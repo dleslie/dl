@@ -1,3 +1,4 @@
+* TODO [#A] Fix Bezier Curves
 * TODO [#A] Add Quaternions
 * TODO [#B] Add fast sin, cos, tan, asin, acos, atan, sqrt
 * TODO [#B] Use Merge Sort instead of Quick Sort
