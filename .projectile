@@ -1,0 +1,7 @@
+;; -*- mode: Emacs-Lisp; -*-
+
+((nil . ((projectile-project-name . "Zeta")
+	 (projectile-enable-caching . nil)
+	 (projectile-compilation-command . "make debug")
+	 (compile-command . "make debug")))
+ (c-mode . ()))
