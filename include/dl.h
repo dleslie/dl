@@ -2416,7 +2416,6 @@ real *select_bezier(const real *restrict v, natural l, real p, real *restrict ou
 real *select_catmullrom(const real *restrict v, natural l, real p, real *restrict out) {
   natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   real target, t, v0, v1, t2, t3;
-  real actual_v[4];
   
   if (safety(v == NULL || out == NULL))
     return NULL;
@@ -2594,7 +2593,7 @@ point3 *select_bezier_point3(const point3 *restrict v, natural l, real p, point3
 point3 *select_catmullrom_point3(const point3 *restrict v, natural l, real p, point3 *restrict out) {
   natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   real target, t, t2, t3;
-  point3 actual_v[4], v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
+  point3 v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
   
   max_idx = l - 1;
   target = (real)max_idx * p;
@@ -5171,7 +5170,6 @@ api integer collection_destroy_all(collection *restrict col, filter *f) {
     return 0;
 
   count = 0;
-  item;
   iter = collection_begin(col);
 
   while ((item = collection_ref(col, iter))) {

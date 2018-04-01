@@ -1,5 +1,5 @@
 #define DL_IMPLEMENTATION 1
-#include "../../core/dl.h"
+#include "dl.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>

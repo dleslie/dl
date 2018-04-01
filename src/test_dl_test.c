@@ -1,4 +1,4 @@
-#include "../../core/dl.h"
+#include "dl.h"
 
 bool my_passing_test_function() {
   return true;

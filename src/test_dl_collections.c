@@ -1,4 +1,4 @@
-#include "../../core/dl.h"
+#include "dl.h"
 
 ////////////////////////////////////////
 // Tools
@@ -669,7 +669,6 @@ bool test_collection_prev() {
 
   any ref = NULL;
   iterator idx = collection_end(&c);
-  natural last_idx = INTEGER_MIN;
   natural last_value = INTEGER_MIN;
   for (natural count = collection_count(&c); count > 0; --count) {
     if (!check(ref = collection_prev(&c, &idx),

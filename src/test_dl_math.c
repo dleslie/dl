@@ -1,4 +1,4 @@
-#include "../../core/dl.h"
+#include "dl.h"
 
 /* For testing purposes; MAX * MAX should be a sane value */
 real MIN_REAL = -1024;
@@ -2147,7 +2147,6 @@ bool test_mat4_mul() {
   mat4 mat[2];
   vec4 col[4];
   natural a = 0, b = 1, c = 2, d = 3;
-  natural v_idx;
   real expected, found;
   random_state r;
   init_random_time(&r);
@@ -2451,7 +2450,7 @@ bool test_mat4_mul_point3() {
 bool test_mat4_transpose() {
   mat4 mat;
   vec3 col[4];
-  natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
+  natural a = 0, b = 1, c = 2, d = 3, col_idx, row_idx;
   real v,f;
   random_state r;
   init_random_time(&r);
