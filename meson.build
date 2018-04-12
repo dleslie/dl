@@ -1,4 +1,5 @@
-project('dl', 'c')
+project('dl', 'c',
+        default_options : ['c_std=c89', 'cpp_std=c++99'])
 
 inc = include_directories('include')
 cc = meson.get_compiler('c')

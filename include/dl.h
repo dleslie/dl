@@ -4,39 +4,62 @@
 
 
 #ifndef DL_USE_MALLOC
-#  define DL_USE_MALLOC 1
+# define DL_USE_MALLOC 1
 #endif
 
 #ifndef DL_USE_SAFETY_CHECKS
-#  define DL_USE_SAFETY_CHECKS 1
+# define DL_USE_SAFETY_CHECKS 1
 #endif
 
 #ifndef DL_USE_LEFT_HANDED
-#  define DL_USE_LEFT_HANDED 0
+# define DL_USE_LEFT_HANDED 0
+#endif
+
+#ifndef DL_USE_LOGGING
+# define DL_USE_LOGGING 1
+#endif
+
+#ifndef DL_USE_TEST
+# define DL_USE_TEST 1
+#endif
+
+#ifndef DL_USE_MATH
+# define DL_USE_MATH 1
+#endif
+
+#ifndef DL_USE_TWEEN
+# define DL_USE_TWEEN 1
+#endif
+
+#ifndef DL_USE_CONTAINERS
+# define DL_USE_CONTAINERS 1
 #endif
 
 #ifndef DL_IMPLEMENTATION
-#  define DL_IMPLEMENTATION 0
+# define DL_IMPLEMENTATION 0
 #endif
 
 #ifndef DL_BEZIER_DEGREE
-#  define DL_BEZIER_DEGREE 4
+# define DL_BEZIER_DEGREE 4
 #endif
 
 
 
-#include <float.h>
-#include <inttypes.h>
-#include <math.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
+#if DL_USE_MATH
+# include <float.h>
+# include <inttypes.h>
+# include <math.h>
+# include <time.h>
+#endif
 
 #if DL_USE_MALLOC
-#  include <malloc.h>
+# include <malloc.h>
 #endif
 
 
@@ -57,129 +80,129 @@ typedef uint32_t natural;
 #define REAL_MIN FLT_MIN
 
 #ifndef NULL
-#  define NULL 0
+# define NULL 0
 #endif
 
 #if _WIN32 || _WIN64
-#  define IS_WINDOWS 1
+# define IS_WINDOWS 1
 #else
-#  define IS_WINDOWS 0
+# define IS_WINDOWS 0
 #endif
 
 #if __linux__ || __linux || linux
-#  define IS_LINUX 1
+# define IS_LINUX 1
 #else
-#  define IS_LINUX 0
+# define IS_LINUX 0
 #endif
 
 #if __APPLE__ || __MACH__
-#  define IS_APPLE 1
+# define IS_APPLE 1
 #else
-#  define IS_APPLE 0
+# define IS_APPLE 0
 #endif
 
 #if _MSC_VER
-#  define IS_MSC 1
+# define IS_MSC 1
 #else
-#  define IS_MSC 0
+# define IS_MSC 0
 #endif
 
 #if __GNUC__ && !__clang__ && !__MINGW32__
-#  define IS_GNUC 1
+# define IS_GNUC 1
 #else
-#  define IS_GNUC 0
+# define IS_GNUC 0
 #endif
 
 #if __clang__
-#  define IS_CLANG 1
+# define IS_CLANG 1
 #else
-#  define IS_CLANG 0
+# define IS_CLANG 0
 #endif
 
 #if __MINGW32__
-#  define IS_MINGW 1
+# define IS_MINGW 1
 #else
-#  define IS_MINGW 0
+# define IS_MINGW 0
 #endif
 
 #if defined(__STDC__)
-#  if __STDC_VERSION__ >= 201112L
-#    define IS_C11 1
-#    define IS_C99 0
-#    define IS_C90 0
-#    define IS_C89 0
-#  elif __STDC_VERSION__ >= 199901L
-#    define IS_C11 0
-#    define IS_C99 1
-#    define IS_C90 0
-#    define IS_C89 0
-#  elif __STDC_VERSION__ >= 199409L
-#    define IS_C11 0
-#    define IS_C99 0
-#    define IS_C90 1
-#    define IS_C89 0
-#  else
-#    define IS_C11 0
-#    define IS_C99 0
-#    define IS_C90 0
-#    define IS_C89 1
-#  endif
+# if __STDC_VERSION__ >= 201112L
+#   define IS_C11 1
+#   define IS_C99 0
+#   define IS_C90 0
+#   define IS_C89 0
+# elif __STDC_VERSION__ >= 199901L
+#   define IS_C11 0
+#   define IS_C99 1
+#   define IS_C90 0
+#   define IS_C89 0
+# elif __STDC_VERSION__ >= 199409L
+#   define IS_C11 0
+#   define IS_C99 0
+#   define IS_C90 1
+#   define IS_C89 0
+# else
+#   define IS_C11 0
+#   define IS_C99 0
+#   define IS_C90 0
+#   define IS_C89 1
+# endif
 #else
-#  error "C version not determined."
-#  define IS_C11 0
-#  define IS_C99 0
-#  define IS_C90 0
-#  define IS_C89 0
+# error "C version not determined."
+# define IS_C11 0
+# define IS_C99 0
+# define IS_C90 0
+# define IS_C89 0
 #endif
 
 #ifndef inline
-#  define inline  
-#  if IS_GNUC || IS_CLANG || IS_MINGW
-#    undef inline
-#    define inline inline __attribute__((__always_inline__))
-#  endif
+# define inline  
+# if IS_GNUC || IS_CLANG || IS_MINGW
+#   undef inline
+#   define inline inline __attribute__((__always_inline__))
+# endif
 #endif
 
 #ifndef api
-#  define api  
-#  if IS_GNUC || IS_CLANG || IS_MINGW
-#    undef api
-#    define api
-#  endif
+# define api  
+# if IS_GNUC || IS_CLANG || IS_MINGW
+#   undef api
+#   define api
+# endif
 #endif
 
 #ifndef restrict
-#  define restrict
-#  if IS_GNUC || IS_CLANG || IS_MINGW
-#    undef restrict
-#    define restrict __restrict__
-#  endif
-#  if IS_MSC
-#    undef restrict
-#    define restrict __restrict
-#  endif
+# define restrict
+# if IS_GNUC || IS_CLANG || IS_MINGW
+#   undef restrict
+#   define restrict __restrict__
+# endif
+# if IS_MSC
+#   undef restrict
+#   define restrict __restrict
+# endif
 #endif
 
 #ifndef likely
-#  define likely(x) !!(x)
-#  if IS_GNUC || IS_CLANG || IS_MINGW
-#    undef likely
-#    define likely(x) __builtin_expect(!!(x), 1)
-#  endif
+# define likely(x) !!(x)
+# if IS_GNUC || IS_CLANG || IS_MINGW
+#   undef likely
+#   define likely(x) __builtin_expect(!!(x), 1)
+# endif
 #endif
 
 #ifndef unlikely
-#  define unlikely(x) !!(x)
-#  if IS_GNUC || IS_CLANG || IS_MINGW
-#    undef unlikely
-#    define unlikely(x) __builtin_expect(!!(x), 0)
-#  endif
+# define unlikely(x) !!(x)
+# if IS_GNUC || IS_CLANG || IS_MINGW
+#   undef unlikely
+#   define unlikely(x) __builtin_expect(!!(x), 0)
+# endif
 #endif
 
 #if DL_USE_SAFETY_CHECKS
-#  define safety(x) (unlikely(x) ? ERROR("Safety triggered") || 1 : 0)
+# define safety(x) (unlikely(x) ? ERROR("Safety triggered") || 1 : 0)
 #else
-#  define safety(x) (1 == 0)
+# define safety(x) (1 == 0)
 #endif
 
 
@@ -231,6 +254,11 @@ extern "C" {
   /*****************************************************************************
    **  Logging
    ****************************************************************************/
+
+#if DL_USE_LOGGING
+# if IS_C89 || IS_C90
+#   error "DL_USE_LOGGING not available for C90 or lower"
+# endif
   
   typedef enum {
     LOG_INFO = 1,
@@ -244,35 +272,20 @@ extern "C" {
 
   natural log_message(log_channel ch, const char *restrict file, natural line, const char *restrict function, const char *restrict fmt, ...);
 
-#if IS_C99 || IS_C11
-#  if IS_GNUC || IS_CLANG || IS_MSC || IS_MINGW
-#    define INFO(...) log_message(LOG_INFO, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#    define WARN(...) log_message(LOG_WARNING, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#    define ERROR(...) log_message(LOG_ERROR, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#    define TEST(...) log_message(LOG_TEST, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#    define MSG(...) log_message(LOG_MESSAGE, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#  else
-#    define INFO(...) log_message(LOG_INFO, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#    define WARN(...) log_message(LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#    define ERROR(...) log_message(LOG_ERROR, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#    define TEST(...) log_message(LOG_TEST, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#    define MSG(...) log_message(LOG_MESSAGE, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#  endif
-#elif IS_C90 || IS_C89
-#  if IS_GNUC || IS_CLANG || IS_MSC || IS_MINGW
-#    define INFO(str) log_message(LOG_INFO, __FILE__, __LINE__, __func__, str)
-#    define WARN(str) log_message(LOG_WARNING, __FILE__, __LINE__, __func__, str)
-#    define ERROR(str) log_message(LOG_ERROR, __FILE__, __LINE__, __func__, str)
-#    define TEST(str) log_message(LOG_TEST, __FILE__, __LINE__, __func__, str)
-#    define MSG(str) log_message(LOG_MESSAGE, __FILE__, __LINE__, __func__, str)
-#  else
-#    define INFO(str) log_message(LOG_INFO, __FILE__, __LINE__, "", str)
-#    define WARN(str) log_message(LOG_WARNING, __FILE__, __LINE__, "", str)
-#    define ERROR(str) log_message(LOG_ERROR, __FILE__, __LINE__, "", str)
-#    define TEST(str) log_message(LOG_TEST, __FILE__, __LINE__, "", str)
-#    define MSG(str) log_message(LOG_MESSAGE, __FILE__, __LINE__, "", str)
-#  endif
-#endif
+# if IS_GNUC || IS_CLANG || IS_MSC || IS_MINGW
+#   define INFO(...) log_message(LOG_INFO, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define WARN(...) log_message(LOG_WARNING, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define ERROR(...) log_message(LOG_ERROR, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define TEST(...) log_message(LOG_TEST, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define MSG(...) log_message(LOG_MESSAGE, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+# else
+#   define INFO(...) log_message(LOG_INFO, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define WARN(...) log_message(LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define ERROR(...) log_message(LOG_ERROR, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define TEST(...) log_message(LOG_TEST, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define MSG(...) log_message(LOG_MESSAGE, __FILE__, __LINE__, "", ## __VA_ARGS__)
+# endif
+#endif /* DL_USE_LOGGING */
 
 
 
@@ -280,13 +293,17 @@ extern "C" {
    **  Testing
    ****************************************************************************/
 
-#if IS_C99 || IS_C11
+#if DL_USE_TEST
+# if IS_C90 || IS_C89
+#   error "DL_USE_TEST is not available for C90 or lower"
+# endif
+    
   integer test_run(bool (**tests)(), const char **names, integer count);
   integer test_count(bool (**tests)(), integer max);
 
-#  define check(predicate, ...) ((predicate) ? true : ERROR(__VA_ARGS__) && false)
-#  define not_implemented() check(false, "Test is not implemented.")
-#  define BEGIN_TEST_SUITE(name) \
+# define check(predicate, ...) ((predicate) ? true : ERROR(__VA_ARGS__) && false)
+# define not_implemented() check(false, "Test is not implemented.")
+# define BEGIN_TEST_SUITE(name) \
   void _test_suite_##name(integer *out_count, integer *out_passed) {\
     bool (*tests[256])();\
     const char *test_names[256];\
@@ -294,30 +311,23 @@ extern "C" {
     if (out_count == NULL || out_passed == NULL)\
       return;\
     memset(tests, 0, sizeof(bool (*)()) * 256);
-#  define END_TEST_SUITE \
+# define END_TEST_SUITE \
     *out_count = test_count(tests, 256);\
     *out_passed = test_run(tests, test_names, *out_count);\
   }
-#  define DECLARE_TEST(test_name) \
+# define DECLARE_TEST(test_name) \
   bool test_name();\
   tests[current] = test_name;\
   test_names[current] = #test_name;\
   current++;
-#  define RUN_TEST_SUITE(name)\
+# define RUN_TEST_SUITE(name)\
   do {\
     integer count, passed;\
     TEST("<<"#name ">>");\
     _test_suite_##name(&count, &passed);\
     TEST("<<" #name ">> %i/%i", passed, count);\
   } while (0)
-#elif IS_C90 || IS_C89
-#  define check(predicate, str) ((predicate) ? true : ERROR(str) && false)
-#  define not_implemented() check(false, "Test is not implemented.")  
-#  define BEGIN_TEST_SUITE(name) void _test_suite_##name(integer *out_count, integer *out_passed) { 
-#  define END_TEST_SUITE }
-#  define DECLARE_TEST(test_name)
-#  define RUN_TEST_SUITE(name) do { _test_suite_##name(NULL, NULL); } while (0)
-#endif
+#endif /* DL_USE_TEST */
 
 
 
@@ -325,33 +335,34 @@ extern "C" {
    **  Math
    ****************************************************************************/
 
-#ifdef M_PI
-#  undef M_PI
-#endif
-#ifdef M_INV_PI
-#  undef M_INV_PI
-#endif
-#ifdef M_E
-#  undef M_E
-#endif
-#ifdef M_INV_E
-#  undef M_INV_E
-#endif
-#ifdef M_EPSILON
-#  undef M_EPSILON
-#endif
-#ifdef min
-#  undef min
-#endif
-#ifdef max
-#  undef max
-#endif
-#ifdef clamp
-#  undef clamp
-#endif
-#ifdef clamp01
-#  undef clamp01
-#endif
+#if DL_USE_MATH
+# ifdef M_PI
+#   undef M_PI
+# endif
+# ifdef M_INV_PI
+#   undef M_INV_PI
+# endif
+# ifdef M_E
+#   undef M_E
+# endif
+# ifdef M_INV_E
+#   undef M_INV_E
+# endif
+# ifdef M_EPSILON
+#   undef M_EPSILON
+# endif
+# ifdef min
+#   undef min
+# endif
+# ifdef max
+#   undef max
+# endif
+# ifdef clamp
+#   undef clamp
+# endif
+# ifdef clamp01
+#   undef clamp01
+# endif
   
   extern const real M_PI;
   extern const real M_INV_PI;
@@ -359,10 +370,10 @@ extern "C" {
   extern const real M_INV_E;
   extern const real M_EPSILON;
   
-#define min(x, y) ((x) <= (y) ? (x) : (y))
-#define max(x, y) ((x) >= (y) ? (x) : (y))
-#define clamp(x, a, b) max(min(b, x), a)
-#define clamp01(x) clamp(x, 0, 1)
+# define min(x, y) ((x) <= (y) ? (x) : (y))
+# define max(x, y) ((x) >= (y) ? (x) : (y))
+# define clamp(x, a, b) max(min(b, x), a)
+# define clamp01(x) clamp(x, 0, 1)
 
   api bool approximately_equal(real a, real b, real epsilon);
   api integer floor_to_integer(real n);
@@ -537,6 +548,7 @@ extern "C" {
   typedef union {
     real ary[4][4];
     vec4 cols[4];
+    real vals[16];
   } mat4;
   
   extern const mat4 mat4_identity;
@@ -604,12 +616,16 @@ extern "C" {
 
   /* mat4 *quat_to_mat4(const quat *restrict q, mat4 *restrict out); */
   /* quat *mat4_to_quat(const mat4 *restrict m, quat *restrict out); */
+
+#endif /* DL_USE_MATH */
   
 
 
   /*****************************************************************************
    **  Tweening
    ****************************************************************************/
+
+#if DL_USE_TWEEN
 
   typedef enum {
     EASE_IN,
@@ -661,10 +677,6 @@ extern "C" {
 
 
 
-  /*****************************************************************************
-   **  Linear Interpolation
-   ****************************************************************************/
-
   api integer lerp_integer(integer a, integer b, real p);
   api real lerp_real(real a, real b, real p);
   api point2 *lerp_point2(const point2 *restrict a, const point2 *restrict b, real p, point2 *restrict out);
@@ -673,15 +685,15 @@ extern "C" {
   api vec3 *lerp_vec3(const vec3 *restrict a, const vec3 *restrict b, real p, vec3 *restrict out);
 
 
-  
-  /*****************************************************************************
-   **  Containers
-   ****************************************************************************/
 
+#endif /* DL_USE_TWEEN */
+  
   /*****************************************************************************
    **  Vectors
    ****************************************************************************/
 
+#if DL_USE_CONTAINERS
+  
   typedef struct {
     natural element_size;
     natural slice_length;
@@ -927,7 +939,9 @@ extern "C" {
   api integer collection_ref_array(collection *restrict col, iterator index, any *out_array);
   api integer collection_remove_all(collection *restrict col, filter *predicate, collection *out);
   api integer collection_remove_range(collection *restrict col, iterator *index, natural count, collection *out);
-  
+
+#endif /* DL_USE_CONTAINERS */
+
 #if defined(__cplusplus)
 }
 #endif
@@ -943,6 +957,8 @@ extern "C" {
 /*****************************************************************************
  **  Logging
  ****************************************************************************/
+
+#if DL_USE_LOGGING
 
 natural _default_log_handler(log_channel ch, const char *restrict file, natural line, const char *restrict function, const char *restrict msg) {
   char time_buf[20];
@@ -995,23 +1011,23 @@ natural log_message(log_channel ch, const char *restrict file, natural line, con
   return active_log_handler(ch, file, line, function, buf);
 }
 
+#endif /* DL_USE_LOGGING */
+
 
 
 /*****************************************************************************
  **  Tests
  ****************************************************************************/
 
-integer test_run(bool (**tests)(), const char **names, integer count) {
-  integer passed = 0;
+#if DL_USE_TEST
 
-  for (integer i = 0; i < count; ++i) {
+integer test_run(bool (**tests)(), const char **names, integer count) {
+  integer i, passed = 0;
+
+  for (i = 0; i < count; ++i) {
     TEST("[%3i/%3i] %s", i + 1, count, names[i]);
-    if (tests[i]()) {
+    if (tests[i]())
       passed++;
-      /* TEST("[PASS] %i %s", names[i]); */
-    }
-    /* else */
-    /*   TEST("[FAIL] %i %s", names[i]); */
   }
 
   return passed;
@@ -1019,15 +1035,20 @@ integer test_run(bool (**tests)(), const char **names, integer count) {
 
 integer test_count(bool (**tests)(), integer max) {
   integer idx;
+  
   for (idx = 0; idx < max && tests[idx] != NULL; ++idx);
   return idx;
 }
+
+#endif /* DL_USE_TEST */
 
 
 
 /*****************************************************************************
  **  Math
  ****************************************************************************/
+
+#if DL_USE_MATH
 
 #ifndef M_PI
 const real M_PI = 3.14159265359f;
@@ -1040,10 +1061,7 @@ const real M_INV_PI = 0.318309886185f;
 const real M_INV_E = 0.367879441171f;
 const real M_EPSILON = 0.001f;
 
-const mat4 mat4_identity = { 1, 0, 0, 0,
-			     0, 1, 0, 0,
-			     0, 0, 1, 0,
-			     0, 0, 0, 1 };
+const mat4 mat4_identity = { .vals = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
 const point2 point2_zero = { 0, 0 };
 const point2 point2_one = { 1, 1 };
 const vec2 vec2_up = { 0, 1 };
@@ -1085,13 +1103,31 @@ api integer ceil_to_integer(real n) {
 }
 
 api integer round_to_integer(real n) {
+#if IS_C89 || IS_C90
+  real floored = floor(n);
+  real frac = n - floored;
+  return frac > 0.5 ? (integer)(floored + 1) : (integer)floored;
+#else
   return (integer)lround(n);
+#endif
 }
 
 api real rationalize(real value, natural decimal_points) {
+#if IS_C89 || IS_C90
+  real d = (real)pow(10, (real)decimal_points);
+  real floored = floor(value);
+  real frac = value - floored;
+  real n = frac > 0.5 ? (floored + 1) : floored;
+  value = (value - n) * d;
+  floored = floor(value);
+  frac = value - floored;
+  value = frac > 0.5 ? (floored + 1) : floored;
+  return n + (value / d);
+#else  
   real d = (real)powf(10, (real)decimal_points);
-  real n = roundf(value);
+  real n = (real)roundf(value);
   return n + (roundf((value - n) * d) / d);
+#endif
 }
 
 api real degree_to_radian(real degree) {
@@ -1107,11 +1143,12 @@ api real radian_to_degree(real radian) {
 integer _factorial_cache[13] = { 1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600 };
 
 api integer factorial(integer n) {
+  integer i;
   if (likely((natural)n < sizeof(_factorial_cache)))
     return _factorial_cache[n];
   if (unlikely(n < 0))
     return 1;
-  for (integer i = n - 1; i > 0; --i) {
+  for (i = n - 1; i > 0; --i) {
     n = n * i;
   }
   return n;
@@ -1122,6 +1159,7 @@ api integer factorial(integer n) {
 api random_state *init_random(random_state *state, integer seed) {
   return init_random_custom(state, INTEGER_MAX, 1103515245, 12345, seed);
 }
+
 api random_state *init_random_custom(random_state *state, integer m, integer a, integer c, integer seed) {
   if (safety(state == NULL))
     return NULL;
@@ -1631,7 +1669,7 @@ api vec3 *vec3_cross(const vec3 *restrict left, const vec3 *restrict right, vec3
   if (safety(left == NULL || right == NULL || out == NULL))
     return NULL;
 
-  // In case right was passed as out, as well.
+  /* In case right was passed as out, as well. */
   orig_x = right->x;
   orig_y = right->y;
   
@@ -1785,22 +1823,26 @@ api mat4 *init_mat4_cols(mat4 * restrict m, const vec4 *restrict column_a, const
 }
 
 api mat4 *mat4_add(const mat4 *restrict left, const mat4 *restrict right, mat4 *restrict out) {
+  integer i, j;
+  
   if (safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
-  for (integer i = 0; i < 4; ++i)
-    for (integer j = 0; j < 4; ++j)
+  for (i = 0; i < 4; ++i)
+    for (j = 0; j < 4; ++j)
       out->ary[i][j] = left->ary[i][j] + right->ary[i][j];
 
   return out;
 }
 
 api mat4 *mat4_sub(const mat4 *restrict left, const mat4 *restrict right, mat4 *restrict out) {
+  integer i, j;
+  
   if (safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
-  for (integer i = 0; i < 4; ++i)
-    for (integer j = 0; j < 4; ++j)
+  for (i = 0; i < 4; ++i)
+    for (j = 0; j < 4; ++j)
       out->ary[i][j] = left->ary[i][j] - right->ary[i][j];
 
   return out;
@@ -1813,7 +1855,7 @@ api mat4 *mat4_mul(const mat4 *restrict left, const mat4 *restrict right, mat4 *
   if (safety(left == NULL || right == NULL || out == NULL))
     return NULL;
 
-  // The copy prevents errors arising from right/left and out pointing at the same data.
+  /* The copy prevents errors arising from right/left and out pointing at the same data. */
   temp = *right;
   A = (vec4 *)&left->ary;
   B = (vec4 *)&temp.ary;
@@ -1842,11 +1884,13 @@ api mat4 *mat4_mul(const mat4 *restrict left, const mat4 *restrict right, mat4 *
 }
 
 bool mat4_approximately_equal(const mat4 *restrict left, const mat4 *restrict right, real epsilon) {
+  integer i, j;
+  
   if (safety(left == NULL || right == NULL))
     return false;
 
-  for (integer i = 0; i < 4; ++i)
-    for (integer j = 0; j < 4; ++j)
+  for (i = 0; i < 4; ++i)
+    for (j = 0; j < 4; ++j)
       if (fabsf(left->ary[i][j] - right->ary[i][j]) > epsilon)
 	return false;
   
@@ -1885,6 +1929,7 @@ api vec3 *mat4_mul_vec3(const mat4 *restrict left, const vec3 *restrict right, v
 
 api point3 *mat4_mul_point3(const mat4 *restrict left, const point3 *restrict right, point3 *restrict out) {
   point3 p;
+  
   if (safety(left == NULL || right == NULL || out == NULL))
     return NULL;
 
@@ -1915,11 +1960,13 @@ api mat4 *mat4_transpose(const mat4 *restrict left, mat4 *restrict out) {
 }
 
 api mat4 *mat4_mul_scalar(const mat4 *restrict left, real scalar, mat4 *restrict out) {
+  integer i,j;
+  
   if (safety(left == NULL || out == NULL))
     return NULL;
   
-  for (integer i = 0; i < 4; ++i)
-    for (integer j = 0; j < 4; ++j)
+  for (i = 0; i < 4; ++i)
+    for (j = 0; j < 4; ++j)
       out->ary[i][j] = left->ary[i][j] * scalar;
 
   return out;
@@ -1930,11 +1977,13 @@ api mat4 *mat4_div_scalar(const mat4 *restrict left, real scalar, mat4 *restrict
 }
 
 api mat4 *mat4_add_scalar(const mat4 *restrict left, real scalar, mat4 *restrict out) {
+  integer i, j;
+  
   if (safety(left == NULL || out == NULL))
     return NULL;
   
-  for (integer i = 0; i < 4; ++i)
-    for (integer j = 0; j < 4; ++j)
+  for (i = 0; i < 4; ++i)
+    for (j = 0; j < 4; ++j)
       out->ary[i][j] = left->ary[i][j] + scalar;
 
   return out;
@@ -1972,8 +2021,13 @@ api mat4 *init_mat4_rotate_x(mat4 * restrict m, real radians) {
 		   0,  s,  c, 0,
 		   0,  0,  0, 1);
 #else
+# if IS_C89 || IS_C90
+  c = (real)cos(radians);
+  s = (real)sin(radians);
+# else
   c = cosf(radians);
   s = sinf(radians);
+# endif
 
   return init_mat4(m,
 		   1, 0,  0, 0,
@@ -2136,12 +2190,16 @@ api mat4 *init_mat4_perspective(mat4 * restrict m, real vertical_fov, real aspec
   return m;
 }
 
+#endif /* DL_USE_MATH */
+
 
 
 /*****************************************************************************
  **  Tweening
  ****************************************************************************/
 
+#if DL_USE_TWEEN
+  
 api real tween(easing_function ease, ease_direction direction, real percent) {
   percent = clamp01(percent);
   return ease(direction, percent);
@@ -2627,10 +2685,6 @@ point3 *select_catmullrom_point3(const point3 *restrict v, natural l, real p, po
 
 
 
-/*****************************************************************************
- **  Linear Interpolation
- ****************************************************************************/
-
 api integer lerp_integer(integer a, integer b, real p) {
   return (integer)truncf(lerp_real((real)a, (real)b, p));
 }
@@ -2655,6 +2709,8 @@ api vec3 *lerp_vec3(const vec3 *restrict a, const vec3 *restrict b, real p, vec3
   return vec3_add(vec3_mul_scalar(vec3_sub(b, a, out), p, out), a, out);
 }
 
+#endif /* DL_USE_TWEEN */
+  
 
 
 /*****************************************************************************
@@ -2773,6 +2829,8 @@ any memory_set(any left, byte val, natural bytes) {
 /*****************************************************************************
  **  Collections
  ****************************************************************************/
+
+#if DL_USE_CONTAINERS
 
 integer _default_compare_8(any data, any left, any right) {
   return (integer)(*(int8_t *)left - *(int8_t *)right);
@@ -5310,6 +5368,8 @@ api integer collection_copy_array(const any data, natural count, collection *res
   return collection_copy(&source, target);
 }
 
+#endif /* DL_USE_CONTAINERS */
+  
 #endif /* DL_IMPLEMENTATION */
 
 #endif
