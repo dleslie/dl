@@ -200,7 +200,11 @@ typedef uint32_t natural;
 #endif
 
 #if DL_USE_SAFETY_CHECKS
-# define safety(x) (unlikely(x) ? ERROR("Safety triggered") || 1 : 0)
+# if DL_USE_LOGGING
+#   define safety(x) (unlikely(x) ? ERROR("Safety triggered") || 1 : 0)
+# else
+#   define safety(x) (unlikely(x) ? 1 : 0)
+# endif
 #else
 # define safety(x) (1 == 0)
 #endif

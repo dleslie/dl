@@ -1,6 +1,6 @@
 #include "dl.h"
 
-#if DL_USE_MATH
+#if DL_USE_MATH && DL_USE_TEST
 
 /* For testing purposes; MAX * MAX should be a sane value */
 real MIN_REAL = -1024;

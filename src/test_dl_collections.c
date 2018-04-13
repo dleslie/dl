@@ -1,6 +1,6 @@
 #include "dl.h"
 
-#if DL_USE_CONTAINERS
+#if DL_USE_CONTAINERS && DL_USE_TEST
 
 /***************************************
  * Tools

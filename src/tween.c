@@ -128,8 +128,6 @@ void change(random_state *r) {
   real x;
   
   active_method = (active_method + 1) % tween_count;
-  
-  INFO("%s", tween_methods[active_method].name);
 
   if (!was_interpolate) {
     for (idx = 0; idx < point_count; idx++) {
@@ -153,7 +151,6 @@ int main(int argc, char **argv)
   integer screen_height = height;
   
   if (!al_init()) {
-    ERROR("Could not initialize Allegro.");
     return -1;
   }
 
@@ -162,23 +159,19 @@ int main(int argc, char **argv)
   al_set_new_display_flags(ALLEGRO_OPENGL);
   display = al_create_display(screen_width, screen_height);
   if (!display) {
-    ERROR("Could not create display.");
     return -1;
   }
 
   if (!al_install_keyboard()) {
-    ERROR("Could not load keyboard.");
     return -1;
   }
 
   if (!al_install_mouse()) {
-    ERROR("Could not load mouse.");
     return -1;
   }
 
   bkg = al_create_bitmap(width, height);
   if (!bkg) {
-    ERROR("Could not create background image.");
     return -1;
   }
 
