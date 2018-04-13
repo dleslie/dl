@@ -163,6 +163,11 @@ typedef byte bool;
 # define IS_C89 0
 #endif
 
+#define IS_ATLEAST_C89 (IS_C11 || IS_C99 || IS_C90 || IS_C89)
+#define IS_ATLEAST_C90 (IS_C11 || IS_C99 || IS_C90)
+#define IS_ATLEAST_C99 (IS_C11 || IS_C99)
+#define IS_ATLEAST_C11 (IS_C11)
+
 #ifndef inline
 # define inline  
 # if IS_GNUC || IS_CLANG || IS_MINGW
@@ -268,7 +273,7 @@ extern "C" {
    ****************************************************************************/
 
 #if DL_USE_LOGGING
-# if IS_C89 || IS_C90
+# if !IS_ATLEAST_C99
 #   error "DL_USE_LOGGING not available for C90 or lower"
 #   undef DL_USE_LOGGING
 #   define DL_USE_LOGGING 0
@@ -308,7 +313,7 @@ extern "C" {
    ****************************************************************************/
 
 #if DL_USE_TEST
-# if IS_C90 || IS_C89
+# if !IS_ATLEAST_C99
 #   error "DL_USE_TEST is not available for C90 or lower"
 #   undef DL_USE_TEST
 #   define DL_USE_TEST 0
@@ -401,7 +406,7 @@ extern "C" {
   api real radian_to_degree(real radian);
   api integer factorial(integer n);
   
-# if IS_C89 || IS_C90
+# if !IS_ATLEAST_C99
 #   define _sqrt(v) sqrt(v)
 #   define _cos(v) cos(v)
 #   define _sin(v) sin(v)
@@ -1159,7 +1164,7 @@ api integer ceil_to_integer(real n) {
 }
 
 api integer round_to_integer(real n) {
-#if IS_C89 || IS_C90
+#if !IS_ATLEAST_C99
   real floored = _floor(n);
   real frac = n - floored;
   return frac > 0.5 ? (integer)(floored + 1) : (integer)floored;
@@ -1169,7 +1174,7 @@ api integer round_to_integer(real n) {
 }
 
 api real rationalize(real value, natural decimal_points) {
-#if IS_C89 || IS_C90
+#if !IS_ATLEAST_C99
   real d = (real)pow(10, (real)decimal_points);
   real floored = floor(value);
   real frac = value - floored;
@@ -2079,7 +2084,7 @@ api mat4 *init_mat4_rotate_x(mat4 * restrict m, real radians) {
 		   0,  s,  c, 0,
 		   0,  0,  0, 1);
 #else
-# if IS_C89 || IS_C90
+# if !IS_ATLEAST_C99
   c = (real)cos(radians);
   s = (real)sin(radians);
 # else
