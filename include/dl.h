@@ -49,8 +49,6 @@
 # include <stdarg.h>
 #endif
 
-#include <inttypes.h>
-
 #if DL_USE_MATH
 # include <math.h>
 # include <time.h>
@@ -63,23 +61,23 @@
 
 
 typedef void* any;
-typedef int32_t integer;
+typedef signed long int integer;
 typedef float real;
-typedef uint8_t byte;
-typedef uint32_t natural;
+typedef unsigned char byte;
+typedef unsigned long int natural;
 typedef byte bool;
 
 #define true 1
 #define false 0
 
-#define INTEGER_MAX INT32_MAX
-#define INTEGER_MIN INT32_MIN
+#define INTEGER_MAX 0x7fffffffL
+#define INTEGER_MIN (-INTEGER_MAX - 1L)
 
-#define NATURAL_MAX UINT32_MAX
+#define NATURAL_MAX 0xffffffffUL
 #define MATURAL_MIN 0
 
-#define REAL_MAX FLT_MAX
-#define REAL_MIN FLT_MIN
+#define REAL_MAX 3.402823e+38f
+#define REAL_MIN 1.175494e-38f
 
 #ifndef NULL
 # define NULL 0
@@ -384,7 +382,6 @@ extern "C" {
 # define max(x, y) ((x) >= (y) ? (x) : (y))
 # define clamp(x, a, b) max(min(b, x), a)
 # define clamp01(x) clamp(x, 0, 1)
-# define _abs(v) ((v) > 0 ? (v) : -(v))
 
   api bool approximately_equal(real a, real b, real epsilon);
   api integer floor_to_integer(real n);
@@ -409,6 +406,7 @@ extern "C" {
 #   define _exp(v) exp(v)
 #   define _floor(v) floor(v)
 #   define _ceil(v) ceil(v)
+#   define _abs(v) ((v) > 0 ? (v) : -(v))
 #else
 #   define _sqrt(v) sqrtf(v)
 #   define _cos(v) cosf(v)
@@ -422,6 +420,7 @@ extern "C" {
 #   define _exp(v) expf(v)
 #   define _floor(v) floorf(v)
 #   define _ceil(v) ceilf(v)
+#   define _abs(v) ((v) > 0 ? (v) : -(v))
 #endif
 
   typedef struct {
@@ -1096,9 +1095,15 @@ const real M_PI = 3.14159265359f;
 const real M_E = 2.71828182846f;
 #endif
 
+#ifndef M_INV_PI
 const real M_INV_PI = 0.318309886185f;
+#endif
+#ifndef M_INV_E
 const real M_INV_E = 0.367879441171f;
+#endif
+#ifndef M_EPSILON
 const real M_EPSILON = 0.001f;
+#endif
 
 const mat4 mat4_identity = { .vals = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
 const point2 point2_zero = { 0, 0 };
@@ -2761,7 +2766,7 @@ api vec3 *lerp_vec3(const vec3 *restrict a, const vec3 *restrict b, real p, vec3
 #if DL_USE_MALLOC
 #if IS_GNUC
 any _default_alloc(natural count, natural element_size) {
-  return (any)memalign(sizeof(intptr_t), count * element_size);
+  return (any)memalign(sizeof(any), count * element_size);
 }
 #define DECLARE_ALLOC_MEMBERS(alloc, free)	\
   .alloc = _default_alloc,			\
@@ -2874,23 +2879,23 @@ any memory_set(any left, byte val, natural bytes) {
 #if DL_USE_CONTAINERS
 
 integer _default_compare_8(any data, any left, any right) {
-  return (integer)(*(int8_t *)left - *(int8_t *)right);
+  return (integer)(*(unsigned char *)left - *(unsigned char *)right);
 }
 
 integer _default_compare_16(any data, any left, any right) {
-  return (integer)(*(int16_t *)left - *(int16_t *)right);
+  return (integer)(*(unsigned int *)left - *(unsigned int *)right);
 }
 
 integer _default_compare_32(any data, any left, any right) {
-  return (integer)(*(int32_t *)left - *(int32_t *)right);
+  return (integer)(*(unsigned long int *)left - *(unsigned long int *)right);
 }
 
 integer _default_compare_64(any data, any left, any right) {
-  return (integer)(*(int64_t *)left - *(int64_t *)right);
+  return (integer)(*(unsigned long long int *)left - *(unsigned long long int *)right);
 }
 
 integer _default_compare_any(any data, any left, any right) {
-  return (integer)((intptr_t)left - (intptr_t)right);
+  return (integer)((any)left - (any)right);
 }
 
 typedef struct {
@@ -2939,7 +2944,7 @@ api vector *init_vector_custom(vector * restrict target, vector_settings setting
 
   target->settings = settings;
 
-  target->data.slices = (byte **)target->settings.alloc(target->slice_count, sizeof(uint8_t *));
+  target->data.slices = (byte **)target->settings.alloc(target->slice_count, sizeof(byte *));
   if (unlikely(target->data.slices == NULL))
     return NULL;
 

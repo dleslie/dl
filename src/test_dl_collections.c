@@ -72,7 +72,7 @@ void _print_collection(collection *c1) {
     sprintf(buf2, "%s %i", buf, *(integer *)ref);
     sprintf(buf, "%s", buf2);
 #else
-    snprintf(buf2, 256, "%s %i", buf, *(integer *)ref);
+    snprintf(buf2, 256, "%s %li", buf, *(integer *)ref);
     snprintf(buf, 256, "%s", buf2);
 #endif
   }
