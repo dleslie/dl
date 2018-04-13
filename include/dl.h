@@ -45,21 +45,6 @@
 
 
 
-#if DL_USE_LOGGING
-# include <stdarg.h>
-#endif
-
-#if DL_USE_MATH
-# include <math.h>
-# include <time.h>
-#endif
-
-#if DL_USE_MALLOC
-# include <malloc.h>
-#endif
-
-
-
 typedef void* any;
 typedef signed long int integer;
 typedef float real;
@@ -124,6 +109,29 @@ typedef byte bool;
 #else
 # define IS_MINGW 0
 #endif
+
+
+
+#if IS_LINUX || IS_MSC
+# define HAS_TIME 1
+# include <time.h>
+#else
+# define HAS_TIME 0
+#endif
+
+#if DL_USE_LOGGING
+# include <stdarg.h>
+#endif
+
+#if DL_USE_MATH
+# include <math.h>
+#endif
+
+#if DL_USE_MALLOC
+# include <malloc.h>
+#endif
+
+
 
 #if defined(__STDC__)
 # if __STDC_VERSION__ >= 201112L
@@ -1001,14 +1009,18 @@ extern "C" {
 natural _default_log_handler(log_channel ch, const char *restrict file, natural line, const char *restrict function, const char *restrict msg) {
   char time_buf[20];
 
-#if IS_MSC
+#if HAS_TIME
+# if IS_MSC
   struct tm ltime;
   time_t t = time(NULL);
   localtime_s(&ltime, &t);
   strftime(time_buf, sizeof(time_buf), "%F %T", &ltime);
-#else
+# else
   time_t t = time(NULL);
   strftime(time_buf, sizeof(time_buf), "%F %T", localtime(&t));
+# endif
+#else
+  time_buf[0] = (char)0;
 #endif
 
   switch (ch) {
