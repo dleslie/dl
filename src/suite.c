@@ -3,10 +3,13 @@
 #define DL_IMPLEMENTATION 1
 #include "dl.h"
 
+#if DL_USE_TEST
+
 /*******************************************************************************
  math
 *******************************************************************************/
 
+#if DL_USE_MATH
 BEGIN_TEST_SUITE(math)
 DECLARE_TEST(test_approximately_equal)
 DECLARE_TEST(test_ceil_to_integer)
@@ -110,6 +113,7 @@ DECLARE_TEST(test_mat4_sub_scalar)
 DECLARE_TEST(test_mat4_translate)
 DECLARE_TEST(test_mat4_transpose)
 END_TEST_SUITE
+#endif
 
 /*******************************************************************************
  test
@@ -124,13 +128,14 @@ END_TEST_SUITE
  collections
 *******************************************************************************/
 
+#if DL_USE_CONTAINERS
+
 BEGIN_TEST_SUITE(collections)
 DECLARE_TEST(test_memory_swap)
 DECLARE_TEST(test_init_linked_list)
 DECLARE_TEST(test_linked_list_capacity)
 DECLARE_TEST(test_linked_list_length)
 DECLARE_TEST(test_linked_list_add)
-//DECLARE_TEST(test_linked_list_remove)
 DECLARE_TEST(test_linked_list_copy)
 DECLARE_TEST(test_linked_list_copy_array)
 DECLARE_TEST(test_linked_list_grow)
@@ -140,7 +145,6 @@ DECLARE_TEST(test_linked_list_get)
 DECLARE_TEST(test_linked_list_set)
 DECLARE_TEST(test_linked_list_ref)
 DECLARE_TEST(test_linked_list_index)
-//DECLARE_TEST(test_linked_list_destroy)
 DECLARE_TEST(test_linked_list_destroy_range)
 DECLARE_TEST(test_linked_list_swap)
 DECLARE_TEST(test_init_destroy_vector)
@@ -172,11 +176,8 @@ DECLARE_TEST(test_collection_map)
 DECLARE_TEST(test_collection_next)
 DECLARE_TEST(test_collection_peek)
 DECLARE_TEST(test_collection_pop)
-//DECLARE_TEST(test_collection_pop_forget)
-//DECLARE_TEST(test_collection_pop_destroy)
 DECLARE_TEST(test_collection_prev)
 DECLARE_TEST(test_collection_push)
-//DECLARE_TEST(test_collection_push_index)
 DECLARE_TEST(test_collection_ref)
 DECLARE_TEST(test_collection_ref_array)
 DECLARE_TEST(test_collection_remove_all)
@@ -192,12 +193,25 @@ DECLARE_TEST(test_collection_fifo)
 DECLARE_TEST(test_collection_remove_range)
 DECLARE_TEST(test_collection_destroy_range)
 DECLARE_TEST(test_collection_insert)
+/*
+DECLARE_TEST(test_collection_pop_forget)
+DECLARE_TEST(test_collection_pop_destroy)
+DECLARE_TEST(test_linked_list_remove)
+DECLARE_TEST(test_linked_list_destroy)
+DECLARE_TEST(test_collection_push_index)
+*/
 END_TEST_SUITE
 
+#endif
+
+#endif
 
 int main(int argc, char **argv) {
+#if DL_USE_TEST
   RUN_TEST_SUITE(tester);
   RUN_TEST_SUITE(math);
   RUN_TEST_SUITE(collections);
+#endif
+  
   return 0;
 }

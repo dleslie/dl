@@ -258,6 +258,8 @@ extern "C" {
 #if DL_USE_LOGGING
 # if IS_C89 || IS_C90
 #   error "DL_USE_LOGGING not available for C90 or lower"
+#   undef DL_USE_LOGGING
+#   define DL_USE_LOGGING 0
 # endif
   
   typedef enum {
@@ -296,6 +298,8 @@ extern "C" {
 #if DL_USE_TEST
 # if IS_C90 || IS_C89
 #   error "DL_USE_TEST is not available for C90 or lower"
+#   undef DL_USE_TEST
+#   define DL_USE_TEST 0
 # endif
     
   integer test_run(bool (**tests)(), const char **names, integer count);
@@ -384,6 +388,36 @@ extern "C" {
   api real degree_to_radian(real degree);
   api real radian_to_degree(real radian);
   api integer factorial(integer n);
+  
+# if IS_C89 || IS_C90
+#   define _sqrt(v) sqrt(v)
+#   define _cos(v) cos(v)
+#   define _sin(v) sin(v)
+#   define _tan(v) tan(v)
+#   define _acos(v) acos(v)
+#   define _asin(v) asin(v)
+#   define _atan(v) atan(v)
+#   define _hypot(a, b) sqrt((a) * (a) + (b) * (b))
+#   define _abs(v) abs(v)
+#   define _pow(a, b) pow(a, b)
+#   define _exp(v) exp(v)
+#   define _floor(v) floor(v)
+#   define _ceil(v) ceil(v)
+#else
+#   define _sqrt(v) sqrtf(v)
+#   define _cos(v) cosf(v)
+#   define _sin(v) sinf(v)
+#   define _tan(v) tanf(v)
+#   define _acos(v) acosf(v)
+#   define _asin(v) asinf(v)
+#   define _atan(v) atanf(v)
+#   define _hypot(a, b) hypotf(a, b)
+#   define _abs(v) fabsf(v)
+#   define _pow(a, b) powf(a, b)
+#   define _exp(v) expf(v)
+#   define _floor(v) floorf(v)
+#   define _ceil(v) ceilf(v)
+#endif
 
   typedef struct {
     integer m, a, c;
@@ -1095,16 +1129,16 @@ api bool approximately_equal(real a, real b, real epsilon) {
 }
 
 api integer floor_to_integer(real n) {
-  return (integer)floor(n);
+  return (integer)_floor(n);
 }
 
 api integer ceil_to_integer(real n) {
-  return (integer)ceil(n);
+  return (integer)_ceil(n);
 }
 
 api integer round_to_integer(real n) {
 #if IS_C89 || IS_C90
-  real floored = floor(n);
+  real floored = _floor(n);
   real frac = n - floored;
   return frac > 0.5 ? (integer)(floored + 1) : (integer)floored;
 #else
@@ -1124,7 +1158,7 @@ api real rationalize(real value, natural decimal_points) {
   value = frac > 0.5 ? (floored + 1) : floored;
   return n + (value / d);
 #else  
-  real d = (real)powf(10, (real)decimal_points);
+  real d = (real)_pow(10, (real)decimal_points);
   real n = (real)roundf(value);
   return n + (roundf((value - n) * d) / d);
 #endif
@@ -1313,10 +1347,11 @@ api vec2 *vec2_sub_scalar(const vec2 *restrict left, real scalar, vec2 *restrict
 }
 
 api vec2 *vec2_normalize(const vec2 *restrict left, vec2 *restrict out) {
+  real inv_magnitude;
   if (safety(left == NULL || out == NULL))
     return NULL;
-  
-  real inv_magnitude = 1.0f / hypotf(left->x, left->y);
+
+  inv_magnitude = 1.0f / _hypot(left->x, left->y);
   vec2_mul_scalar(left, inv_magnitude, out);
 
   return out;
@@ -1353,7 +1388,8 @@ api real vec2_square_magnitude(const vec2 *restrict left) {
 api real vec2_magnitude(const vec2 *restrict left) {
   if (safety(left == NULL))
     return 0;
-  return hypotf(left->x, left->y);
+  
+  return _hypot(left->x, left->y);
 }
 
 api vec2 *vec2_reflect(const vec2 *restrict left, const vec2 *restrict normal, vec2 *restrict out) {
@@ -1377,7 +1413,7 @@ api vec2 *vec2_refract(const vec2 *restrict left, const vec2 *restrict normal, f
     return out;
   }
 
-  return vec2_sub(vec2_mul_scalar(left, eta, &t), vec2_mul_scalar(normal, eta * dot * sqrtf(k), out), out);
+  return vec2_sub(vec2_mul_scalar(left, eta, &t), vec2_mul_scalar(normal, eta * dot * _sqrt(k), out), out);
 }
 
 
@@ -1504,7 +1540,7 @@ api real vec4_square_magnitude(const vec4 *restrict left) {
 }
 
 api real vec4_magnitude(const vec4 *restrict left) {
-  return sqrtf(vec4_square_magnitude(left));
+  return _sqrt(vec4_square_magnitude(left));
 }
 
 api bool vec4_approximately_equal(const vec4 *restrict left, const vec4 *restrict right, real epsilon) {
@@ -1751,7 +1787,7 @@ api real vec3_square_magnitude(const vec3 *restrict left) {
 }
 
 api real vec3_magnitude(const vec3 *restrict left) {
-  return sqrtf(vec3_square_magnitude(left));
+  return _sqrt(vec3_square_magnitude(left));
 }
 
 api vec3 *vec3_rotate(const vec3 *restrict left, const vec3 *restrict axis, const real angle, vec3 *restrict out) {
@@ -1781,7 +1817,7 @@ api vec3 *vec3_refract(const vec3 *restrict left, const vec3 *restrict normal, f
     return out;
   }
 
-  return vec3_sub(vec3_mul_scalar(left, eta, &t), vec3_mul_scalar(normal, eta * dot * sqrtf(k), out), out);
+  return vec3_sub(vec3_mul_scalar(left, eta, &t), vec3_mul_scalar(normal, eta * dot * _sqrt(k), out), out);
 }
 
 
@@ -1891,7 +1927,7 @@ bool mat4_approximately_equal(const mat4 *restrict left, const mat4 *restrict ri
 
   for (i = 0; i < 4; ++i)
     for (j = 0; j < 4; ++j)
-      if (fabsf(left->ary[i][j] - right->ary[i][j]) > epsilon)
+      if (_abs(left->ary[i][j] - right->ary[i][j]) > epsilon)
 	return false;
   
   return true;
@@ -2012,8 +2048,8 @@ api mat4 *init_mat4_rotate_x(mat4 * restrict m, real radians) {
     return NULL;
 
 #if DL_USE_LEFT_HANDED
-  c = cosf(-radians);
-  s = sinf(-radians);
+  c = _cos(-radians);
+  s = _sin(-radians);
 
   return init_mat4(m,
 		   1,  0,  0, 0,
@@ -2025,8 +2061,8 @@ api mat4 *init_mat4_rotate_x(mat4 * restrict m, real radians) {
   c = (real)cos(radians);
   s = (real)sin(radians);
 # else
-  c = cosf(radians);
-  s = sinf(radians);
+  c = _cos(radians);
+  s = _sin(radians);
 # endif
 
   return init_mat4(m,
@@ -2044,8 +2080,8 @@ api mat4 *init_mat4_rotate_y(mat4 * restrict m, real radians) {
     return NULL;
   
 #if DL_USE_LEFT_HANDED
-  c = cosf(-radians);
-  s = sinf(-radians);
+  c = _cos(-radians);
+  s = _sin(-radians);
   
   return init_mat4(m,
 		   c,  0, s, 0,
@@ -2053,8 +2089,8 @@ api mat4 *init_mat4_rotate_y(mat4 * restrict m, real radians) {
 		   -s, 0, c, 0,
 		   0,  0, 0, 1);
 #else
-  c = cosf(radians);
-  s = sinf(radians);
+  c = _cos(radians);
+  s = _sin(radians);
   
   return init_mat4(m,
 		   c, 0, -s, 0,
@@ -2070,8 +2106,8 @@ api mat4 *init_mat4_rotate_z(mat4 * restrict m, real radians) {
   if (safety(m == NULL))
     return NULL;
 
-  c = cosf(radians);
-  s = sinf(radians);
+  c = _cos(radians);
+  s = _sin(radians);
   
   return init_mat4(m,
 		   c,  s, 0, 0,
@@ -2098,8 +2134,8 @@ api mat4 *init_mat4_rotate(mat4 * restrict m, const vec3 *restrict a, real radia
     t = *a;
 
 #if DL_USE_LEFT_HANDED
-  c = cosf(-radians);
-  s = sinf(-radians);
+  c = _cos(-radians);
+  s = _sin(-radians);
   vec3_mul_scalar(&t, 1.0 - c, &i);  
 
   return init_mat4(m,
@@ -2108,8 +2144,8 @@ api mat4 *init_mat4_rotate(mat4 * restrict m, const vec3 *restrict a, real radia
 		   -(i.z * t.x + s * t.y), -(i.z * t.y - s * t.x), c + i.z * t.z,          0,
 		   0, 0, 0, 1);
 #else
-  c = cosf(radians);
-  s = sinf(radians);
+  c = _cos(radians);
+  s = _sin(radians);
   vec3_mul_scalar(&t, 1.0 - c, &i);  
 
   return init_mat4(m,
@@ -2175,7 +2211,7 @@ api mat4 *init_mat4_perspective(mat4 * restrict m, real vertical_fov, real aspec
     return NULL;
 
   half_fov = vertical_fov * 0.5f;
-  invan_fov = 1.0 / tanf(half_fov);
+  invan_fov = 1.0 / _tan(half_fov);
   neg_depth = z_near - z_far;
   inv_neg_depth = 1.0 / neg_depth;
 
@@ -2283,11 +2319,11 @@ api real ease_quintic(ease_direction d, real p) {
 api real ease_sinusoidal(ease_direction d, real p) {
   switch (d) {
   case EASE_IN:
-    return 1.0 - cosf(p * M_PI * 0.5f);
+    return 1.0 - _cos(p * M_PI * 0.5f);
   case EASE_OUT:
-    return sinf(p * M_PI * 0.5f);
+    return _sin(p * M_PI * 0.5f);
   case EASE_INOUT:
-    return 0.5f * (1 - cosf(M_PI * p));
+    return 0.5f * (1 - _cos(M_PI * p));
   }
   return 0;
 }
@@ -2295,14 +2331,14 @@ api real ease_sinusoidal(ease_direction d, real p) {
 api real ease_exponential(ease_direction d, real p) {
   switch (d) {
   case EASE_IN:
-    return powf(1024.0, (p - 1.0));
+    return _pow(1024.0, (p - 1.0));
   case EASE_OUT:
-    return 1.0 - powf(2.0, -10.0 * p);
+    return 1.0 - _pow(2.0, -10.0 * p);
   case EASE_INOUT:
     p = 2.0 * p;
     if (p < 1.0)
-      return 0.5f * powf(1024.0, (p - 1.0));
-    return 0.5f * (2.0 - powf(2.0, -10.0 * (p - 1.0)));
+      return 0.5f * _pow(1024.0, (p - 1.0));
+    return 0.5f * (2.0 - _pow(2.0, -10.0 * (p - 1.0)));
   }
   return 0;
 }
@@ -2310,17 +2346,17 @@ api real ease_exponential(ease_direction d, real p) {
 api real ease_circular(ease_direction d, real p) {
   switch (d) {
   case EASE_IN:
-    return 1.0 - sqrtf(1.0 - (p * p));
+    return 1.0 - _sqrt(1.0 - (p * p));
   case EASE_OUT:
     p = p - 1.0;
-    return sqrtf(1.0 - (p * p));
+    return _sqrt(1.0 - (p * p));
   case EASE_INOUT:
     p = 2.0 * p;
     if (p < 1.0)
-      return -0.5f * (sqrtf(1.0 - (p * p)) - 1.0);
+      return -0.5f * (_sqrt(1.0 - (p * p)) - 1.0);
 
     p = p - 2.0;
-    return 0.5f * (sqrtf(1.0 - (p * p)) + 1.0);
+    return 0.5f * (_sqrt(1.0 - (p * p)) + 1.0);
   }
   return 0;
 }
@@ -2334,19 +2370,19 @@ api real ease_elastic(ease_direction d, real p) {
 
 api real ease_elastic_tunable(ease_direction d, real p, real a, real k) {
   real invk = 1.0 / k;
-  real s = a < 1.0 ? (k * 0.25f) : (k * asinf(1.0 / a) * 0.5f * M_INV_PI);
+  real s = a < 1.0 ? (k * 0.25f) : (k * _asin(1.0 / a) * 0.5f * M_INV_PI);
 
   switch (d) {
   case EASE_IN:
     p = p - 1.0;
-    return -(a * powf(2.0, 10.0 * p) * sinf((p - s) * 2.0 * M_PI * invk));
+    return -(a * _pow(2.0, 10.0 * p) * _sin((p - s) * 2.0 * M_PI * invk));
   case EASE_OUT:
-    return 1.0 + (a * powf(2.0, -10.0 * p) * sinf((p - s) * 2.0 * M_PI * invk));
+    return 1.0 + (a * _pow(2.0, -10.0 * p) * _sin((p - s) * 2.0 * M_PI * invk));
   case EASE_INOUT:
     p = p * 2.0;
     if (p < 1)
-      return -0.5f * a * powf(2.0, 10.0 * (p - 1.0)) * sinf((p - 1 - s) * 2.0 * M_PI * invk);
-    return 1.0 + (0.5f * a * powf(2.0, -10.0 * (p - 1.0)) * sinf((p - 1 - s) * 2.0 * M_PI * invk));
+      return -0.5f * a * _pow(2.0, 10.0 * (p - 1.0)) * _sin((p - 1 - s) * 2.0 * M_PI * invk);
+    return 1.0 + (0.5f * a * _pow(2.0, -10.0 * (p - 1.0)) * _sin((p - 1 - s) * 2.0 * M_PI * invk));
   }
   return 0;
 }
@@ -2434,7 +2470,7 @@ real *select_linear(const real *restrict v, natural l, real p, real *restrict ou
   
   max_idx = l - 1;
   scaled_p = (real)max_idx * p;
-  idx = (natural)floorf(scaled_p);
+  idx = (natural)_floor(scaled_p);
   next_idx = idx + 1;
   
   if (unlikely(next_idx > max_idx))
@@ -2455,7 +2491,7 @@ real *select_bezier(const real *restrict v, natural l, real p, real *restrict ou
   max_idx = l - 1;
   degree = clamp(DL_BEZIER_DEGREE, 1, max_idx);
   target = (real)max_idx * p;
-  idx = (natural)floorf(target);
+  idx = (natural)_floor(target);
 
   for (i = 0; i < degree + 1; ++i) {
     desired_idx = idx + i;
@@ -2480,7 +2516,7 @@ real *select_catmullrom(const real *restrict v, natural l, real p, real *restric
   
   max_idx = l - 1;
   target = (real)max_idx * p;
-  idx = (natural)floorf(target);
+  idx = (natural)_floor(target);
 
   a_idx = unlikely(0 < idx) ? idx - 1 : 0;
   b_idx = idx;
@@ -2522,7 +2558,7 @@ point2 *select_linear_point2(const point2 *restrict v, natural l, real p, point2
   
   max_idx = l - 1;
   scaled_p = (real)max_idx * p;
-  idx = (natural)floorf(scaled_p);
+  idx = (natural)_floor(scaled_p);
   next_idx = idx + 1;
 
   if (unlikely(next_idx > max_idx)) {
@@ -2542,7 +2578,7 @@ point2 *select_bezier_point2(const point2 *restrict v, natural l, real p, point2
   max_idx = l - 1;
   degree = clamp(DL_BEZIER_DEGREE, 1, max_idx);
   target = (real)max_idx * p;
-  idx = (natural)floorf(target);
+  idx = (natural)_floor(target);
 
   for (i = 0; i < degree + 1; ++i) {
     desired_idx = idx + i;
@@ -2565,7 +2601,7 @@ point2 *select_catmullrom_point2(const point2 *restrict v, natural l, real p, po
   
   max_idx = l - 1;
   target = (real)max_idx * p;
-  idx = (natural)floorf(target);
+  idx = (natural)_floor(target);
 
   a_idx = unlikely(0 < idx) ? idx - 1 : 0;
   b_idx = idx;
@@ -2613,7 +2649,7 @@ point3 *select_linear_point3(const point3 *restrict v, natural l, real p, point3
   
   max_idx = l - 1;
   scaled_p = (real)max_idx * p;
-  idx = (natural)floorf(scaled_p);
+  idx = (natural)_floor(scaled_p);
   next_idx = idx + 1;
 
   if (unlikely(next_idx > max_idx)) {
@@ -2632,7 +2668,7 @@ point3 *select_bezier_point3(const point3 *restrict v, natural l, real p, point3
   
   max_idx = l - 1;
   target = (real)max_idx * p;
-  idx = (natural)floorf(target);
+  idx = (natural)_floor(target);
 
   for (i = 0; i < DL_BEZIER_DEGREE + 1; ++i) {
     desired_idx = idx + i;
@@ -2655,7 +2691,7 @@ point3 *select_catmullrom_point3(const point3 *restrict v, natural l, real p, po
   
   max_idx = l - 1;
   target = (real)max_idx * p;
-  idx = (natural)floorf(target);
+  idx = (natural)_floor(target);
 
   a_idx = unlikely(0 < idx) ? idx - 1 : 0;
   b_idx = idx;
@@ -2686,7 +2722,7 @@ point3 *select_catmullrom_point3(const point3 *restrict v, natural l, real p, po
 
 
 api integer lerp_integer(integer a, integer b, real p) {
-  return (integer)truncf(lerp_real((real)a, (real)b, p));
+  return (integer)((real)(b - a) * p) + a;
 }
 
 api real lerp_real(real a, real b, real p) {
@@ -3165,7 +3201,7 @@ api bool vector_resize(vector * restrict v, natural minimum_capacity, handler *d
     for (slice_idx = 0; slice_idx < slice_count; ++slice_idx)
       new_slices[slice_idx] = v->data.slices[slice_idx];
 
-    // Shrinking
+    /* Shrinking */
     if (needed_count < 0) {
       for (; slice_idx < v->slice_count; ++slice_idx) {
         slice = v->data.slices[slice_idx];
@@ -3178,7 +3214,7 @@ api bool vector_resize(vector * restrict v, natural minimum_capacity, handler *d
         v->settings.free((any)slice);
       }
     }
-    // Growing
+    /* Growing */
     else {
       for (; slice_idx < new_slice_count; ++slice_idx) {
         new_slices[slice_idx] = v->settings.alloc(v->settings.slice_length, v->settings.element_size);
@@ -3219,7 +3255,7 @@ api natural vector_copy(vector * restrict target, natural target_offset_index, c
   if (unlikely(original->settings.element_size != target->settings.element_size))
     return 0;
 
-  // target is too small
+  /* target is too small */
   original_capacity = vector_capacity(original);
   if (unlikely(vector_capacity(target) - target_offset_index < original_capacity))
     return 0;
@@ -3376,17 +3412,17 @@ api any _linked_list_node_deconstructor(any data, any element) {
   d = (_linked_list_node_deconstructor_data *)data;
   e = (struct linked_list_node *)element;
 
-  // Is it in the free list?
+  /* Is it in the free list? */
   for (f = d->list->free; f != NULL; f = f->next)
     if (f == e) {
       _linked_list_node_detach_free(d->list, e);
       return NULL;
     }
 
-  // Swap from free list
+  /* Swap from free list */
   new_node = _linked_list_node_alloc(d->list, e->previous);
   if (!new_node) {
-    // No free nodes, destroy it.
+    /* No free nodes, destroy it. */
     if (d->original_destructor != NULL && d->original_destructor->func != NULL) {
       destruct = d->original_destructor;
       destruct->func(destruct->data, e->data);

@@ -1,5 +1,7 @@
 #include "dl.h"
 
+#if DL_USE_MATH
+
 /* For testing purposes; MAX * MAX should be a sane value */
 real MIN_REAL = -1024;
 real MAX_REAL = 1024;
@@ -358,7 +360,11 @@ bool test_vec2_normalize() {
   vec2_normalize(&vec, &vec);
 
   sqr_m = a * a + b * b;
-  inv_m = 1.0f / sqrtf(sqr_m);
+#if IS_C89 || IS_C90
+  inv_m = 1.0f / sqrt(sqr_m);
+#else  
+  inv_m = 1.0f / sqrt(sqr_m);
+#endif
 
   return check(approximately_equal(vec.x, a * inv_m, M_EPSILON),
     "Expected x to be %f, was %f", a * inv_m, vec.x) &&
@@ -495,7 +501,12 @@ bool test_vec2_magnitude() {
   init_vec2(&vec, a, b);
 
   m = vec2_magnitude(&vec);
-  expected_m = sqrtf(a * a + b * b);
+  
+#if IS_C89 || IS_C90
+  expected_m = sqrt(a * a + b * b);
+#else
+  expected_m = hypotf(a, b);
+#endif
 
   return check(approximately_equal(m, expected_m, M_EPSILON),
     "Expected %f ~= %f", m, expected_m);
@@ -1030,7 +1041,11 @@ bool test_vec4_normalize() {
   init_vec4(&vec, a, b, c, d);
   vec4_normalize(&vec, &vec);
 
+#if IS_C89 || IS_C90
+  m = sqrt(a * a + b * b + c * c + d * d);
+#else
   m = sqrtf(a * a + b * b + c * c + d * d);
+#endif
 
   return check(approximately_equal(a / m, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a / m, vec.x) &&
@@ -1207,7 +1222,12 @@ bool test_vec4_magnitude() {
   init_vec4(&vec, a, b, c, d);
 
   m = vec4_magnitude(&vec);
+
+#if IS_C89 || IS_C90
+  expected = sqrt(a * a + b * b + c * c + d * d);
+#else
   expected = sqrtf(a * a + b * b + c * c + d * d);
+#endif
 
   return check(approximately_equal(m, expected, M_EPSILON),
     "Expected %f to be approximately %f", m, expected);
@@ -1833,7 +1853,11 @@ bool test_vec3_normalize() {
 
   vec3_normalize(&vec, &vec);
 
+#if IS_C89 || IS_C90
+  m = sqrt(a * a + b * b + c * c);
+#else
   m = sqrtf(a * a + b * b + c * c);
+#endif
 
   return check(approximately_equal(a / m, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a / m, vec.x) &&
@@ -1956,7 +1980,12 @@ bool test_vec3_magnitude() {
   init_vec3(&vec, a, b, c);
 
   m = vec3_magnitude(&vec);
+
+#if IS_C89 || IS_C90
+  expected = sqrt(a * a + b * b + c * c);
+#else
   expected = sqrtf(a * a + b * b + c * c);
+#endif
 
   return check(approximately_equal(m, expected, M_EPSILON),
     "Expected square magnitude to be %f, was %f", expected, m);
@@ -2921,3 +2950,5 @@ bool test_mat4_approximately_equal() {
   return check(mat4_approximately_equal(&mat[a], &mat[b], M_EPSILON),
     "Expected matrices to be equal");
 }
+
+#endif

@@ -1,5 +1,7 @@
 #include "dl.h"
 
+#if DL_USE_TEST
+
 bool my_passing_test_function() {
   return true;
 }
@@ -33,5 +35,6 @@ bool test_test_run_tests() {
 
   return check(test_run(passing_predicates, passing_names, 2) == 2, "Expected the number of passing tests to be 2")
     && check(test_run(failing_predicates, failing_names, 2) == 1, "Expected the number of passing tests to be 1");
-
 }
+
+#endif

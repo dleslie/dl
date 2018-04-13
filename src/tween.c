@@ -1,6 +1,8 @@
 #define DL_IMPLEMENTATION 1
 #include "dl.h"
 
+#if DL_USE_TWEEN
+
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
@@ -70,28 +72,30 @@ void draw(double time, double delta_time) {
   ALLEGRO_COLOR red = al_map_rgba_f(1.0, 0.0, 0.0, 1.0);
   ALLEGRO_COLOR green = al_map_rgba_f(0.0, 1.0, 0.0, 1.0);
   tween_method current = tween_methods[active_method];
+  natural idx, pidx;
+  real last_p, p, ys[point_count];
+  point2 p0, p1;
 
   al_draw_line(0, 0.75 * height, width, 0.75 * height, green, 1.0);
   al_draw_line(0, 0.25 * height, width, 0.25 * height, green, 1.0);
 
   if (current.selector != NULL) {
-    for (natural idx = 0; idx < point_count; ++idx) {
+    for (idx = 0; idx < point_count; ++idx) {
       al_draw_filled_circle(((real)width / (real)(point_count - 1)) * (real)(idx),
 			    (points[idx].y * height * 0.5) + (height * 0.25),
 			    3.0, red);
     }
   }
   if (current.selector_point2 != NULL) {
-    for (natural idx = 0; idx < point_count; ++idx) {
+    for (idx = 0; idx < point_count; ++idx) {
       al_draw_filled_circle(points[idx].x * width,
 			    (points[idx].y * height * 0.5) + (height * 0.25),
 			    3.0, red);
     }
   }
 
-  for (real p = 0; p < 1; p += 0.001) {
-    real last_p = clamp01(p - 0.001);
-    point2 p0, p1;
+  for (p = 0; p < 1; p += 0.001) {
+    last_p = clamp01(p - 0.001);
     
     if (current.ease != NULL) {
       p0.x = last_p;
@@ -99,8 +103,7 @@ void draw(double time, double delta_time) {
       p0.y = tween(current.ease, current.dir, last_p);
       p1.y = tween(current.ease, current.dir, p);
     } else if (current.selector != NULL) {
-      real ys[point_count];
-      for (natural pidx = 0; pidx < point_count; ++pidx)
+      for (pidx = 0; pidx < point_count; ++pidx)
 	ys[pidx] = points[pidx].y;
       
       p0.x = last_p;
@@ -121,20 +124,26 @@ void draw(double time, double delta_time) {
 
 void change(random_state *r) {
   bool was_interpolate = active_method >= 0 && (tween_methods[active_method].selector != NULL || tween_methods[active_method].selector_point2 != NULL);
+  natural idx;
+  real x;
+  
   active_method = (active_method + 1) % tween_count;
   
   INFO("%s", tween_methods[active_method].name);
 
   if (!was_interpolate) {
-    for (natural idx = 0; idx < point_count; idx++) {
-      real x = idx == 0 ? 0 : (idx == point_count - 1 ? 1 : random_real_range(r, 0, 1.0/(float)point_count) + (float)idx/(float)point_count);
+    for (idx = 0; idx < point_count; idx++) {
+      x = idx == 0 ? 0 : (idx == point_count - 1 ? 1 : random_real_range(r, 0, 1.0/(float)point_count) + (float)idx/(float)point_count);
       init_vec2(&points[idx], x, random_real_range(r, 0, 1));
     }
   }
 }
 
+#endif
+
 int main(int argc, char **argv)
 {
+# if DL_USE_TWEEN
   ALLEGRO_DISPLAY *display;
   ALLEGRO_EVENT_QUEUE *events;
   ALLEGRO_BITMAP *bkg;
@@ -220,6 +229,8 @@ int main(int argc, char **argv)
 
     al_flip_display();
   }
+
+# endif
   
   return 0;
 }

@@ -1,5 +1,7 @@
 #include "dl.h"
 
+#if DL_USE_CONTAINERS
+
 /***************************************
  * Tools
  **************************************/
@@ -230,15 +232,15 @@ const natural _c_type_count = 16;
 
 #define DUAL_TEST_BEGIN()   collection c1, c2;										\
   natural c1_data[20], type1_idx, type2_idx;										\
-  const char *type1_name = _c_types[type1_idx].name;									\
-  comparator type1_comp = _c_types[type1_idx].comp;									\
-  collection_type type1 = _c_types[type1_idx].type;									\
-  handler type1_destructor = _c_types[type1_idx].destructor;								\
-  const char *type2_name = _c_types[type2_idx].name;									\
-  comparator type2_comp = _c_types[type2_idx].comp;									\
-  collection_type type2 = _c_types[type2_idx].type;									\
-  storage_type storage2 = _c_types[type2_idx].storage;									\
-  handler type2_destructor = _c_types[type2_idx].destructor;								\
+  const char *type1_name;												\
+  comparator type1_comp;												\
+  collection_type type1;												\
+  handler type1_destructor;												\
+  const char *type2_name;												\
+  comparator type2_comp;												\
+  collection_type type2;												\
+  storage_type storage2;												\
+  handler type2_destructor;												\
 															\
   for (type1_idx = 0; type1_idx < _c_type_count; ++type1_idx) {								\
     type1_name = _c_types[type1_idx].name;										\
@@ -395,7 +397,7 @@ bool test_collection_push() {
 bool test_collection_pop() {
   natural idx;
   integer item;
-  integer last_item = INTEGER_MIN;
+  integer next_item;
   SINGLE_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_a, 10, &c))
@@ -411,12 +413,12 @@ bool test_collection_pop() {
     goto fail;
 
   for (idx = 10; idx > 0; --idx) {
-    if (!check(collection_pop(&c, (any)&item) && item != last_item,
-      "%s: Expected pop to work", type_name))
+    next_item = *(integer *)collection_peek(&c);
+    if (!check(collection_pop(&c, (any)&item) && item == next_item,
+	       "%s: Expected pop to work, found %i and expected %i", type_name, item, next_item))
       goto fail;
     if (!_confirm_properties(&c, type_name))
       goto fail;
-    last_item = item;
   }
 
   SINGLE_TEST_END();
@@ -2887,3 +2889,5 @@ finish:
   destroy_linked_list(&list, NULL);
   return success;
 }
+
+#endif
