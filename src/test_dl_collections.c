@@ -1,8 +1,10 @@
 #include "dl.h"
 
-////////////////////////////////////////
-// Tools
-////////////////////////////////////////
+#if DL_USE_CONTAINERS && DL_USE_TEST
+
+/***************************************
+ * Tools
+ **************************************/
 
 any _test_zip(any data, any left, any right, any out) {
   *(integer *)out = *(integer *)left + *(integer *)right;
@@ -64,53 +66,60 @@ void _print_collection(collection *c1) {
   char buf[256]; buf[0] = 0;
   char buf2[256]; buf2[0] = 0;
   iterator i;
-  for (any ref = collection_begin_ref(c1, &i); ref != NULL; ref = collection_next(c1, &i)) {
+  any ref;
+  for (ref = collection_begin_ref(c1, &i); ref != NULL; ref = collection_next(c1, &i)) {
+#if IS_C89 || IS_C90
+    sprintf(buf2, "%s %i", buf, *(integer *)ref);
+    sprintf(buf, "%s", buf2);
+#else
     snprintf(buf2, 256, "%s %i", buf, *(integer *)ref);
     snprintf(buf, 256, "%s", buf2);
+#endif
   }
   INFO("%s", buf2);
 }
 
 bool _confirm_properties(collection *c, const char *type_name) {
-  {
-    iterator index = collection_begin(c);
-    iterator last = make_invalid_iterator(c);
-    for (any item = collection_ref(c, index); item != NULL; item = collection_next(c, &index)) {
-      iterator prev = index;
-      collection_prev(c, &prev);
-      if (!check(iterator_equal(c, prev, last),
-        "%s: Expected iterators to monotonically increase.", type_name))
-        return false;
-      last = index;
+  iterator index = collection_begin(c);
+  iterator last = make_invalid_iterator(c);
+  iterator next_index, next, prev;
+  any item, next_item, last_item;
 
-      if (iterator_is_valid(c, prev)) {
-        iterator next = prev;
-        collection_next(c, &next);
-        if (!check(iterator_equal(c, next, index),
-          "%s: Expected iterators to monotonically increase.", type_name))
-          return false;
-      }
-
-      iterator next = index;
+  for (item = collection_ref(c, index); item != NULL; item = collection_next(c, &index)) {
+    prev = index;
+    collection_prev(c, &prev);
+    if (!check(iterator_equal(c, prev, last),
+	       "%s: Expected iterators to monotonically increase.", type_name))
+      return false;
+    last = index;
+      
+    if (iterator_is_valid(c, prev)) {
+      next = prev;
       collection_next(c, &next);
-      prev = next;
-      collection_prev(c, &prev);
-      if (!check(iterator_equal(c, prev, index),
-        "%s: Expected iterators to monotonically decrease.", type_name))
-        return false;
-
-      if (!check(abs(*(integer *)item) <= 20,
-        "%s: expected all test values to be -20<=x<=20, found %i.",
-        type_name, *(integer *)item))
-        return false;
+      if (!check(iterator_equal(c, next, index),
+		 "%s: Expected iterators to monotonically increase.", type_name))
+	return false;
     }
+
+    next = index;
+    collection_next(c, &next);
+    prev = next;
+    collection_prev(c, &prev);
+    if (!check(iterator_equal(c, prev, index),
+	       "%s: Expected iterators to monotonically decrease.", type_name))
+      return false;
+
+    if (!check(abs(*(integer *)item) <= 20,
+	       "%s: expected all test values to be -20<=x<=20, found %i.",
+	       type_name, *(integer *)item))
+      return false;
   }
 
   if (collection_is_sorted(c)) {
-    any last_item = NULL;
-
-    iterator index = collection_begin(c);
-    for (any item = collection_ref(c, index);
+    last_item = NULL;
+    index = collection_begin(c);
+    
+    for (item = collection_ref(c, index);
       item != NULL;
       last_item = item, item = collection_next(c, &index)) {
       if (item != NULL && last_item != NULL
@@ -122,12 +131,12 @@ bool _confirm_properties(collection *c, const char *type_name) {
   }
 
   if (collection_is_set(c)) {
-    iterator index = collection_begin(c);
-    for (any item = collection_ref(c, index);
+    index = collection_begin(c);
+    for (item = collection_ref(c, index);
       item != NULL;
       item = collection_next(c, &index)) {
-      iterator next_index = index;
-      for (any next_item = collection_next(c, &next_index);
+      next_index = index;
+      for (next_item = collection_next(c, &next_index);
         next_item != NULL;
         next_item = collection_next(c, &next_index)) {
         if (!check(c->settings.comparer.func(c->settings.comparer.data, item, next_item) != 0,
@@ -142,43 +151,45 @@ bool _confirm_properties(collection *c, const char *type_name) {
 }
 
 bool _contains_only(const char *type_name, collection *c, integer *data, natural count) {
-  {
-    iterator idx = collection_begin(c);
-    for (any ref = collection_ref(c, idx);
-      ref != NULL;
-      ref = collection_next(c, &idx)) {
-      bool fail = true;
-      for (natural didx = 0; didx < count; ++didx)
-        if (*(integer *)ref == data[didx]) {
-          fail = false;
-          break;
-        }
-      if (!check(!fail, "%s: Expected not to see %i.", type_name, *(integer *)ref))
-        return false;
-    }
+  iterator idx;
+  any ref;
+  bool fail;
+  natural didx;
+  
+  idx = collection_begin(c);
+  for (ref = collection_ref(c, idx);
+       ref != NULL;
+       ref = collection_next(c, &idx)) {
+    fail = true;
+    for (didx = 0; didx < count; ++didx)
+      if (*(integer *)ref == data[didx]) {
+	fail = false;
+	break;
+      }
+    if (!check(!fail, "%s: Expected not to see %i.", type_name, *(integer *)ref))
+      return false;
   }
-  {
-    for (natural didx = 0; didx < count; ++didx) {
-      bool fail = true;
-      iterator idx = collection_begin(c);
-      for (any ref = collection_ref(c, idx);
-        ref != NULL;
-        ref = collection_next(c, &idx))
-        if (*(integer *)ref == data[didx]) {
-          fail = false;
-          break;
-        }
-      if (!check(!fail, "%s: Expected to see %i.", type_name, data[didx]))
-        return false;
-    }
+
+  for (didx = 0; didx < count; ++didx) {
+    fail = true;
+    idx = collection_begin(c);
+    for (ref = collection_ref(c, idx);
+	 ref != NULL;
+	 ref = collection_next(c, &idx))
+      if (*(integer *)ref == data[didx]) {
+	fail = false;
+	break;
+      }
+    if (!check(!fail, "%s: Expected to see %i.", type_name, data[didx]))
+      return false;
   }
 
   return true;
 }
 
-////////////////////////////////////////
-// Data
-////////////////////////////////////////
+/***************************************
+ * Data
+ **************************************/
 
 integer _c_data_a[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 integer _c_data_b[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
@@ -215,29 +226,38 @@ _collection_type_info _c_types[] = {
 };
 const natural _c_type_count = 16;
 
-////////////////////////////////////////
-// Macros
-////////////////////////////////////////
+/***************************************
+ * Macros
+ **************************************/
 
 #define DUAL_TEST_BEGIN()   collection c1, c2;										\
-  natural c1_data[20];													\
+  natural c1_data[20], type1_idx, type2_idx;										\
+  const char *type1_name;												\
+  comparator type1_comp;												\
+  collection_type type1;												\
+  handler type1_destructor;												\
+  const char *type2_name;												\
+  comparator type2_comp;												\
+  collection_type type2;												\
+  storage_type storage2;												\
+  handler type2_destructor;												\
 															\
-  for (natural type1_idx = 0; type1_idx < _c_type_count; ++type1_idx) {							\
-    const char *type1_name = _c_types[type1_idx].name;									\
-    comparator type1_comp = _c_types[type1_idx].comp;									\
-    collection_type type1 = _c_types[type1_idx].type;									\
-    handler type1_destructor = _c_types[type1_idx].destructor;								\
+  for (type1_idx = 0; type1_idx < _c_type_count; ++type1_idx) {								\
+    type1_name = _c_types[type1_idx].name;										\
+    type1_comp = _c_types[type1_idx].comp;										\
+    type1 = _c_types[type1_idx].type;											\
+    type1_destructor = _c_types[type1_idx].destructor;									\
 															\
     if (!check(init_collection_array(&c1, type1, &type1_comp, &type1_destructor, (any)c1_data, sizeof(integer), 20),    \
                "%s: Failed to initialize.", type1_name))								\
       return false;													\
 															\
-    for (natural type2_idx = 0; type2_idx < _c_type_count; ++type2_idx) {						\
-      const char *type2_name = _c_types[type2_idx].name;								\
-      comparator type2_comp = _c_types[type2_idx].comp;									\
-      collection_type type2 = _c_types[type2_idx].type;									\
-      storage_type storage2 = _c_types[type2_idx].storage;								\
-      handler type2_destructor = _c_types[type2_idx].destructor;							\
+    for (type2_idx = 0; type2_idx < _c_type_count; ++type2_idx) {							\
+      type2_name = _c_types[type2_idx].name;										\
+      type2_comp = _c_types[type2_idx].comp;										\
+      type2 = _c_types[type2_idx].type;											\
+      storage2 = _c_types[type2_idx].storage;										\
+      type2_destructor = _c_types[type2_idx].destructor;								\
 															\
       if (!check(init_collection(&c2, type2, storage2, &type2_comp, &type2_destructor, sizeof(integer)),	        \
                  "%s: Failed to initialize.", type2_name)) {								\
@@ -246,63 +266,77 @@ const natural _c_type_count = 16;
       }															\
       collection_clear(&c1);												
 
-#define DUAL_TEST_END()													\
-    if (!_confirm_properties(&c1, type1_name)) goto fail;								\
-    if (!_confirm_properties(&c2, type2_name)) goto fail;								\
-    destroy_collection(&c2);												\
-  }															\
-															\
-    destroy_collection(&c1);						\
-    }															\
-															\
-  return true;														\
-fail:															\
- _print_collection(&c1);												\
- _print_collection(&c2);												\
- destroy_collection(&c1);												\
- destroy_collection(&c2);												\
+#define DUAL_TEST_END()						\
+    if (!_confirm_properties(&c1, type1_name)) goto fail;	\
+    if (!_confirm_properties(&c2, type2_name)) goto fail;	\
+    destroy_collection(&c2);					\
+  }								\
+								\
+    destroy_collection(&c1);					\
+    }								\
+								\
+  return true;							\
+fail:								\
+ _print_collection(&c1);					\
+ _print_collection(&c2);					\
+ destroy_collection(&c1);					\
+ destroy_collection(&c2);					\
  return false;
 
-#define SINGLE_TEST_BEGIN()												\
-  collection c;														\
-															\
-  for (natural type_idx = 0; type_idx < _c_type_count; ++type_idx) {							\
-    const char *type_name = _c_types[type_idx].name;									\
-    comparator type_comp = _c_types[type_idx].comp;									\
-    collection_type type = _c_types[type_idx].type;									\
-    storage_type storage = _c_types[type_idx].storage;									\
-    handler type_destructor = _c_types[type_idx].destructor;								\
-															\
-    if (!check(init_collection(&c, type, storage, &type_comp, &type_destructor, sizeof(integer)),			\
-               "%s: Failed to initialize.", type_name))									\
+#define SINGLE_TEST_BEGIN()										\
+  collection c;												\
+  natural type_idx;											\
+  const char *type_name;										\
+  comparator type_comp;											\
+  collection_type type;											\
+  storage_type storage;											\
+  handler type_destructor;										\
+													\
+  for (type_idx = 0; type_idx < _c_type_count; ++type_idx) {						\
+    type_name = _c_types[type_idx].name;								\
+    type_comp = _c_types[type_idx].comp;								\
+    type = _c_types[type_idx].type;									\
+    storage = _c_types[type_idx].storage;								\
+    type_destructor = _c_types[type_idx].destructor;							\
+													\
+    if (!check(init_collection(&c, type, storage, &type_comp, &type_destructor, sizeof(integer)),	\
+               "%s: Failed to initialize.", type_name))							\
       return false;
 
-#define SINGLE_TEST_END()												\
-  if (!_confirm_properties(&c, type_name)) goto fail;									\
-  destroy_collection(&c);												\
-  }															\
-															\
-  return true;														\
-fail:															\
- _print_collection(&c);													\
- destroy_collection(&c);												\
+#define SINGLE_TEST_END()				\
+  if (!_confirm_properties(&c, type_name)) goto fail;	\
+  destroy_collection(&c);				\
+  }							\
+							\
+  return true;						\
+fail:							\
+ _print_collection(&c);					\
+ destroy_collection(&c);				\
  return false;
 
-////////////////////////////////////////
-// Basic Collection Tests
-////////////////////////////////////////
+/***************************************
+ * Basic Collection Tests
+ **************************************/
 
 bool test_init_collection() {
-  for (natural type_idx = 0; type_idx < _c_type_count; ++type_idx) {
-    const char *type_name = _c_types[type_idx].name;
-    comparator type_comp = _c_types[type_idx].comp;
-    collection_type type = _c_types[type_idx].type;
-    storage_type storage = _c_types[type_idx].storage;
-    handler type_destructor = _c_types[type_idx].destructor;
-    vector v;
-    collection c;
+  collection c;
+  collection_settings settings;
+  collection_type type;
+  comparator type_comp;
+  const char *type_name;
+  handler type_destructor;
+  natural type_idx;
+  storage_type storage;
+  vector v;
+  
+  for (type_idx = 0; type_idx < _c_type_count; ++type_idx) {
+    type_name = _c_types[type_idx].name;
+    type_comp = _c_types[type_idx].comp;
+    type = _c_types[type_idx].type;
+    storage = _c_types[type_idx].storage;
+    type_destructor = _c_types[type_idx].destructor;
 
-    collection_settings settings = default_collection_settings;
+    settings = default_collection_settings;
     settings.type = type;
     settings.storage = storage;
     settings.comparer = type_comp;
@@ -361,6 +395,9 @@ bool test_collection_push() {
 }
 
 bool test_collection_pop() {
+  natural idx;
+  integer item;
+  integer next_item;
   SINGLE_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_a, 10, &c))
@@ -375,21 +412,23 @@ bool test_collection_pop() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  integer item;
-  integer last_item = INTEGER_MIN;
-  for (natural idx = 10; idx > 0; --idx) {
-    if (!check(collection_pop(&c, (any)&item) && item != last_item,
-      "%s: Expected pop to work", type_name))
+  for (idx = 10; idx > 0; --idx) {
+    next_item = *(integer *)collection_peek(&c);
+    if (!check(collection_pop(&c, (any)&item) && item == next_item,
+	       "%s: Expected pop to work, found %i and expected %i", type_name, item, next_item))
       goto fail;
     if (!_confirm_properties(&c, type_name))
       goto fail;
-    last_item = item;
   }
 
   SINGLE_TEST_END();
 }
 
 bool test_collection_peek() {
+  any ref = NULL;
+  integer peek_item = 0;
+  integer pop_item = 0;
+  natural idx;
   SINGLE_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_a, 10, &c))
@@ -401,10 +440,7 @@ bool test_collection_peek() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  any ref = NULL;
-  integer peek_item = 0;
-  integer pop_item = 0;
-  for (natural idx = 10; idx > 0; --idx) {
+  for (idx = 10; idx > 0; --idx) {
     if (!check(ref = collection_peek(&c),
       "%s: Expected peek to work", type_name))
       goto fail;
@@ -423,9 +459,12 @@ bool test_collection_peek() {
 }
 
 bool test_collection_remove_at() {
+  random_state r;
+  any ref;
+  integer original, removed;
+  iterator pos;
   SINGLE_TEST_BEGIN();
 
-  random_state r;
   init_random_time(&r);
   
   if (0 == collection_copy_array(_c_data_a, 10, &c))
@@ -437,9 +476,7 @@ bool test_collection_remove_at() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  any ref;
-  integer original, removed;
-  iterator pos = collection_index(&c, (natural)random_integer_range(&r, 0, collection_count(&c)));
+  pos = collection_index(&c, (natural)random_integer_range(&r, 0, collection_count(&c)));
   if (!check(ref = collection_ref(&c, pos),
     "%s: expected to ref %lui", type_name, pos))
     goto fail;
@@ -461,8 +498,9 @@ bool test_collection_remove_at() {
 }
 
 bool test_collection_remove_all() {
-  SINGLE_TEST_BEGIN();
   collection out;
+  natural count;
+  SINGLE_TEST_BEGIN();
 
   init_collection(&out, COLLECTION_TYPE_LIST, STORAGE_TYPE_VECTOR, NULL, &type_destructor, sizeof(integer));
 
@@ -482,7 +520,7 @@ bool test_collection_remove_all() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  natural count = collection_count(&out);
+  count = collection_count(&out);
   if (!check(count == 5,
     "%s: Expected 5 items to be removed, %lu were.", type_name, count))
     goto infail;
@@ -511,9 +549,12 @@ insuccess:
 }
 
 bool test_collection_ref() {
+  random_state r;
+  any ref;
+  iterator pos;
+  integer val;
   SINGLE_TEST_BEGIN();
   
-  random_state r;
   init_random_time(&r);
 
   if (0 == collection_copy_array(_c_data_a, 10, &c))
@@ -525,13 +566,12 @@ bool test_collection_ref() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  any ref;
-  iterator pos = collection_index(&c, (natural)random_integer_range(&r, 0, collection_count(&c)));
+  pos = collection_index(&c, (natural)random_integer_range(&r, 0, collection_count(&c)));
   if (!check(ref = collection_ref(&c, pos),
     "%s: expected to ref %lui", type_name, pos))
     goto fail;
 
-  integer val = *(integer *)ref;
+  val = *(integer *)ref;
 
   if (!check(val != INTEGER_MIN,
     "%s: Expected %i not to be %i", type_name, val, INTEGER_MIN))
@@ -541,6 +581,9 @@ bool test_collection_ref() {
 }
 
 bool test_collection_ref_array() {
+  any ref;
+  natural count;
+  integer first;
   SINGLE_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_a, 10, &c))
@@ -552,8 +595,8 @@ bool test_collection_ref_array() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  any ref = NULL;
-  natural count = 0;
+  ref = NULL;
+  count = 0;
   if (!check(count = collection_ref_array(&c, collection_begin(&c), &ref),
     "%s: expected to ref %lu", type_name, 0))
     goto fail;
@@ -562,7 +605,7 @@ bool test_collection_ref_array() {
     "%s: expected count to be more than zero.", type_name))
     goto fail;
 
-  integer first = *(integer *)ref;
+  first = *(integer *)ref;
   if (!check(first != INTEGER_MIN,
     "%s: Expected %i not to be %i", type_name, first, INTEGER_MIN))
     goto fail;
@@ -571,6 +614,7 @@ bool test_collection_ref_array() {
 }
 
 bool test_collection_clear() {
+  natural before_count, after_count;
   SINGLE_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_a, 10, &c))
@@ -582,13 +626,13 @@ bool test_collection_clear() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  natural before_count = collection_count(&c);
+  before_count = collection_count(&c);
   collection_clear(&c);
   if (!check(0 == collection_count(&c),
     "%s: Expected clear to work.", type_name))
     goto fail;
 
-  natural after_count = collection_count(&c);
+  after_count = collection_count(&c);
 
   if (!check(after_count == 0 && after_count != before_count,
     "%s: Expected clear to work; was %lu in size, is now %lu.", type_name, before_count, after_count))
@@ -626,6 +670,9 @@ bool test_collection_is_empty() {
 }
 
 bool test_collection_next() {
+  any ref;
+  iterator idx;
+  natural last_value, count;
   SINGLE_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_a, 10, &c))
@@ -637,10 +684,10 @@ bool test_collection_next() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  any ref = NULL;
-  iterator idx = collection_begin(&c);
-  natural last_value = INTEGER_MIN;
-  for (natural count = collection_count(&c); count > 1; --count) {
+  ref = NULL;
+  idx = collection_begin(&c);
+  last_value = INTEGER_MIN;
+  for (count = collection_count(&c); count > 1; --count) {
     if (!check(ref = collection_next(&c, &idx),
       "%s: Expected next to work at count %lu.", type_name, count))
       goto fail;
@@ -656,6 +703,9 @@ bool test_collection_next() {
 }
 
 bool test_collection_prev() {
+  any ref;
+  iterator idx;
+  natural last_value, count;
   SINGLE_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_a, 10, &c))
@@ -667,10 +717,10 @@ bool test_collection_prev() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  any ref = NULL;
-  iterator idx = collection_end(&c);
-  natural last_value = INTEGER_MIN;
-  for (natural count = collection_count(&c); count > 0; --count) {
+  ref = NULL;
+  idx = collection_end(&c);
+  last_value = INTEGER_MIN;
+  for (count = collection_count(&c); count > 0; --count) {
     if (!check(ref = collection_prev(&c, &idx),
       "%s: Expected next to work.", type_name))
       goto fail;
@@ -709,6 +759,7 @@ bool test_collection_count() {
 }
 
 bool test_collection_copy() {
+  natural current;
   DUAL_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_a, 10, &c1))
@@ -738,7 +789,7 @@ bool test_collection_copy() {
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  natural current = collection_count(&c2);
+  current = collection_count(&c2);
 
   if (!check(collection_copy(&c1, &c2),
     "%s, %s: Expected copy to work.", type1_name, type2_name))
@@ -1526,6 +1577,8 @@ bool test_collection_index_of() {
 }
 
 bool test_collection_fifo() {
+  integer item;
+  natural idx;
   SINGLE_TEST_BEGIN();
 
   if (collection_is_queue(&c)) {
@@ -1535,8 +1588,7 @@ bool test_collection_fifo() {
     if (!_confirm_properties(&c, type_name))
       goto fail;
 
-    integer item;
-    for (natural idx = 0; idx < 10; ++idx) {
+    for (idx = 0; idx < 10; ++idx) {
       if (!check(collection_pop(&c, &item),
         "%s: Expected pop to work", type_name))
         goto fail;
@@ -1555,6 +1607,9 @@ bool test_collection_fifo() {
 }
 
 bool test_collection_remove_range() {
+  natural count;
+  integer first, second, third;
+  iterator index;
   DUAL_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_c, 10, &c1))
@@ -1566,16 +1621,16 @@ bool test_collection_remove_range() {
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  natural count = collection_count(&c1);
-
-  integer first = NATURAL_MAX;
-  integer second = NATURAL_MAX;
-  integer third = NATURAL_MAX;
+  count = collection_count(&c1);
+  first = NATURAL_MAX;
+  second = NATURAL_MAX;
+  third = NATURAL_MAX;
+  
   collection_get(&c1, collection_index(&c1, 2), &first);
   collection_get(&c1, collection_index(&c1, 3), &second);
   collection_get(&c1, collection_index(&c1, 4), &third);
 
-  iterator index = collection_index(&c1, 2);
+  index = collection_index(&c1, 2);
   if (!check(3 == collection_remove_range(&c1, &index, 3, &c2),
     "%s, %s: Expected remove range to work.", type1_name, type2_name))
     goto fail;
@@ -1619,6 +1674,9 @@ bool test_collection_remove_range() {
 }
 
 bool test_collection_destroy_range() {
+  natural count;
+  integer first, second, third;
+  iterator index;
   SINGLE_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_c, 10, &c))
@@ -1630,18 +1688,19 @@ bool test_collection_destroy_range() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  natural count = collection_count(&c);
+  count = collection_count(&c);
   if (!check(count == 10 && iterator_is_valid(&c, collection_index(&c, 2)),
     "%s: Expected 2 to be a valid index.", type_name))
     goto fail;
 
-  integer first = NATURAL_MAX;
-  integer second = NATURAL_MAX;
-  integer third = NATURAL_MAX;
+  first = NATURAL_MAX;
+  second = NATURAL_MAX;
+  third = NATURAL_MAX;
+  
   collection_get(&c, collection_index(&c, 2), &first);
   collection_get(&c, collection_index(&c, 3), &second);
   collection_get(&c, collection_index(&c, 4), &third);
-  iterator index = collection_index(&c, 2);
+  index = collection_index(&c, 2);
 
   if (!check(3 == collection_destroy_range(&c, &index, 3),
     "%s: Expected remove range to work.", type_name))
@@ -1670,6 +1729,8 @@ bool test_collection_destroy_range() {
 }
 
 bool test_collection_insert() {
+  integer value;
+  iterator index;
   SINGLE_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_c, 10, &c))
@@ -1681,8 +1742,8 @@ bool test_collection_insert() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  integer value = 11;
-  iterator index = collection_index(&c, 5);
+  value = 11;
+  index = collection_index(&c, 5);
 
   if (!check(collection_insert(&c, &index, &value),
     "%s: Expected insert to work.", type_name))
@@ -1702,9 +1763,9 @@ bool test_collection_insert() {
   SINGLE_TEST_END();
 }
 
-////////////////////////////////////////
-// Vectors
-////////////////////////////////////////
+/***************************************
+ * Vectors
+ **************************************/
 
 bool test_init_destroy_vector() {
   vector v;
@@ -1744,14 +1805,15 @@ bool test_init_vector_array() {
 bool test_vector_get() {
   vector v1, v2;
   char data[] = { '1', '2', '3', '4', '5', '6' };
-
   random_state r;
-  init_random_time(&r);
+  char out;
+  natural idx;
   
+  init_random_time(&r);  
   init_vector_array(&v1, (any)&data, sizeof(char), 6);
 
-  char out = 'F';
-  natural idx = (natural)random_integer_range(&r, 0, 5);
+  out = 'F';
+  idx = (natural)random_integer_range(&r, 0, 5);
   if (!check(vector_get(&v1, idx, (any)&out) && out == data[idx],
     "Expected %c to be %c", out, data[idx]))
     return false;
@@ -1778,14 +1840,15 @@ bool test_vector_set() {
   vector v1, v2;
   char data[] = { 'A', 'B', 'C', 'D', 'E', 'F' };
   char set_data[] = { '1', '2', '3', '4', '5', '6' };
-
+  natural idx;
   random_state r;
-  init_random_time(&r);
+  char out;
   
+  init_random_time(&r);
   init_vector_array(&v1, (any)&data, sizeof(char), 6);
 
-  natural idx = (natural)random_integer_range(&r, 0, 5);
-  char out = 'F';
+  idx = (natural)random_integer_range(&r, 0, 5);
+  out = 'F';
   if (!check(vector_set(&v1, idx, (any)&set_data[idx]) &&
     vector_get(&v1, idx, (any)&out) &&
     out == set_data[idx],
@@ -1814,14 +1877,15 @@ bool test_vector_set() {
 bool test_vector_ref() {
   vector v1, v2;
   char data[] = { '1', '2', '3', '4', '5', '6' };
-
+  any out;
   random_state r;
-  init_random_time(&r);
+  natural idx;
   
+  init_random_time(&r);
   init_vector_array(&v1, (any)&data, sizeof(char), 6);
 
-  any out = NULL;
-  natural idx = (natural)random_integer_range(&r, 0, 5);
+  out = NULL;
+  idx = (natural)random_integer_range(&r, 0, 5);
   if (!check((out = vector_ref(&v1, idx)) && *(char *)out == data[idx],
     "Expected %c to be %c", *(char *)out, data[idx]))
     return false;
@@ -1845,17 +1909,19 @@ bool test_vector_copy() {
   char data3[] = { '1', '2', '3', '4', '5' };
   char data4[] = { '1', '2', '3', '4', '5', '6', '7' };
   char a, b;
-
+  vector_settings settings_5, settings_6;
+  natural idx;
+  
   init_vector_array(&v1, (any)&data1, sizeof(char), 6);
   init_vector_array(&v2, (any)&data2, sizeof(char), 6);
   init_vector_array(&v3, (any)&data3, sizeof(char), 5);
   init_vector_array(&v4, (any)&data4, sizeof(char), 7);
 
-  vector_settings settings_5 = default_vector_settings;
+  settings_5 = default_vector_settings;
   settings_5.slice_length = 12;
   settings_5.element_size = sizeof(char);
 
-  vector_settings settings_6 = default_vector_settings;
+  settings_6 = default_vector_settings;
   settings_6.slice_length = 4;
   settings_6.element_size = sizeof(char);
 
@@ -1874,7 +1940,7 @@ bool test_vector_copy() {
     "Expected copy to succeed."))
     goto vector_copy_fail;
 
-  for (natural idx = 0; idx < 6; ++idx) {
+  for (idx = 0; idx < 6; ++idx) {
     vector_get(&v1, idx, (any)&a);
     vector_get(&v2, idx, (any)&b);
 
@@ -1891,7 +1957,7 @@ bool test_vector_copy() {
     "Expected copy to succeed."))
     goto vector_copy_fail;
 
-  for (natural idx = 0; idx < 6; ++idx) {
+  for (idx = 0; idx < 6; ++idx) {
     vector_get(&v1, idx, (any)&a);
     vector_get(&v4, idx, (any)&b);
 
@@ -1904,7 +1970,7 @@ bool test_vector_copy() {
     "Expected copy to succeed."))
     goto vector_copy_fail;
 
-  for (natural idx = 0; idx < 6; ++idx) {
+  for (idx = 0; idx < 6; ++idx) {
     vector_get(&v1, idx, (any)&a);
     vector_get(&v5, idx, (any)&b);
 
@@ -1913,7 +1979,7 @@ bool test_vector_copy() {
       goto vector_copy_fail;
   }
 
-  for (natural idx = 0; idx < 24; ++idx) {
+  for (idx = 0; idx < 24; ++idx) {
     vector_set(&v5, idx, &data4[idx % 7]);
   }
 
@@ -1925,7 +1991,7 @@ bool test_vector_copy() {
     "Expected copy to succeed."))
     goto vector_copy_fail;
 
-  for (natural idx = 0; idx < 14; ++idx) {
+  for (idx = 0; idx < 14; ++idx) {
     vector_get(&v5, idx, (any)&a);
     vector_get(&v6, idx + 24, (any)&b);
 
@@ -1942,7 +2008,7 @@ bool test_vector_copy() {
     "Expected copy to work."))
     goto vector_copy_fail;
 
-  for (natural idx = 0; idx < 6; ++idx) {
+  for (idx = 0; idx < 6; ++idx) {
     vector_get(&v5, idx, (any)&a);
     b = data1[idx];
 
@@ -1965,21 +2031,22 @@ bool test_vector_grow() {
   vector v1, v2;
   byte data[] = { 0x0 };
   byte set_data[] = { 0x1, 0x2, 0x4, 0x8, 0x16, 0x32, 0x64 };
-
+  natural original_capacity, idx;
+  any value;
+  
   init_vector(&v1, sizeof(byte), 32);
   init_vector_array(&v2, (byte *)&data, sizeof(byte), 1);
 
-  natural original_capacity = vector_capacity(&v1);
+  original_capacity = vector_capacity(&v1);
 
-  for (natural idx = 0; idx < original_capacity; ++idx)
+  for (idx = 0; idx < original_capacity; ++idx)
     vector_set(&v1, idx, &set_data[idx % 7]);
 
   if (!check(vector_grow(&v1) && vector_capacity(&v1) > original_capacity,
     "Expected vector to grow."))
     goto test_vector_grow_fail;
 
-  any value;
-  for (natural idx = 0; idx < original_capacity; ++idx) {
+  for (idx = 0; idx < original_capacity; ++idx) {
     value = vector_ref(&v1, idx);
     if (!check(*(byte *)value == set_data[idx % 7],
       "Expected original values to remain."))
@@ -2003,25 +2070,27 @@ bool test_vector_shrink() {
   vector v1, v2;
   byte data[] = { 0x0 };
   byte set_data[] = { 0x1, 0x2, 0x4, 0x8, 0x16, 0x32, 0x64 };
-
-  vector_settings settings_1 = default_vector_settings;
+  vector_settings settings_1;
+  natural original_capacity, idx;
+  any value;
+  
+  settings_1 = default_vector_settings;
   settings_1.slice_length = 8;
   settings_1.element_size = sizeof(byte);
 
   init_vector_custom(&v1, settings_1, 32);
   init_vector_array(&v2, (byte *)&data, sizeof(byte), 1);
 
-  natural original_capacity = vector_capacity(&v1);
+  original_capacity = vector_capacity(&v1);
 
-  for (natural idx = 0; idx < original_capacity; ++idx)
+  for (idx = 0; idx < original_capacity; ++idx)
     vector_set(&v1, idx, &set_data[idx % 7]);
 
   if (!check(vector_shrink(&v1, NULL) && vector_capacity(&v1) < original_capacity,
     "Expected vector to shrink."))
     goto test_vector_shrink_fail;
 
-  any value;
-  for (natural idx = 0; idx < vector_capacity(&v1); ++idx) {
+  for (idx = 0; idx < vector_capacity(&v1); ++idx) {
     value = vector_ref(&v1, idx);
     if (!check(*(byte *)value == set_data[idx % 7],
       "Expected original values to remain."))
@@ -2043,19 +2112,22 @@ test_vector_shrink_fail:
 
 bool test_vector_resize() {
   vector v1, v2;
+  byte item;
   byte data[] = { 0x0 };
   byte set_data[] = { 0x1, 0x2, 0x4, 0x8, 0x16, 0x32, 0x64 };
-
+  vector_settings settings;
+  natural original_capacity, new_capacity, idx;
+  
   init_vector_array(&v1, (byte *)&data, sizeof(byte), 1);
 
-  vector_settings settings = default_vector_settings;
+  settings = default_vector_settings;
   settings.slice_length = 12;
   settings.element_size = sizeof(byte);
 
   init_vector_custom(&v2, settings, 24);
 
-  natural original_capacity = vector_capacity(&v2);
-  for (natural idx = 0; idx < original_capacity; ++idx)
+  original_capacity = vector_capacity(&v2);
+  for (idx = 0; idx < original_capacity; ++idx)
     vector_set(&v2, idx, &set_data[idx % 7]);
 
   if (!check(!vector_resize(&v1, 2, NULL),
@@ -2070,8 +2142,7 @@ bool test_vector_resize() {
     "Expected vector to resize"))
     goto test_vector_resize_fail;
 
-  for (natural idx = 0; idx < original_capacity; ++idx) {
-    byte item;
+  for (idx = 0; idx < original_capacity; ++idx) {
     if (!check(vector_get(&v2, idx, (any)&item) && item == set_data[idx % 7],
       "Expected vector data not to change."))
       goto test_vector_resize_fail;
@@ -2081,9 +2152,8 @@ bool test_vector_resize() {
     "Expected vector to resize"))
     goto test_vector_resize_fail;
 
-  natural new_capacity = vector_capacity(&v2);
-  for (natural idx = 0; idx < new_capacity; ++idx) {
-    byte item;
+  new_capacity = vector_capacity(&v2);
+  for (idx = 0; idx < new_capacity; ++idx) {
     if (!check(vector_get(&v2, idx, (any)&item) && item == set_data[idx % 7],
       "Expected vector data not to change."))
       goto test_vector_resize_fail;
@@ -2100,13 +2170,15 @@ test_vector_resize_fail:
 
 bool test_memory_swap() {
   char data_a[64], data_b[64], data_c[64], data_d[64];
+  natural idx;
+  
   strncpy(data_a, "The quicker brown fox jumped over the lazy dog.", 64);
   strncpy(data_b, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-", 64);
   strncpy(data_c, "The quicker brown fox jumped over the lazy dog.", 64);
   strncpy(data_d, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-", 64);
 
   memory_swap(data_a, data_b, sizeof(char) * 47);
-  for (natural idx = 0; idx < 47; ++idx) {
+  for (idx = 0; idx < 47; ++idx) {
     if (!check(data_a[idx] == data_d[idx],
       "Expected %c to be %c.", data_a[idx], data_d[idx]))
       return false;
@@ -2115,10 +2187,10 @@ bool test_memory_swap() {
       return false;
   }
 
-  for (natural idx = 0; idx < 47; ++idx)
+  for (idx = 0; idx < 47; ++idx)
     memory_swap(data_a + idx, data_b + idx, sizeof(char));
 
-  for (natural idx = 0; idx < 47; ++idx) {
+  for (idx = 0; idx < 47; ++idx) {
     if (!check(data_a[idx] == data_c[idx],
       "Expected %c to be %c.", data_a[idx], data_c[idx]))
       return false;
@@ -2130,12 +2202,15 @@ bool test_memory_swap() {
   return true;
 }
 
-////////////////////////////////////////
-// Linked Lists
-////////////////////////////////////////
+/***************************************
+ * Linked Lists
+ **************************************/
 
 bool test_init_linked_list() {
   linked_list list;
+  natural count;
+  struct linked_list_node *node;
+  
   if (!check(init_linked_list(&list, sizeof(natural), 32),
     "Expected linked list to initialize."))
     return false;
@@ -2158,8 +2233,8 @@ bool test_init_linked_list() {
     "Expected last to be NULL."))
     goto fail;
 
-  natural count = 0;
-  struct linked_list_node *node = list.free;
+  count = 0;
+  node = list.free;
   while (node != NULL) {
     node = node->next;
     ++count;
@@ -2179,13 +2254,15 @@ fail:
 
 bool test_linked_list_add() {
   natural buf[256];
-
+  natural count, current, value;
   linked_list list;
+  struct linked_list_node *node;
+  
   if (!check(init_linked_list(&list, sizeof(natural), 32),
     "Expected linked list to initialize."))
     return false;
 
-  natural count = 0;
+  count = 0;
   if (!check(linked_list_add(&list, NULL, &count),
     "Expected add to work."))
     goto fail;
@@ -2222,10 +2299,10 @@ bool test_linked_list_add() {
     "Expected last node to exist."))
     goto fail;
 
-  struct linked_list_node *node = list.first;
-  natural current = 0;
+  node = list.first;
+  current = 0;
   while (node != NULL) {
-    natural value = *(natural *)&node->data;
+    value = *(natural *)&node->data;
     if (!check(value == buf[current],
       "Expected %i to be %i.", value, buf[current]))
       goto fail;
@@ -2300,6 +2377,10 @@ fail:
 
 bool test_linked_list_copy() {
   linked_list a, b;
+  natural num, count, value_a, value_b;
+  struct linked_list_node *node_a;
+  struct linked_list_node *node_b;
+  bool success;
 
   if (!check(init_linked_list(&a, sizeof(natural), 32),
     "Expected init to work."))
@@ -2311,8 +2392,8 @@ bool test_linked_list_copy() {
     return false;
   }
 
-  natural num = linked_list_capacity(&a) / 4;
-  for (natural count = 0; count < num; ++count)
+  num = linked_list_capacity(&a) / 4;
+  for (count = 0; count < num; ++count)
     if (!check(linked_list_add(&a, NULL, &count),
       "Expected add to work."))
       goto fail;
@@ -2329,10 +2410,11 @@ bool test_linked_list_copy() {
     "Expected lists to be the same length."))
     goto fail;
 
-  struct linked_list_node *node_a = a.first, *node_b = b.first;
+  node_a = a.first;
+  node_b = b.first;
   while (node_a != NULL && node_b != NULL) {
-    natural value_a = *(natural *)&node_a->data;
-    natural value_b = *(natural *)&node_b->data;
+    value_a = *(natural *)&node_a->data;
+    value_b = *(natural *)&node_b->data;
     if (!check(value_a == value_b,
       "Expected data to be the same, found %i and %i.",
       value_a, value_b))
@@ -2354,7 +2436,7 @@ bool test_linked_list_copy() {
     "Expected lists to be the triple the length."))
     goto fail;
 
-  bool success = true;
+  success = true;
   goto finish;
 fail:
   success = false;;
@@ -2366,12 +2448,16 @@ finish:
 
 bool test_linked_list_copy_array() {
   linked_list a;
+  natural num, idx;
+  integer value;
+  struct linked_list_node *node;
+  bool success;
 
   if (!check(init_linked_list(&a, sizeof(integer), 32),
     "Expected init to work."))
     return false;
 
-  natural num = linked_list_capacity(&a) / 4;
+  num = linked_list_capacity(&a) / 4;
 
   if (!check(linked_list_length(&a) == 0,
     "Expected list to be empty."))
@@ -2386,11 +2472,11 @@ bool test_linked_list_copy_array() {
     goto fail;
 
 
-  struct linked_list_node *node = a.first;
-  for (natural idx = 0;
+  node = a.first;
+  for (idx = 0;
     idx < num && node != NULL;
     ++idx, node = node->next) {
-    integer value = *(integer *)&node->data;
+    value = *(integer *)&node->data;
     if (!check(value == _c_data_a[idx],
       "Expected data to be the same, expected %i to be %i.",
       value, _c_data_a[idx]))
@@ -2409,7 +2495,7 @@ bool test_linked_list_copy_array() {
     "Expected lists to be the triple the length."))
     goto fail;
 
-  bool success = true;
+  success = true;
   goto finish;
 fail:
   success = false;;
@@ -2420,22 +2506,26 @@ finish:
 
 bool test_linked_list_grow() {
   linked_list list;
+  natural sz, new_sz, count;
+  bool success;
+  struct linked_list_node *node;
+  
   if (!check(init_linked_list(&list, sizeof(integer), 32),
     "Expected init to work."))
     return false;
 
-  natural sz = linked_list_capacity(&list);
+  sz = linked_list_capacity(&list);
   if (!check(linked_list_grow(&list),
     "Expected grow to work."))
     goto fail;
 
-  natural new_sz = linked_list_capacity(&list);
+  new_sz = linked_list_capacity(&list);
   if (!check(sz < new_sz,
     "Expected new size to be larger."))
     goto fail;
 
-  natural count = 0;
-  struct linked_list_node *node = list.free;
+  count = 0;
+  node = list.free;
   while (node != NULL) {
     node = node->next;
     ++count;
@@ -2445,7 +2535,7 @@ bool test_linked_list_grow() {
     "Expected node cache to be size %i, was %i.", new_sz, count))
     goto fail;
 
-  bool success = true;
+  success = true;
   goto finish;
 fail:
   success = false;;
@@ -2456,6 +2546,10 @@ finish:
 
 bool test_linked_list_shrink() {
   linked_list list;
+  integer count;
+  natural length, capacity;
+  bool success;
+  
   if (!check(init_linked_list(&list, sizeof(integer), 32),
     "Expected init to work."))
     return false;
@@ -2464,12 +2558,12 @@ bool test_linked_list_shrink() {
     "Expected grow to work."))
     goto fail;
 
-  integer count = 0;
+  count = 0;
   while (linked_list_add(&list, NULL, &count))
     ++count;
 
-  natural length = linked_list_length(&list);
-  natural capacity = linked_list_capacity(&list);
+  length = linked_list_length(&list);
+  capacity = linked_list_capacity(&list);
 
   if (!check(length == (natural)count && length == capacity,
     "Expected list to be exhausted."))
@@ -2483,7 +2577,7 @@ bool test_linked_list_shrink() {
     "Expected size to change."))
     goto fail;
 
-  bool success = true;
+  success = true;
   goto finish;
 fail:
   success = false;;
@@ -2552,6 +2646,9 @@ bool test_linked_list_get() {
   char data[] = "The quick brown fox jumped over the lazy dog.";
   char buf[256];
   linked_list list;
+  natural idx;
+  bool success;
+  
   if (!check(init_linked_list(&list, sizeof(data), 32),
     "Expected init to work."))
     return false;
@@ -2564,12 +2661,12 @@ bool test_linked_list_get() {
     "Expected get to work."))
     goto fail;
 
-  for (natural idx = 0; idx < sizeof(data); ++idx)
+  for (idx = 0; idx < sizeof(data); ++idx)
     if (!check(buf[idx] == data[idx],
       "Expected %c to be %c", buf[idx], data[idx]))
       goto fail;
 
-  bool success = true;
+  success = true;
   goto finish;
 fail:
   success = false;;
@@ -2583,6 +2680,9 @@ bool test_linked_list_set() {
   char atad[] = "The quick brown dog jumped over the lazy fox.";
   char buf[256];
   linked_list list;
+  natural idx;
+  bool success;
+  
   if (!check(init_linked_list(&list, sizeof(data), 32),
     "Expected init to work."))
     return false;
@@ -2599,12 +2699,12 @@ bool test_linked_list_set() {
     "Expected get to work."))
     goto fail;
 
-  for (natural idx = 0; idx < sizeof(data); ++idx)
+  for (idx = 0; idx < sizeof(data); ++idx)
     if (!check(buf[idx] == atad[idx],
       "Expected %c to be %c", buf[idx], data[idx]))
       goto fail;
 
-  bool success = true;
+  success = true;
   goto finish;
 fail:
   success = false;;
@@ -2617,6 +2717,9 @@ bool test_linked_list_ref() {
   char data[] = "The quick brown fox jumped over the lazy dog.";
   char *ref = NULL;
   linked_list list;
+  natural idx;
+  bool success;
+  
   if (!check(init_linked_list(&list, sizeof(data), 32),
     "Expected init to work."))
     return false;
@@ -2629,12 +2732,12 @@ bool test_linked_list_ref() {
     "Expected ref to work."))
     goto fail;
 
-  for (natural idx = 0; idx < sizeof(data); ++idx)
+  for (idx = 0; idx < sizeof(data); ++idx)
     if (!check(ref[idx] == data[idx],
       "Expected %c to be %c", ref[idx], data[idx]))
       goto fail;
 
-  bool success = true;
+  success = true;
   goto finish;
 fail:
   success = false;;
@@ -2645,22 +2748,23 @@ finish:
 
 bool test_linked_list_index() {
   linked_list list;
+  integer count, found;
+  natural idx;
+  struct linked_list_node *node;
+  bool success;
+  
   if (!check(init_linked_list(&list, sizeof(integer), 32),
     "Expected init to work."))
     return false;
 
-  integer count = 0;
+  count = 0;
   while (linked_list_add(&list, list.last, &count))
     ++count;
 
-  for (natural idx = 0; idx < linked_list_length(&list); ++idx) {
-    struct linked_list_node *node;
-
+  for (idx = 0; idx < linked_list_length(&list); ++idx) {
     if (!check((node = linked_list_index(&list, idx)),
       "Expected index to work for %i.", idx))
       goto fail;
-
-    integer found;
 
     if (!check(linked_list_get(&list, node, &found),
       "Expected get to work."))
@@ -2675,7 +2779,7 @@ bool test_linked_list_index() {
     "Expected index to fail."))
     goto fail;
 
-  bool success = true;
+  success = true;
   goto finish;
 fail:
   success = false;;
@@ -2686,16 +2790,21 @@ finish:
 
 bool test_linked_list_destroy_range() {
   linked_list list;
+  integer count;
+  natural length;
+  struct linked_list_node *node;
+  bool success;
+  
   if (!check(init_linked_list(&list, sizeof(integer), 32),
     "Expected init to work."))
     return false;
 
-  integer count = 0;
+  count = 0;
   while (linked_list_add(&list, NULL, &count))
     ++count;
 
-  natural length = linked_list_length(&list);
-  struct linked_list_node *node = linked_list_index(&list, length / 4);
+  length = linked_list_length(&list);
+  node = linked_list_index(&list, length / 4);
 
   if (!check(linked_list_destroy_range(&list, node, length / 4, NULL) == length / 4,
     "Expected destroy range to work."))
@@ -2705,7 +2814,7 @@ bool test_linked_list_destroy_range() {
     "Expected destroy range to remove items."))
     goto fail;
 
-  bool success = true;
+  success = true;
   goto finish;
 fail:
   success = false;;
@@ -2716,23 +2825,27 @@ finish:
 
 bool test_linked_list_swap() {
   linked_list list;
+  integer count, value0, value1;
+  natural length;
+  struct linked_list_node *node0, *node1, *next0, *next1, *prev0, *prev1;
+  bool success;
+  
   if (!check(init_linked_list(&list, sizeof(integer), 32),
     "Expected init to work."))
     return false;
 
-  integer count = 0;
+  count = 0;
   while (linked_list_add(&list, NULL, &count))
     ++count;
 
-  natural length = linked_list_length(&list);
-  struct linked_list_node *node0 = linked_list_index(&list, 0);
-  struct linked_list_node *node1 = linked_list_index(&list, length / 4);
-  struct linked_list_node *next0 = node0->next;
-  struct linked_list_node *next1 = node1->next;
-  struct linked_list_node *prev0 = node0->previous;
-  struct linked_list_node *prev1 = node1->previous;
+  length = linked_list_length(&list);
+  node0 = linked_list_index(&list, 0);
+  node1 = linked_list_index(&list, length / 4);
+  next0 = node0->next;
+  next1 = node1->next;
+  prev0 = node0->previous;
+  prev1 = node1->previous;
 
-  integer value0, value1;
   linked_list_get(&list, node0, &value0);
   linked_list_get(&list, node1, &value1);
 
@@ -2768,7 +2881,7 @@ bool test_linked_list_swap() {
     "Expected data to move."))
     goto fail;
 
-  bool success = true;
+  success = true;
   goto finish;
 fail:
   success = false;;
@@ -2776,3 +2889,5 @@ finish:
   destroy_linked_list(&list, NULL);
   return success;
 }
+
+#endif

@@ -1,5 +1,7 @@
 #include "dl.h"
 
+#if DL_USE_MATH && DL_USE_TEST
+
 /* For testing purposes; MAX * MAX should be a sane value */
 real MIN_REAL = -1024;
 real MAX_REAL = 1024;
@@ -358,7 +360,11 @@ bool test_vec2_normalize() {
   vec2_normalize(&vec, &vec);
 
   sqr_m = a * a + b * b;
-  inv_m = 1.0f / sqrtf(sqr_m);
+#if IS_C89 || IS_C90
+  inv_m = 1.0f / sqrt(sqr_m);
+#else  
+  inv_m = 1.0f / sqrt(sqr_m);
+#endif
 
   return check(approximately_equal(vec.x, a * inv_m, M_EPSILON),
     "Expected x to be %f, was %f", a * inv_m, vec.x) &&
@@ -495,7 +501,12 @@ bool test_vec2_magnitude() {
   init_vec2(&vec, a, b);
 
   m = vec2_magnitude(&vec);
-  expected_m = sqrtf(a * a + b * b);
+  
+#if IS_C89 || IS_C90
+  expected_m = sqrt(a * a + b * b);
+#else
+  expected_m = hypotf(a, b);
+#endif
 
   return check(approximately_equal(m, expected_m, M_EPSILON),
     "Expected %f ~= %f", m, expected_m);
@@ -785,17 +796,17 @@ bool test_point2_line_orientation() {
   init_point2(&a, 0.0, 0.0);
   init_point2(&b, 1.0, 1.0);
 
-  // Above is negative
+  /* Above is negative */
   f = point2_line_orientation(&above, &a, &b);
   if (!check(0 > f, "Expected value to be negative, was %f", f))
     return false;
 
-  // Below is positive
+  /* Below is positive */
   f = point2_line_orientation(&below, &a, &b);
   if (!check(0 < f, "Expected value to be positive, was %f", f))
     return false;
 
-  // On is approximately zero
+  /* On is approximately zero */
   f = point2_line_orientation(&on, &a, &b);
   if (!check(approximately_equal(f, 0.0, M_EPSILON),
     "Expected value to be zero, was %f", f))
@@ -1030,7 +1041,11 @@ bool test_vec4_normalize() {
   init_vec4(&vec, a, b, c, d);
   vec4_normalize(&vec, &vec);
 
+#if IS_C89 || IS_C90
+  m = sqrt(a * a + b * b + c * c + d * d);
+#else
   m = sqrtf(a * a + b * b + c * c + d * d);
+#endif
 
   return check(approximately_equal(a / m, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a / m, vec.x) &&
@@ -1207,7 +1222,12 @@ bool test_vec4_magnitude() {
   init_vec4(&vec, a, b, c, d);
 
   m = vec4_magnitude(&vec);
+
+#if IS_C89 || IS_C90
+  expected = sqrt(a * a + b * b + c * c + d * d);
+#else
   expected = sqrtf(a * a + b * b + c * c + d * d);
+#endif
 
   return check(approximately_equal(m, expected, M_EPSILON),
     "Expected %f to be approximately %f", m, expected);
@@ -1393,7 +1413,7 @@ bool test_point3_rotate() {
   random_state r;
   init_random_time(&r);
   
-  // Identity: no angle
+  /* Identity: no angle */
   point = point3_one;
   point3_rotate(&point, &vec3_up, 0.0, &out);
 
@@ -1401,7 +1421,7 @@ bool test_point3_rotate() {
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, point3_one.x, point3_one.y, point3_one.z))
     return false;
 
-  // Identity: zero vector
+  /* Identity: zero vector */
   point = point3_one;
   point3_rotate(&point, &vec3_zero, 0.0, &out);
 
@@ -1412,7 +1432,7 @@ bool test_point3_rotate() {
   angle = M_PI * 0.5f;
 
 #if USE_LEFT_HANDED
-  // Positive is clockwise in left-handed, we're testing for counter-clockwise
+  /* Positive is clockwise in left-handed, we're testing for counter-clockwise */
   init_point3(&expected_x, vec3_forward.x, vec3_forward.y, vec3_forward.z);
   init_point3(&expected_y, vec3_backward.x, vec3_backward.y, vec3_backward.z);
   init_point3(&expected_z, vec3_up.x, vec3_up.y, vec3_up.z);
@@ -1422,7 +1442,7 @@ bool test_point3_rotate() {
   init_point3(&expected_z, vec3_up.x, vec3_up.y, vec3_up.z);
 #endif
   
-  // Rotate around x, 90 degrees
+  /* Rotate around x, 90 degrees */
   init_point3(&point, vec3_up.x, vec3_up.y, vec3_up.z);
 
   point3_rotate(&point, &vec3_right, angle, &out);
@@ -1431,7 +1451,7 @@ bool test_point3_rotate() {
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, expected_x.x, expected_x.y, expected_x.z))
     return false;
 
-  // Rotate around y, 90 degrees
+  /* Rotate around y, 90 degrees */
   init_point3(&point, vec3_right.x, vec3_right.y, vec3_right.z);
 
   point3_rotate(&point, &vec3_up, angle, &out);
@@ -1440,7 +1460,7 @@ bool test_point3_rotate() {
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, expected_y.x, expected_y.y, expected_y.z))
     return false;
   
-  // Rotate around z, 90 degrees
+  /* Rotate around z, 90 degrees */
   init_point3(&point, vec3_right.x, vec3_right.y, vec3_right.z);
 
   point3_rotate(&point, &vec3_forward, angle, &out);
@@ -1761,7 +1781,7 @@ bool test_vec3_rotate() {
   vec3 vec, expected_x, expected_y, expected_z, out;
   real angle;
 
-  // Identity: no angle
+  /* Identity: no angle */
   vec = vec3_one;
   vec3_rotate(&vec, &vec3_up, 0.0, &out);
 
@@ -1769,7 +1789,7 @@ bool test_vec3_rotate() {
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, vec3_one.x, vec3_one.y, vec3_one.z))
     return false;
 
-  // Identity: zero vector
+  /* Identity: zero vector */
   vec = vec3_one;
   vec3_rotate(&vec, &vec3_zero, 0.0, &out);
 
@@ -1789,7 +1809,7 @@ bool test_vec3_rotate() {
   init_vec3(&expected_z, vec3_up.x, vec3_up.y, vec3_up.z);
 #endif
 
-  // Rotate around x, 90 degrees
+  /* Rotate around x, 90 degrees */
   init_vec3(&vec, vec3_forward.x, vec3_forward.y, vec3_forward.z);
 
   vec3_rotate(&vec, &vec3_right, angle, &out);
@@ -1798,7 +1818,7 @@ bool test_vec3_rotate() {
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, expected_x.x, expected_x.y, expected_x.z))
     return false;
 
-  // Rotate around y, 90 degrees
+  /* Rotate around y, 90 degrees */
   init_vec3(&vec, vec3_right.x, vec3_right.y, vec3_right.z);
 
   vec3_rotate(&vec, &vec3_up, angle, &out);
@@ -1807,7 +1827,7 @@ bool test_vec3_rotate() {
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, expected_y.x, expected_y.y, expected_y.z))
     return false;
 
-  // Rotate around z, 90 degrees
+  /* Rotate around z, 90 degrees */
   init_vec3(&vec, vec3_right.x, vec3_right.y, vec3_right.z);
 
   vec3_rotate(&vec, &vec3_forward, angle, &out);
@@ -1833,7 +1853,11 @@ bool test_vec3_normalize() {
 
   vec3_normalize(&vec, &vec);
 
+#if IS_C89 || IS_C90
+  m = sqrt(a * a + b * b + c * c);
+#else
   m = sqrtf(a * a + b * b + c * c);
+#endif
 
   return check(approximately_equal(a / m, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a / m, vec.x) &&
@@ -1956,7 +1980,12 @@ bool test_vec3_magnitude() {
   init_vec3(&vec, a, b, c);
 
   m = vec3_magnitude(&vec);
+
+#if IS_C89 || IS_C90
+  expected = sqrt(a * a + b * b + c * c);
+#else
   expected = sqrtf(a * a + b * b + c * c);
+#endif
 
   return check(approximately_equal(m, expected, M_EPSILON),
     "Expected square magnitude to be %f, was %f", expected, m);
@@ -2146,12 +2175,13 @@ bool test_mat4_sub() {
 bool test_mat4_mul() {
   mat4 mat[2];
   vec4 col[4];
-  natural a = 0, b = 1, c = 2, d = 3;
+  natural v_idx, a = 0, b = 1, c = 2, d = 3;
   real expected, found;
   random_state r;
+  
   init_random_time(&r);
   
-  for (natural v_idx = 0; v_idx < 4; ++v_idx) {
+  for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
       random_real_range(&r, MIN_REAL, MAX_REAL),
       random_real_range(&r, MIN_REAL, MAX_REAL),
@@ -2450,12 +2480,12 @@ bool test_mat4_mul_point3() {
 bool test_mat4_transpose() {
   mat4 mat;
   vec3 col[4];
-  natural a = 0, b = 1, c = 2, d = 3, col_idx, row_idx;
+  natural v_idx, a = 0, b = 1, c = 2, d = 3, col_idx, row_idx;
   real v,f;
   random_state r;
   init_random_time(&r);
   
-  for (natural v_idx = 0; v_idx < 4; ++v_idx) {
+  for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
       random_real_range(&r, MIN_REAL, MAX_REAL),
       random_real_range(&r, MIN_REAL, MAX_REAL),
@@ -2920,3 +2950,5 @@ bool test_mat4_approximately_equal() {
   return check(mat4_approximately_equal(&mat[a], &mat[b], M_EPSILON),
     "Expected matrices to be equal");
 }
+
+#endif
