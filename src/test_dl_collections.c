@@ -109,7 +109,7 @@ bool _confirm_properties(collection *c, const char *type_name) {
 	       "%s: Expected iterators to monotonically decrease.", type_name))
       return false;
 
-    if (!check(abs(*(integer *)item) <= 20,
+    if (!check(_abs(*(integer *)item) <= 20,
 	       "%s: expected all test values to be -20<=x<=20, found %i.",
 	       type_name, *(integer *)item))
       return false;
@@ -2171,11 +2171,11 @@ test_vector_resize_fail:
 bool test_memory_swap() {
   char data_a[64], data_b[64], data_c[64], data_d[64];
   natural idx;
-  
-  strncpy(data_a, "The quicker brown fox jumped over the lazy dog.", 64);
-  strncpy(data_b, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-", 64);
-  strncpy(data_c, "The quicker brown fox jumped over the lazy dog.", 64);
-  strncpy(data_d, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-", 64);
+
+  memory_copy(data_a, "The quicker brown fox jumped over the lazy dog.", 64);
+  memory_copy(data_b, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-", 64);
+  memory_copy(data_c, "The quicker brown fox jumped over the lazy dog.", 64);
+  memory_copy(data_d, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-", 64);
 
   memory_swap(data_a, data_b, sizeof(char) * 47);
   for (idx = 0; idx < 47; ++idx) {

@@ -45,15 +45,13 @@
 
 
 
-#include <stdarg.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#if DL_USE_LOGGING
+# include <stdarg.h>
+#endif
+
+#include <inttypes.h>
 
 #if DL_USE_MATH
-# include <float.h>
-# include <inttypes.h>
 # include <math.h>
 # include <time.h>
 #endif
@@ -69,6 +67,10 @@ typedef int32_t integer;
 typedef float real;
 typedef uint8_t byte;
 typedef uint32_t natural;
+typedef byte bool;
+
+#define true 1
+#define false 0
 
 #define INTEGER_MAX INT32_MAX
 #define INTEGER_MIN INT32_MIN
@@ -318,7 +320,7 @@ extern "C" {
     integer current = 0;\
     if (out_count == NULL || out_passed == NULL)\
       return;\
-    memset(tests, 0, sizeof(bool (*)()) * 256);
+    memory_set(tests, 0, sizeof(bool (*)()) * 256);
 # define END_TEST_SUITE \
     *out_count = test_count(tests, 256);\
     *out_passed = test_run(tests, test_names, *out_count);\
@@ -382,6 +384,7 @@ extern "C" {
 # define max(x, y) ((x) >= (y) ? (x) : (y))
 # define clamp(x, a, b) max(min(b, x), a)
 # define clamp01(x) clamp(x, 0, 1)
+# define _abs(v) ((v) > 0 ? (v) : -(v))
 
   api bool approximately_equal(real a, real b, real epsilon);
   api integer floor_to_integer(real n);
@@ -402,7 +405,6 @@ extern "C" {
 #   define _asin(v) asin(v)
 #   define _atan(v) atan(v)
 #   define _hypot(a, b) sqrt((a) * (a) + (b) * (b))
-#   define _abs(v) abs(v)
 #   define _pow(a, b) pow(a, b)
 #   define _exp(v) exp(v)
 #   define _floor(v) floor(v)
@@ -416,7 +418,6 @@ extern "C" {
 #   define _asin(v) asinf(v)
 #   define _atan(v) atanf(v)
 #   define _hypot(a, b) hypotf(a, b)
-#   define _abs(v) fabsf(v)
 #   define _pow(a, b) powf(a, b)
 #   define _exp(v) expf(v)
 #   define _floor(v) floorf(v)
@@ -1202,9 +1203,9 @@ api random_state *init_random_custom(random_state *state, integer m, integer a, 
   if (safety(state == NULL))
     return NULL;
 
-  state->m = abs(m);
-  state->a = abs(a);
-  state->c = abs(c);
+  state->m = _abs(m);
+  state->a = _abs(a);
+  state->c = _abs(c);
   state->seed = (a * seed + c) % m;
 
   return state;
@@ -1233,7 +1234,7 @@ api integer random_integer(random_state *state, integer max) {
 
   state->seed = (state->a * state->seed + state->c) % state->m;
 
-  return abs(state->seed) % max;
+  return _abs(state->seed) % max;
 }
 
 api integer random_integer_range(random_state *state, integer min, integer max) {
@@ -3597,7 +3598,7 @@ api natural linked_list_length(const linked_list * restrict list) {
 }
 
 api bool linked_list_grow(linked_list * restrict list) {
-  return _linked_list_cache_grow(list);
+  return _linked_list_cache_grow(list) != NULL;
 }
 
 api bool linked_list_shrink(linked_list * restrict list, handler *restrict deconstruct_entry) {

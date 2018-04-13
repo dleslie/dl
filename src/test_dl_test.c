@@ -12,7 +12,7 @@ bool my_failing_test_function() {
 
 bool test_test_count_tests() {
   bool (*predicates[3])();
-  memset(predicates, 0, sizeof(predicates));
+  memory_set(predicates, 0, 3 * sizeof(bool));
   predicates[0] = &my_passing_test_function;
   predicates[1] = &my_passing_test_function;
 
