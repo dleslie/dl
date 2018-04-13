@@ -112,15 +112,14 @@ typedef byte bool;
 
 
 
-#if IS_LINUX || IS_MSC
-# define HAS_TIME 1
-# include <time.h>
-#else
-# define HAS_TIME 0
-#endif
-
 #if DL_USE_LOGGING
 # include <stdarg.h>
+# if IS_LINUX || IS_MSC
+#   define HAS_TIME 1
+#   include <time.h>
+# else
+#   define HAS_TIME 0
+# endif
 #endif
 
 #if DL_USE_MATH
