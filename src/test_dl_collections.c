@@ -196,6 +196,14 @@ integer _c_data_b[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 integer _c_data_c[] = { -1, -2, -3, -4, -5, -6, -7, -8, -9, -10 };
 integer _c_data_d[] = { 1, 3, 5, 7, 9, 11, 13, 15, 17, 19 };
 
+
+typedef struct {
+  natural a;
+  byte padding[256];
+  natural b;
+  byte more_padding[256];
+} fat_data;
+
 typedef struct {
   collection_type type;
   storage_type storage;
@@ -2206,13 +2214,6 @@ bool test_memory_swap() {
  * Linked Lists
  **************************************/
 
-typedef struct {
-  natural a;
-  byte padding[256];
-  natural b;
-  byte more_padding[256];
-} linked_list_fat;
-
 bool test_init_linked_list() {
   linked_list list;
   natural count;
@@ -2264,7 +2265,7 @@ bool test_init_linked_list_fat() {
   natural count;
   struct linked_list_node *node;
   
-  if (!check(init_linked_list(&list, sizeof(linked_list_fat), 32),
+  if (!check(init_linked_list(&list, sizeof(fat_data), 32),
     "Expected linked list to initialize."))
     return false;
 
@@ -2375,10 +2376,10 @@ fail:
 }
 
 bool test_linked_list_add_fat() {
-  linked_list_fat count, value;
+  fat_data count, value;
   linked_list list;
   
-  if (!check(init_linked_list(&list, sizeof(linked_list_fat), 32),
+  if (!check(init_linked_list(&list, sizeof(fat_data), 32),
     "Expected linked list to initialize."))
     return false;
 
