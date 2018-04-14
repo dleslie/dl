@@ -114,9 +114,15 @@ typedef byte bool;
 
 #if DL_USE_LOGGING
 # include <stdarg.h>
-# if IS_LINUX || IS_MSC
+# if IS_LINUX || IS_APPLE
 #   define HAS_TIME 1
 #   include <time.h>
+#   include <sys/time.h>
+# elif IS_WINDOWS
+#   define HAS_TIME 1
+#   define WIN32_LEAN_AND_MEAN
+#   include <Windows.h>
+#   include <stdint.h>
 # else
 #   define HAS_TIME 0
 # endif
@@ -1268,10 +1274,6 @@ api real random_real_range(random_state *state, real min, real max) {
 
 #if IS_WINDOWS
 
-#define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#include <stdint.h>
-
 api random_state *init_random_time(random_state *state) {
   static const uint64_t epoch = ((uint64_t)116444736000000000ULL);
   
@@ -1295,7 +1297,6 @@ api random_state *init_random_time(random_state *state) {
 
 #if IS_LINUX || IS_APPLE
 
-#include <sys/time.h>
 api random_state *init_random_time(random_state *state) {
   struct timeval t1;
   gettimeofday(&t1, NULL);
