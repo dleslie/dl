@@ -2206,12 +2206,65 @@ bool test_memory_swap() {
  * Linked Lists
  **************************************/
 
+typedef struct {
+  natural a;
+  byte padding[256];
+  natural b;
+  byte more_padding[256];
+} linked_list_fat;
+
 bool test_init_linked_list() {
   linked_list list;
   natural count;
   struct linked_list_node *node;
   
   if (!check(init_linked_list(&list, sizeof(natural), 32),
+    "Expected linked list to initialize."))
+    return false;
+
+  if (!check(vector_capacity(&list.node_cache) == list.settings.cache_length,
+    "Expected node cache to be %i in length, was %i.",
+    list.settings.cache_length,
+    vector_capacity(&list.node_cache)))
+    goto fail;
+
+  if (!check(list.free != NULL,
+    "Expected free list to exist."))
+    goto fail;
+
+  if (!check(list.first == NULL,
+    "Expected first to be NULL."))
+    goto fail;
+
+  if (!check(list.last == NULL,
+    "Expected last to be NULL."))
+    goto fail;
+
+  count = 0;
+  node = list.free;
+  while (node != NULL) {
+    node = node->next;
+    ++count;
+  }
+
+  if (!check(count == vector_capacity(&list.node_cache),
+    "Expected list node cache to fill free list, filled %i/%i.",
+    count, vector_capacity(&list.node_cache)))
+    goto fail;
+
+  destroy_linked_list(&list, NULL);
+  return true;
+fail:
+  destroy_linked_list(&list, NULL);
+  return false;
+}
+
+bool test_init_linked_list_fat() {
+  linked_list list;
+  natural count;
+  struct linked_list_node *node;
+  
+  if (!check(init_linked_list(&list, sizeof(linked_list_fat), 32),
     "Expected linked list to initialize."))
     return false;
 
@@ -2312,6 +2365,53 @@ bool test_linked_list_add() {
 
   if (!check(current == count,
     "Expected to find %i items, found %i.", count, current))
+    goto fail;
+
+  destroy_linked_list(&list, NULL);
+  return true;
+fail:
+  destroy_linked_list(&list, NULL);
+  return false;
+}
+
+bool test_linked_list_add_fat() {
+  linked_list_fat count, value;
+  linked_list list;
+  
+  if (!check(init_linked_list(&list, sizeof(linked_list_fat), 32),
+    "Expected linked list to initialize."))
+    return false;
+
+  count.a = 0;
+  count.b = 37;
+  if (!check(linked_list_add(&list, NULL, &count),
+    "Expected add to work."))
+    goto fail;
+  ++count.a; ++count.b;
+
+  if (!check(linked_list_add(&list, list.first, &count),
+    "Expected add to work."))
+    goto fail;
+  ++count.a; ++count.b;
+
+  if (!check(linked_list_add(&list, list.first, &count),
+    "Expected add to work."))
+    goto fail;
+  ++count.a; ++count.b;
+
+  linked_list_get(&list, linked_list_index(&list, 0), &value);
+  if (!check(value.a == 0 && value.b == 37,
+	     "Expected {%ul, %ul} to be {0, 37}", value.a, value.b))
+    goto fail;
+
+  linked_list_get(&list, linked_list_index(&list, 2), &value);
+  if (!check(value.a == 1 && value.b == 38,
+	     "Expected {%ul, %ul} to be {1, 38}", value.a, value.b))
+    goto fail;
+
+  linked_list_get(&list, linked_list_index(&list, 1), &value);
+  if (!check(value.a == 2 && value.b == 39,
+	     "Expected {%u, %u} to be {2, 39}", value.a, value.b))
     goto fail;
 
   destroy_linked_list(&list, NULL);

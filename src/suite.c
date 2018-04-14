@@ -132,6 +132,8 @@ END_TEST_SUITE
 
 BEGIN_TEST_SUITE(collections)
 DECLARE_TEST(test_memory_swap)
+DECLARE_TEST(test_init_linked_list_fat)
+DECLARE_TEST(test_linked_list_add_fat)
 DECLARE_TEST(test_init_linked_list)
 DECLARE_TEST(test_linked_list_capacity)
 DECLARE_TEST(test_linked_list_length)
