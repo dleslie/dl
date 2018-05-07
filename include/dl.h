@@ -3,70 +3,42 @@
 
 
 
-#ifndef DL_USE_MALLOC
-# define DL_USE_MALLOC 1
+#if defined(__STDC__)
+# if __STDC_VERSION__ >= 201112L
+#   define IS_C11 1
+#   define IS_C99 0
+#   define IS_C90 0
+#   define IS_C89 0
+# elif __STDC_VERSION__ >= 199901L
+#   define IS_C11 0
+#   define IS_C99 1
+#   define IS_C90 0
+#   define IS_C89 0
+# elif __STDC_VERSION__ >= 199409L
+#   define IS_C11 0
+#   define IS_C99 0
+#   define IS_C90 1
+#   define IS_C89 0
+# else
+#   define IS_C11 0
+#   define IS_C99 0
+#   define IS_C90 0
+#   define IS_C89 1
+# endif
+#else
+# error "C version not determined."
+# define IS_C11 0
+# define IS_C99 0
+# define IS_C90 0
+# define IS_C89 0
 #endif
 
-#ifndef DL_USE_SAFETY_CHECKS
-# define DL_USE_SAFETY_CHECKS 1
-#endif
-
-#ifndef DL_USE_LEFT_HANDED
-# define DL_USE_LEFT_HANDED 0
-#endif
-
-#ifndef DL_USE_LOGGING
-# define DL_USE_LOGGING 1
-#endif
-
-#ifndef DL_USE_TEST
-# define DL_USE_TEST 1
-#endif
-
-#ifndef DL_USE_MATH
-# define DL_USE_MATH 1
-#endif
-
-#ifndef DL_USE_TWEEN
-# define DL_USE_TWEEN 1
-#endif
-
-#ifndef DL_USE_CONTAINERS
-# define DL_USE_CONTAINERS 1
-#endif
-
-#ifndef DL_IMPLEMENTATION
-# define DL_IMPLEMENTATION 0
-#endif
-
-#ifndef DL_BEZIER_DEGREE
-# define DL_BEZIER_DEGREE 4
-#endif
+#define IS_ATLEAST_C89 (IS_C11 || IS_C99 || IS_C90 || IS_C89)
+#define IS_ATLEAST_C90 (IS_C11 || IS_C99 || IS_C90)
+#define IS_ATLEAST_C99 (IS_C11 || IS_C99)
+#define IS_ATLEAST_C11 (IS_C11)
 
 
-
-typedef void* any;
-typedef signed long int integer;
-typedef float real;
-typedef unsigned char byte;
-typedef unsigned long int natural;
-typedef byte bool;
-
-#define true 1
-#define false 0
-
-#define INTEGER_MAX 0x7fffffffL
-#define INTEGER_MIN (-INTEGER_MAX - 1L)
-
-#define NATURAL_MAX 0xffffffffUL
-#define MATURAL_MIN 0
-
-#define REAL_MAX 3.402823e+38f
-#define REAL_MIN 1.175494e-38f
-
-#ifndef NULL
-# define NULL 0
-#endif
 
 #if _WIN32 || _WIN64
 # define IS_WINDOWS 1
@@ -110,6 +82,62 @@ typedef byte bool;
 # define IS_MINGW 0
 #endif
 
+#if defined(NDEBUG) || defined(_DEBUG)
+# define IS_DEBUG 1
+#else
+# define IS_DEBUG 0
+#endif
+
+
+
+#ifndef DL_USE_MALLOC
+# define DL_USE_MALLOC 1
+#endif
+
+#ifndef DL_USE_SAFETY_CHECKS
+# define DL_USE_SAFETY_CHECKS IS_DEBUG
+#endif
+
+#ifndef DL_USE_LEFT_HANDED
+# define DL_USE_LEFT_HANDED 0
+#endif
+
+#ifndef DL_USE_LOGGING
+# if IS_ATLEAST_C99
+#   define DL_USE_LOGGING 1
+# else
+#   define DL_USE_LOGGING 0
+# endif
+#endif
+
+#ifndef DL_USE_TEST
+# if IS_ATLEAST_C99
+#   define DL_USE_TEST 1
+# else
+#   define DL_USE_TEST 0
+# endif
+#endif
+
+#ifndef DL_USE_MATH
+# define DL_USE_MATH 1
+#endif
+
+#ifndef DL_USE_TWEEN
+# define DL_USE_TWEEN 1
+#endif
+
+#ifndef DL_USE_CONTAINERS
+# define DL_USE_CONTAINERS 1
+#endif
+
+#ifndef DL_IMPLEMENTATION
+# define DL_IMPLEMENTATION 0
+#endif
+
+#ifndef DL_BEZIER_DEGREE
+# define DL_BEZIER_DEGREE 4
+#endif
+
 
 
 #if DL_USE_LOGGING
@@ -137,41 +165,6 @@ typedef byte bool;
 #endif
 
 
-
-#if defined(__STDC__)
-# if __STDC_VERSION__ >= 201112L
-#   define IS_C11 1
-#   define IS_C99 0
-#   define IS_C90 0
-#   define IS_C89 0
-# elif __STDC_VERSION__ >= 199901L
-#   define IS_C11 0
-#   define IS_C99 1
-#   define IS_C90 0
-#   define IS_C89 0
-# elif __STDC_VERSION__ >= 199409L
-#   define IS_C11 0
-#   define IS_C99 0
-#   define IS_C90 1
-#   define IS_C89 0
-# else
-#   define IS_C11 0
-#   define IS_C99 0
-#   define IS_C90 0
-#   define IS_C89 1
-# endif
-#else
-# error "C version not determined."
-# define IS_C11 0
-# define IS_C99 0
-# define IS_C90 0
-# define IS_C89 0
-#endif
-
-#define IS_ATLEAST_C89 (IS_C11 || IS_C99 || IS_C90 || IS_C89)
-#define IS_ATLEAST_C90 (IS_C11 || IS_C99 || IS_C90)
-#define IS_ATLEAST_C99 (IS_C11 || IS_C99)
-#define IS_ATLEAST_C11 (IS_C11)
 
 #ifndef inline
 # define inline  
@@ -225,6 +218,31 @@ typedef byte bool;
 # endif
 #else
 # define safety(x) (1 == 0)
+#endif
+
+
+
+typedef void* any;
+typedef signed long int integer;
+typedef float real;
+typedef unsigned char byte;
+typedef unsigned long int natural;
+typedef byte bool;
+
+#define true 1
+#define false 0
+
+#define INTEGER_MAX 0x7fffffffL
+#define INTEGER_MIN (-INTEGER_MAX - 1L)
+
+#define NATURAL_MAX 0xffffffffUL
+#define MATURAL_MIN 0
+
+#define REAL_MAX 3.402823e+38f
+#define REAL_MIN 1.175494e-38f
+
+#ifndef NULL
+# define NULL 0
 #endif
 
 
@@ -602,9 +620,9 @@ extern "C" {
 
   
   typedef union {
+    real vals[16];
     real ary[4][4];
     vec4 cols[4];
-    real vals[16];
   } mat4;
   
   extern const mat4 mat4_identity;
@@ -808,9 +826,10 @@ extern "C" {
   struct linked_list_node {
     struct linked_list_node *next;
     struct linked_list_node *previous;
-
-    byte data[];
   };
+
+#define LINKED_LIST_HEADER_SIZE (sizeof(struct linked_list_node))
+#define LINKED_LIST_DATA(element) ((any)&((struct linked_list_node *)element)[1])
 
   typedef struct {
     struct linked_list_node *first;
@@ -1127,7 +1146,7 @@ const real M_INV_E = 0.367879441171f;
 const real M_EPSILON = 0.001f;
 #endif
 
-const mat4 mat4_identity = { .vals = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
+const mat4 mat4_identity = { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
 const point2 point2_zero = { 0, 0 };
 const point2 point2_one = { 1, 1 };
 const vec2 vec2_up = { 0, 1 };
@@ -1293,9 +1312,7 @@ api random_state *init_random_time(random_state *state) {
   return init_random(state, tv_usec + tv_sec);
 }
 
-#endif
-
-#if IS_LINUX || IS_APPLE
+#elsif (IS_LINUX || IS_APPLE) && IS_ATLEAST_C99
 
 api random_state *init_random_time(random_state *state) {
   struct timeval t1;
@@ -1303,9 +1320,7 @@ api random_state *init_random_time(random_state *state) {
   return init_random(state, t1.tv_usec + t1.tv_sec);
 }
 
-#endif
-
-#if !IS_WINDOWS && !IS_LINUX && !IS_APPLE
+#else
 
 api random_state *init_random_time(random_state *state) {
   return init_random(state, (integer)__LINE__);
@@ -1482,11 +1497,11 @@ api bool point2_approximately_equal(const point2 *restrict left, const point2 *r
 }
 
 api real point2_line_orientation(const point2 *restrict point, const point2 *restrict line_a, const point2 *restrict line_b) {
+  real rise, run, m, b;
+
   if (safety(point == NULL || line_a == NULL || line_b == NULL))
     return 0;
   
-  real rise, run, m, b;
-
   rise = line_b->y - line_a->y;
   run = line_b->x - line_a->x;
   m = rise / run;
@@ -2786,17 +2801,17 @@ any _default_alloc(natural count, natural element_size) {
   return (any)memalign(sizeof(any), count * element_size);
 }
 #define DECLARE_ALLOC_MEMBERS(alloc, free)	\
-  .alloc = _default_alloc,			\
-    .free = (void(*)(any))free
+  _default_alloc,				\
+  (void(*)(any))free
 #else
 #define DECLARE_ALLOC_MEMBERS(alloc, free)	\
-  .alloc = (any (*)(natural, natural))calloc,	\
-    .free = (void (*)(any))free
+  (any (*)(natural, natural))calloc,		\
+  (void (*)(any))free
 #endif
 #else
 #define DECLARE_ALLOC_MEMBERS(alloc, free)	\
-  .alloc = (any (*)(natural, natural))NULL,	\
-    .free = (void (*)(any))NULL
+  (any (*)(natural, natural))NULL,		\
+  (void (*)(any))NULL
 #endif
 
 api any memory_swap(any left, any right, natural bytes) {
@@ -2908,11 +2923,15 @@ integer _default_compare_32(any data, any left, any right) {
 }
 
 integer _default_compare_64(any data, any left, any right) {
+#if IS_ATLEAST_C99
   return (integer)(*(unsigned long long int *)left - *(unsigned long long int *)right);
+#else
+  return 0;
+#endif
 }
 
 integer _default_compare_any(any data, any left, any right) {
-  return (integer)((any)left - (any)right);
+  return 0;
 }
 
 typedef struct {
@@ -2930,7 +2949,7 @@ integer _collection_sorted_list_predicate_func(any data, any value) {
  ****************************************************************************/
 
 vector_settings default_vector_settings = {
-  .slice_length = 32,
+  0, 32,
   DECLARE_ALLOC_MEMBERS(alloc, free)
 };
 
@@ -3358,8 +3377,7 @@ api natural vector_ref_array(vector * restrict v, natural index, any *restrict o
  ****************************************************************************/
 
 linked_list_settings default_linked_list_settings = {
-  .element_size = 32,
-  .cache_length = 32,
+  32, 32,
   DECLARE_ALLOC_MEMBERS(alloc, free)
 };
 
@@ -3452,7 +3470,7 @@ api any _linked_list_node_deconstructor(any data, any element) {
     /* No free nodes, destroy it. */
     if (d->original_destructor != NULL && d->original_destructor->func != NULL) {
       destruct = d->original_destructor;
-      destruct->func(destruct->data, e->data);
+      destruct->func(destruct->data, LINKED_LIST_DATA(e));
     }
   }
   else
@@ -3495,7 +3513,7 @@ api linked_list *_linked_list_cache_grow(linked_list * restrict target) {
 
   if (target->free == NULL && target->first == NULL) {
     zero = 0;
-    if (!init_vector(v, sizeof(struct linked_list_node) + settings.element_size, settings.cache_length))
+    if (!init_vector(v, LINKED_LIST_HEADER_SIZE + settings.element_size, settings.cache_length))
       return NULL;
   }
   else {
@@ -3508,7 +3526,7 @@ api linked_list *_linked_list_cache_grow(linked_list * restrict target) {
 
   for (idx = zero; idx < length; ++idx) {
     node = (struct linked_list_node *)vector_ref(v, idx);
-    memory_set(node, 0, sizeof(struct linked_list_node));
+    memory_set(node, 0, LINKED_LIST_HEADER_SIZE);
     _linked_list_node_free(target, node);
   }
 
@@ -3539,7 +3557,7 @@ api natural linked_list_copy(linked_list * restrict target, struct linked_list_n
   count = 0;
 
   while (source_node != NULL) {
-    next = linked_list_add(target, target_position, source_node->data);
+    next = linked_list_add(target, target_position, LINKED_LIST_DATA(source_node));
     if (unlikely(next == NULL))
       break;
 
@@ -3585,7 +3603,7 @@ api void destroy_linked_list(linked_list * restrict target, handler *restrict de
   if (deconstruct_entry != NULL && deconstruct_entry->func != NULL) {
     node = target->first;
     while (node != NULL) {
-      deconstruct_entry->func(deconstruct_entry->data, node->data);
+      deconstruct_entry->func(deconstruct_entry->data, LINKED_LIST_DATA(node));
       node = node->previous;
     }
   }
@@ -3657,21 +3675,21 @@ api any linked_list_get(const linked_list * restrict list, struct linked_list_no
   if (safety(list == NULL || position == NULL || out == NULL))
     return NULL;
 
-  return memory_copy(out, &position->data, list->settings.element_size);
+  return memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size);
 }
 
 api const any linked_list_ref(const struct linked_list_node *position) {
   if (safety(position == NULL))
     return NULL;
 
-  return (const any)&position->data;
+  return (const any)LINKED_LIST_DATA(position);
 }
 
 api any linked_list_set(linked_list * restrict list, struct linked_list_node *position, any value) {
   if (safety(list == NULL || position == NULL || value == NULL))
     return NULL;
 
-  return memory_copy(&position->data, value, list->settings.element_size);
+  return memory_copy(LINKED_LIST_DATA(position), value, list->settings.element_size);
 }
 
 api struct linked_list_node *linked_list_add(linked_list * restrict list, struct linked_list_node *position, any value) {
@@ -3684,7 +3702,7 @@ api struct linked_list_node *linked_list_add(linked_list * restrict list, struct
     return NULL;
 
   node = _linked_list_node_alloc(list, position);
-  if (unlikely(value != NULL && !memory_copy(node->data, value, list->settings.element_size))) {
+  if (unlikely(value != NULL && !memory_copy(LINKED_LIST_DATA(node), value, list->settings.element_size))) {
     _linked_list_node_free(list, node);
     return NULL;
   }
@@ -3696,7 +3714,7 @@ api any linked_list_remove(linked_list * restrict list, struct linked_list_node 
   if (safety(list == NULL || position == NULL))
     return NULL;
 
-  if (unlikely(!memory_copy(out, position->data, list->settings.element_size)))
+  if (unlikely(!memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size)))
     return NULL;
 
   _linked_list_node_free(list, position);
@@ -3709,7 +3727,7 @@ api bool linked_list_destroy(linked_list * restrict list, struct linked_list_nod
     return false;
   
   if (deconstruct_entry != NULL && deconstruct_entry->func != NULL)
-    deconstruct_entry->func(deconstruct_entry->data, position->data);
+    deconstruct_entry->func(deconstruct_entry->data, LINKED_LIST_DATA(position));
 
   _linked_list_node_free(list, position);
 
@@ -3792,7 +3810,7 @@ api bool linked_list_swap(linked_list * restrict list, struct linked_list_node *
     list->last = position1;
 
   if (data)
-    memory_swap(&position1->data[0], &position2->data[0], list->settings.element_size);
+    memory_swap(LINKED_LIST_DATA(position1), LINKED_LIST_DATA(position2), list->settings.element_size);
 
   return true;
 }
@@ -4743,11 +4761,7 @@ api natural collection_element_size(const collection *restrict col) {
  ****************************************************************************/
 
 collection_settings default_collection_settings = {
-  .type = COLLECTION_TYPE_LIST,
-  .storage = STORAGE_TYPE_VECTOR,
-  .comparer.func = NULL,
-  .deconstruct_entry.func = NULL,
-  .capacity = 32
+  COLLECTION_TYPE_LIST, STORAGE_TYPE_VECTOR, {0}, {0}, 32
 };
 
 void _check_init_collection(collection *restrict col, collection_settings settings, natural element_size, natural count) {
@@ -5035,10 +5049,11 @@ api bool collection_any(const collection *restrict col, filter *restrict f) {
 }
 
 api integer collection_drop(collection *restrict col, natural count) {
+  natural removed = 0;
+
   if (safety(col == NULL))
     return 0;
 
-  natural removed = 0;
   for (; count > 0; --count, ++removed)
     if (!collection_pop_destroy(col))
       return removed;

@@ -149,6 +149,9 @@ int main(int argc, char **argv)
   
   integer screen_width = width;
   integer screen_height = height;
+
+  random_state r;
+  double time, last_tick, delta_time;
   
   if (!al_init()) {
     return -1;
@@ -175,7 +178,6 @@ int main(int argc, char **argv)
     return -1;
   }
 
-  random_state r;
   init_random_time(&r);
   
   change(&r);
@@ -187,7 +189,7 @@ int main(int argc, char **argv)
 
   al_set_window_title(display, "Tween Test");
 
-  double last_tick = al_get_time();
+  last_tick = al_get_time();
   bool should_exit = false;
 
   while (!should_exit) {
@@ -208,8 +210,8 @@ int main(int argc, char **argv)
     al_set_target_bitmap(bkg);
     al_clear_to_color(black);
     
-    double time = al_get_time();
-    double delta_time = time - last_tick;
+    time = al_get_time();
+    delta_time = time - last_tick;
     last_tick = time;
 
     draw(time, delta_time);

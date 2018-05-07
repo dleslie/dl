@@ -2356,7 +2356,7 @@ bool test_linked_list_add() {
   node = list.first;
   current = 0;
   while (node != NULL) {
-    value = *(natural *)&node->data;
+    value = *(natural *)LINKED_LIST_DATA(node);
     if (!check(value == buf[current],
       "Expected %i to be %i.", value, buf[current]))
       goto fail;
@@ -2514,8 +2514,8 @@ bool test_linked_list_copy() {
   node_a = a.first;
   node_b = b.first;
   while (node_a != NULL && node_b != NULL) {
-    value_a = *(natural *)&node_a->data;
-    value_b = *(natural *)&node_b->data;
+    value_a = *(natural *)LINKED_LIST_DATA(node_a);
+    value_b = *(natural *)LINKED_LIST_DATA(node_b);
     if (!check(value_a == value_b,
       "Expected data to be the same, found %i and %i.",
       value_a, value_b))
@@ -2577,7 +2577,7 @@ bool test_linked_list_copy_array() {
   for (idx = 0;
     idx < num && node != NULL;
     ++idx, node = node->next) {
-    value = *(integer *)&node->data;
+    value = *(integer *)LINKED_LIST_DATA(node);
     if (!check(value == _c_data_a[idx],
       "Expected data to be the same, expected %i to be %i.",
       value, _c_data_a[idx]))
