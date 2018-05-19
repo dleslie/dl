@@ -344,7 +344,15 @@ bool test_init_collection() {
     storage = _c_types[type_idx].storage;
     type_destructor = _c_types[type_idx].destructor;
 
-    settings = default_collection_settings;
+    switch (storage) {
+    case STORAGE_TYPE_LINKED_LIST:
+      settings = default_linked_list_collection_settings;
+      break;
+    case STORAGE_TYPE_VECTOR:
+      settings = default_vector_collection_settings;
+      break;
+    }
+    
     settings.type = type;
     settings.storage = storage;
     settings.comparer = type_comp;

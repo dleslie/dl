@@ -437,7 +437,7 @@ extern "C" {
 #   define _acos(v) acos(v)
 #   define _asin(v) asin(v)
 #   define _atan(v) atan(v)
-#   define _hypot(a, b) sqrt((a) * (a) + (b) * (b))
+#   define _hypot(a, b) _sqrt((a) * (a) + (b) * (b))
 #   define _pow(a, b) pow(a, b)
 #   define _exp(v) exp(v)
 #   define _floor(v) floor(v)
@@ -875,6 +875,16 @@ extern "C" {
    **  Collections
    ****************************************************************************/
 
+
+  typedef union {
+    struct {
+      natural index;
+    } vector;
+    struct {
+      struct linked_list_node *node;
+    } linked_list;
+  } iterator;
+
   enum {
     /* Unsorted */
     COLLECTION_TYPE_LIST,
@@ -889,17 +899,23 @@ extern "C" {
     STORAGE_TYPE_VECTOR,
     STORAGE_TYPE_LINKED_LIST
   };
-  typedef byte storage_type;
+  typedef byte storage_type;  
 
+  struct collection_dispatch_functions;
   typedef struct {
     collection_type type;
     storage_type storage;
+    
     comparator comparer;
     handler deconstruct_entry;
     natural capacity;
+    natural element_size;
+
+    struct collection_dispatch_functions *functions;
   } collection_settings;
 
-  extern collection_settings default_collection_settings;
+  extern collection_settings default_vector_collection_settings;
+  extern collection_settings default_linked_list_collection_settings;
 
   typedef struct {
     collection_settings settings;
@@ -915,15 +931,34 @@ extern "C" {
     } data;
   } collection;
 
-  typedef union {
-    struct {
-      natural index;
-    } vector;
-    struct {
-      struct linked_list_node *node;
-    } linked_list;
-  } iterator;
+  struct collection_dispatch_functions {
+    integer (*_iterator_compare)(const collection *restrict col, iterator left, iterator right);
+    bool (*_iterator_is_valid)(const collection *restrict col, iterator index);
+    iterator (*_make_invalid_iterator)(const collection *restrict col);
 
+    any (*_collection_push_start)(collection *restrict col, iterator *iter);
+    bool (*_collection_is_empty)(const collection *restrict col);
+    any (*_collection_pop)(const collection *restrict col, any out);
+    bool (*_collection_pop_destroy)(collection *restrict col);
+    bool (*_collection_pop_forget)(collection *restrict col);
+    integer (*_collection_ref_array)(collection *restrict col, iterator iter, any *out_array);
+    any (*_collection_ref)(collection *restrict col, iterator iter);
+    bool (*_collection_swap)(collection *restrict col, iterator *iter_a, iterator *iter_b);
+    any (*_collection_get)(const collection *restrict col, iterator iter, any out);
+    any (*_collection_set)(collection *restrict col, iterator *iter, any value);
+    iterator (*_collection_index)(collection *restrict col, natural index);
+    void (*_collection_next)(const collection *restrict col, iterator *iter);
+    void (*_collection_prev)(const collection *restrict col, iterator *iter);
+    integer (*_collection_count)(const collection *restrict col);
+    iterator (*_collection_begin)(const collection *restrict col);
+    iterator (*_collection_end)(const collection *restrict col);
+    const any (*_collection_search_region)(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter);
+    bool (*_collection_destroy_at)(collection *restrict col, iterator *iter, handler *destructor);
+    any (*_collection_remove_at)(collection *restrict col, iterator *iter, any out);
+    integer (*_collection_destroy_range)(collection *restrict col, iterator *iter, natural count);
+    bool (*_collection_insert)(collection *restrict col, iterator *restrict position, any item);
+  };
+  
   api integer iterator_compare(const collection *restrict col, iterator left, iterator right);
   api bool iterator_equal(const collection *restrict col, iterator left, iterator right);
   api bool iterator_is_valid(const collection *restrict col, iterator index);
@@ -1176,7 +1211,7 @@ const vec3 vec3_one = { 1, 1, 1, 0 };
 const point3 point3_one = { 1, 1, 1, 1 };
 
 api bool approximately_equal(real a, real b, real epsilon) {
-  return fabs(a - b) < epsilon;
+  return _abs(a - b) < epsilon;
 }
 
 api integer floor_to_integer(real n) {
@@ -3848,14 +3883,7 @@ api integer iterator_compare(const collection *restrict col, iterator left, iter
   if (!iterator_is_valid(col, left) && iterator_is_valid(col, right))
     return -1;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return left.vector.index - right.vector.index;
-  case STORAGE_TYPE_LINKED_LIST:
-    return (integer)(left.linked_list.node - right.linked_list.node);
-  default:
-    return 0;
-  }
+  return col->settings.functions->_iterator_compare(col, left, right);
 }
 
 api bool iterator_equal(const collection *restrict col, const iterator left, const iterator right) {
@@ -3866,33 +3894,11 @@ api bool iterator_is_valid(const collection *restrict col, const iterator index)
   if (safety(col == NULL))
     return false;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return index.vector.index < col->data.vector.index[1]
-      && index.vector.index >= col->data.vector.index[0];
-  case STORAGE_TYPE_LINKED_LIST:
-    return index.linked_list.node != NULL;
-  default:
-    return false;
-  }
+  return col->settings.functions->_iterator_is_valid(col, index);
 }
 
 api iterator make_invalid_iterator(const collection *restrict col) {
-  iterator bad;
-  bad.linked_list.node = NULL;
-
-  if (safety(col == NULL))
-    return bad;
-
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    bad.vector.index = NATURAL_MAX;
-    return bad;
-  case STORAGE_TYPE_LINKED_LIST:
-    return bad;
-  default:
-    return bad;
-  }
+  return col->settings.functions->_make_invalid_iterator(col);
 }
 
 
@@ -3919,35 +3925,10 @@ api void _force_collection_properties(collection *restrict col) {
 }
 
 api any collection_push_start(collection *restrict col, iterator *iter) {
-  linked_list *list;
-
   if (safety(col == NULL))
     return NULL;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR: {
-    if (col->data.vector.index[1] >= vector_capacity(&col->data.vector.container)
-	&& !vector_grow(&col->data.vector.container))
-      return NULL;
-
-    iter->vector.index = col->data.vector.index[1];
-    col->data.vector.index[1]++;
-
-    return vector_ref(&col->data.vector.container, iter->vector.index);
-  }
-  case STORAGE_TYPE_LINKED_LIST: {
-    list = &col->data.linked_list.container;
-    if ((iter->linked_list.node = linked_list_add(list, col->data.linked_list.container.last, NULL)))
-      return linked_list_ref(iter->linked_list.node);
-    else {
-      if (linked_list_grow(list) && (iter->linked_list.node = linked_list_add(list, col->data.linked_list.container.last, NULL)))
-        return linked_list_ref(iter->linked_list.node);
-      return NULL;
-    }
-  }
-  default:
-    return NULL;
-  }
+  return col->settings.functions->_collection_push_start(col, iter);
 }
 
 api any collection_push_finish(collection *restrict col, iterator *iter) {
@@ -4021,141 +4002,11 @@ api void _vector_queue_roll_slices(collection *restrict col) {
   col->data.vector.index[1] -= col->data.vector.container.settings.slice_length;
 }
 
-api any _collection_pop_vector(collection *restrict col, any out) {
-  vector *v;
-  natural idx;
-
-  if (collection_is_queue(col)) {
-    v = &col->data.vector.container;
-    idx = col->data.vector.index[0];
-
-    if (unlikely(!vector_get(v, idx, out)))
-      return NULL;
-
-    col->data.vector.index[0]++;
-
-    _vector_queue_roll_slices(col);
-
-    return out;
-  }
-  else {
-    v = &col->data.vector.container;
-    idx = collection_end(col).vector.index - 1;
-
-    col->data.vector.index[1] = idx;
-    return vector_get(v, idx, out);
-  }
-}
-
-api any _collection_pop_linked_list(collection * restrict col, any out) {
-  linked_list *list;
-  struct linked_list_node *position;
-
-  list = &col->data.linked_list.container;
-  
-  if (collection_is_queue(col))
-    position = list->first;
-  else
-    position = list->last;
-
-  return linked_list_remove(list, position, out);
-}
-
-api bool _collection_pop_destroy_vector(collection *restrict col) {
-  natural index;
-  any ref;
-  
-  if (collection_is_queue(col)) {
-    index = col->data.vector.index[0];
-
-    if (col->settings.deconstruct_entry.func != NULL) {
-      if (!(ref = vector_ref(&col->data.vector.container, index)))
-        return false;
-
-      col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, ref);
-    }
-
-    col->data.vector.index[0]++;
-
-    _vector_queue_roll_slices(col);
-
-    return true;
-  }
-  else {
-    index = collection_end(col).vector.index - 1;
-
-    if (col->settings.deconstruct_entry.func != NULL) {
-      if (!(ref = vector_ref(&col->data.vector.container, index)))
-        return false;
-
-      col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, ref);
-    }
-
-    col->data.vector.index[1] = index;
-
-    return true;
-  }
-}
-
-api bool _collection_pop_forget_vector(collection *restrict col) {
-  natural index;
-  
-  if (collection_is_queue(col)) {
-    col->data.vector.index[0]++;
-
-    _vector_queue_roll_slices(col);
-
-    return true;
-  }
-  else {
-    index = collection_end(col).vector.index - 1;
-
-    col->data.vector.index[1] = index;
-
-    return true;
-  }
-}
-
-api bool _collection_pop_destroy_linked_list(collection *restrict col) {
-  linked_list *list;
-  struct linked_list_node *position;
-
-  list = &col->data.linked_list.container;
-  
-  if (collection_is_queue(col))
-    position = list->first;
-  else
-    position = list->last;
-
-  return linked_list_destroy(list, position, &col->settings.deconstruct_entry);
-}
-
-api bool _collection_pop_forget_linked_list(collection *restrict col) {
-  linked_list *list;
-  struct linked_list_node *position;
-
-  list = &col->data.linked_list.container;
-  
-  if (collection_is_queue(col))
-    position = list->first;
-  else
-    position = list->last;
-
-  return linked_list_destroy(list, position, NULL);
-}
-
 api bool collection_is_empty(const collection *restrict col) {
   if (safety(col == NULL))
     return true;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return col->data.vector.index[0] == col->data.vector.index[1];
-  case STORAGE_TYPE_LINKED_LIST:
-    return col->data.linked_list.container.first == NULL;
-  default:
-    return true;
-  }
+  return col->settings.functions->_collection_is_empty(col);
 }
 
 api any collection_pop(collection *restrict col, any out) {
@@ -4165,14 +4016,7 @@ api any collection_pop(collection *restrict col, any out) {
   if (collection_is_empty(col))
     return NULL;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return _collection_pop_vector(col, out);
-  case STORAGE_TYPE_LINKED_LIST:
-    return _collection_pop_linked_list(col, out);
-  default:
-    return NULL;
-  }
+  return col->settings.functions->_collection_pop(col, out);
 }
 
 api bool collection_pop_destroy(collection *restrict col) {
@@ -4182,14 +4026,7 @@ api bool collection_pop_destroy(collection *restrict col) {
   if (collection_is_empty(col))
     return false;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return _collection_pop_destroy_vector(col);
-  case STORAGE_TYPE_LINKED_LIST:
-    return _collection_pop_destroy_linked_list(col);
-  default:
-    return false;
-  }
+  return col->settings.functions->_collection_pop_destroy(col);
 }
 
 api bool collection_pop_forget(collection *restrict col) {
@@ -4199,39 +4036,17 @@ api bool collection_pop_forget(collection *restrict col) {
   if (collection_is_empty(col))
     return false;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return _collection_pop_forget_vector(col);
-  case STORAGE_TYPE_LINKED_LIST:
-    return _collection_pop_forget_linked_list(col);
-  default:
-    return false;
-  }
+  return col->settings.functions->_collection_pop_forget(col);
 }
 
-api integer collection_ref_array(collection *restrict col, iterator iter, any *out_array) {
-  natural count, limit;
-  
+api integer collection_ref_array(collection *restrict col, iterator iter, any *out_array) {  
   if (safety(col == NULL || out_array == NULL))
     return 0;
 
   if (!iterator_is_valid(col, iter))
     return 0;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR: {
-    count = vector_ref_array(&col->data.vector.container, iter.vector.index, out_array);
-    limit = col->data.vector.index[1] - iter.vector.index;
-
-    return count < limit ? count : limit;
-  }
-  case STORAGE_TYPE_LINKED_LIST: {
-    out_array[0] = linked_list_ref(iter.linked_list.node);
-    return 1;
-  }
-  default:
-    return 0;
-  }
+  return col->settings.functions->_collection_ref_array(col, iter, out_array);
 }
 
 api const any collection_ref(const collection *restrict col, iterator iter) {
@@ -4241,42 +4056,17 @@ api const any collection_ref(const collection *restrict col, iterator iter) {
   if (!iterator_is_valid(col, iter))
     return NULL;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return vector_ref(&col->data.vector.container, iter.vector.index);
-  case STORAGE_TYPE_LINKED_LIST:
-    return linked_list_ref(iter.linked_list.node);
-  default:
-    return NULL;
-  }
+  return col->settings.functions->_collection_ref((collection *restrict )col, iter);
 }
 
 api bool collection_swap(collection *restrict col, iterator *iter_a, iterator *iter_b) {
-  iterator t;
-  
   if (safety(col == NULL || iter_a == NULL || iter_b == NULL))
     return false;
 
   if (!iterator_is_valid(col, *iter_a) || !iterator_is_valid(col, *iter_b))
     return false;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR: {
-    if (!vector_swap(&col->data.vector.container, iter_a->vector.index, iter_b->vector.index))
-      return false;
-    t = *iter_a;
-    *iter_a = *iter_b;
-    *iter_b = t;
-    return true;
-  }
-  case STORAGE_TYPE_LINKED_LIST: {
-    if (!linked_list_swap(&col->data.linked_list.container, iter_a->linked_list.node, iter_b->linked_list.node, false))
-      return false;
-    return true;
-  }
-  default:
-    return false;
-  }
+  return col->settings.functions->_collection_swap(col, iter_a, iter_b);
 }
 
 any collection_get(const collection *restrict col, iterator iter, any out) {
@@ -4286,19 +4076,10 @@ any collection_get(const collection *restrict col, iterator iter, any out) {
   if (!iterator_is_valid(col, iter))
     return NULL;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return vector_get(&col->data.vector.container, iter.vector.index, out);
-  case STORAGE_TYPE_LINKED_LIST:
-    return linked_list_get(&col->data.linked_list.container, iter.linked_list.node, out);
-  default:
-    return false;
-  }
+  return col->settings.functions->_collection_get(col, iter, out);
 }
 
 any collection_set(collection *restrict col, iterator *iter, any value) {
-  any ref;
-  
   if (safety(col == NULL))
     return NULL;
 
@@ -4313,38 +4094,14 @@ any collection_set(collection *restrict col, iterator *iter, any value) {
     return collection_push_index(col, value, iter);
   }
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    if ((ref = vector_set(&col->data.vector.container, iter->vector.index, value)))
-      return collection_ref(col, *iter);
-    return NULL;
-  case STORAGE_TYPE_LINKED_LIST:
-    if ((ref = linked_list_set(&col->data.linked_list.container, iter->linked_list.node, value)))
-      return collection_ref(col, *iter);
-    return NULL;
-  default:
-    return NULL;
-  }
+  return col->settings.functions->_collection_set(col, iter, value);
 }
 
 api iterator collection_index(collection *restrict col, natural index) {
-  iterator iter;
-  
   if (safety(col == NULL || (integer)index >= collection_count(col)))
     return collection_end(col);
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR: {
-    iter.vector.index = index;
-    return iter;
-  }
-  case STORAGE_TYPE_LINKED_LIST: {
-    iter.linked_list.node = linked_list_index(&col->data.linked_list.container, index);
-    return iter;
-  }
-  default:
-    return make_invalid_iterator(col);
-  }
+  return col->settings.functions->_collection_index(col, index);
 }
 
 api const any collection_next(const collection *restrict col, iterator *iter) {
@@ -4358,17 +4115,7 @@ api const any collection_next(const collection *restrict col, iterator *iter) {
     return NULL;
   }
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    iter->vector.index++;
-    break;
-  case STORAGE_TYPE_LINKED_LIST:
-    iter->linked_list.node = iter->linked_list.node->next;
-    break;
-  default:
-    *iter = make_invalid_iterator(col);
-    return NULL;
-  }
+  col->settings.functions->_collection_next(col, iter);
 
   return collection_ref(col, *iter);
 }
@@ -4377,28 +4124,8 @@ api const any collection_prev(const collection *restrict col, iterator *iter) {
   if (safety(col == NULL || iter == NULL))
     return NULL;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    if (!iterator_is_valid(col, *iter))
-      iter->vector.index = col->data.vector.index[1] - 1;
-    else if (iter->vector.index > col->data.vector.index[0])
-      iter->vector.index--;
-    else
-      *iter = make_invalid_iterator(col);
-    break;
-  case STORAGE_TYPE_LINKED_LIST:
-    if (!iterator_is_valid(col, *iter))
-      iter->linked_list.node = col->data.linked_list.container.last;
-    else if (iter->linked_list.node != col->data.linked_list.container.first)
-      iter->linked_list.node = iter->linked_list.node->previous;
-    else
-      *iter = make_invalid_iterator(col);
-    break;
-  default:
-    *iter = make_invalid_iterator(col);
-    return NULL;
-  }
-
+  col->settings.functions->_collection_prev(col, iter);
+  
   return collection_ref(col, *iter);
 }
 
@@ -4406,54 +4133,21 @@ api integer collection_count(const collection *restrict col) {
   if (safety(col == NULL))
     return 0;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return col->data.vector.index[1] - col->data.vector.index[0];
-  case STORAGE_TYPE_LINKED_LIST:
-    return linked_list_length(&col->data.linked_list.container);
-  default:
-    return -1;
-  }
+  return col->settings.functions->_collection_count(col);
 }
 
 api iterator collection_begin(const collection *restrict col) {
-  iterator iter;
-  
   if (safety(col == NULL))
     return make_invalid_iterator(col);
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR: {
-    iter.vector.index = col->data.vector.index[0];
-    return iter;
-  }
-  case STORAGE_TYPE_LINKED_LIST: {
-    iter.linked_list.node = col->data.linked_list.container.first;
-    return iter;
-  }
-  default:
-    return make_invalid_iterator(col);
-  }
+  return col->settings.functions->_collection_begin(col);
 }
 
 api iterator collection_end(const collection *restrict col) {
-  iterator iter;
-  
   if (safety(col == NULL))
     return make_invalid_iterator(col);
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR: {
-    iter.vector.index = col->data.vector.index[1];
-    return iter;
-  }
-  case STORAGE_TYPE_LINKED_LIST: {
-    iter.linked_list.node = NULL;
-    return iter;
-  }
-  default:
-    return make_invalid_iterator(col);
-  }
+  return col->settings.functions->_collection_end(col);
 }
 
 const any _collection_search_region_vector(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter) {
@@ -4501,44 +4195,15 @@ const any collection_search_region(const collection *restrict col, filter *predi
   if (safety(col == NULL || predicate == NULL || iter == NULL))
     return NULL;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    if (collection_is_sorted(col))
-      return _collection_search_region_vector(col, predicate, left, right, iter);
-  default:
-    return _collection_linear_search(col, predicate, left, right, iter);
-  }
+  return col->settings.functions->_collection_search_region(col, predicate, left, right, iter);
 }
 
 const any collection_search(const collection *restrict col, filter *predicate, iterator *iter) {
   return collection_search_region(col, predicate, collection_begin(col), collection_end(col), iter);
 }
 
-api bool _collection_destroy_at_vector(collection *restrict col, iterator *iter, handler *destructor) {
-  vector *v;
-  natural index, swap_index;
-  any item;
-  
-  v = &col->data.vector.container;
-  index = iter->vector.index;
-
-  if (destructor != NULL) {
-    if (unlikely(!(item = vector_ref(v, index))))
-      return false;
-    destructor->func(destructor->data, item);
-  }
-
-  if (collection_count(col) > 1)
-    for (swap_index = col->data.vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
-      vector_swap(v, swap_index, index);
-  col->data.vector.index[1]--;
-
-  return true;
-}
-
 api bool collection_destroy_at(collection *restrict col, iterator *iter) {
   handler *destructor;
-  struct linked_list_node *next;
   
   if (safety(col == NULL || !iterator_is_valid(col, *iter)))
     return false;
@@ -4548,19 +4213,7 @@ api bool collection_destroy_at(collection *restrict col, iterator *iter) {
 
   destructor = col->settings.deconstruct_entry.func == NULL ? NULL : &col->settings.deconstruct_entry;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return _collection_destroy_at_vector(col, iter, destructor);
-  case STORAGE_TYPE_LINKED_LIST: {
-    next = iter->linked_list.node->next;
-    if (linked_list_destroy(&col->data.linked_list.container, iter->linked_list.node, destructor)) {
-      iter->linked_list.node = next;
-      return true;
-    }
-  }
-  default:
-    return false;
-  }
+  return col->settings.functions->_collection_destroy_at(col, iter, destructor);
 }
 
 api bool collection_forget_at(collection *restrict col, iterator *iter) {
@@ -4570,49 +4223,7 @@ api bool collection_forget_at(collection *restrict col, iterator *iter) {
   if (collection_is_empty(col))
     return false;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return _collection_destroy_at_vector(col, iter, NULL);
-  case STORAGE_TYPE_LINKED_LIST: {
-    struct linked_list_node *next = iter->linked_list.node->next;
-    if (linked_list_destroy(&col->data.linked_list.container, iter->linked_list.node, NULL)) {
-      iter->linked_list.node = next;
-      return true;
-    }
-  }
-  default:
-    return false;
-  }
-}
-
-api any _collection_remove_at_vector(collection *restrict col, iterator *iter, any out) {
-  vector *v;
-  natural index, swap_index;
-  
-  v = &col->data.vector.container;
-  index = iter->vector.index;
-
-  if (!(out = vector_get(v, index, out)))
-    return NULL;
-
-  if (collection_count(col) > 1)
-    for (swap_index = col->data.vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
-      vector_swap(v, swap_index, index);
-  col->data.vector.index[1]--;
-
-  return out;
-}
-
-api any _collection_remove_at_linked_list(collection *restrict col, iterator *iter, any out) {
-  struct linked_list_node *next;
-  
-  next = iter->linked_list.node->next;
-  if ((out = linked_list_remove(&col->data.linked_list.container, iter->linked_list.node, out))) {
-    iter->linked_list.node = next;
-    return out;
-  }
-
-  return NULL;
+  return col->settings.functions->_collection_destroy_at(col, iter, NULL);
 }
 
 api any collection_remove_at(collection *restrict col, iterator *iter, any out) {
@@ -4622,98 +4233,14 @@ api any collection_remove_at(collection *restrict col, iterator *iter, any out) 
   if (collection_is_empty(col))
     return NULL;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return _collection_remove_at_vector(col, iter, out);
-  case STORAGE_TYPE_LINKED_LIST:
-    return _collection_remove_at_linked_list(col, iter, out);
-  default:
-    return NULL;
-  }
-}
-
-api integer _collection_destroy_range_vector(collection *restrict col, iterator *iter, natural count) {
-  natural index, start, total;
-  handler destruct;
-  vector *v;
-  any item;
-  
-  index = iter->vector.index;
-  start = index;
-  v = &col->data.vector.container;
-
-  total = 0;
-  destruct = col->settings.deconstruct_entry;
-
-  for (item = vector_ref(v, index);
-       item != NULL && total < count;
-       ++index, item = vector_ref(v, index), ++total)
-    if (destruct.func != NULL)
-      destruct.func(destruct.data, item);
-
-  if (total != 0) {
-    do {
-      vector_swap(v, start, index);
-      ++start;
-      ++index;
-    } while (NULL != vector_ref(v, index));
-  }
-
-  col->data.vector.index[1] -= total;
-
-  return total;
+  return col->settings.functions->_collection_remove_at(col, iter, out);
 }
 
 api integer collection_destroy_range(collection *restrict col, iterator *index, natural count) {
-  struct linked_list_node *next;
-  natural idx;
-  
   if (safety(col == NULL || !iterator_is_valid(col, *index)))
     return 0;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    return _collection_destroy_range_vector(col, index, count);
-  case STORAGE_TYPE_LINKED_LIST: {
-    next = index->linked_list.node;
-    for (idx = 0; idx < count && next != NULL; ++idx)
-      next = next->next;
-    count = linked_list_destroy_range(&col->data.linked_list.container, index->linked_list.node, count, &col->settings.deconstruct_entry);
-    index->linked_list.node = next;
-    return count;
-  }
-  default:
-    return 0;
-  }
-}
-
-bool _collection_insert_vector(collection *restrict col, iterator *restrict position, any item) {
-  iterator index, next;
-  
-  index = collection_end(col);
-
-  if (!collection_push(col, item))
-    return false;
-
-  while (!iterator_equal(col, index, *position)) {
-    next = index;
-    collection_prev(col, &next);
-    collection_swap(col, &next, &index);
-  }
-
-  return true;
-}
-
-bool _collection_insert_linked_list(collection *restrict col, iterator *restrict position, any item) {
-  struct linked_list_node *node;
-  linked_list *list;
-
-  node = position->linked_list.node;
-  list = &col->data.linked_list.container;
-
-  position->linked_list.node = linked_list_add(list, node, item);
-
-  return true;
+  return col->settings.functions->_collection_destroy_range(col, index, count);
 }
 
 any collection_insert(collection *restrict col, iterator *restrict position, any item) {
@@ -4726,183 +4253,16 @@ any collection_insert(collection *restrict col, iterator *restrict position, any
   if (collection_is_sorted(col))
     return collection_push_index(col, item, position);
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    if (_collection_insert_vector(col, position, item))
-      return collection_ref(col, *position);
-    return NULL;
-  case STORAGE_TYPE_LINKED_LIST:
-    if (_collection_insert_linked_list(col, position, item))
-      return collection_ref(col, *position);
-    return NULL;
-  default:
-    return NULL;
-  }
+  if (col->settings.functions->_collection_insert(col, position, item))
+    return collection_ref(col, *position);
+  return NULL;
 }
 
 api natural collection_element_size(const collection *restrict col) {
   if (safety(col == NULL))
     return 0;
 
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_LINKED_LIST:
-    return col->data.linked_list.container.settings.element_size;
-  case STORAGE_TYPE_VECTOR:
-    return col->data.vector.container.settings.element_size;
-  default:
-    return 0;
-  }
-}
-
-
-
-/*****************************************************************************
- **  Init/Destroy Collections
- ****************************************************************************/
-
-collection_settings default_collection_settings = {
-  COLLECTION_TYPE_LIST, STORAGE_TYPE_VECTOR, {0}, {0}, 32
-};
-
-void _check_init_collection(collection *restrict col, collection_settings settings, natural element_size, natural count) {
-  col->settings = settings;
-  
-  if (col->settings.comparer.func == NULL) {
-    switch (element_size) {
-    case 1:
-      col->settings.comparer.func = _default_compare_8;
-      break;
-    case 2:
-      col->settings.comparer.func = _default_compare_16;
-      break;
-    case 4:
-      col->settings.comparer.func = _default_compare_32;
-      break;
-    case 8:
-      col->settings.comparer.func = _default_compare_64;
-      break;
-    default:
-      col->settings.comparer.func = _default_compare_any;
-      break;
-    }
-  }
-
-  if (col->settings.storage == STORAGE_TYPE_VECTOR) {
-    col->data.vector.index[0] = 0;
-    col->data.vector.index[1] = count;
-  }
-}
-
-api collection *init_collection(collection *restrict col, collection_type type, storage_type storage, comparator *compare, handler *destructor, natural element_size) {
-  collection_settings settings;
-  
-  if (safety(col == NULL || element_size < 1))
-    return NULL;
-
-  settings = default_collection_settings;
-  settings.storage = storage;
-  settings.type = type;
-  if (destructor != NULL)
-    settings.deconstruct_entry = *destructor;
-  else
-    settings.deconstruct_entry.func = NULL;
-  if (compare != NULL)
-    settings.comparer = *compare;
-  else
-    settings.comparer.func = NULL;
-
-  _check_init_collection(col, settings, element_size, 0);
-  
-  switch (settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    if (!init_vector(&col->data.vector.container, element_size, col->settings.capacity))
-      return NULL;
-    break;
-  case STORAGE_TYPE_LINKED_LIST:
-    if (!init_linked_list(&col->data.linked_list.container, element_size, col->settings.capacity))
-      return NULL;
-    break;
-  default:
-    return NULL;
-  }
-  _force_collection_properties(col);
-
-  return col;
-}
-
-api collection *init_collection_custom(collection *restrict col, collection_settings settings, natural element_size) {
-  if (safety(col == NULL))
-    return NULL;
-
-  _check_init_collection(col, settings, element_size, 0);
-
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    if (!init_vector(&col->data.vector.container, element_size, col->settings.capacity))
-      return NULL;
-    break;
-  case STORAGE_TYPE_LINKED_LIST:
-    if (!init_linked_list(&col->data.linked_list.container, element_size, col->settings.capacity))
-      return NULL;
-    break;
-  default:
-    return NULL;
-  }
-
-  _force_collection_properties(col);
-
-  return col;
-}
-
-api collection *init_collection_array(collection *restrict col, collection_type type, comparator *comp, handler *deconstruct_entry, byte *data, natural element_size, natural count) {
-  collection_settings settings;
-  
-  if (safety(col == NULL || data == NULL))
-    return NULL;
-
-  if (!init_vector_array(&col->data.vector.container, data, element_size, count))
-    return NULL;
-
-  settings = default_collection_settings;
-  settings.storage = STORAGE_TYPE_VECTOR;
-  settings.type = type;
-  if (comp != NULL)
-    settings.comparer = *comp;
-  else
-    settings.comparer.func = NULL;
-  if (deconstruct_entry != NULL)
-    settings.deconstruct_entry = *deconstruct_entry;
-  else
-    settings.deconstruct_entry.func = NULL;
-
-  _check_init_collection(col, settings, element_size, count);
-
-  _force_collection_properties(col);
-
-  return col;
-}
-
-api void destroy_collection(collection *restrict col) {
-  iterator index;
-  any item;
-  
-  if (safety(col == NULL))
-    return;
-
-  switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
-    if (col->settings.deconstruct_entry.func != NULL) {
-      index = collection_begin(col);
-      for (item = collection_ref(col, index); item != NULL; item = collection_next(col, &index))
-	col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, item);
-    }
-
-    destroy_vector(&col->data.vector.container, NULL);
-    break;
-  case STORAGE_TYPE_LINKED_LIST:
-    destroy_linked_list(&col->data.linked_list.container, &col->settings.deconstruct_entry);
-    break;
-  }
+  return col->settings.element_size;
 }
 
 
@@ -5445,6 +4805,716 @@ api integer collection_copy_array(const any data, natural count, collection *res
 
   return collection_copy(&source, target);
 }
+
+
+
+/*****************************************************************************
+ **  Container Dispatchers
+ ****************************************************************************/
+
+api integer _vector_iterator_compare(const collection *restrict col, iterator left, iterator right) {
+  return left.vector.index - right.vector.index;
+}
+
+api integer _linked_list_iterator_compare(const collection *restrict col, iterator left, iterator right) {
+  return (integer)(left.linked_list.node - right.linked_list.node);
+}
+
+api bool _vector_iterator_is_valid(const collection *restrict col, iterator index) {
+  return index.vector.index < col->data.vector.index[1]
+    && index.vector.index >= col->data.vector.index[0];
+}
+
+api bool _linked_list_iterator_is_valid(const collection *restrict col, iterator index) {
+  return index.linked_list.node != NULL;
+}
+
+api iterator _vector_make_invalid_iterator(const collection *restrict col) {
+  iterator bad;
+  bad.vector.index = NATURAL_MAX;
+  return bad;
+}
+
+api iterator _linked_list_make_invalid_iterator(const collection *restrict col) {
+  iterator bad;
+  bad.linked_list.node = NULL;
+
+  return bad;
+}
+
+api any _vector_collection_push_start(collection *restrict col, iterator *iter) {
+  if (col->data.vector.index[1] >= vector_capacity(&col->data.vector.container)
+      && !vector_grow(&col->data.vector.container))
+    return NULL;
+
+  iter->vector.index = col->data.vector.index[1];
+  col->data.vector.index[1]++;
+
+  return vector_ref(&col->data.vector.container, iter->vector.index);
+}
+
+api any _linked_list_collection_push_start(collection *restrict col, iterator *iter) {
+  linked_list *list;
+  
+  list = &col->data.linked_list.container;
+  if ((iter->linked_list.node = linked_list_add(list, col->data.linked_list.container.last, NULL)))
+    return linked_list_ref(iter->linked_list.node);
+  else {
+    if (linked_list_grow(list) && (iter->linked_list.node = linked_list_add(list, col->data.linked_list.container.last, NULL)))
+      return linked_list_ref(iter->linked_list.node);
+    return NULL;
+  }
+}
+
+api bool _vector_collection_is_empty(const collection *restrict col) {
+  return col->data.vector.index[0] == col->data.vector.index[1];
+}
+
+api bool _linked_list_collection_is_empty(const collection *restrict col) {
+  return col->data.linked_list.container.first == NULL;
+}
+
+api any _vector_collection_pop(collection *restrict col, any out) {
+  vector *v;
+  natural idx;
+
+  if (collection_is_queue(col)) {
+    v = &col->data.vector.container;
+    idx = col->data.vector.index[0];
+
+    if (unlikely(!vector_get(v, idx, out)))
+      return NULL;
+
+    col->data.vector.index[0]++;
+
+    _vector_queue_roll_slices(col);
+
+    return out;
+  }
+  else {
+    v = &col->data.vector.container;
+    idx = collection_end(col).vector.index - 1;
+
+    col->data.vector.index[1] = idx;
+    return vector_get(v, idx, out);
+  }
+}
+
+api any _linked_list_collection_pop(collection * restrict col, any out) {
+  linked_list *list;
+  struct linked_list_node *position;
+
+  list = &col->data.linked_list.container;
+  
+  if (collection_is_queue(col))
+    position = list->first;
+  else
+    position = list->last;
+
+  return linked_list_remove(list, position, out);
+}
+
+api bool _vector_collection_pop_destroy(collection *restrict col) {
+  natural index;
+  any ref;
+  
+  if (collection_is_queue(col)) {
+    index = col->data.vector.index[0];
+
+    if (col->settings.deconstruct_entry.func != NULL) {
+      if (!(ref = vector_ref(&col->data.vector.container, index)))
+        return false;
+
+      col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, ref);
+    }
+
+    col->data.vector.index[0]++;
+
+    _vector_queue_roll_slices(col);
+
+    return true;
+  }
+  else {
+    index = collection_end(col).vector.index - 1;
+
+    if (col->settings.deconstruct_entry.func != NULL) {
+      if (!(ref = vector_ref(&col->data.vector.container, index)))
+        return false;
+
+      col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, ref);
+    }
+
+    col->data.vector.index[1] = index;
+
+    return true;
+  }
+}
+
+api bool _linked_list_collection_pop_destroy(collection *restrict col) {
+  linked_list *list;
+  struct linked_list_node *position;
+
+  list = &col->data.linked_list.container;
+  
+  if (collection_is_queue(col))
+    position = list->first;
+  else
+    position = list->last;
+
+  return linked_list_destroy(list, position, &col->settings.deconstruct_entry);
+}
+
+api bool _vector_collection_pop_forget(collection *restrict col) {
+  natural index;
+  
+  if (collection_is_queue(col)) {
+    col->data.vector.index[0]++;
+
+    _vector_queue_roll_slices(col);
+
+    return true;
+  }
+  else {
+    index = collection_end(col).vector.index - 1;
+
+    col->data.vector.index[1] = index;
+
+    return true;
+  }
+}
+
+api bool _linked_list_collection_pop_forget(collection *restrict col) {
+  linked_list *list;
+  struct linked_list_node *position;
+
+  list = &col->data.linked_list.container;
+  
+  if (collection_is_queue(col))
+    position = list->first;
+  else
+    position = list->last;
+
+  return linked_list_destroy(list, position, NULL);
+}
+
+api integer _vector_collection_ref_array(collection *restrict col, iterator iter, any *out_array) {
+  natural count, limit;
+    
+  count = vector_ref_array(&col->data.vector.container, iter.vector.index, out_array);
+  limit = col->data.vector.index[1] - iter.vector.index;
+
+  return count < limit ? count : limit;
+}
+
+api integer _linked_list_collection_ref_array(collection *restrict col, iterator iter, any *out_array) {
+  out_array[0] = linked_list_ref(iter.linked_list.node);
+  return 1;
+}
+
+api const any _vector_collection_ref(const collection *restrict col, iterator iter) {
+  return vector_ref(&col->data.vector.container, iter.vector.index);
+}
+
+api const any _linked_list_collection_ref(const collection *restrict col, iterator iter) {
+  return linked_list_ref(iter.linked_list.node);
+}
+
+api bool _vector_collection_swap(collection *restrict col, iterator *iter_a, iterator *iter_b) {
+  iterator t;
+
+  if (!vector_swap(&col->data.vector.container, iter_a->vector.index, iter_b->vector.index))
+    return false;
+  t = *iter_a;
+  *iter_a = *iter_b;
+  *iter_b = t;
+  return true;
+}
+
+api bool _linked_list_collection_swap(collection *restrict col, iterator *iter_a, iterator *iter_b) {
+  if (!linked_list_swap(&col->data.linked_list.container, iter_a->linked_list.node, iter_b->linked_list.node, false))
+    return false;
+  return true;
+}
+
+any _vector_collection_get(const collection *restrict col, iterator iter, any out) {
+  return vector_get(&col->data.vector.container, iter.vector.index, out);
+}
+
+any _linked_list_collection_get(const collection *restrict col, iterator iter, any out) {
+  return linked_list_get(&col->data.linked_list.container, iter.linked_list.node, out);
+}
+
+any _vector_collection_set(collection *restrict col, iterator *iter, any value) {
+  any ref;
+
+  if ((ref = vector_set(&col->data.vector.container, iter->vector.index, value)))
+    return collection_ref(col, *iter);
+  return NULL;
+}
+
+any _linked_list_collection_set(collection *restrict col, iterator *iter, any value) {
+  any ref;
+
+  if ((ref = linked_list_set(&col->data.linked_list.container, iter->linked_list.node, value)))
+    return collection_ref(col, *iter);
+  return NULL;
+}
+
+api iterator _vector_collection_index(collection *restrict col, natural index) {
+  iterator iter;
+  iter.vector.index = index;
+  return iter;
+}
+
+api iterator _linked_list_collection_index(collection *restrict col, natural index) {
+  iterator iter;
+  iter.linked_list.node = linked_list_index(&col->data.linked_list.container, index);
+  return iter;
+}
+
+api void _vector_collection_next(const collection *restrict col, iterator *iter) {
+  iter->vector.index++;
+}
+
+api void _linked_list_collection_next(const collection *restrict col, iterator *iter) {
+  iter->linked_list.node = iter->linked_list.node->next;
+}
+
+api void _vector_collection_prev(const collection *restrict col, iterator *iter) {
+  if (!iterator_is_valid(col, *iter))
+    iter->vector.index = col->data.vector.index[1] - 1;
+  else if (iter->vector.index > col->data.vector.index[0])
+    iter->vector.index--;
+  else
+    *iter = make_invalid_iterator(col);
+}
+
+api void _linked_list_collection_prev(const collection *restrict col, iterator *iter) {
+  if (!iterator_is_valid(col, *iter))
+    iter->linked_list.node = col->data.linked_list.container.last;
+  else if (iter->linked_list.node != col->data.linked_list.container.first)
+    iter->linked_list.node = iter->linked_list.node->previous;
+  else
+    *iter = make_invalid_iterator(col);
+}
+
+api integer _vector_collection_count(const collection *restrict col) {
+  return col->data.vector.index[1] - col->data.vector.index[0];
+}
+
+api integer _linked_list_collection_count(const collection *restrict col) {
+  return linked_list_length(&col->data.linked_list.container);
+}
+
+api iterator _vector_collection_begin(const collection *restrict col) {
+  iterator iter;
+  iter.vector.index = col->data.vector.index[0];
+  return iter;
+}
+
+api iterator _linked_list_collection_begin(const collection *restrict col) {
+  iterator iter;
+  iter.linked_list.node = col->data.linked_list.container.first;
+  return iter;
+}
+
+api iterator _vector_collection_end(const collection *restrict col) {
+  iterator iter;
+  iter.vector.index = col->data.vector.index[1];
+  return iter;
+}
+
+api iterator _linked_list_collection_end(const collection *restrict col) {
+  iterator iter;
+  iter.linked_list.node = NULL;
+  return iter;
+}
+
+api const any _vector_collection_search_region(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter) {
+  if (collection_is_sorted(col))
+    return _collection_search_region_vector(col, predicate, left, right, iter);
+  return _collection_linear_search(col, predicate, left, right, iter);
+}
+
+api const any _linked_list_collection_search_region(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter) {
+  return _collection_linear_search(col, predicate, left, right, iter);
+}
+
+api bool _vector_collection_destroy_at(collection *restrict col, iterator *iter, handler *destructor) {
+  vector *v;
+  natural index, swap_index;
+  any item;
+  
+  v = &col->data.vector.container;
+  index = iter->vector.index;
+
+  if (destructor != NULL) {
+    if (unlikely(!(item = vector_ref(v, index))))
+      return false;
+    destructor->func(destructor->data, item);
+  }
+
+  if (collection_count(col) > 1)
+    for (swap_index = col->data.vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
+      vector_swap(v, swap_index, index);
+  col->data.vector.index[1]--;
+
+  return true;
+}
+
+api bool _linked_list_collection_destroy_at(collection *restrict col, iterator *iter, handler *destructor) {
+  struct linked_list_node *next;
+  next = iter->linked_list.node->next;
+  if (linked_list_destroy(&col->data.linked_list.container, iter->linked_list.node, destructor)) {
+    iter->linked_list.node = next;
+    return true;
+  }
+  return false;
+}
+  
+api any _vector_collection_remove_at(collection *restrict col, iterator *iter, any out) {
+  vector *v;
+  natural index, swap_index;
+  
+  v = &col->data.vector.container;
+  index = iter->vector.index;
+
+  if (!(out = vector_get(v, index, out)))
+    return NULL;
+
+  if (collection_count(col) > 1)
+    for (swap_index = col->data.vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
+      vector_swap(v, swap_index, index);
+  col->data.vector.index[1]--;
+
+  return out;
+}
+
+api any _linked_list_collection_remove_at(collection *restrict col, iterator *iter, any out) {
+  struct linked_list_node *next;
+  
+  next = iter->linked_list.node->next;
+  if ((out = linked_list_remove(&col->data.linked_list.container, iter->linked_list.node, out))) {
+    iter->linked_list.node = next;
+    return out;
+  }
+
+  return NULL;
+}
+
+  
+api integer _vector_collection_destroy_range(collection *restrict col, iterator *iter, natural count) {
+  natural index, start, total;
+  handler destruct;
+  vector *v;
+  any item;
+  
+  index = iter->vector.index;
+  start = index;
+  v = &col->data.vector.container;
+
+  total = 0;
+  destruct = col->settings.deconstruct_entry;
+
+  for (item = vector_ref(v, index);
+       item != NULL && total < count;
+       ++index, item = vector_ref(v, index), ++total)
+    if (destruct.func != NULL)
+      destruct.func(destruct.data, item);
+
+  if (total != 0) {
+    do {
+      vector_swap(v, start, index);
+      ++start;
+      ++index;
+    } while (NULL != vector_ref(v, index));
+  }
+
+  col->data.vector.index[1] -= total;
+
+  return total;
+}
+  
+api integer _linked_list_collection_destroy_range(collection *restrict col, iterator *index, natural count) {
+  struct linked_list_node *next;
+  natural idx;
+
+  next = index->linked_list.node;
+  for (idx = 0; idx < count && next != NULL; ++idx)
+    next = next->next;
+  count = linked_list_destroy_range(&col->data.linked_list.container, index->linked_list.node, count, &col->settings.deconstruct_entry);
+  index->linked_list.node = next;
+  return count;
+}
+
+bool _vector_collection_insert(collection *restrict col, iterator *restrict position, any item) {
+  iterator index, next;
+  
+  index = collection_end(col);
+
+  if (!collection_push(col, item))
+    return false;
+
+  while (!iterator_equal(col, index, *position)) {
+    next = index;
+    collection_prev(col, &next);
+    collection_swap(col, &next, &index);
+  }
+
+  return true;
+}
+
+bool _linked_list_collection_insert(collection *restrict col, iterator *restrict position, any item) {
+  struct linked_list_node *node;
+  linked_list *list;
+
+  node = position->linked_list.node;
+  list = &col->data.linked_list.container;
+
+  position->linked_list.node = linked_list_add(list, node, item);
+
+  return true;
+}
+
+
+
+/*****************************************************************************
+ **  Init/Destroy Collections
+ ****************************************************************************/
+
+struct collection_dispatch_functions default_vector_collection_dispatch_functions = {
+  (integer (*)(const collection *restrict col, iterator left, iterator right))_vector_iterator_compare,
+  (bool (*)(const collection *restrict col, iterator index))_vector_iterator_is_valid,
+  (iterator (*)(const collection *restrict col))_vector_make_invalid_iterator,
+  (any (*)(collection *restrict col, iterator *iter))_vector_collection_push_start,
+  (bool (*)(const collection *restrict col))_vector_collection_is_empty,
+  (any (*)(const collection *restrict col, any out))_vector_collection_pop,
+  (bool (*)(collection *restrict col))_vector_collection_pop_destroy,
+  (bool (*)(collection *restrict col))_vector_collection_pop_forget,
+  (integer (*)(collection *restrict col, iterator iter, any *out_array))_vector_collection_ref_array,
+  (any (*)(collection *restrict col, iterator iter))_vector_collection_ref,
+  (bool (*)(collection *restrict col, iterator *iter_a, iterator *iter_b))_vector_collection_swap,
+  (any (*)(const collection *restrict col, iterator iter, any out))_vector_collection_get,
+  (any (*)(collection *restrict col, iterator *iter, any value))_vector_collection_set,
+  (iterator (*)(collection *restrict col, natural index))_vector_collection_index,
+  (void (*)(const collection *restrict col, iterator *iter))_vector_collection_next,
+  (void (*)(const collection *restrict col, iterator *iter))_vector_collection_prev,
+  (integer (*)(const collection *restrict col))_vector_collection_count,
+  (iterator (*)(const collection *restrict col))_vector_collection_begin,
+  (iterator (*)(const collection *restrict col))_vector_collection_end,
+  (const any (*)(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter))_vector_collection_search_region,
+  (bool (*)(collection *restrict col, iterator *iter, handler *destructor))_vector_collection_destroy_at,
+  (any (*)(collection *restrict col, iterator *iter, any out))_vector_collection_remove_at,
+  (integer (*)(collection *restrict col, iterator *iter, natural count))_vector_collection_destroy_range,
+  (bool (*)(collection *restrict col, iterator *restrict position, any item))_vector_collection_insert
+};
+
+struct collection_dispatch_functions default_linked_list_collection_dispatch_functions = {
+  (integer (*)(const collection *restrict col, iterator left, iterator right))_linked_list_iterator_compare,
+  (bool (*)(const collection *restrict col, iterator index))_linked_list_iterator_is_valid,
+  (iterator (*)(const collection *restrict col))_linked_list_make_invalid_iterator,
+  (any (*)(collection *restrict col, iterator *iter))_linked_list_collection_push_start,
+  (bool (*)(const collection *restrict col))_linked_list_collection_is_empty,
+  (any (*)(const collection *restrict col, any out))_linked_list_collection_pop,
+  (bool (*)(collection *restrict col))_linked_list_collection_pop_destroy,
+  (bool (*)(collection *restrict col))_linked_list_collection_pop_forget,
+  (integer (*)(collection *restrict col, iterator iter, any *out_array))_linked_list_collection_ref_array,
+  (any (*)(collection *restrict col, iterator iter))_linked_list_collection_ref,
+  (bool (*)(collection *restrict col, iterator *iter_a, iterator *iter_b))_linked_list_collection_swap,
+  (any (*)(const collection *restrict col, iterator iter, any out))_linked_list_collection_get,
+  (any (*)(collection *restrict col, iterator *iter, any value))_linked_list_collection_set,
+  (iterator (*)(collection *restrict col, natural index))_linked_list_collection_index,
+  (void (*)(const collection *restrict col, iterator *iter))_linked_list_collection_next,
+  (void (*)(const collection *restrict col, iterator *iter))_linked_list_collection_prev,
+  (integer (*)(const collection *restrict col))_linked_list_collection_count,
+  (iterator (*)(const collection *restrict col))_linked_list_collection_begin,
+  (iterator (*)(const collection *restrict col))_linked_list_collection_end,
+  (const any (*)(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter))_linked_list_collection_search_region,
+  (bool (*)(collection *restrict col, iterator *iter, handler *destructor))_linked_list_collection_destroy_at,
+  (any (*)(collection *restrict col, iterator *iter, any out))_linked_list_collection_remove_at,
+  (integer (*)(collection *restrict col, iterator *iter, natural count))_linked_list_collection_destroy_range,
+  (bool (*)(collection *restrict col, iterator *restrict position, any item))_linked_list_collection_insert
+};
+
+collection_settings default_vector_collection_settings = {
+  COLLECTION_TYPE_LIST,
+  STORAGE_TYPE_VECTOR,
+  {0},
+  {0},
+  32,
+  sizeof(byte),
+  &default_vector_collection_dispatch_functions
+};
+
+collection_settings default_linked_list_collection_settings = {
+  COLLECTION_TYPE_LIST,
+  STORAGE_TYPE_LINKED_LIST,
+  {0},
+  {0},
+  32,
+  sizeof(byte),
+  &default_linked_list_collection_dispatch_functions
+};
+
+void _check_init_collection(collection *restrict col, collection_settings settings, natural count) {
+  col->settings = settings;
+  
+  if (col->settings.comparer.func == NULL) {
+    switch (settings.element_size) {
+    case 1:
+      col->settings.comparer.func = _default_compare_8;
+      break;
+    case 2:
+      col->settings.comparer.func = _default_compare_16;
+      break;
+    case 4:
+      col->settings.comparer.func = _default_compare_32;
+      break;
+    case 8:
+      col->settings.comparer.func = _default_compare_64;
+      break;
+    default:
+      col->settings.comparer.func = _default_compare_any;
+      break;
+    }
+  }
+
+  if (col->settings.storage == STORAGE_TYPE_VECTOR) {
+    col->data.vector.index[0] = 0;
+    col->data.vector.index[1] = count;
+  }
+}
+
+api collection *init_collection(collection *restrict col, collection_type type, storage_type storage, comparator *compare, handler *destructor, natural element_size) {
+  collection_settings settings;
+  
+  if (safety(col == NULL || element_size < 1))
+    return NULL;
+
+  switch (storage) {
+  case STORAGE_TYPE_VECTOR: {
+    settings = default_vector_collection_settings;
+    break;
+  }
+  case STORAGE_TYPE_LINKED_LIST: {
+    settings = default_linked_list_collection_settings;
+    break;
+  }
+  default:
+    return NULL;
+  }
+
+  settings.type = type;
+  settings.element_size = element_size;
+  
+  if (destructor != NULL)
+    settings.deconstruct_entry = *destructor;
+  else
+    settings.deconstruct_entry.func = NULL;
+  if (compare != NULL)
+    settings.comparer = *compare;
+  else
+    settings.comparer.func = NULL;
+
+  _check_init_collection(col, settings, 0);
+  
+  switch (settings.storage) {
+  case STORAGE_TYPE_VECTOR: {
+    if (!init_vector(&col->data.vector.container, element_size, col->settings.capacity))
+      return NULL;
+    break;
+  }
+  case STORAGE_TYPE_LINKED_LIST: {
+    if (!init_linked_list(&col->data.linked_list.container, element_size, col->settings.capacity))
+      return NULL;
+    break;
+  }
+  default:
+    return NULL;
+  }
+  
+  _force_collection_properties(col);
+
+  return col;
+}
+
+api collection *init_collection_custom(collection *restrict col, collection_settings settings, natural element_size) {
+  if (safety(col == NULL))
+    return NULL;
+
+  _check_init_collection(col, settings, 0);
+
+  switch (col->settings.storage) {
+  case STORAGE_TYPE_VECTOR:
+    if (!init_vector(&col->data.vector.container, element_size, col->settings.capacity))
+      return NULL;
+    break;
+  case STORAGE_TYPE_LINKED_LIST:
+    if (!init_linked_list(&col->data.linked_list.container, element_size, col->settings.capacity))
+      return NULL;
+    break;
+  default:
+    return NULL;
+  }
+
+  _force_collection_properties(col);
+
+  return col;
+}
+
+api collection *init_collection_array(collection *restrict col, collection_type type, comparator *comp, handler *deconstruct_entry, byte *data, natural element_size, natural count) {
+  collection_settings settings;
+  
+  if (safety(col == NULL || data == NULL))
+    return NULL;
+
+  if (!init_vector_array(&col->data.vector.container, data, element_size, count))
+    return NULL;
+
+  settings = default_vector_collection_settings;
+  settings.storage = STORAGE_TYPE_VECTOR;
+  settings.type = type;
+  settings.element_size = element_size;
+  
+  if (comp != NULL)
+    settings.comparer = *comp;
+  else
+    settings.comparer.func = NULL;
+  if (deconstruct_entry != NULL)
+    settings.deconstruct_entry = *deconstruct_entry;
+  else
+    settings.deconstruct_entry.func = NULL;
+
+  _check_init_collection(col, settings, count);
+
+  _force_collection_properties(col);
+
+  return col;
+}
+
+api void destroy_collection(collection *restrict col) {
+  iterator index;
+  any item;
+  
+  if (safety(col == NULL))
+    return;
+
+  switch (col->settings.storage) {
+  case STORAGE_TYPE_VECTOR:
+    if (col->settings.deconstruct_entry.func != NULL) {
+      index = collection_begin(col);
+      for (item = collection_ref(col, index); item != NULL; item = collection_next(col, &index))
+	col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, item);
+    }
+
+    destroy_vector(&col->data.vector.container, NULL);
+    break;
+  case STORAGE_TYPE_LINKED_LIST:
+    destroy_linked_list(&col->data.linked_list.container, &col->settings.deconstruct_entry);
+    break;
+  }
+}
+
 
 #endif /* DL_USE_CONTAINERS */
   
