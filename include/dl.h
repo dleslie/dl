@@ -158,6 +158,9 @@
 
 #if DL_USE_MATH
 # include <math.h>
+# if IS_ATLEAST_C99
+#   include <tgmath.h>
+# endif
 #endif
 
 #if DL_USE_MALLOC
@@ -429,34 +432,23 @@ extern "C" {
   api real radian_to_degree(real radian);
   api integer factorial(integer n);
   
+# define _sqrt(v) sqrt(v)
+# define _cos(v) cos(v)
+# define _sin(v) sin(v)
+# define _tan(v) tan(v)
+# define _acos(v) acos(v)
+# define _asin(v) asin(v)
+# define _atan(v) atan(v)
+# define _pow(a, b) pow(a, b)
+# define _exp(v) exp(v)
+# define _floor(v) floor(v)
+# define _ceil(v) ceil(v)
+# define _abs(v) ((v) > 0 ? (v) : -(v))
+
 # if !IS_ATLEAST_C99
-#   define _sqrt(v) sqrt(v)
-#   define _cos(v) cos(v)
-#   define _sin(v) sin(v)
-#   define _tan(v) tan(v)
-#   define _acos(v) acos(v)
-#   define _asin(v) asin(v)
-#   define _atan(v) atan(v)
 #   define _hypot(a, b) _sqrt((a) * (a) + (b) * (b))
-#   define _pow(a, b) pow(a, b)
-#   define _exp(v) exp(v)
-#   define _floor(v) floor(v)
-#   define _ceil(v) ceil(v)
-#   define _abs(v) ((v) > 0 ? (v) : -(v))
 #else
-#   define _sqrt(v) sqrtf(v)
-#   define _cos(v) cosf(v)
-#   define _sin(v) sinf(v)
-#   define _tan(v) tanf(v)
-#   define _acos(v) acosf(v)
-#   define _asin(v) asinf(v)
-#   define _atan(v) atanf(v)
-#   define _hypot(a, b) hypotf(a, b)
-#   define _pow(a, b) powf(a, b)
-#   define _exp(v) expf(v)
-#   define _floor(v) floorf(v)
-#   define _ceil(v) ceilf(v)
-#   define _abs(v) ((v) > 0 ? (v) : -(v))
+#   define _hypot(a, b) hypot(a, b)
 #endif
 
   typedef struct {
