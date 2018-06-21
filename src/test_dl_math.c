@@ -1993,12 +1993,14 @@ bool test_vec3_magnitude() {
 
 bool test_vec3_reflect() {
   vec3 in, out, result;
+  in = out = result = vec3_zero;
   in.x = 0.5;
   in.y = 0.5;
   in.z = 0.5;
   out.x = 0.5;
   out.y = -0.5;
   out.z = 0.5;
+  
   vec3_reflect(&in, &vec3_up, &result);
 
   if (!check(vec3_approximately_equal(&result, &out, M_EPSILON),
@@ -2030,12 +2032,14 @@ bool test_vec3_reflect() {
 
 bool test_vec3_refract() {
   vec3 in, out, result;
+  in = out = result = vec3_zero;
   in.x = 1.0;
   in.y = 1.0;
   in.z = 1.0;
   out.x = 0.3;
   out.y = 0.0;
   out.z = 0.3;
+
   vec3_refract(&in, &vec3_up, 0.3, &result);
 
   if (!check(vec3_approximately_equal(&result, &out, M_EPSILON),
