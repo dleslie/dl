@@ -372,11 +372,10 @@ bool test_init_collection() {
 
       destroy_collection(&c);
 
-      if (!check(init_vector(&v, sizeof(integer), 0),
-        "Failed to initialize vector."))
+      if (!check(init_vector(&v, sizeof(integer), 0), "Failed to initialize vector."))
         return false;
 
-      destroy_collection(&c);
+      destroy_vector(&v, NULL);
     }
   }
 
