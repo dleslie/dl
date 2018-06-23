@@ -3242,6 +3242,8 @@ api bool vector_shrink(vector * restrict v, handler *restrict deconstruct_entry)
     v->data.slices[idx] = existing_slices[idx];
   v->slice_count--;
 
+  v->settings.free((any)existing_slices);
+
   return true;
 }
 

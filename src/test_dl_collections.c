@@ -239,7 +239,7 @@ const natural _c_type_count = 16;
  **************************************/
 
 #define DUAL_TEST_BEGIN()   collection c1, c2;										\
-  natural c1_data[20], type1_idx, type2_idx;										\
+  natural type1_idx, type2_idx;												\
   const char *type1_name;												\
   comparator type1_comp;												\
   collection_type type1;												\
@@ -249,6 +249,7 @@ const natural _c_type_count = 16;
   collection_type type2;												\
   storage_type storage2;												\
   handler type2_destructor;												\
+  natural c1_data[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };					\
 															\
   for (type1_idx = 0; type1_idx < _c_type_count; ++type1_idx) {								\
     type1_name = _c_types[type1_idx].name;										\
