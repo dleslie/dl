@@ -54,3 +54,10 @@ Mkfile.old
 dkms.conf
 build/
 dist/
+
+
+
+ls
+GPATH
+GRTAGS
+GTAGS
