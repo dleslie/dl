@@ -1,0 +1,47 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "test suite",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/build && ./suite",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "tween suite",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/build && ./tween",
+            "problemMatcher": []
+        },
+        {
+            "label": "meson",
+            "type": "shell",
+            "command": "meson build",
+            "problemMatcher": []
+        },
+        {
+            "label": "ninja",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/build && ninja",
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "ninja clean",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/build && ninja clean",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ]
+}
