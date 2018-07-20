@@ -130,6 +130,10 @@
 # define DL_USE_CONTAINERS 1
 #endif
 
+#ifndef DL_USE_TIME
+# define DL_USE_TIME 1
+#endif
+
 #ifndef DL_IMPLEMENTATION
 # define DL_IMPLEMENTATION 0
 #endif
@@ -142,24 +146,30 @@
 
 #if DL_USE_LOGGING
 # include <stdarg.h>
+#endif
+
+#if DL_USE_TIME
 # if IS_LINUX || IS_APPLE
 #   define HAS_TIME 1
 #   include <time.h>
 #   include <sys/time.h>
-# elif IS_WINDOWS
+# endif
+# if IS_WINDOWS
 #   define HAS_TIME 1
 #   define WIN32_LEAN_AND_MEAN
 #   include <Windows.h>
 #   include <stdint.h>
-# else
+# endif
+# ifndef HAS_TIME
 #   define HAS_TIME 0
 # endif
 #endif
 
 #if DL_USE_MATH
-# include <math.h>
 # if IS_ATLEAST_C99
 #   include <tgmath.h>
+# else
+#   include <math.h>
 # endif
 #endif
 
@@ -439,7 +449,7 @@ extern "C" {
 # define _acos(v) acos(v)
 # define _asin(v) asin(v)
 # define _atan(v) atan(v)
-# define _pow(a, b) pow(a, b)
+# define _pow(a, b) pow((a), (b))
 # define _exp(v) exp(v)
 # define _floor(v) floor(v)
 # define _ceil(v) ceil(v)
@@ -448,7 +458,7 @@ extern "C" {
 # if !IS_ATLEAST_C99
 #   define _hypot(a, b) _sqrt((a) * (a) + (b) * (b))
 #else
-#   define _hypot(a, b) hypot(a, b)
+#   define _hypot(a, b) hypot((a), (b))
 #endif
 
   typedef struct {
@@ -719,7 +729,7 @@ extern "C" {
 
   typedef real *(*selector_function)(const real *restrict values, natural length, real percent, real *out);
 
-  api real *interpolate(selector_function select, const real *restrict values, natural length, real percent, real *restrict out);
+  api real *interpolate(const selector_function select, const real *restrict values, natural length, real percent, real *restrict out);
 
   api real *select_linear(const real *restrict v, natural l, real p, real *restrict out);
   api real *select_bezier(const real *restrict v, natural l, real p, real *restrict out);
@@ -743,8 +753,8 @@ extern "C" {
 
 
 
-  api integer lerp_integer(integer a, integer b, real p);
-  api real lerp_real(real a, real b, real p);
+  api integer *lerp_integer(integer a, integer b, real p, integer *restrict out);
+  api real *lerp_real(real a, real b, real p, real *restrict out);
   api point2 *lerp_point2(const point2 *restrict a, const point2 *restrict b, real p, point2 *restrict out);
   api point3 *lerp_point3(const point3 *restrict a, const point3 *restrict b, real p, point3 *restrict out);
   api vec2 *lerp_vec2(const vec2 *restrict a, const vec2 *restrict b, real p, vec2 *restrict out);
@@ -1056,6 +1066,7 @@ extern "C" {
 
 #if DL_IMPLEMENTATION
 
+
 /*****************************************************************************
  **  Logging
  ****************************************************************************/
@@ -1339,7 +1350,9 @@ api random_state *init_random_time(random_state *state) {
   return init_random(state, tv_usec + tv_sec);
 }
 
-#elsif (IS_LINUX || IS_APPLE) && IS_ATLEAST_C99
+#endif
+
+#if (IS_LINUX || IS_APPLE) && IS_ATLEAST_C99
 
 api random_state *init_random_time(random_state *state) {
   struct timeval t1;
@@ -2518,7 +2531,7 @@ real ease_bounce(ease_direction d, real p) {
 
 
 
-real *interpolate(selector_function select, const real *restrict values, natural length, real percent, real *out) {
+real *interpolate(const selector_function select, const real *restrict values, natural length, real percent, real *out) {
   if (safety(select == NULL || values == NULL || length == 0))
     return NULL;
   if (unlikely(length == 1)) {
@@ -2542,38 +2555,51 @@ real *select_linear(const real *restrict v, natural l, real p, real *restrict ou
   idx = (natural)_floor(scaled_p);
   next_idx = idx + 1;
   
-  if (unlikely(next_idx > max_idx))
+  if (unlikely(next_idx > max_idx)) {
     *out = v[max_idx];
-  else
-    *out = lerp_real(v[idx], v[next_idx], (scaled_p - (real)idx));
-  return out;
+    return out;
+  }
+
+  return lerp_real(v[idx], v[next_idx], (scaled_p - (real)idx), out);
 }
 
 real *select_bezier(const real *restrict v, natural l, real p, real *restrict out) {
-  natural max_idx, idx, i, j, desired_idx, degree;
-  real target;
-  real compute_v[DL_BEZIER_DEGREE + 1];
-
-  if (safety(v ==  NULL || out == NULL) || l < 1)
-    return NULL;
-
-  max_idx = l - 1;
-  degree = clamp(DL_BEZIER_DEGREE, 1, max_idx);
-  target = (real)max_idx * p;
-  idx = (natural)_floor(target);
-
-  for (i = 0; i < degree + 1; ++i) {
-    desired_idx = idx + i;
-    desired_idx = clamp(desired_idx, 0, max_idx);
-    compute_v[i] = v[desired_idx];
+  point2 points[256];
+  point2 out_p;
+  for (int idx = 0; idx < l; ++idx)
+  {
+    points[idx].x = 0;
+    points[idx].y = v[idx];
   }
-    
-  for (i = 1; i <= degree; ++i)
-    for (j = 0; j <= degree - i; ++j)
-      compute_v[j] = ((1.0 - p) * compute_v[j]) + ((p) * compute_v[j+1]);
-
-  *out = compute_v[0];
+  select_bezier_point2(points, l, p, &out_p);
+  *out = out_p.y;
   return out;
+  // natural max_idx, idx, degree;
+  // real target, t1, t2;
+  // real compute_v[DL_BEZIER_DEGREE + 1];
+  // integer i, j, desired_idx;
+  
+  // max_idx = l - 1;
+  // degree = clamp(DL_BEZIER_DEGREE, 1, max_idx);
+  // target = (real)max_idx * p;
+  // idx = (natural)_floor(target);
+
+  // for (i = 0; i < degree + 1; ++i) {
+  //   desired_idx = idx + i;
+  //   desired_idx = clamp(desired_idx, 0, max_idx);
+  //   compute_v[i] = v[desired_idx];
+  // }
+    
+  // for (i = 1; i <= degree; ++i)
+  //   for (j = 0; j <= degree - i; ++j)
+  //   {
+  //       t1 = (1.0 - p) * compute_v[j];
+  //       t2 = compute_v[j + 1] * p;
+  //       compute_v[j] = t1 + t2;
+  //   }
+
+  // *out = compute_v[0];
+  // return out;
 }
 
 real *select_catmullrom(const real *restrict v, natural l, real p, real *restrict out) {
@@ -2641,7 +2667,7 @@ point2 *select_linear_point2(const point2 *restrict v, natural l, real p, point2
 point2 *select_bezier_point2(const point2 *restrict v, natural l, real p, point2 *restrict out) {
   natural max_idx, idx, degree;
   real target;
-  point2 temp[2], compute_v[DL_BEZIER_DEGREE + 1];
+  point2 t1, t2, compute_v[DL_BEZIER_DEGREE + 1];
   integer i, j, desired_idx;
   
   max_idx = l - 1;
@@ -2657,7 +2683,10 @@ point2 *select_bezier_point2(const point2 *restrict v, natural l, real p, point2
     
   for (i = 1; i <= degree; ++i)
     for (j = 0; j <= degree - i; ++j)
-      point2_add(point2_mul_scalar(&compute_v[j], 1.0 - p, &temp[0]), point2_mul_scalar(&compute_v[j + 1], p, &temp[1]), &compute_v[j]);
+      point2_add(
+        point2_mul_scalar(&compute_v[j], 1.0 - p, &t1),
+		    point2_mul_scalar(&compute_v[j + 1], p, &t2),
+        &compute_v[j]);
 
   *out = compute_v[0];
   return out;
@@ -2790,12 +2819,26 @@ point3 *select_catmullrom_point3(const point3 *restrict v, natural l, real p, po
 
 
 
-api integer lerp_integer(integer a, integer b, real p) {
-  return (integer)((real)(b - a) * p) + a;
+api integer *lerp_integer(integer a, integer b, real p, integer *out) {
+  if (safety(out == NULL))
+    return NULL;
+  
+  *out = b - a;
+  *out = (integer)((real)*out * p);
+  *out += a;
+
+  return out;
 }
 
-api real lerp_real(real a, real b, real p) {
-  return ((b - a) * p) + a;
+api real *lerp_real(real a, real b, real p, real *out) {
+  if (safety(out == NULL))
+    return NULL;
+
+  *out = b - a;
+  *out *= p;
+  *out += a;
+
+  return out;
 }
 
 api point2 *lerp_point2(const point2 *restrict a, const point2 *restrict b, real p, point2 *restrict out) {

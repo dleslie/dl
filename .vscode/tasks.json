@@ -7,6 +7,7 @@
             "label": "test suite",
             "type": "shell",
             "command": "cd ${workspaceFolder}/build && ./suite",
+            "dependsOn": "meson",
             "problemMatcher": [
                 "$gcc"
             ]
@@ -14,12 +15,14 @@
         {
             "label": "tween suite",
             "type": "shell",
+            "dependsOn": "meson",
             "command": "cd ${workspaceFolder}/build && ./tween",
             "problemMatcher": []
         },
         {
             "label": "meson",
             "type": "shell",
+            "dependsOn": "ninja",
             "command": "meson build",
             "problemMatcher": []
         },

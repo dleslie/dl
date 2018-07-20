@@ -6,8 +6,8 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
-const integer width = 640;
-const integer height = 480;
+const integer width = 800;
+const integer height = 600;
 
 typedef struct {
   ease_direction dir;
@@ -22,20 +22,19 @@ typedef struct {
 
 integer active_method = -1;
 tween_method tween_methods[tween_count] = {
-  { 0, NULL, select_linear, NULL, "select_linear" },
-  { 0, NULL, select_bezier, NULL, "select_bezier" },
-  { 0, NULL, select_catmullrom, NULL, "select_catmullrom" },
-
-  { 0, NULL, NULL, select_linear_point2, "select_linear_point2" },
   { 0, NULL, NULL, select_bezier_point2, "select_bezier_point2" },
+  { 0, NULL, select_bezier, NULL, "select_bezier" },
   { 0, NULL, NULL, select_catmullrom_point2, "select_catmullrom_point2" },
+  { 0, NULL, select_catmullrom, NULL, "select_catmullrom" },
+  { 0, NULL, NULL, select_linear_point2, "select_linear_point2" },
+  { 0, NULL, select_linear, NULL, "select_linear" },
 
-  { EASE_IN, ease_linear, NULL, NULL, "EASE_IN linear" },
-  { EASE_OUT, ease_linear, NULL, NULL, "EASE_OUT linear" },
-  { EASE_INOUT, ease_linear, NULL, NULL, "EASE_INOUT linear" },
   { EASE_IN, ease_quadratic, NULL, NULL, "EASE_IN quadratic" },
   { EASE_OUT, ease_quadratic, NULL, NULL, "EASE_OUT quadratic" },
   { EASE_INOUT, ease_quadratic, NULL, NULL, "EASE_INOUT quadratic" },
+  { EASE_IN, ease_linear, NULL, NULL, "EASE_IN linear" },
+  { EASE_OUT, ease_linear, NULL, NULL, "EASE_OUT linear" },
+  { EASE_INOUT, ease_linear, NULL, NULL, "EASE_INOUT linear" },
   { EASE_IN, ease_cubic, NULL, NULL, "EASE_IN cubic" },
   { EASE_OUT, ease_cubic, NULL, NULL, "EASE_OUT cubic" },
   { EASE_INOUT, ease_cubic, NULL, NULL, "EASE_INOUT cubic" },
@@ -65,55 +64,55 @@ tween_method tween_methods[tween_count] = {
   { EASE_INOUT, ease_bounce, NULL, NULL, "EASE_INOUT bounce" },
 };
 
-vec2 points[point_count];
+point2 points[point_count];
+real ys[point_count];
 
 void draw(double time, double delta_time) {
   ALLEGRO_COLOR white = al_map_rgba_f(1.0, 1.0, 1.0, 1.0);
   ALLEGRO_COLOR red = al_map_rgba_f(1.0, 0.0, 0.0, 1.0);
   ALLEGRO_COLOR green = al_map_rgba_f(0.0, 1.0, 0.0, 1.0);
   tween_method current = tween_methods[active_method];
-  natural idx, pidx;
-  real last_p, p, ys[point_count];
+  natural idx;
+  real next_p, p;
   point2 p0, p1;
+  const real step = 1.0 / (real)(point_count);
 
   al_draw_line(0, 0.75 * height, width, 0.75 * height, green, 1.0);
   al_draw_line(0, 0.25 * height, width, 0.25 * height, green, 1.0);
 
   if (current.selector != NULL) {
     for (idx = 0; idx < point_count; ++idx) {
-      al_draw_filled_circle(((real)width / (real)(point_count - 1)) * (real)(idx),
-			    (points[idx].y * height * 0.5) + (height * 0.25),
-			    3.0, red);
+      al_draw_filled_circle(
+        (float)idx/(float)(point_count - 1) * width,
+			  (ys[idx] * height * 0.5) + (height * 0.25),
+        3.0, red);
     }
   }
   if (current.selector_point2 != NULL) {
     for (idx = 0; idx < point_count; ++idx) {
-      al_draw_filled_circle(points[idx].x * width,
-			    (points[idx].y * height * 0.5) + (height * 0.25),
-			    3.0, red);
+      al_draw_filled_circle(
+        points[idx].x * width,
+			  (points[idx].y * height * 0.5) + (height * 0.25),
+			  3.0, red);
     }
   }
 
-  for (p = 0; p < 1; p += 0.001) {
-    last_p = clamp01(p - 0.001);
+  for (p = 0; p < 1; p += step) {
+    next_p = clamp01(p + step);
+    p0.x = p;
+    p1.x = next_p;
     
     if (current.ease != NULL) {
-      p0.x = last_p;
-      p1.x = p;
-      p0.y = tween(current.ease, current.dir, last_p);
-      p1.y = tween(current.ease, current.dir, p);
-    } else if (current.selector != NULL) {
-      for (pidx = 0; pidx < point_count; ++pidx)
-	ys[pidx] = points[pidx].y;
-      
-      p0.x = last_p;
-      p1.x = p;
-      interpolate(current.selector, ys, point_count, last_p, &p0.y);
-      interpolate(current.selector, ys, point_count, p, &p1.y); 
+      p0.y = tween(current.ease, current.dir, p);
+      p1.y = tween(current.ease, current.dir, next_p);
+    }
+    else if (current.selector != NULL) {
+      interpolate(current.selector, ys, point_count, p, &p0.y);
+      interpolate(current.selector, ys, point_count, next_p, &p1.y); 
     }
     else {
-      interpolate_point2(current.selector_point2, points, point_count, last_p, &p0);
-      interpolate_point2(current.selector_point2, points, point_count, p, &p1);
+      interpolate_point2(current.selector_point2, points, point_count, p, &p0);
+      interpolate_point2(current.selector_point2, points, point_count, next_p, &p1);
     }
     
     al_draw_line(p0.x * width, (p0.y * height * 0.5) + (height * 0.25),
@@ -126,13 +125,17 @@ void change(random_state *r) {
   bool was_interpolate = active_method >= 0 && (tween_methods[active_method].selector != NULL || tween_methods[active_method].selector_point2 != NULL);
   natural idx;
   real x;
+  //bool do_random_x = tween_methods[active_method].selector_point2 != NULL;
   
   active_method = (active_method + 1) % tween_count;
 
   if (!was_interpolate) {
     for (idx = 0; idx < point_count; idx++) {
-      x = idx == 0 ? 0 : (idx == point_count - 1 ? 1 : random_real_range(r, 0, 1.0/(float)point_count) + (float)idx/(float)point_count);
-      init_vec2(&points[idx], x, random_real_range(r, 0, 1));
+      x = //(!do_random_x ? 0 : random_real_range(r, 0, 1.0/(float)point_count)) + 
+        (float)idx/(float)(point_count - 1);
+      // ys[idx] = random_real_range(r, 0, 0.5);
+      ys[idx] = (float)idx/(float)(point_count - 1);
+      init_vec2(&points[idx], x, ys[idx]);
     }
   }
 }
