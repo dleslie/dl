@@ -17,17 +17,16 @@ typedef struct {
   const char *name;
 } tween_method;
 
-#define tween_count 39
+#define tween_count 38
 #define point_count 16
 
 integer active_method = -1;
 tween_method tween_methods[tween_count] = {
-  { 0, NULL, NULL, select_bezier_point2, "select_bezier_point2" },
-  { 0, NULL, select_bezier, NULL, "select_bezier" },
-  { 0, NULL, NULL, select_catmullrom_point2, "select_catmullrom_point2" },
+  { 0, NULL, select_linear, NULL, "select_linear" },
   { 0, NULL, select_catmullrom, NULL, "select_catmullrom" },
   { 0, NULL, NULL, select_linear_point2, "select_linear_point2" },
-  { 0, NULL, select_linear, NULL, "select_linear" },
+  { 0, NULL, NULL, select_bezier_point2, "select_bezier_point2" },
+  { 0, NULL, NULL, select_catmullrom_point2, "select_catmullrom_point2" },
 
   { EASE_IN, ease_quadratic, NULL, NULL, "EASE_IN quadratic" },
   { EASE_OUT, ease_quadratic, NULL, NULL, "EASE_OUT quadratic" },
@@ -75,7 +74,7 @@ void draw(double time, double delta_time) {
   natural idx;
   real next_p, p;
   point2 p0, p1;
-  const real step = 1.0 / (real)(point_count);
+  const real step = 1.0 / (real)(point_count - 1) / 10.0;
 
   al_draw_line(0, 0.75 * height, width, 0.75 * height, green, 1.0);
   al_draw_line(0, 0.25 * height, width, 0.25 * height, green, 1.0);
@@ -107,12 +106,12 @@ void draw(double time, double delta_time) {
       p1.y = tween(current.ease, current.dir, next_p);
     }
     else if (current.selector != NULL) {
-      interpolate(current.selector, ys, point_count, p, &p0.y);
-      interpolate(current.selector, ys, point_count, next_p, &p1.y); 
+      interpolate(current.selector, ys, point_count, p0.x, &p0.y);
+      interpolate(current.selector, ys, point_count, p1.x, &p1.y); 
     }
     else {
-      interpolate_point2(current.selector_point2, points, point_count, p, &p0);
-      interpolate_point2(current.selector_point2, points, point_count, next_p, &p1);
+      interpolate_point2(current.selector_point2, points, point_count, p0.x, &p0);
+      interpolate_point2(current.selector_point2, points, point_count, p1.x, &p1);
     }
     
     al_draw_line(p0.x * width, (p0.y * height * 0.5) + (height * 0.25),
@@ -122,20 +121,32 @@ void draw(double time, double delta_time) {
 }
 
 void change(random_state *r) {
-  bool was_interpolate = active_method >= 0 && (tween_methods[active_method].selector != NULL || tween_methods[active_method].selector_point2 != NULL);
   natural idx;
-  real x;
-  //bool do_random_x = tween_methods[active_method].selector_point2 != NULL;
+  real last_x, last_y, t;
+  bool do_random, type_change;
+  integer last_method = active_method;
   
   active_method = (active_method + 1) % tween_count;
-
-  if (!was_interpolate) {
+  do_random = tween_methods[active_method].selector_point2 != NULL;
+  type_change = last_method < 0 
+    || (tween_methods[active_method].selector != NULL && tween_methods[last_method].selector == NULL)
+    || (tween_methods[active_method].selector == NULL && tween_methods[last_method].selector != NULL)
+    || (tween_methods[active_method].selector_point2 != NULL && tween_methods[last_method].selector_point2 == NULL)
+    || (tween_methods[active_method].selector_point2 == NULL && tween_methods[last_method].selector_point2 != NULL)
+    || (tween_methods[active_method].ease != NULL && tween_methods[last_method].ease == NULL)
+    || (tween_methods[active_method].ease == NULL && tween_methods[last_method].ease != NULL);
+  last_x = last_y = 0.5;
+  
+  if (type_change) {
     for (idx = 0; idx < point_count; idx++) {
-      x = //(!do_random_x ? 0 : random_real_range(r, 0, 1.0/(float)point_count)) + 
-        (float)idx/(float)(point_count - 1);
-      // ys[idx] = random_real_range(r, 0, 0.5);
-      ys[idx] = (float)idx/(float)(point_count - 1);
-      init_vec2(&points[idx], x, ys[idx]);
+      t = last_x + random_real_range(r, -0.15, 0.15);
+      last_x = do_random
+        ? clamp01(t)
+        : (float)idx/(float)(point_count - 1);
+
+      t = last_y + random_real_range(r, -0.15, 0.15);
+      ys[idx] = last_y = clamp01(t);
+      init_point2(&points[idx], last_x, last_y);
     }
   }
 }

@@ -732,7 +732,6 @@ extern "C" {
   api real *interpolate(const selector_function select, const real *restrict values, natural length, real percent, real *restrict out);
 
   api real *select_linear(const real *restrict v, natural l, real p, real *restrict out);
-  api real *select_bezier(const real *restrict v, natural l, real p, real *restrict out);
   api real *select_catmullrom(const real *restrict v, natural l, real p, real *restrict out);
 
   typedef point2 *(*selector_function_point2)(const point2 *restrict values, natural length, real percent, point2 *restrict out);
@@ -2561,45 +2560,6 @@ real *select_linear(const real *restrict v, natural l, real p, real *restrict ou
   }
 
   return lerp_real(v[idx], v[next_idx], (scaled_p - (real)idx), out);
-}
-
-real *select_bezier(const real *restrict v, natural l, real p, real *restrict out) {
-  point2 points[256];
-  point2 out_p;
-  for (int idx = 0; idx < l; ++idx)
-  {
-    points[idx].x = 0;
-    points[idx].y = v[idx];
-  }
-  select_bezier_point2(points, l, p, &out_p);
-  *out = out_p.y;
-  return out;
-  // natural max_idx, idx, degree;
-  // real target, t1, t2;
-  // real compute_v[DL_BEZIER_DEGREE + 1];
-  // integer i, j, desired_idx;
-  
-  // max_idx = l - 1;
-  // degree = clamp(DL_BEZIER_DEGREE, 1, max_idx);
-  // target = (real)max_idx * p;
-  // idx = (natural)_floor(target);
-
-  // for (i = 0; i < degree + 1; ++i) {
-  //   desired_idx = idx + i;
-  //   desired_idx = clamp(desired_idx, 0, max_idx);
-  //   compute_v[i] = v[desired_idx];
-  // }
-    
-  // for (i = 1; i <= degree; ++i)
-  //   for (j = 0; j <= degree - i; ++j)
-  //   {
-  //       t1 = (1.0 - p) * compute_v[j];
-  //       t2 = compute_v[j + 1] * p;
-  //       compute_v[j] = t1 + t2;
-  //   }
-
-  // *out = compute_v[0];
-  // return out;
 }
 
 real *select_catmullrom(const real *restrict v, natural l, real p, real *restrict out) {
