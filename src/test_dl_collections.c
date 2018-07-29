@@ -31,7 +31,7 @@ integer _test_match_even_func(any data, any value) {
   return (*(integer *)value % 2) == 0;
 }
 
-filter _test_match_even = {
+dl_filter _test_match_even = {
   .data = NULL,
   .func = _test_match_even_func
 };
@@ -40,7 +40,7 @@ integer _test_match_natural_func(any data, any value) {
   return *(integer *)value > 0;
 }
 
-filter _test_match_natural = {
+dl_filter _test_match_natural = {
   .data = NULL,
   .func = _test_match_natural_func
 };
@@ -2188,12 +2188,12 @@ bool test_memory_swap() {
   char data_a[64], data_b[64], data_c[64], data_d[64];
   natural idx;
 
-  memory_copy(data_a, "The quicker brown fox jumped over the lazy dog.", 64);
-  memory_copy(data_b, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-", 64);
-  memory_copy(data_c, "The quicker brown fox jumped over the lazy dog.", 64);
-  memory_copy(data_d, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-", 64);
+  dl_memory_copy(data_a, "The quicker brown fox jumped over the lazy dog.", 64);
+  dl_memory_copy(data_b, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-", 64);
+  dl_memory_copy(data_c, "The quicker brown fox jumped over the lazy dog.", 64);
+  dl_memory_copy(data_d, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-", 64);
 
-  memory_swap(data_a, data_b, sizeof(char) * 47);
+  dl_memory_swap(data_a, data_b, sizeof(char) * 47);
   for (idx = 0; idx < 47; ++idx) {
     if (!check(data_a[idx] == data_d[idx],
       "Expected %c to be %c.", data_a[idx], data_d[idx]))
@@ -2204,7 +2204,7 @@ bool test_memory_swap() {
   }
 
   for (idx = 0; idx < 47; ++idx)
-    memory_swap(data_a + idx, data_b + idx, sizeof(char));
+    dl_memory_swap(data_a + idx, data_b + idx, sizeof(char));
 
   for (idx = 0; idx < 47; ++idx) {
     if (!check(data_a[idx] == data_c[idx],

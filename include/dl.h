@@ -268,14 +268,15 @@ extern "C" {
    **  Tools
    ****************************************************************************/
 
-  api any memory_swap(any target, any source, natural bytes);
-  api any memory_copy(any target, any source, natural bytes);
-  api any memory_set(any target, byte val, natural bytes);
+  api any dl_memory_swap(any target, any source, natural bytes);
+
+  api any dl_memory_copy(any target, any source, natural bytes);
+  api any dl_memory_set(any target, byte val, natural bytes);
 
   typedef struct {
     integer (*func)(any data, const any value);
     any data;
-  } filter;
+  } dl_filter;
 
   typedef struct {
     any (*func)(any data, any value);
@@ -367,7 +368,7 @@ extern "C" {
     integer current = 0;\
     if (out_count == NULL || out_passed == NULL)\
       return;\
-    memory_set(tests, 0, sizeof(bool (*)()) * 256);
+    dl_memory_set(tests, 0, sizeof(bool (*)()) * 256);
 # define END_TEST_SUITE \
     *out_count = test_count(tests, 256);\
     *out_passed = test_run(tests, test_names, *out_count);\
@@ -953,7 +954,7 @@ extern "C" {
     integer (*_collection_count)(const collection *restrict col);
     iterator (*_collection_begin)(const collection *restrict col);
     iterator (*_collection_end)(const collection *restrict col);
-    const any (*_collection_search_region)(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter);
+    const any (*_collection_search_region)(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter);
     bool (*_collection_destroy_at)(collection *restrict col, iterator *iter, handler *destructor);
     any (*_collection_remove_at)(collection *restrict col, iterator *iter, any out);
     integer (*_collection_destroy_range)(collection *restrict col, iterator *iter, natural count);
@@ -1004,25 +1005,25 @@ extern "C" {
   api const any collection_next(const collection *restrict col, iterator *iter);
   api const any collection_prev(const collection *restrict col, iterator *iter);
 
-  api any collection_find(const collection *restrict col, filter *restrict predicate, iterator *iter);
-  api any collection_find_last(const collection *restrict col, filter *restrict predicate, iterator *iter);
+  api any collection_find(const collection *restrict col, dl_filter *restrict predicate, iterator *iter);
+  api any collection_find_last(const collection *restrict col, dl_filter *restrict predicate, iterator *iter);
 
   api any collection_foldl(const collection *restrict col, any initial, folder *func);
   api any collection_foldr(const collection *restrict col, any initial, folder *func);
-  api const any collection_search(const collection *restrict col, filter *predicate, iterator *iter);
-  api const any collection_search_region(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter);
+  api const any collection_search(const collection *restrict col, dl_filter *predicate, iterator *iter);
+  api const any collection_search_region(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter);
 
   api any collection_get(const collection *restrict col, iterator index, any out);
   api any collection_insert(collection *restrict col, iterator *index, any item);
   api const any collection_peek(const collection *restrict col);
   api const any collection_ref(const collection *restrict col, iterator iter);
   api any collection_remove_at(collection *restrict col, iterator *index, any out);
-  api any collection_remove_first(collection *restrict col, filter *predicate, iterator *index, any out);
-  api any collection_remove_last(collection *restrict col, filter *predicate, iterator *index, any out);
+  api any collection_remove_first(collection *restrict col, dl_filter *predicate, iterator *index, any out);
+  api any collection_remove_last(collection *restrict col, dl_filter *predicate, iterator *index, any out);
   api any collection_set(collection *restrict col, iterator *index, any value);
 
-  api bool collection_all(const collection *restrict col, filter *func);
-  api bool collection_any(const collection *restrict col, filter *func);
+  api bool collection_all(const collection *restrict col, dl_filter *func);
+  api bool collection_any(const collection *restrict col, dl_filter *func);
   api bool collection_contains(const collection *restrict col, const any item);
   api bool collection_is_empty(const collection *restrict col);
 
@@ -1031,8 +1032,8 @@ extern "C" {
 
   api bool collection_forget_at(collection *restrict col, iterator *iter);
   api bool collection_destroy_at(collection *restrict col, iterator *iter);
-  api bool collection_destroy_first(collection *restrict col, filter *predicate, iterator *iter);
-  api bool collection_destroy_last(collection *restrict col, filter *predicate, iterator *iter);
+  api bool collection_destroy_first(collection *restrict col, dl_filter *predicate, iterator *iter);
+  api bool collection_destroy_last(collection *restrict col, dl_filter *predicate, iterator *iter);
   api bool collection_swap(collection *restrict col, iterator *iter_a, iterator *iter_b);
   api bool collection_quick_sort(collection *restrict col, comparator *compare);
   api bool collection_quick_sort_region(collection *restrict col, comparator *compare, iterator left, iterator right);
@@ -1041,14 +1042,14 @@ extern "C" {
   api void collection_clear(collection *restrict col);
 
   api integer collection_count(const collection *restrict col);
-  api integer collection_find_all(const collection *restrict col, filter *predicate, collection *out);
+  api integer collection_find_all(const collection *restrict col, dl_filter *predicate, collection *out);
 
   api integer collection_take(collection *restrict col, natural count, collection *out);
-  api integer collection_destroy_all(collection *restrict col, filter *predicate);
+  api integer collection_destroy_all(collection *restrict col, dl_filter *predicate);
   api integer collection_destroy_range(collection *restrict col, iterator *index, natural count);
   api integer collection_drop(collection *restrict col, natural count);
   api integer collection_ref_array(collection *restrict col, iterator index, any *out_array);
-  api integer collection_remove_all(collection *restrict col, filter *predicate, collection *out);
+  api integer collection_remove_all(collection *restrict col, dl_filter *predicate, collection *out);
   api integer collection_remove_range(collection *restrict col, iterator *index, natural count, collection *out);
 
 #endif /* DL_USE_CONTAINERS */
@@ -2844,7 +2845,8 @@ any _default_alloc(natural count, natural element_size) {
   (void (*)(any))NULL
 #endif
 
-api any memory_swap(any left, any right, natural bytes) {
+api any dl_memory_swap(any left, any right, natural bytes) {
+
   natural nat_count, byte_count, *nat_left, *nat_right, nat_temp;
   byte *byte_left, *byte_right, byte_temp;
   
@@ -2876,7 +2878,7 @@ api any memory_swap(any left, any right, natural bytes) {
   return left;
 }
 
-api any memory_copy(any left, any right, natural bytes) {
+api any dl_memory_copy(any left, any right, natural bytes) {
   natural nat_count, byte_count, *nat_left, *nat_right;
   byte *byte_left, *byte_right;
   
@@ -2904,7 +2906,7 @@ api any memory_copy(any left, any right, natural bytes) {
   return left;
 }
 
-any memory_set(any left, byte val, natural bytes) {
+any dl_memory_set(any left, byte val, natural bytes) {
   natural *nat_left, nat_count, byte_count, nat_val, shift;
   byte *byte_left;
   
@@ -3088,7 +3090,7 @@ api any vector_get(const vector * restrict v, natural index, any out) {
     if (unlikely(index >= v->settings.slice_length))
       return NULL;
 
-    memory_copy(out, (void *)&v->data.array[index * v->settings.element_size], v->settings.element_size);
+    dl_memory_copy(out, (void *)&v->data.array[index * v->settings.element_size], v->settings.element_size);
   }
   else {
     slice = index / v->settings.slice_length;
@@ -3098,7 +3100,7 @@ api any vector_get(const vector * restrict v, natural index, any out) {
     slice_index = index - (slice * v->settings.slice_length);
     target_slice = v->data.slices[slice];
 
-    memory_copy(out, (void *)&target_slice[slice_index * v->settings.element_size], v->settings.element_size);
+    dl_memory_copy(out, (void *)&target_slice[slice_index * v->settings.element_size], v->settings.element_size);
   }
 
   return out;
@@ -3144,7 +3146,7 @@ api any vector_set(vector * restrict v, natural index, any value) {
     source = (byte *)value;
     target = v->data.array;
 
-    return memory_copy((void *)&target[base_index], (void *)source, v->settings.element_size);
+    return dl_memory_copy((void *)&target[base_index], (void *)source, v->settings.element_size);
   }
   else {
     slice = index / v->settings.slice_length;
@@ -3155,7 +3157,7 @@ api any vector_set(vector * restrict v, natural index, any value) {
     base_index = slice_index * v->settings.element_size;
     source = (byte *)value;
 
-    return memory_copy((void *)&v->data.slices[slice][base_index], (void *)source, v->settings.element_size);
+    return dl_memory_copy((void *)&v->data.slices[slice][base_index], (void *)source, v->settings.element_size);
   }
 }
 
@@ -3210,7 +3212,8 @@ api bool vector_swap(vector * restrict v, natural index1, natural index2) {
   if (unlikely(right == NULL))
     return false;
 
-  memory_swap(left, right, v->settings.element_size);
+  dl_memory_swap(left, right, v->settings.element_size);
+
   return true;
 }
 
@@ -3369,7 +3372,7 @@ api natural vector_copy(vector * restrict target, natural target_offset_index, c
     min_remainder = target_remainder < original_remainder ? target_remainder : original_remainder;
     count_to_copy = total_remainder < min_remainder ? total_remainder : min_remainder;
 
-    memory_copy(&target_slice[target_length - target_remainder], &original_slice[original_length - original_remainder], count_to_copy);
+    dl_memory_copy(&target_slice[target_length - target_remainder], &original_slice[original_length - original_remainder], count_to_copy);
 
     total_remainder -= count_to_copy;
     target_remainder -= count_to_copy;
@@ -3558,7 +3561,7 @@ api linked_list *_linked_list_cache_grow(linked_list * restrict target) {
 
   for (idx = zero; idx < length; ++idx) {
     node = (struct linked_list_node *)vector_ref(v, idx);
-    memory_set(node, 0, LINKED_LIST_HEADER_SIZE);
+    dl_memory_set(node, 0, LINKED_LIST_HEADER_SIZE);
     _linked_list_node_free(target, node);
   }
 
@@ -3642,7 +3645,7 @@ api void destroy_linked_list(linked_list * restrict target, handler *restrict de
 
   destroy_vector(&target->node_cache, NULL);
 
-  memory_set(target, 0, sizeof(linked_list));
+  dl_memory_set(target, 0, sizeof(linked_list));
 }
 
 api natural linked_list_capacity(const linked_list * restrict list) {
@@ -3707,7 +3710,7 @@ api any linked_list_get(const linked_list * restrict list, struct linked_list_no
   if (safety(list == NULL || position == NULL || out == NULL))
     return NULL;
 
-  return memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size);
+  return dl_memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size);
 }
 
 api const any linked_list_ref(const struct linked_list_node *position) {
@@ -3721,7 +3724,7 @@ api any linked_list_set(linked_list * restrict list, struct linked_list_node *po
   if (safety(list == NULL || position == NULL || value == NULL))
     return NULL;
 
-  return memory_copy(LINKED_LIST_DATA(position), value, list->settings.element_size);
+  return dl_memory_copy(LINKED_LIST_DATA(position), value, list->settings.element_size);
 }
 
 api struct linked_list_node *linked_list_add(linked_list * restrict list, struct linked_list_node *position, any value) {
@@ -3734,7 +3737,7 @@ api struct linked_list_node *linked_list_add(linked_list * restrict list, struct
     return NULL;
 
   node = _linked_list_node_alloc(list, position);
-  if (unlikely(value != NULL && !memory_copy(LINKED_LIST_DATA(node), value, list->settings.element_size))) {
+  if (unlikely(value != NULL && !dl_memory_copy(LINKED_LIST_DATA(node), value, list->settings.element_size))) {
     _linked_list_node_free(list, node);
     return NULL;
   }
@@ -3746,7 +3749,7 @@ api any linked_list_remove(linked_list * restrict list, struct linked_list_node 
   if (safety(list == NULL || position == NULL))
     return NULL;
 
-  if (unlikely(!memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size)))
+  if (unlikely(!dl_memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size)))
     return NULL;
 
   _linked_list_node_free(list, position);
@@ -3842,7 +3845,8 @@ api bool linked_list_swap(linked_list * restrict list, struct linked_list_node *
     list->last = position1;
 
   if (data)
-    memory_swap(LINKED_LIST_DATA(position1), LINKED_LIST_DATA(position2), list->settings.element_size);
+    dl_memory_swap(LINKED_LIST_DATA(position1), LINKED_LIST_DATA(position2), list->settings.element_size);
+
 
   return true;
 }
@@ -4147,7 +4151,7 @@ api iterator collection_end(const collection *restrict col) {
   return col->settings.functions->_collection_end(col);
 }
 
-const any _collection_search_region_vector(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter) {
+const any _collection_search_region_vector(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
   any ref;
   integer outcome;
   iterator iter_next;
@@ -4172,7 +4176,7 @@ const any _collection_search_region_vector(const collection *restrict col, filte
   }
 }
 
-const any _collection_linear_search(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter) {
+const any _collection_linear_search(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
   any ref;
   integer outcome;
   
@@ -4188,14 +4192,14 @@ const any _collection_linear_search(const collection *restrict col, filter *pred
   return NULL;
 }
 
-const any collection_search_region(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter) {
+const any collection_search_region(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
   if (safety(col == NULL || predicate == NULL || iter == NULL))
     return NULL;
 
   return col->settings.functions->_collection_search_region(col, predicate, left, right, iter);
 }
 
-const any collection_search(const collection *restrict col, filter *predicate, iterator *iter) {
+const any collection_search(const collection *restrict col, dl_filter *predicate, iterator *iter) {
   return collection_search_region(col, predicate, collection_begin(col), collection_end(col), iter);
 }
 
@@ -4343,7 +4347,7 @@ api iterator collection_index_of(const collection *restrict col, const any item)
   iterator bad, iter, index;
   any candidate;
   _collection_sorted_list_predicate_data data;
-  filter predicate;
+  dl_filter predicate;
   
   bad = make_invalid_iterator(col);
 
@@ -4373,7 +4377,7 @@ api iterator collection_index_of(const collection *restrict col, const any item)
   }
 }
 
-api bool collection_all(const collection *restrict col, filter *restrict f) {
+api bool collection_all(const collection *restrict col, dl_filter *restrict f) {
   iterator index;
   any item;
   
@@ -4388,7 +4392,7 @@ api bool collection_all(const collection *restrict col, filter *restrict f) {
   return true;
 }
 
-api bool collection_any(const collection *restrict col, filter *restrict f) {
+api bool collection_any(const collection *restrict col, dl_filter *restrict f) {
   iterator index;
   any item;
   
@@ -4513,7 +4517,7 @@ api integer collection_take(collection *restrict col, natural count, collection 
   return added;
 }
 
-api any collection_find(const collection *restrict col, filter *f, iterator *index) {
+api any collection_find(const collection *restrict col, dl_filter *f, iterator *index) {
   any item;
   
   if (safety(col == NULL || f == NULL || index == NULL))
@@ -4526,7 +4530,7 @@ api any collection_find(const collection *restrict col, filter *f, iterator *ind
   return NULL;
 }
 
-api any collection_find_last(const collection *restrict col, filter *f, iterator *index) {
+api any collection_find_last(const collection *restrict col, dl_filter *f, iterator *index) {
   any item;
   
   if (safety(col == NULL || f == NULL || index == NULL))
@@ -4539,7 +4543,7 @@ api any collection_find_last(const collection *restrict col, filter *f, iterator
   return NULL;
 }
 
-api integer collection_find_all(const collection *restrict col, filter *f, collection *out) {
+api integer collection_find_all(const collection *restrict col, dl_filter *f, collection *out) {
   natural start_count;
   iterator index;
   any item;
@@ -4558,7 +4562,7 @@ api integer collection_find_all(const collection *restrict col, filter *f, colle
   return collection_count(out) - start_count;
 }
 
-api any collection_remove_first(collection *restrict col, filter *f, iterator *iter, any out) {
+api any collection_remove_first(collection *restrict col, dl_filter *f, iterator *iter, any out) {
   if (safety(col == NULL || iter == NULL))
     return NULL;
 
@@ -4568,7 +4572,7 @@ api any collection_remove_first(collection *restrict col, filter *f, iterator *i
   return collection_remove_at(col, iter, out);
 }
 
-api any collection_remove_last(collection *restrict col, filter *f, iterator *iter, any out) {
+api any collection_remove_last(collection *restrict col, dl_filter *f, iterator *iter, any out) {
   if (safety(col == NULL || iter == NULL))
     return NULL;
 
@@ -4578,7 +4582,7 @@ api any collection_remove_last(collection *restrict col, filter *f, iterator *it
   return collection_remove_at(col, iter, out);
 }
 
-api bool collection_destroy_first(collection *restrict col, filter *f, iterator *index) {
+api bool collection_destroy_first(collection *restrict col, dl_filter *f, iterator *index) {
   if (safety(col == NULL || index == NULL))
     return false;
 
@@ -4588,7 +4592,7 @@ api bool collection_destroy_first(collection *restrict col, filter *f, iterator 
   return collection_destroy_at(col, index);
 }
 
-api bool collection_destroy_last(collection *restrict col, filter *f, iterator *index) {
+api bool collection_destroy_last(collection *restrict col, dl_filter *f, iterator *index) {
   if (safety(col == NULL || index == NULL))
     return false;
 
@@ -4651,7 +4655,7 @@ api bool collection_quick_sort(collection *restrict col, comparator *compare) {
   return collection_quick_sort_region(col, compare, collection_begin(col), collection_end(col));
 }
 
-api integer collection_destroy_all(collection *restrict col, filter *f) {
+api integer collection_destroy_all(collection *restrict col, dl_filter *f) {
   natural count;
   any item;
   iterator iter;
@@ -4695,7 +4699,7 @@ api any collection_push_index(collection *restrict col, any value, iterator *out
   if (!iterator_is_valid(col, *out_index))
     return NULL;
 
-  memory_copy(ref, value, collection_element_size(col));
+  dl_memory_copy(ref, value, collection_element_size(col));
   return collection_push_finish(col, out_index);
 }
 
@@ -4726,7 +4730,7 @@ api integer collection_remove_range(collection *restrict col, iterator *index, n
 }
 
 
-api integer collection_remove_all(collection *restrict col, filter *f, collection *out) {
+api integer collection_remove_all(collection *restrict col, dl_filter *f, collection *out) {
   iterator index, new_iter;
   natural total;
   any ref, new_ref;
@@ -4782,7 +4786,7 @@ api integer collection_copy(const collection *restrict original, collection *res
 
     ref = collection_ref(original, iter);
 
-    memory_copy(new_ref, ref, collection_element_size(original));
+    dl_memory_copy(new_ref, ref, collection_element_size(original));
     collection_push_finish(target, &new_iter);
 
     ++count;
@@ -5127,13 +5131,13 @@ api iterator _linked_list_collection_end(const collection *restrict col) {
   return iter;
 }
 
-api const any _vector_collection_search_region(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter) {
+api const any _vector_collection_search_region(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
   if (collection_is_sorted(col))
     return _collection_search_region_vector(col, predicate, left, right, iter);
   return _collection_linear_search(col, predicate, left, right, iter);
 }
 
-api const any _linked_list_collection_search_region(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter) {
+api const any _linked_list_collection_search_region(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
   return _collection_linear_search(col, predicate, left, right, iter);
 }
 
@@ -5299,7 +5303,7 @@ struct collection_dispatch_functions default_vector_collection_dispatch_function
   (integer (*)(const collection *restrict col))_vector_collection_count,
   (iterator (*)(const collection *restrict col))_vector_collection_begin,
   (iterator (*)(const collection *restrict col))_vector_collection_end,
-  (const any (*)(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter))_vector_collection_search_region,
+  (const any (*)(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter))_vector_collection_search_region,
   (bool (*)(collection *restrict col, iterator *iter, handler *destructor))_vector_collection_destroy_at,
   (any (*)(collection *restrict col, iterator *iter, any out))_vector_collection_remove_at,
   (integer (*)(collection *restrict col, iterator *iter, natural count))_vector_collection_destroy_range,
@@ -5326,7 +5330,7 @@ struct collection_dispatch_functions default_linked_list_collection_dispatch_fun
   (integer (*)(const collection *restrict col))_linked_list_collection_count,
   (iterator (*)(const collection *restrict col))_linked_list_collection_begin,
   (iterator (*)(const collection *restrict col))_linked_list_collection_end,
-  (const any (*)(const collection *restrict col, filter *predicate, iterator left, iterator right, iterator *iter))_linked_list_collection_search_region,
+  (const any (*)(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter))_linked_list_collection_search_region,
   (bool (*)(collection *restrict col, iterator *iter, handler *destructor))_linked_list_collection_destroy_at,
   (any (*)(collection *restrict col, iterator *iter, any out))_linked_list_collection_remove_at,
   (integer (*)(collection *restrict col, iterator *iter, natural count))_linked_list_collection_destroy_range,
