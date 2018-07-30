@@ -209,7 +209,7 @@ typedef struct {
   storage_type storage;
   char *name;
   comparator comp;
-  handler destructor;
+  dl_handler destructor;
   bool sorted;
   bool fifo;
 } _collection_type_info;
@@ -243,12 +243,12 @@ const natural _c_type_count = 16;
   const char *type1_name;												\
   comparator type1_comp;												\
   collection_type type1;												\
-  handler type1_destructor;												\
+  dl_handler type1_destructor;												\
   const char *type2_name;												\
   comparator type2_comp;												\
   collection_type type2;												\
   storage_type storage2;												\
-  handler type2_destructor;												\
+  dl_handler type2_destructor;												\
   natural c1_data[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };					\
 															\
   for (type1_idx = 0; type1_idx < _c_type_count; ++type1_idx) {								\
@@ -299,7 +299,7 @@ fail:								\
   comparator type_comp;											\
   collection_type type;											\
   storage_type storage;											\
-  handler type_destructor;										\
+  dl_handler type_destructor;										\
 													\
   for (type_idx = 0; type_idx < _c_type_count; ++type_idx) {						\
     type_name = _c_types[type_idx].name;								\
@@ -333,7 +333,7 @@ bool test_init_collection() {
   collection_type type;
   comparator type_comp;
   const char *type_name;
-  handler type_destructor;
+  dl_handler type_destructor;
   natural type_idx;
   storage_type storage;
   vector v;

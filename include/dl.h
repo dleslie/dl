@@ -281,7 +281,7 @@ extern "C" {
   typedef struct {
     any (*func)(any data, any value);
     any data;
-  } handler;
+  } dl_handler;
 
   typedef struct {
     any (*func)(any data, any item, const any left);
@@ -797,13 +797,13 @@ extern "C" {
   api natural vector_copy(vector * restrict target, natural target_offset_index, const vector * restrict original);
   api natural vector_copy_array(vector * restrict target, natural target_offset_index, const byte *restrict data, natural count);
 
-  api void destroy_vector(vector * restrict target, const handler *restrict deconstruct_entry);
+  api void destroy_vector(vector * restrict target, const dl_handler *restrict deconstruct_entry);
 
   api natural vector_capacity(const vector * restrict v);
 
   api bool vector_grow(vector * restrict v);
-  api bool vector_shrink(vector * restrict v, handler *deconstruct_entry);
-  api bool vector_resize(vector * restrict v, natural minimum_capacity, handler *deconstruct_entry);
+  api bool vector_shrink(vector * restrict v, dl_handler *deconstruct_entry);
+  api bool vector_resize(vector * restrict v, natural minimum_capacity, dl_handler *deconstruct_entry);
 
   api any vector_get(const vector * restrict v, natural index, any out);
   api const any vector_ref(const vector * restrict v, natural index);
@@ -850,14 +850,14 @@ extern "C" {
   api natural linked_list_copy(linked_list * restrict target, struct linked_list_node *target_position, const linked_list *restrict original);
   api natural linked_list_copy_array(linked_list * restrict target, struct linked_list_node *target_position, const byte *restrict data, natural count);
 
-  api void destroy_linked_list(linked_list * restrict target, handler *restrict deconstruct_entry);
+  api void destroy_linked_list(linked_list * restrict target, dl_handler *restrict deconstruct_entry);
 
   api natural linked_list_capacity(const linked_list * restrict list);
   api natural linked_list_length(const linked_list * restrict list);
 
   api bool linked_list_grow(linked_list * restrict list);
-  api bool linked_list_shrink(linked_list * restrict list, handler *restrict deconstruct_entry);
-  api bool linked_list_resize(linked_list * restrict list, natural minimum_capacity, handler *restrict deconstruct_entry);
+  api bool linked_list_shrink(linked_list * restrict list, dl_handler *restrict deconstruct_entry);
+  api bool linked_list_resize(linked_list * restrict list, natural minimum_capacity, dl_handler *restrict deconstruct_entry);
 
   api any linked_list_get(const linked_list * restrict list, struct linked_list_node *restrict position, any out);
   api const any linked_list_ref(const struct linked_list_node *restrict position);
@@ -866,8 +866,8 @@ extern "C" {
 
   api struct linked_list_node *linked_list_add(linked_list * restrict list, struct linked_list_node *restrict position, any value);
   api any linked_list_remove(linked_list * restrict list, struct linked_list_node * restrict position, any out);
-  api natural linked_list_destroy_range(linked_list * restrict list, struct linked_list_node *restrict position, natural count, handler *restrict destruct_entry);
-  api bool linked_list_destroy(linked_list * restrict list, struct linked_list_node *restrict position, handler *deconstruct_entry);
+  api natural linked_list_destroy_range(linked_list * restrict list, struct linked_list_node *restrict position, natural count, dl_handler *restrict destruct_entry);
+  api bool linked_list_destroy(linked_list * restrict list, struct linked_list_node *restrict position, dl_handler *deconstruct_entry);
 
   api bool linked_list_swap(linked_list * restrict list, struct linked_list_node *restrict position1, struct linked_list_node *restrict position2, bool data);
 
@@ -909,7 +909,7 @@ extern "C" {
     storage_type storage;
     
     comparator comparer;
-    handler deconstruct_entry;
+    dl_handler deconstruct_entry;
     natural capacity;
     natural element_size;
 
@@ -955,7 +955,7 @@ extern "C" {
     iterator (*_collection_begin)(const collection *restrict col);
     iterator (*_collection_end)(const collection *restrict col);
     const any (*_collection_search_region)(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter);
-    bool (*_collection_destroy_at)(collection *restrict col, iterator *iter, handler *destructor);
+    bool (*_collection_destroy_at)(collection *restrict col, iterator *iter, dl_handler *destructor);
     any (*_collection_remove_at)(collection *restrict col, iterator *iter, any out);
     integer (*_collection_destroy_range)(collection *restrict col, iterator *iter, natural count);
     bool (*_collection_insert)(collection *restrict col, iterator *restrict position, any item);
@@ -966,10 +966,10 @@ extern "C" {
   api bool iterator_is_valid(const collection *restrict col, iterator index);
   api iterator make_invalid_iterator(const collection *restrict col);
 
-  api collection *init_collection(collection *restrict col, collection_type type, storage_type storage, comparator *restrict compare, handler *restrict destructor, natural element_size);
+  api collection *init_collection(collection *restrict col, collection_type type, storage_type storage, comparator *restrict compare, dl_handler *restrict destructor, natural element_size);
   api collection *init_collection_custom(collection *restrict col, collection_settings settings, natural element_size);
 
-  api collection *init_collection_array(collection *restrict col, collection_type type, comparator *restrict comp, handler *restrict destruct_entry, byte * data, natural element_size, natural count);
+  api collection *init_collection_array(collection *restrict col, collection_type type, comparator *restrict comp, dl_handler *restrict destruct_entry, byte * data, natural element_size, natural count);
 
   api natural collection_element_size(const collection *restrict col);
 
@@ -3049,7 +3049,7 @@ api vector *init_vector_array(vector * restrict target, byte *data, natural elem
   return target;
 }
 
-api void destroy_vector(vector * restrict target, const handler *deconstruct_entry) {
+api void destroy_vector(vector * restrict target, const dl_handler *deconstruct_entry) {
   any entry;
   natural slice_idx, idx;
   
@@ -3217,7 +3217,7 @@ api bool vector_swap(vector * restrict v, natural index1, natural index2) {
   return true;
 }
 
-api bool vector_shrink(vector * restrict v, handler *restrict deconstruct_entry) {
+api bool vector_shrink(vector * restrict v, dl_handler *restrict deconstruct_entry) {
   byte **new_slices, **existing_slices;
   natural idx;
   any entry;
@@ -3253,7 +3253,7 @@ api bool vector_shrink(vector * restrict v, handler *restrict deconstruct_entry)
   return true;
 }
 
-api bool vector_resize(vector * restrict v, natural minimum_capacity, handler *deconstruct_entry) {
+api bool vector_resize(vector * restrict v, natural minimum_capacity, dl_handler *deconstruct_entry) {
   natural current_capacity, new_slice_count, slice_idx, slice_count, item_idx;
   real needed;
   integer needed_count;
@@ -3480,14 +3480,14 @@ api void _linked_list_node_detach_free(linked_list *restrict list, struct linked
 }
 
 typedef struct {
-  handler *original_destructor;
+  dl_handler *original_destructor;
   linked_list *list;
 } _linked_list_node_deconstructor_data;
 
 api any _linked_list_node_deconstructor(any data, any element) {
   _linked_list_node_deconstructor_data *d;
   struct linked_list_node *f, *e, *new_node;
-  handler *destruct;
+  dl_handler *destruct;
 
   d = (_linked_list_node_deconstructor_data *)data;
   e = (struct linked_list_node *)element;
@@ -3629,7 +3629,7 @@ api natural linked_list_copy_array(linked_list * restrict target, struct linked_
   return count;
 }
 
-api void destroy_linked_list(linked_list * restrict target, handler *restrict deconstruct_entry) {
+api void destroy_linked_list(linked_list * restrict target, dl_handler *restrict deconstruct_entry) {
   struct linked_list_node *node;
   
   if (safety(target == NULL))
@@ -3676,9 +3676,9 @@ api bool linked_list_grow(linked_list * restrict list) {
   return _linked_list_cache_grow(list) != NULL;
 }
 
-api bool linked_list_shrink(linked_list * restrict list, handler *restrict deconstruct_entry) {
+api bool linked_list_shrink(linked_list * restrict list, dl_handler *restrict deconstruct_entry) {
   _linked_list_node_deconstructor_data data;
-  handler destructor;
+  dl_handler destructor;
   
   if (safety(list == NULL))
     return false;
@@ -3691,9 +3691,9 @@ api bool linked_list_shrink(linked_list * restrict list, handler *restrict decon
   return vector_shrink(&list->node_cache, &destructor);
 }
 
-api bool linked_list_resize(linked_list * restrict list, natural minimum_capacity, handler *restrict deconstruct_entry) {
+api bool linked_list_resize(linked_list * restrict list, natural minimum_capacity, dl_handler *restrict deconstruct_entry) {
   _linked_list_node_deconstructor_data data;
-  handler destructor;
+  dl_handler destructor;
   
   if (safety(list == NULL))
     return false;
@@ -3757,7 +3757,7 @@ api any linked_list_remove(linked_list * restrict list, struct linked_list_node 
   return out;
 }
 
-api bool linked_list_destroy(linked_list * restrict list, struct linked_list_node *position, handler *deconstruct_entry) {
+api bool linked_list_destroy(linked_list * restrict list, struct linked_list_node *position, dl_handler *deconstruct_entry) {
   if (safety(list == NULL || position == NULL))
     return false;
   
@@ -3769,7 +3769,7 @@ api bool linked_list_destroy(linked_list * restrict list, struct linked_list_nod
   return true;
 }
 
-api natural linked_list_destroy_range(linked_list * restrict list, struct linked_list_node *position, natural count, handler *deconstruct_entry) {
+api natural linked_list_destroy_range(linked_list * restrict list, struct linked_list_node *position, natural count, dl_handler *deconstruct_entry) {
   natural removed;
   struct linked_list_node *next;
   
@@ -4204,7 +4204,7 @@ const any collection_search(const collection *restrict col, dl_filter *predicate
 }
 
 api bool collection_destroy_at(collection *restrict col, iterator *iter) {
-  handler *destructor;
+  dl_handler *destructor;
   
   if (safety(col == NULL || !iterator_is_valid(col, *iter)))
     return false;
@@ -5141,7 +5141,7 @@ api const any _linked_list_collection_search_region(const collection *restrict c
   return _collection_linear_search(col, predicate, left, right, iter);
 }
 
-api bool _vector_collection_destroy_at(collection *restrict col, iterator *iter, handler *destructor) {
+api bool _vector_collection_destroy_at(collection *restrict col, iterator *iter, dl_handler *destructor) {
   vector *v;
   natural index, swap_index;
   any item;
@@ -5163,7 +5163,7 @@ api bool _vector_collection_destroy_at(collection *restrict col, iterator *iter,
   return true;
 }
 
-api bool _linked_list_collection_destroy_at(collection *restrict col, iterator *iter, handler *destructor) {
+api bool _linked_list_collection_destroy_at(collection *restrict col, iterator *iter, dl_handler *destructor) {
   struct linked_list_node *next;
   next = iter->linked_list.node->next;
   if (linked_list_destroy(&col->data.linked_list.container, iter->linked_list.node, destructor)) {
@@ -5206,7 +5206,7 @@ api any _linked_list_collection_remove_at(collection *restrict col, iterator *it
   
 api integer _vector_collection_destroy_range(collection *restrict col, iterator *iter, natural count) {
   natural index, start, total;
-  handler destruct;
+  dl_handler destruct;
   vector *v;
   any item;
   
@@ -5304,7 +5304,7 @@ struct collection_dispatch_functions default_vector_collection_dispatch_function
   (iterator (*)(const collection *restrict col))_vector_collection_begin,
   (iterator (*)(const collection *restrict col))_vector_collection_end,
   (const any (*)(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter))_vector_collection_search_region,
-  (bool (*)(collection *restrict col, iterator *iter, handler *destructor))_vector_collection_destroy_at,
+  (bool (*)(collection *restrict col, iterator *iter, dl_handler *destructor))_vector_collection_destroy_at,
   (any (*)(collection *restrict col, iterator *iter, any out))_vector_collection_remove_at,
   (integer (*)(collection *restrict col, iterator *iter, natural count))_vector_collection_destroy_range,
   (bool (*)(collection *restrict col, iterator *restrict position, any item))_vector_collection_insert
@@ -5331,7 +5331,7 @@ struct collection_dispatch_functions default_linked_list_collection_dispatch_fun
   (iterator (*)(const collection *restrict col))_linked_list_collection_begin,
   (iterator (*)(const collection *restrict col))_linked_list_collection_end,
   (const any (*)(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter))_linked_list_collection_search_region,
-  (bool (*)(collection *restrict col, iterator *iter, handler *destructor))_linked_list_collection_destroy_at,
+  (bool (*)(collection *restrict col, iterator *iter, dl_handler *destructor))_linked_list_collection_destroy_at,
   (any (*)(collection *restrict col, iterator *iter, any out))_linked_list_collection_remove_at,
   (integer (*)(collection *restrict col, iterator *iter, natural count))_linked_list_collection_destroy_range,
   (bool (*)(collection *restrict col, iterator *restrict position, any item))_linked_list_collection_insert
@@ -5386,7 +5386,7 @@ void _check_init_collection(collection *restrict col, collection_settings settin
   }
 }
 
-api collection *init_collection(collection *restrict col, collection_type type, storage_type storage, comparator *compare, handler *destructor, natural element_size) {
+api collection *init_collection(collection *restrict col, collection_type type, storage_type storage, comparator *compare, dl_handler *destructor, natural element_size) {
   collection_settings settings;
   
   if (safety(col == NULL || element_size < 1))
@@ -5463,7 +5463,7 @@ api collection *init_collection_custom(collection *restrict col, collection_sett
   return col;
 }
 
-api collection *init_collection_array(collection *restrict col, collection_type type, comparator *comp, handler *deconstruct_entry, byte *data, natural element_size, natural count) {
+api collection *init_collection_array(collection *restrict col, collection_type type, comparator *comp, dl_handler *deconstruct_entry, byte *data, natural element_size, natural count) {
   collection_settings settings;
   
   if (safety(col == NULL || data == NULL))
