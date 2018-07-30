@@ -430,33 +430,35 @@ extern "C" {
 #   define dl_clamp01(x) dl_clamp(x, 0, 1)
 # endif
 
-  dl_api dl_bool approximately_equal(dl_real a, dl_real b, dl_real epsilon);
-  dl_api dl_integer floor_to_integer(dl_real n);
-  dl_api dl_integer ceil_to_integer(dl_real n);
-  dl_api dl_integer round_to_integer(dl_real n);
-  dl_api dl_real rationalize(dl_real value, dl_natural decimal_points);
+  dl_api dl_bool dl_approximately_equal(dl_real a, dl_real b, dl_real epsilon);
+  dl_api dl_integer dl_floor_to_integer(dl_real n);
+  dl_api dl_integer dl_ceil_to_integer(dl_real n);
+  dl_api dl_integer dl_round_to_integer(dl_real n);
+  dl_api dl_real dl_rationalize(dl_real value, dl_natural decimal_points);
 
-  dl_api dl_real degree_to_radian(dl_real degree);
-  dl_api dl_real radian_to_degree(dl_real radian);
-  dl_api dl_integer factorial(dl_integer n);
+  dl_api dl_real dl_degree_to_radian(dl_real degree);
+  dl_api dl_real dl_radian_to_degree(dl_real radian);
+  dl_api dl_integer dl_factorial(dl_integer n);
   
-# define _sqrt(v) sqrt(v)
-# define _cos(v) cos(v)
-# define _sin(v) sin(v)
-# define _tan(v) tan(v)
-# define _acos(v) acos(v)
-# define _asin(v) asin(v)
-# define _atan(v) atan(v)
-# define _pow(a, b) pow((a), (b))
-# define _exp(v) exp(v)
-# define _floor(v) floor(v)
-# define _ceil(v) ceil(v)
-# define _abs(v) ((v) > 0 ? (v) : -(v))
+# define dl_sqrt(v) sqrt(v)
+# define dl_cos(v) cos(v)
+# define dl_sin(v) sin(v)
+# define dl_tan(v) tan(v)
+# define dl_acos(v) acos(v)
+# define dl_asin(v) asin(v)
+# define dl_atan(v) atan(v)
+# define dl_pow(a, b) pow((a), (b))
+# define dl_exp(v) exp(v)
+# define dl_floor(v) floor(v)
+# define dl_ceil(v) ceil(v)
+# define dl_abs(v) ((v) > 0 ? (v) : -(v))
 
 # if !DL_IS_ATLEAST_C99
-#   define _hypot(a, b) _sqrt((a) * (a) + (b) * (b))
+#   define dl_hypot(a, b) dl_sqrt((a) * (a) + (b) * (b))
+#   define dl_round(a) dl_floor(a)
 #else
-#   define _hypot(a, b) hypot((a), (b))
+#   define dl_hypot(a, b) hypot((a), (b))
+#   define dl_round(a) roundf(a)
 #endif
 
   typedef struct {
@@ -1210,29 +1212,29 @@ const vec2 vec2_one = { 1, 1 };
 const vec3 vec3_one = { 1, 1, 1, 0 };
 const point3 point3_one = { 1, 1, 1, 1 };
 
-dl_api dl_bool approximately_equal(dl_real a, dl_real b, dl_real epsilon) {
-  return _abs(a - b) < epsilon;
+dl_api dl_bool dl_approximately_equal(dl_real a, dl_real b, dl_real epsilon) {
+  return dl_abs(a - b) < epsilon;
 }
 
-dl_api dl_integer floor_to_integer(dl_real n) {
-  return (dl_integer)_floor(n);
+dl_api dl_integer dl_floor_to_integer(dl_real n) {
+  return (dl_integer)dl_floor(n);
 }
 
-dl_api dl_integer ceil_to_integer(dl_real n) {
-  return (dl_integer)_ceil(n);
+dl_api dl_integer dl_ceil_to_integer(dl_real n) {
+  return (dl_integer)dl_ceil(n);
 }
 
-dl_api dl_integer round_to_integer(dl_real n) {
+dl_api dl_integer dl_round_to_integer(dl_real n) {
 #if !DL_IS_ATLEAST_C99
-  dl_real floored = _floor(n);
+  dl_real floored = dl_floor(n);
   dl_real frac = n - floored;
   return frac > 0.5 ? (dl_integer)(floored + 1) : (dl_integer)floored;
 #else
-  return (dl_integer)lround(n);
+  return (dl_integer)dl_round(n);
 #endif
 }
 
-dl_api dl_real rationalize(dl_real value, dl_natural decimal_points) {
+dl_api dl_real dl_rationalize(dl_real value, dl_natural decimal_points) {
 #if !DL_IS_ATLEAST_C99
   dl_real d = (dl_real)pow(10, (dl_real)decimal_points);
   dl_real floored = floor(value);
@@ -1244,25 +1246,25 @@ dl_api dl_real rationalize(dl_real value, dl_natural decimal_points) {
   value = frac > 0.5 ? (floored + 1) : floored;
   return n + (value / d);
 #else  
-  dl_real d = (dl_real)_pow(10, (dl_real)decimal_points);
-  dl_real n = (dl_real)roundf(value);
+  dl_real d = (dl_real)dl_pow(10, (dl_real)decimal_points);
+  dl_real n = (dl_real)dl_round(value);
   return n + (roundf((value - n) * d) / d);
 #endif
 }
 
-dl_api dl_real degree_to_radian(dl_real degree) {
+dl_api dl_real dl_degree_to_radian(dl_real degree) {
   static const dl_real factor = 0.01745329252f;
   return degree * factor;
 }
 
-dl_api dl_real radian_to_degree(dl_real radian) {
+dl_api dl_real dl_radian_to_degree(dl_real radian) {
   static const dl_real factor = 57.2957795131f;
   return radian * factor;
 }
 
 dl_integer _factorial_cache[13] = { 1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600 };
 
-dl_api dl_integer factorial(dl_integer n) {
+dl_api dl_integer dl_factorial(dl_integer n) {
   dl_integer i;
   if (dl_likely((dl_natural)n < sizeof(_factorial_cache)))
     return _factorial_cache[n];
@@ -1284,9 +1286,9 @@ dl_api random_state *init_random_custom(random_state *state, dl_integer m, dl_in
   if (dl_safety(state == NULL))
     return NULL;
 
-  state->m = _abs(m);
-  state->a = _abs(a);
-  state->c = _abs(c);
+  state->m = dl_abs(m);
+  state->a = dl_abs(a);
+  state->c = dl_abs(c);
   state->seed = (a * seed + c) % m;
 
   return state;
@@ -1315,7 +1317,7 @@ dl_api dl_integer random_integer(random_state *state, dl_integer max) {
 
   state->seed = (state->a * state->seed + state->c) % state->m;
 
-  return _abs(state->seed) % max;
+  return dl_abs(state->seed) % max;
 }
 
 dl_api dl_integer random_integer_range(random_state *state, dl_integer min, dl_integer max) {
@@ -1430,7 +1432,7 @@ dl_api vec2 *vec2_normalize(const vec2 *dl_restrict left, vec2 *dl_restrict out)
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
 
-  inv_magnitude = 1.0f / _hypot(left->x, left->y);
+  inv_magnitude = 1.0f / dl_hypot(left->x, left->y);
   vec2_mul_scalar(left, inv_magnitude, out);
 
   return out;
@@ -1468,7 +1470,7 @@ dl_api dl_real vec2_magnitude(const vec2 *dl_restrict left) {
   if (dl_safety(left == NULL))
     return 0;
   
-  return _hypot(left->x, left->y);
+  return dl_hypot(left->x, left->y);
 }
 
 dl_api vec2 *vec2_reflect(const vec2 *dl_restrict left, const vec2 *dl_restrict normal, vec2 *dl_restrict out) {
@@ -1492,7 +1494,7 @@ dl_api vec2 *vec2_refract(const vec2 *dl_restrict left, const vec2 *dl_restrict 
     return out;
   }
 
-  return vec2_sub(vec2_mul_scalar(left, eta, &t), vec2_mul_scalar(normal, eta * dot * _sqrt(k), out), out);
+  return vec2_sub(vec2_mul_scalar(left, eta, &t), vec2_mul_scalar(normal, eta * dot * dl_sqrt(k), out), out);
 }
 
 
@@ -1619,7 +1621,7 @@ dl_api dl_real vec4_square_magnitude(const vec4 *dl_restrict left) {
 }
 
 dl_api dl_real vec4_magnitude(const vec4 *dl_restrict left) {
-  return _sqrt(vec4_square_magnitude(left));
+  return dl_sqrt(vec4_square_magnitude(left));
 }
 
 dl_api dl_bool vec4_approximately_equal(const vec4 *dl_restrict left, const vec4 *dl_restrict right, dl_real epsilon) {
@@ -1837,7 +1839,7 @@ dl_api vec3 *vec3_normalize(const vec3 *dl_restrict left, vec3 *dl_restrict out)
 }
 
 dl_api dl_bool vec3_normalized(const vec3 *dl_restrict left) {
-  return approximately_equal(fabs(left->x) + fabs(left->y) + fabs(left->z), 1.0, DL_EPSILON);
+  return dl_approximately_equal(fabs(left->x) + fabs(left->y) + fabs(left->z), 1.0, DL_EPSILON);
 }
 
 dl_api vec3 *vec3_negate(const vec3 *dl_restrict left, vec3 *dl_restrict out) {
@@ -1866,7 +1868,7 @@ dl_api dl_real vec3_square_magnitude(const vec3 *dl_restrict left) {
 }
 
 dl_api dl_real vec3_magnitude(const vec3 *dl_restrict left) {
-  return _sqrt(vec3_square_magnitude(left));
+  return dl_sqrt(vec3_square_magnitude(left));
 }
 
 dl_api vec3 *vec3_rotate(const vec3 *dl_restrict left, const vec3 *dl_restrict axis, const dl_real angle, vec3 *dl_restrict out) {
@@ -1896,7 +1898,7 @@ dl_api vec3 *vec3_refract(const vec3 *dl_restrict left, const vec3 *dl_restrict 
     return out;
   }
 
-  return vec3_sub(vec3_mul_scalar(left, eta, &t), vec3_mul_scalar(normal, eta * dot * _sqrt(k), out), out);
+  return vec3_sub(vec3_mul_scalar(left, eta, &t), vec3_mul_scalar(normal, eta * dot * dl_sqrt(k), out), out);
 }
 
 
@@ -2006,7 +2008,7 @@ dl_bool mat4_approximately_equal(const mat4 *dl_restrict left, const mat4 *dl_re
 
   for (i = 0; i < 4; ++i)
     for (j = 0; j < 4; ++j)
-      if (_abs(left->ary[i][j] - right->ary[i][j]) > epsilon)
+      if (dl_abs(left->ary[i][j] - right->ary[i][j]) > epsilon)
 	return false;
   
   return true;
@@ -2127,8 +2129,8 @@ dl_api mat4 *init_mat4_rotate_x(mat4 * dl_restrict m, dl_real radians) {
     return NULL;
 
 #if DL_USE_LEFT_HANDED
-  c = _cos(-radians);
-  s = _sin(-radians);
+  c = dl_cos(-radians);
+  s = dl_sin(-radians);
 
   return init_mat4(m,
 		   1,  0,  0, 0,
@@ -2140,8 +2142,8 @@ dl_api mat4 *init_mat4_rotate_x(mat4 * dl_restrict m, dl_real radians) {
   c = (dl_real)cos(radians);
   s = (dl_real)sin(radians);
 # else
-  c = _cos(radians);
-  s = _sin(radians);
+  c = dl_cos(radians);
+  s = dl_sin(radians);
 # endif
 
   return init_mat4(m,
@@ -2159,8 +2161,8 @@ dl_api mat4 *init_mat4_rotate_y(mat4 * dl_restrict m, dl_real radians) {
     return NULL;
   
 #if DL_USE_LEFT_HANDED
-  c = _cos(-radians);
-  s = _sin(-radians);
+  c = dl_cos(-radians);
+  s = dl_sin(-radians);
   
   return init_mat4(m,
 		   c,  0, s, 0,
@@ -2168,8 +2170,8 @@ dl_api mat4 *init_mat4_rotate_y(mat4 * dl_restrict m, dl_real radians) {
 		   -s, 0, c, 0,
 		   0,  0, 0, 1);
 #else
-  c = _cos(radians);
-  s = _sin(radians);
+  c = dl_cos(radians);
+  s = dl_sin(radians);
   
   return init_mat4(m,
 		   c, 0, -s, 0,
@@ -2185,8 +2187,8 @@ dl_api mat4 *init_mat4_rotate_z(mat4 * dl_restrict m, dl_real radians) {
   if (dl_safety(m == NULL))
     return NULL;
 
-  c = _cos(radians);
-  s = _sin(radians);
+  c = dl_cos(radians);
+  s = dl_sin(radians);
   
   return init_mat4(m,
 		   c,  s, 0, 0,
@@ -2213,8 +2215,8 @@ dl_api mat4 *init_mat4_rotate(mat4 * dl_restrict m, const vec3 *dl_restrict a, d
     t = *a;
 
 #if DL_USE_LEFT_HANDED
-  c = _cos(-radians);
-  s = _sin(-radians);
+  c = dl_cos(-radians);
+  s = dl_sin(-radians);
   vec3_mul_scalar(&t, 1.0 - c, &i);  
 
   return init_mat4(m,
@@ -2223,8 +2225,8 @@ dl_api mat4 *init_mat4_rotate(mat4 * dl_restrict m, const vec3 *dl_restrict a, d
 		   -(i.z * t.x + s * t.y), -(i.z * t.y - s * t.x), c + i.z * t.z,          0,
 		   0, 0, 0, 1);
 #else
-  c = _cos(radians);
-  s = _sin(radians);
+  c = dl_cos(radians);
+  s = dl_sin(radians);
   vec3_mul_scalar(&t, 1.0 - c, &i);  
 
   return init_mat4(m,
@@ -2290,7 +2292,7 @@ dl_api mat4 *init_mat4_perspective(mat4 * dl_restrict m, dl_real vertical_fov, d
     return NULL;
 
   half_fov = vertical_fov * 0.5f;
-  invan_fov = 1.0 / _tan(half_fov);
+  invan_fov = 1.0 / dl_tan(half_fov);
   neg_depth = z_near - z_far;
   inv_neg_depth = 1.0 / neg_depth;
 
@@ -2398,11 +2400,11 @@ dl_api dl_real ease_quintic(ease_direction d, dl_real p) {
 dl_api dl_real ease_sinusoidal(ease_direction d, dl_real p) {
   switch (d) {
   case EASE_IN:
-    return 1.0 - _cos(p * DL_PI * 0.5f);
+    return 1.0 - dl_cos(p * DL_PI * 0.5f);
   case EASE_OUT:
-    return _sin(p * DL_PI * 0.5f);
+    return dl_sin(p * DL_PI * 0.5f);
   case EASE_INOUT:
-    return 0.5f * (1 - _cos(DL_PI * p));
+    return 0.5f * (1 - dl_cos(DL_PI * p));
   }
   return 0;
 }
@@ -2410,14 +2412,14 @@ dl_api dl_real ease_sinusoidal(ease_direction d, dl_real p) {
 dl_api dl_real ease_exponential(ease_direction d, dl_real p) {
   switch (d) {
   case EASE_IN:
-    return _pow(1024.0, (p - 1.0));
+    return dl_pow(1024.0, (p - 1.0));
   case EASE_OUT:
-    return 1.0 - _pow(2.0, -10.0 * p);
+    return 1.0 - dl_pow(2.0, -10.0 * p);
   case EASE_INOUT:
     p = 2.0 * p;
     if (p < 1.0)
-      return 0.5f * _pow(1024.0, (p - 1.0));
-    return 0.5f * (2.0 - _pow(2.0, -10.0 * (p - 1.0)));
+      return 0.5f * dl_pow(1024.0, (p - 1.0));
+    return 0.5f * (2.0 - dl_pow(2.0, -10.0 * (p - 1.0)));
   }
   return 0;
 }
@@ -2425,17 +2427,17 @@ dl_api dl_real ease_exponential(ease_direction d, dl_real p) {
 dl_api dl_real ease_circular(ease_direction d, dl_real p) {
   switch (d) {
   case EASE_IN:
-    return 1.0 - _sqrt(1.0 - (p * p));
+    return 1.0 - dl_sqrt(1.0 - (p * p));
   case EASE_OUT:
     p = p - 1.0;
-    return _sqrt(1.0 - (p * p));
+    return dl_sqrt(1.0 - (p * p));
   case EASE_INOUT:
     p = 2.0 * p;
     if (p < 1.0)
-      return -0.5f * (_sqrt(1.0 - (p * p)) - 1.0);
+      return -0.5f * (dl_sqrt(1.0 - (p * p)) - 1.0);
 
     p = p - 2.0;
-    return 0.5f * (_sqrt(1.0 - (p * p)) + 1.0);
+    return 0.5f * (dl_sqrt(1.0 - (p * p)) + 1.0);
   }
   return 0;
 }
@@ -2449,19 +2451,19 @@ dl_api dl_real ease_elastic(ease_direction d, dl_real p) {
 
 dl_api dl_real ease_elastic_tunable(ease_direction d, dl_real p, dl_real a, dl_real k) {
   dl_real invk = 1.0 / k;
-  dl_real s = a < 1.0 ? (k * 0.25f) : (k * _asin(1.0 / a) * 0.5f * DL_INV_PI);
+  dl_real s = a < 1.0 ? (k * 0.25f) : (k * dl_asin(1.0 / a) * 0.5f * DL_INV_PI);
 
   switch (d) {
   case EASE_IN:
     p = p - 1.0;
-    return -(a * _pow(2.0, 10.0 * p) * _sin((p - s) * 2.0 * DL_PI * invk));
+    return -(a * dl_pow(2.0, 10.0 * p) * dl_sin((p - s) * 2.0 * DL_PI * invk));
   case EASE_OUT:
-    return 1.0 + (a * _pow(2.0, -10.0 * p) * _sin((p - s) * 2.0 * DL_PI * invk));
+    return 1.0 + (a * dl_pow(2.0, -10.0 * p) * dl_sin((p - s) * 2.0 * DL_PI * invk));
   case EASE_INOUT:
     p = p * 2.0;
     if (p < 1)
-      return -0.5f * a * _pow(2.0, 10.0 * (p - 1.0)) * _sin((p - 1 - s) * 2.0 * DL_PI * invk);
-    return 1.0 + (0.5f * a * _pow(2.0, -10.0 * (p - 1.0)) * _sin((p - 1 - s) * 2.0 * DL_PI * invk));
+      return -0.5f * a * dl_pow(2.0, 10.0 * (p - 1.0)) * dl_sin((p - 1 - s) * 2.0 * DL_PI * invk);
+    return 1.0 + (0.5f * a * dl_pow(2.0, -10.0 * (p - 1.0)) * dl_sin((p - 1 - s) * 2.0 * DL_PI * invk));
   }
   return 0;
 }
@@ -2549,7 +2551,7 @@ dl_real *select_linear(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl
   
   max_idx = l - 1;
   scaled_p = (dl_real)max_idx * p;
-  idx = (dl_natural)_floor(scaled_p);
+  idx = (dl_natural)dl_floor(scaled_p);
   next_idx = idx + 1;
   
   if (dl_unlikely(next_idx > max_idx)) {
@@ -2569,7 +2571,7 @@ dl_real *select_catmullrom(const dl_real *dl_restrict v, dl_natural l, dl_real p
   
   max_idx = l - 1;
   target = (dl_real)max_idx * p;
-  idx = (dl_natural)_floor(target);
+  idx = (dl_natural)dl_floor(target);
 
   a_idx = dl_unlikely(0 < idx) ? idx - 1 : 0;
   b_idx = idx;
@@ -2611,7 +2613,7 @@ point2 *select_linear_point2(const point2 *dl_restrict v, dl_natural l, dl_real 
   
   max_idx = l - 1;
   scaled_p = (dl_real)max_idx * p;
-  idx = (dl_natural)_floor(scaled_p);
+  idx = (dl_natural)dl_floor(scaled_p);
   next_idx = idx + 1;
 
   if (dl_unlikely(next_idx > max_idx)) {
@@ -2631,7 +2633,7 @@ point2 *select_bezier_point2(const point2 *dl_restrict v, dl_natural l, dl_real 
   max_idx = l - 1;
   degree = dl_clamp(DL_BEZIER_DEGREE, 1, max_idx);
   target = (dl_real)max_idx * p;
-  idx = (dl_natural)_floor(target);
+  idx = (dl_natural)dl_floor(target);
 
   for (i = 0; i < degree + 1; ++i) {
     desired_idx = idx + i;
@@ -2657,7 +2659,7 @@ point2 *select_catmullrom_point2(const point2 *dl_restrict v, dl_natural l, dl_r
   
   max_idx = l - 1;
   target = (dl_real)max_idx * p;
-  idx = (dl_natural)_floor(target);
+  idx = (dl_natural)dl_floor(target);
 
   a_idx = dl_unlikely(0 < idx) ? idx - 1 : 0;
   b_idx = idx;
@@ -2705,7 +2707,7 @@ point3 *select_linear_point3(const point3 *dl_restrict v, dl_natural l, dl_real 
   
   max_idx = l - 1;
   scaled_p = (dl_real)max_idx * p;
-  idx = (dl_natural)_floor(scaled_p);
+  idx = (dl_natural)dl_floor(scaled_p);
   next_idx = idx + 1;
 
   if (dl_unlikely(next_idx > max_idx)) {
@@ -2724,7 +2726,7 @@ point3 *select_bezier_point3(const point3 *dl_restrict v, dl_natural l, dl_real 
   
   max_idx = l - 1;
   target = (dl_real)max_idx * p;
-  idx = (dl_natural)_floor(target);
+  idx = (dl_natural)dl_floor(target);
 
   for (i = 0; i < DL_BEZIER_DEGREE + 1; ++i) {
     desired_idx = idx + i;
@@ -2747,7 +2749,7 @@ point3 *select_catmullrom_point3(const point3 *dl_restrict v, dl_natural l, dl_r
   
   max_idx = l - 1;
   target = (dl_real)max_idx * p;
-  idx = (dl_natural)_floor(target);
+  idx = (dl_natural)dl_floor(target);
 
   a_idx = dl_unlikely(0 < idx) ? idx - 1 : 0;
   b_idx = idx;

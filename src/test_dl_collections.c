@@ -109,7 +109,7 @@ dl_bool _confirm_properties(collection *c, const char *type_name) {
 	       "%s: Expected iterators to monotonically decrease.", type_name))
       return false;
 
-    if (!dl_check(_abs(*(dl_integer *)item) <= 20,
+    if (!dl_check(dl_abs(*(dl_integer *)item) <= 20,
 	       "%s: expected all test values to be -20<=x<=20, found %i.",
 	       type_name, *(dl_integer *)item))
       return false;
