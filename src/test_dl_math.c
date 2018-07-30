@@ -3,10 +3,10 @@
 #if DL_USE_MATH && DL_USE_TEST
 
 /* For testing purposes; MAX * MAX should be a sane value */
-real MIN_REAL = -1024;
-real MAX_REAL = 1024;
+dl_real MIN_REAL = -1024;
+dl_real MAX_REAL = 1024;
 
-bool test_approximately_equal() {
+dl_bool test_approximately_equal() {
   if (!check(approximately_equal(0.5f, 0.51f, 0.01f),
     "Expected 0.5 ~= 0.51"))
     return false;
@@ -19,7 +19,7 @@ bool test_approximately_equal() {
   return true;
 }
 
-bool test_floor_to_integer() {
+dl_bool test_floor_to_integer() {
   if (!check(floor_to_integer(0.1f) == 0,
     "Expected 0.1 to become 0"))
     return false;
@@ -31,7 +31,7 @@ bool test_floor_to_integer() {
   return true;
 }
 
-bool test_ceil_to_integer() {
+dl_bool test_ceil_to_integer() {
   if (!check(ceil_to_integer(0.1f) == 1,
     "Expected 0.1 to become 1"))
     return false;
@@ -43,7 +43,7 @@ bool test_ceil_to_integer() {
   return true;
 }
 
-bool test_round_to_integer() {
+dl_bool test_round_to_integer() {
   if (!check(round_to_integer(0.1f) == 0,
     "Expected 0.1 to become 0"))
     return false;
@@ -55,21 +55,21 @@ bool test_round_to_integer() {
   return true;
 }
 
-bool test_min() {
+dl_bool test_min() {
   if (!check(min(0, 1) == 0,
     "Expected 0 to be less than 1"))
     return false;
   return true;
 }
 
-bool test_max() {
+dl_bool test_max() {
   if (!check(max(0, 1) == 1,
     "Expected 0 to be less than 1"))
     return false;
   return true;
 }
 
-bool test_clamp() {
+dl_bool test_clamp() {
   if (!check(clamp(5, 1, 2) == 2,
     "Expected 5 to clamp to 2"))
     return false;
@@ -85,7 +85,7 @@ bool test_clamp() {
   return true;
 }
 
-bool test_factorial() {
+dl_bool test_factorial() {
   if (!check(factorial(3) == 6,
     "Expected %i to be 6", factorial(3)))
     return false;
@@ -101,7 +101,7 @@ bool test_factorial() {
   return true;
 }
 
-bool test_rationalize() {
+dl_bool test_rationalize() {
   if (!check(approximately_equal(rationalize(0.05f, 1), 0.1f, M_EPSILON),
     "Expected %f to be 0.1", rationalize(0.05f, 1)))
     return false;
@@ -113,23 +113,23 @@ bool test_rationalize() {
   return true;
 }
 
-bool test_degree_to_radian() {
-  real result;
+dl_bool test_degree_to_radian() {
+  dl_real result;
   result = degree_to_radian(286.5);
   return check(approximately_equal(result, 5.0f, M_EPSILON),
     "Expected %f to equal %f", result, 5.0);
 }
 
-bool test_radian_to_degree() {
-  real result;
+dl_bool test_radian_to_degree() {
+  dl_real result;
   result = radian_to_degree(5.0);
   return check(approximately_equal(result, 286.5f, 0.1f),
     "Expected %f to equal %f", result, 286.5f);
 }
 
-bool test_random_degree() {
+dl_bool test_random_degree() {
   random_state r;
-  real value;
+  dl_real value;
   
   init_random_time(&r);
   
@@ -140,9 +140,9 @@ bool test_random_degree() {
   return true;
 }
 
-bool test_random_radian() {
+dl_bool test_random_radian() {
   random_state r;
-  real value;
+  dl_real value;
   
   init_random_time(&r);
   
@@ -153,9 +153,9 @@ bool test_random_radian() {
   return true;
 }
 
-bool test_random_real() {
+dl_bool test_random_real() {
   random_state r;
-  real value;
+  dl_real value;
   init_random_time(&r);
   
   value = random_real(&r, M_PI);
@@ -165,9 +165,9 @@ bool test_random_real() {
   return true;
 }
 
-bool test_random_real_range() {
+dl_bool test_random_real_range() {
   random_state r;
-  real value;
+  dl_real value;
   init_random_time(&r);
   
   value = random_real_range(&r, -M_PI, 0);
@@ -177,9 +177,9 @@ bool test_random_real_range() {
   return true;
 }
 
-bool test_random() {
+dl_bool test_random() {
   random_state r;
-  integer value;
+  dl_integer value;
   init_random_time(&r);
   
   value = random_integer(&r, 1337);
@@ -189,9 +189,9 @@ bool test_random() {
   return true;
 }
 
-bool test_random_range() {
+dl_bool test_random_range() {
   random_state r;
-  integer value;
+  dl_integer value;
   init_random_time(&r);
   
   value = random_integer_range(&r, -1337, 0);
@@ -203,10 +203,10 @@ bool test_random_range() {
 
 
 
-bool test_init_vec2() {
+dl_bool test_init_vec2() {
   vec2 vec;
   random_state r;
-  real a,b;
+  dl_real a,b;
   init_random_time(&r);
   
   a = random_real_range(&r, MIN_REAL, MAX_REAL);
@@ -220,10 +220,10 @@ bool test_init_vec2() {
       "Expected y to be %f, was %f", b, vec.y);
 }
 
-bool test_vec2_add() {
+dl_bool test_vec2_add() {
   vec2 vec_a;
   vec2 vec_b;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -243,10 +243,10 @@ bool test_vec2_add() {
       "Expected y to be %f, was %f", b + d, vec_b.y);
 }
 
-bool test_vec2_sub() {
+dl_bool test_vec2_sub() {
   vec2 vec_a;
   vec2 vec_b;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -266,9 +266,9 @@ bool test_vec2_sub() {
       "Expected y to be %f, was %f", b - d, vec_b.y);
 }
 
-bool test_vec2_mul_scalar() {
+dl_bool test_vec2_mul_scalar() {
   vec2 vec;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -286,9 +286,9 @@ bool test_vec2_mul_scalar() {
       "Expected y to be %f, was %f", b * c, vec.y);
 }
 
-bool test_vec2_div_scalar() {
+dl_bool test_vec2_div_scalar() {
   vec2 vec;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -306,9 +306,9 @@ bool test_vec2_div_scalar() {
       "Expected y to be %f, was %f", b / c, vec.y);
 }
 
-bool test_vec2_add_scalar() {
+dl_bool test_vec2_add_scalar() {
   vec2 vec;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -326,9 +326,9 @@ bool test_vec2_add_scalar() {
       "Expected y to be %f, was %f", b + c, vec.y);
 }
 
-bool test_vec2_sub_scalar() {
+dl_bool test_vec2_sub_scalar() {
   vec2 vec;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -346,9 +346,9 @@ bool test_vec2_sub_scalar() {
       "Expected y to be %f, was %f", b - c, vec.y);
 }
 
-bool test_vec2_normalize() {
+dl_bool test_vec2_normalize() {
   vec2 vec;
-  real a,b,sqr_m,inv_m;
+  dl_real a,b,sqr_m,inv_m;
   random_state r;
   init_random_time(&r);
   
@@ -374,9 +374,9 @@ bool test_vec2_normalize() {
       "Expected magnitude to be 1");
 }
 
-bool test_vec2_negate() {
+dl_bool test_vec2_negate() {
   vec2 vec;
-  real a,b;
+  dl_real a,b;
   random_state r;
   init_random_time(&r);
   
@@ -393,10 +393,10 @@ bool test_vec2_negate() {
       "Expected y to be %f, was %f", -b, vec.y);
 }
 
-bool test_vec2_dot() {
+dl_bool test_vec2_dot() {
   vec2 vec_a;
   vec2 vec_b;
-  real a,b,c,d,dot,expected;
+  dl_real a,b,c,d,dot,expected;
   random_state r;
   init_random_time(&r);
   
@@ -415,10 +415,10 @@ bool test_vec2_dot() {
     "Expected dot product to be %f, was %f", expected, dot);
 }
 
-bool test_vec2_approximately_equal() {
+dl_bool test_vec2_approximately_equal() {
   vec2 vec_a;
   vec2 vec_b;
-  real a,b;
+  dl_real a,b;
   random_state r;
   init_random_time(&r);
   
@@ -471,9 +471,9 @@ bool test_vec2_approximately_equal() {
   return true;
 }
 
-bool test_vec2_square_magnitude() {
+dl_bool test_vec2_square_magnitude() {
   vec2 vec;
-  real a,b,m,expected_m;
+  dl_real a,b,m,expected_m;
   random_state r;
   init_random_time(&r);
   
@@ -489,9 +489,9 @@ bool test_vec2_square_magnitude() {
     "Expected %f ~= %f", m, expected_m);
 }
 
-bool test_vec2_magnitude() {
+dl_bool test_vec2_magnitude() {
   vec2 vec;
-  real a,b,m,expected_m;
+  dl_real a,b,m,expected_m;
   random_state r;
   init_random_time(&r);
   
@@ -512,7 +512,7 @@ bool test_vec2_magnitude() {
     "Expected %f ~= %f", m, expected_m);
 }
 
-bool test_vec2_reflect() {
+dl_bool test_vec2_reflect() {
   vec2 in, out, result;
   in.x = 0.5;
   in.y = 0.5;
@@ -539,7 +539,7 @@ bool test_vec2_reflect() {
   return true;
 }
 
-bool test_vec2_refract() {
+dl_bool test_vec2_refract() {
   vec2 in, out, result;
   in.x = 1.0;
   in.y = 1.0;
@@ -567,9 +567,9 @@ bool test_vec2_refract() {
 
 
 
-bool test_init_point2() {
+dl_bool test_init_point2() {
   point2 point;
-  real a,b;
+  dl_real a,b;
   random_state r;
   init_random_time(&r);
   
@@ -584,10 +584,10 @@ bool test_init_point2() {
       "Expected y to be %f, was %f", b, point.y);
 }
 
-bool test_point2_add() {
+dl_bool test_point2_add() {
   point2 point_a;
   point2 point_b;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -607,10 +607,10 @@ bool test_point2_add() {
       "Expected y to be %f, was %f", b + d, point_b.y);
 }
 
-bool test_point2_sub() {
+dl_bool test_point2_sub() {
   point2 point_a;
   point2 point_b;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -630,9 +630,9 @@ bool test_point2_sub() {
       "Expected y to be %f, was %f", b - d, point_b.y);
 }
 
-bool test_point2_mul_scalar() {
+dl_bool test_point2_mul_scalar() {
   point2 point;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -650,9 +650,9 @@ bool test_point2_mul_scalar() {
       "Expected y to be %f, was %f", b * c, point.y);
 }
 
-bool test_point2_div_scalar() {
+dl_bool test_point2_div_scalar() {
   point2 point;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -670,9 +670,9 @@ bool test_point2_div_scalar() {
       "Expected y to be %f, was %f", b / c, point.y);
 }
 
-bool test_point2_add_scalar() {
+dl_bool test_point2_add_scalar() {
   point2 point;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -690,9 +690,9 @@ bool test_point2_add_scalar() {
       "Expected y to be %f, was %f", b + c, point.y);
 }
 
-bool test_point2_sub_scalar() {
+dl_bool test_point2_sub_scalar() {
   point2 point;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -710,9 +710,9 @@ bool test_point2_sub_scalar() {
       "Expected y to be %f, was %f", b - c, point.y);
 }
 
-bool test_point2_negate() {
+dl_bool test_point2_negate() {
   point2 point;
-  real a,b;
+  dl_real a,b;
   random_state r;
   init_random_time(&r);
   
@@ -729,10 +729,10 @@ bool test_point2_negate() {
       "Expected y to be %f, was %f", -b, point.y);
 }
 
-bool test_point2_approximately_equal() {
+dl_bool test_point2_approximately_equal() {
   point2 point_a;
   point2 point_b;
-  real a,b;
+  dl_real a,b;
   random_state r;
   init_random_time(&r);
   
@@ -785,9 +785,9 @@ bool test_point2_approximately_equal() {
   return true;
 }
 
-bool test_point2_line_orientation() {
+dl_bool test_point2_line_orientation() {
   point2 above, below, on, a, b;
-  real f;
+  dl_real f;
   
   init_point2(&above, 0.0, 1.0);
   init_point2(&below, 1.0, 0.0);
@@ -817,9 +817,9 @@ bool test_point2_line_orientation() {
 
 
 
-bool test_init_vec4() {
+dl_bool test_init_vec4() {
   vec4 vec;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -840,9 +840,9 @@ bool test_init_vec4() {
       "Expected w to be %f, was %f", d, vec.w);
 }
 
-bool test_vec4_add() {
+dl_bool test_vec4_add() {
   vec4 vec_a, vec_b;
-  real a,b,c,d,e,f,g,h;
+  dl_real a,b,c,d,e,f,g,h;
   random_state r;
   init_random_time(&r);
   
@@ -870,9 +870,9 @@ bool test_vec4_add() {
       "Expected w to be %f, was %f", d + h, vec_b.w);
 }
 
-bool test_vec4_sub() {
+dl_bool test_vec4_sub() {
   vec4 vec_a, vec_b;
-  real a,b,c,d,e,f,g,h;
+  dl_real a,b,c,d,e,f,g,h;
   random_state r;
   init_random_time(&r);
   
@@ -900,9 +900,9 @@ bool test_vec4_sub() {
       "Expected w to be %f, was %f", d - h, vec_b.w);
 }
 
-bool test_vec4_mul_scalar() {
+dl_bool test_vec4_mul_scalar() {
   vec4 vec;
-  real a,b,c,d,e;
+  dl_real a,b,c,d,e;
   random_state r;
   init_random_time(&r);
   
@@ -926,9 +926,9 @@ bool test_vec4_mul_scalar() {
       "Expected w to be %f, was %f", d * e, vec.w);
 }
 
-bool test_vec4_div_scalar() {
+dl_bool test_vec4_div_scalar() {
   vec4 vec;
-  real a,b,c,d,e;
+  dl_real a,b,c,d,e;
   random_state r;
   init_random_time(&r);
   
@@ -952,9 +952,9 @@ bool test_vec4_div_scalar() {
       "Expected w to be %f, was %f", d / e, vec.w);
 }
 
-bool test_vec4_add_scalar() {
+dl_bool test_vec4_add_scalar() {
   vec4 vec;
-  real a,b,c,d,e;
+  dl_real a,b,c,d,e;
   random_state r;
   init_random_time(&r);
   
@@ -978,9 +978,9 @@ bool test_vec4_add_scalar() {
       "Expected w to be %f, was %f", d + e, vec.w);
 }
 
-bool test_vec4_sub_scalar() {
+dl_bool test_vec4_sub_scalar() {
   vec4 vec;
-  real a,b,c,d,e;
+  dl_real a,b,c,d,e;
   random_state r;
   init_random_time(&r);
   
@@ -1004,9 +1004,9 @@ bool test_vec4_sub_scalar() {
       "Expected w to be %f, was %f", d - e, vec.w);
 }
 
-bool test_vec4_dot() {
+dl_bool test_vec4_dot() {
   vec4 vec_a, vec_b;
-  real a,b,c,d,e,f,dot,expected;
+  dl_real a,b,c,d,e,f,dot,expected;
   random_state r;
   init_random_time(&r);
   
@@ -1027,9 +1027,9 @@ bool test_vec4_dot() {
     "Expected dot product to be %f, was %f", dot, expected);
 }
 
-bool test_vec4_normalize() {
+dl_bool test_vec4_normalize() {
   vec4 vec;
-  real a,b,c,d,m;
+  dl_real a,b,c,d,m;
   random_state r;
   init_random_time(&r);
   
@@ -1059,9 +1059,9 @@ bool test_vec4_normalize() {
       "Expected magnitude to be 1");
 }
 
-bool test_vec4_negate() {
+dl_bool test_vec4_negate() {
   vec4 vec;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -1083,9 +1083,9 @@ bool test_vec4_negate() {
       "Expected w to be %f, was %f", -d, vec.w);
 }
 
-bool test_vec4_approximately_equal() {
+dl_bool test_vec4_approximately_equal() {
   vec4 vec_a, vec_b;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -1188,9 +1188,9 @@ bool test_vec4_approximately_equal() {
   return true;
 }
 
-bool test_vec4_square_magnitude() {
+dl_bool test_vec4_square_magnitude() {
   vec4 vec;
-  real a,b,c,d,square_m,expected;
+  dl_real a,b,c,d,square_m,expected;
   random_state r;
   init_random_time(&r);
   
@@ -1208,9 +1208,9 @@ bool test_vec4_square_magnitude() {
     "Expected %f to be approximately %f", square_m, expected);
 }
 
-bool test_vec4_magnitude() {
+dl_bool test_vec4_magnitude() {
   vec4 vec;
-  real a,b,c,d,m,expected;
+  dl_real a,b,c,d,m,expected;
   random_state r;
   init_random_time(&r);
   
@@ -1235,9 +1235,9 @@ bool test_vec4_magnitude() {
 
 
 
-bool test_init_point3() {
+dl_bool test_init_point3() {
   point3 point;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -1256,9 +1256,9 @@ bool test_init_point3() {
     check(point.w == 1.0, "Expected w to be 1.0");
 }
 
-bool test_point3_add() {
+dl_bool test_point3_add() {
   point3 point_a, point_b;
-  real a,b,c,d,e,f;
+  dl_real a,b,c,d,e,f;
   random_state r;
   init_random_time(&r);
   
@@ -1283,9 +1283,9 @@ bool test_point3_add() {
     check(point_b.w == 1.0, "Expected w to be 1.0");
 }
 
-bool test_point3_sub() {
+dl_bool test_point3_sub() {
   point3 point_a, point_b;
-  real a,b,c,d,e,f;
+  dl_real a,b,c,d,e,f;
   random_state r;
   init_random_time(&r);
   
@@ -1310,9 +1310,9 @@ bool test_point3_sub() {
     check(point_b.w == 1.0, "Expected w to be 1.0");
 }
 
-bool test_point3_mul_scalar() {
+dl_bool test_point3_mul_scalar() {
   point3 point;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -1334,9 +1334,9 @@ bool test_point3_mul_scalar() {
     check(point.w == 1.0, "Expected w to be 1.0");
 }
 
-bool test_point3_div_scalar() {
+dl_bool test_point3_div_scalar() {
   point3 point;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -1358,9 +1358,9 @@ bool test_point3_div_scalar() {
     check(point.w == 1.0, "Expected w to be 1.0");
 }
 
-bool test_point3_add_scalar() {
+dl_bool test_point3_add_scalar() {
   point3 point;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -1382,9 +1382,9 @@ bool test_point3_add_scalar() {
     check(point.w == 1.0, "Expected w to be 1.0");
 }
 
-bool test_point3_sub_scalar() {
+dl_bool test_point3_sub_scalar() {
   point3 point;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -1406,9 +1406,9 @@ bool test_point3_sub_scalar() {
     check(point.w == 1.0, "Expected w to be 1.0");
 }
 
-bool test_point3_rotate() {
+dl_bool test_point3_rotate() {
   point3 point, expected_x, expected_y, expected_z, out;
-  real angle;
+  dl_real angle;
 
   random_state r;
   init_random_time(&r);
@@ -1472,9 +1472,9 @@ bool test_point3_rotate() {
   return true;
 }
 
-bool test_point3_negate() {
+dl_bool test_point3_negate() {
   point3 point;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -1495,9 +1495,9 @@ bool test_point3_negate() {
     check(point.w == 1.0, "Expected w to be 1.0");
 }
 
-bool test_point3_approximately_equal() {
+dl_bool test_point3_approximately_equal() {
   point3 point_a, point_b;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -1552,9 +1552,9 @@ bool test_point3_approximately_equal() {
 
 
 
-bool test_init_vec3() {
+dl_bool test_init_vec3() {
   vec3 vec;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -1573,9 +1573,9 @@ bool test_init_vec3() {
     check(vec.w == 0.0, "Expected w to be 0.0");
 }
 
-bool test_vec3_add() {
+dl_bool test_vec3_add() {
   vec3 vec_a, vec_b;
-  real a,b,c,d,e,f;
+  dl_real a,b,c,d,e,f;
   random_state r;
   init_random_time(&r);
   
@@ -1600,9 +1600,9 @@ bool test_vec3_add() {
     check(vec_b.w == 0.0, "Expected w to be 0.0");
 }
 
-bool test_vec3_sub() {
+dl_bool test_vec3_sub() {
   vec3 vec_a, vec_b;
-  real a,b,c,d,e,f;
+  dl_real a,b,c,d,e,f;
   random_state r;
   init_random_time(&r);
   
@@ -1627,9 +1627,9 @@ bool test_vec3_sub() {
     check(vec_b.w == 0.0, "Expected w to be 0.0");
 }
 
-bool test_vec3_cross() {
+dl_bool test_vec3_cross() {
   vec3 vec_a, vec_b;
-  real a,b,c,d,e,f,cross_x,cross_y,cross_z;
+  dl_real a,b,c,d,e,f,cross_x,cross_y,cross_z;
   random_state r;
   init_random_time(&r);
   
@@ -1658,9 +1658,9 @@ bool test_vec3_cross() {
     check(vec_b.w == 0.0, "Expected w to be 0.0");
 }
 
-bool test_vec3_dot() {
+dl_bool test_vec3_dot() {
   vec3 vec_a, vec_b;
-  real a,b,c,d,e,f,dot,expected;
+  dl_real a,b,c,d,e,f,dot,expected;
   random_state r;
   init_random_time(&r);
   
@@ -1681,9 +1681,9 @@ bool test_vec3_dot() {
     "Expected dot product to be %f, was %f", dot, expected);
 }
 
-bool test_vec3_mul_scalar() {
+dl_bool test_vec3_mul_scalar() {
   vec3 vec;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -1705,9 +1705,9 @@ bool test_vec3_mul_scalar() {
     check(vec.w == 0.0, "Expected w to be 0.0");
 }
 
-bool test_vec3_div_scalar() {
+dl_bool test_vec3_div_scalar() {
   vec3 vec;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -1729,9 +1729,9 @@ bool test_vec3_div_scalar() {
     check(vec.w == 0.0, "Expected w to be 0.0");
 }
 
-bool test_vec3_add_scalar() {
+dl_bool test_vec3_add_scalar() {
   vec3 vec;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -1753,9 +1753,9 @@ bool test_vec3_add_scalar() {
     check(vec.w == 0.0, "Expected w to be 0.0, was %f", vec.w);
 }
 
-bool test_vec3_sub_scalar() {
+dl_bool test_vec3_sub_scalar() {
   vec3 vec;
-  real a,b,c,d;
+  dl_real a,b,c,d;
   random_state r;
   init_random_time(&r);
   
@@ -1777,9 +1777,9 @@ bool test_vec3_sub_scalar() {
     check(vec.w == 0.0, "Expected w to be 0.0, was %f", vec.w);
 }
 
-bool test_vec3_rotate() {
+dl_bool test_vec3_rotate() {
   vec3 vec, expected_x, expected_y, expected_z, out;
-  real angle;
+  dl_real angle;
 
   /* Identity: no angle */
   vec = vec3_one;
@@ -1839,9 +1839,9 @@ bool test_vec3_rotate() {
   return true;
 }
 
-bool test_vec3_normalize() {
+dl_bool test_vec3_normalize() {
   vec3 vec;
-  real a,b,c,m;
+  dl_real a,b,c,m;
   random_state r;
   init_random_time(&r);
   
@@ -1870,9 +1870,9 @@ bool test_vec3_normalize() {
       "Expected magnitude to be 1");
 }
 
-bool test_vec3_negate() {
+dl_bool test_vec3_negate() {
   vec3 vec;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -1893,9 +1893,9 @@ bool test_vec3_negate() {
     check(vec.w == 0.0, "Expected w to be 0.0");
 }
 
-bool test_vec3_approximately_equal() {
+dl_bool test_vec3_approximately_equal() {
   vec3 point_a, point_b;
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -1948,9 +1948,9 @@ bool test_vec3_approximately_equal() {
   return true;
 }
 
-bool test_vec3_square_magnitude() {
+dl_bool test_vec3_square_magnitude() {
   vec3 vec;
-  real a,b,c,square_m,expected;
+  dl_real a,b,c,square_m,expected;
   random_state r;
   init_random_time(&r);
   
@@ -1967,9 +1967,9 @@ bool test_vec3_square_magnitude() {
     "Expected square magnitude to be %f, was %f", expected, square_m);
 }
 
-bool test_vec3_magnitude() {
+dl_bool test_vec3_magnitude() {
   vec3 vec;
-  real a,b,c,m,expected;
+  dl_real a,b,c,m,expected;
   random_state r;
   init_random_time(&r);
   
@@ -1991,7 +1991,7 @@ bool test_vec3_magnitude() {
     "Expected square magnitude to be %f, was %f", expected, m);
 }
 
-bool test_vec3_reflect() {
+dl_bool test_vec3_reflect() {
   vec3 in, out, result;
   in = out = result = vec3_zero;
   in.x = 0.5;
@@ -2030,7 +2030,7 @@ bool test_vec3_reflect() {
   return true;
 }
 
-bool test_vec3_refract() {
+dl_bool test_vec3_refract() {
   vec3 in, out, result;
   in = out = result = vec3_zero;
   in.x = 1.0;
@@ -2071,12 +2071,12 @@ bool test_vec3_refract() {
 
 
 
-bool test_init_mat4() {
+dl_bool test_init_mat4() {
   mat4 mat;
   vec4 col[4];
-  natural a = 0, b = 1, c = 2, d = 3;
-  natural v_idx, col_idx, row_idx;
-  real mat_val, col_val;
+  dl_natural a = 0, b = 1, c = 2, d = 3;
+  dl_natural v_idx, col_idx, row_idx;
+  dl_real mat_val, col_val;
   random_state r;
   init_random_time(&r);
 
@@ -2093,7 +2093,7 @@ bool test_init_mat4() {
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
       mat_val = mat.ary[col_idx][row_idx];
-      col_val = ((real *)&col[col_idx])[row_idx];
+      col_val = ((dl_real *)&col[col_idx])[row_idx];
       if (!check(approximately_equal(mat_val, col_val, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
         col_idx, row_idx, col_val, mat_val))
@@ -2104,12 +2104,12 @@ bool test_init_mat4() {
   return true;
 }
 
-bool test_mat4_add() {
+dl_bool test_mat4_add() {
   mat4 mat[2];
   vec4 col[4];
-  natural a = 0, b = 1, c = 2, d = 3;
-  natural v_idx, col_idx, row_idx;
-  real v,f;
+  dl_natural a = 0, b = 1, c = 2, d = 3;
+  dl_natural v_idx, col_idx, row_idx;
+  dl_real v,f;
   random_state r;
   init_random_time(&r);  
 
@@ -2128,7 +2128,7 @@ bool test_mat4_add() {
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
-      v = ((real *)&col[col_idx])[row_idx] + ((real *)&col[3 - col_idx])[row_idx];
+      v = ((dl_real *)&col[col_idx])[row_idx] + ((dl_real *)&col[3 - col_idx])[row_idx];
       f = mat[b].ary[col_idx][row_idx];
       if (!check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
@@ -2140,12 +2140,12 @@ bool test_mat4_add() {
   return true;
 }
 
-bool test_mat4_sub() {
+dl_bool test_mat4_sub() {
   mat4 mat[2];
   vec3 col[4];
-  natural a = 0, b = 1, c = 2, d = 3;
-  natural v_idx, col_idx, row_idx;
-  real v,f;
+  dl_natural a = 0, b = 1, c = 2, d = 3;
+  dl_natural v_idx, col_idx, row_idx;
+  dl_real v,f;
   random_state r;
   init_random_time(&r);
   
@@ -2164,7 +2164,7 @@ bool test_mat4_sub() {
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
-      v = ((real *)&col[col_idx])[row_idx] - ((real *)&col[3 - col_idx])[row_idx];
+      v = ((dl_real *)&col[col_idx])[row_idx] - ((dl_real *)&col[3 - col_idx])[row_idx];
       f = mat[b].ary[col_idx][row_idx];
       if (!check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
@@ -2176,11 +2176,11 @@ bool test_mat4_sub() {
   return true;
 }
 
-bool test_mat4_mul() {
+dl_bool test_mat4_mul() {
   mat4 mat[2];
   vec4 col[4];
-  natural v_idx, a = 0, b = 1, c = 2, d = 3;
-  real expected, found;
+  dl_natural v_idx, a = 0, b = 1, c = 2, d = 3;
+  dl_real expected, found;
   random_state r;
   
   init_random_time(&r);
@@ -2319,11 +2319,11 @@ bool test_mat4_mul() {
   return true;
 }
 
-bool test_mat4_mul_vec4() {
-  natural a = 2, b = 3, c = 4, d = 5, i;
+dl_bool test_mat4_mul_vec4() {
+  dl_natural a = 2, b = 3, c = 4, d = 5, i;
   vec4 vec[6];
   mat4 mat;
-  real expected, found;
+  dl_real expected, found;
   random_state r;
   init_random_time(&r);
   
@@ -2371,12 +2371,12 @@ bool test_mat4_mul_vec4() {
   return true;
 }
 
-bool test_mat4_mul_vec3() {
+dl_bool test_mat4_mul_vec3() {
   vec4 mat_vec[4];
   vec3 vec, vec_out;
   mat4 mat;
-  natural i;
-  real expected, found;
+  dl_natural i;
+  dl_real expected, found;
   random_state r;
   init_random_time(&r);
   
@@ -2426,12 +2426,12 @@ bool test_mat4_mul_vec3() {
   return true;
 }
 
-bool test_mat4_mul_point3() {
+dl_bool test_mat4_mul_point3() {
   vec4 mat_vec[4];
   point3 point, point_out;
   mat4 mat;
-  natural i;
-  real expected, found;
+  dl_natural i;
+  dl_real expected, found;
   random_state r;
   init_random_time(&r);
   
@@ -2481,11 +2481,11 @@ bool test_mat4_mul_point3() {
   return true;
 }
 
-bool test_mat4_transpose() {
+dl_bool test_mat4_transpose() {
   mat4 mat;
   vec3 col[4];
-  natural v_idx, a = 0, b = 1, c = 2, d = 3, col_idx, row_idx;
-  real v,f;
+  dl_natural v_idx, a = 0, b = 1, c = 2, d = 3, col_idx, row_idx;
+  dl_real v,f;
   random_state r;
   init_random_time(&r);
   
@@ -2503,7 +2503,7 @@ bool test_mat4_transpose() {
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
-      v = ((real *)&col[row_idx])[col_idx];
+      v = ((dl_real *)&col[row_idx])[col_idx];
       f = mat.ary[col_idx][row_idx];
       if (!check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
@@ -2515,11 +2515,11 @@ bool test_mat4_transpose() {
   return true;
 }
 
-bool test_mat4_mul_scalar() {
+dl_bool test_mat4_mul_scalar() {
   mat4 mat;
   vec3 col[4];
-  natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
-  real scalar, v, f;
+  dl_natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
+  dl_real scalar, v, f;
   random_state r;
   init_random_time(&r);
   
@@ -2539,7 +2539,7 @@ bool test_mat4_mul_scalar() {
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
-      v = ((real *)&col[col_idx])[row_idx] * scalar;
+      v = ((dl_real *)&col[col_idx])[row_idx] * scalar;
       f = mat.ary[col_idx][row_idx];
       if (!check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
@@ -2551,11 +2551,11 @@ bool test_mat4_mul_scalar() {
   return true;
 }
 
-bool test_mat4_div_scalar() {
+dl_bool test_mat4_div_scalar() {
   mat4 mat;
   vec3 col[4];
-  natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
-  real scalar, v, f;
+  dl_natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
+  dl_real scalar, v, f;
   random_state r;
   init_random_time(&r);
   
@@ -2575,7 +2575,7 @@ bool test_mat4_div_scalar() {
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
-      v = ((real *)&col[col_idx])[row_idx] / scalar;
+      v = ((dl_real *)&col[col_idx])[row_idx] / scalar;
       f = mat.ary[col_idx][row_idx];
       if (!check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
@@ -2587,11 +2587,11 @@ bool test_mat4_div_scalar() {
   return true;
 }
 
-bool test_mat4_add_scalar() {
+dl_bool test_mat4_add_scalar() {
   mat4 mat;
   vec3 col[4];
-  natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
-  real v, f, scalar;
+  dl_natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
+  dl_real v, f, scalar;
   random_state r;
   init_random_time(&r);
   
@@ -2611,7 +2611,7 @@ bool test_mat4_add_scalar() {
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
-      v = ((real *)&col[col_idx])[row_idx] + scalar;
+      v = ((dl_real *)&col[col_idx])[row_idx] + scalar;
       f = mat.ary[col_idx][row_idx];
       if (!check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
@@ -2623,11 +2623,11 @@ bool test_mat4_add_scalar() {
   return true;
 }
 
-bool test_mat4_sub_scalar() {
+dl_bool test_mat4_sub_scalar() {
   mat4 mat;
   vec3 col[4];
-  natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
-  real scalar, v, f;
+  dl_natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
+  dl_real scalar, v, f;
   random_state r;
   init_random_time(&r);
   
@@ -2647,7 +2647,7 @@ bool test_mat4_sub_scalar() {
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
-      v = ((real *)&col[col_idx])[row_idx] - scalar;
+      v = ((dl_real *)&col[col_idx])[row_idx] - scalar;
       f = mat.ary[col_idx][row_idx];
       if (!check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
@@ -2659,11 +2659,11 @@ bool test_mat4_sub_scalar() {
   return true;
 }
 
-bool test_mat4_translate() {
+dl_bool test_mat4_translate() {
   mat4 mat;
   point3 point[2];
   vec3 vec[2];
-  real a,b,c;
+  dl_real a,b,c;
   random_state r;
   init_random_time(&r);
   
@@ -2693,9 +2693,9 @@ bool test_mat4_translate() {
   return true;
 }
 
-bool test_mat4_rotate() {
+dl_bool test_mat4_rotate() {
   random_state r;
-  real angle, a, b, c;
+  dl_real angle, a, b, c;
   vec3 vec[3];
   mat4 mat[2];
   
@@ -2744,10 +2744,10 @@ bool test_mat4_rotate() {
   return true;
 }
 
-bool test_mat4_rotate_x() {
+dl_bool test_mat4_rotate_x() {
   mat4 mat;
   vec3 vec;
-  real angle;
+  dl_real angle;
 #if USE_LEFT_HANDED
   vec3 expected[4];
   expected[0] = vec3_forward;
@@ -2801,10 +2801,10 @@ bool test_mat4_rotate_x() {
   return true;
 }
 
-bool test_mat4_rotate_y() {
+dl_bool test_mat4_rotate_y() {
   mat4 mat;
   vec3 vec;
-  real angle;
+  dl_real angle;
 #if USE_LEFT_HANDED
   vec3 expected[4];
   expected[0] = vec3_backward;
@@ -2858,12 +2858,12 @@ bool test_mat4_rotate_y() {
   return true;
 }
 
-bool test_mat4_rotate_z() {
+dl_bool test_mat4_rotate_z() {
   mat4 mat;
   vec3 vec = vec3_up;
   vec3 expected = vec3_left;
 
-  real angle = M_PI * 0.5f;
+  dl_real angle = M_PI * 0.5f;
 
   init_mat4_rotate_z(&mat, angle);
   mat4_mul_vec3(&mat, &vec, &vec);
@@ -2903,7 +2903,7 @@ bool test_mat4_rotate_z() {
   return true;
 }
 
-bool test_mat4_scale() {
+dl_bool test_mat4_scale() {
   point3 point = point3_one;
   point3 expected_point;
   vec3 vec = vec3_one;
@@ -2933,10 +2933,10 @@ bool test_mat4_scale() {
   return true;
 }
 
-bool test_mat4_approximately_equal() {
+dl_bool test_mat4_approximately_equal() {
   mat4 mat[2];
   vec3 col[4];
-  natural a = 0, b = 1, c = 2, d = 3, v_idx;
+  dl_natural a = 0, b = 1, c = 2, d = 3, v_idx;
   random_state r;
   init_random_time(&r);
   

@@ -2,16 +2,16 @@
 
 #if DL_USE_TEST
 
-bool my_passing_test_function() {
+dl_bool my_passing_test_function() {
   return true;
 }
 
-bool my_failing_test_function() {
+dl_bool my_failing_test_function() {
   return false;
 }
 
-bool test_test_count_tests() {
-  bool (*predicates[3])();
+dl_bool test_test_count_tests() {
+  dl_bool (*predicates[3])();
   dl_memory_set(predicates, 0, sizeof(predicates));
   predicates[0] = &my_passing_test_function;
   predicates[1] = &my_passing_test_function;
@@ -19,9 +19,9 @@ bool test_test_count_tests() {
   return check(test_count(predicates, 3) == 2, "Expected the number of tests to be 2");
 }
 
-bool test_test_run_tests() {
-  bool (*passing_predicates[2])();
-  bool (*failing_predicates[2])();
+dl_bool test_test_run_tests() {
+  dl_bool (*passing_predicates[2])();
+  dl_bool (*failing_predicates[2])();
   const char *passing_names[2];
   const char *failing_names[2];
   failing_names[0] = "IGNORE_first_should_fail";

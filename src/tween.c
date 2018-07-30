@@ -6,8 +6,8 @@
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
 
-const integer width = 800;
-const integer height = 600;
+const dl_integer width = 800;
+const dl_integer height = 600;
 
 typedef struct {
   ease_direction dir;
@@ -20,7 +20,7 @@ typedef struct {
 #define tween_count 38
 #define point_count 16
 
-integer active_method = -1;
+dl_integer active_method = -1;
 tween_method tween_methods[tween_count] = {
   { 0, NULL, select_linear, NULL, "select_linear" },
   { 0, NULL, select_catmullrom, NULL, "select_catmullrom" },
@@ -64,17 +64,17 @@ tween_method tween_methods[tween_count] = {
 };
 
 point2 points[point_count];
-real ys[point_count];
+dl_real ys[point_count];
 
 void draw(double time, double delta_time) {
   ALLEGRO_COLOR white = al_map_rgba_f(1.0, 1.0, 1.0, 1.0);
   ALLEGRO_COLOR red = al_map_rgba_f(1.0, 0.0, 0.0, 1.0);
   ALLEGRO_COLOR green = al_map_rgba_f(0.0, 1.0, 0.0, 1.0);
   tween_method current = tween_methods[active_method];
-  natural idx;
-  real next_p, p;
+  dl_natural idx;
+  dl_real next_p, p;
   point2 p0, p1;
-  const real step = 1.0 / (real)(point_count - 1) / 10.0;
+  const dl_real step = 1.0 / (dl_real)(point_count - 1) / 10.0;
 
   al_draw_line(0, 0.75 * height, width, 0.75 * height, green, 1.0);
   al_draw_line(0, 0.25 * height, width, 0.25 * height, green, 1.0);
@@ -121,10 +121,10 @@ void draw(double time, double delta_time) {
 }
 
 void change(random_state *r) {
-  natural idx;
-  real last_x, last_y, t;
-  bool do_random, type_change;
-  integer last_method = active_method;
+  dl_natural idx;
+  dl_real last_x, last_y, t;
+  dl_bool do_random, type_change;
+  dl_integer last_method = active_method;
   
   active_method = (active_method + 1) % tween_count;
   do_random = tween_methods[active_method].selector_point2 != NULL;
@@ -161,8 +161,8 @@ int main(int argc, char **argv)
   ALLEGRO_BITMAP *bkg;
   ALLEGRO_COLOR black = al_map_rgba_f(0.0, 0.0, 0.0, 1.0);
   
-  integer screen_width = width;
-  integer screen_height = height;
+  dl_integer screen_width = width;
+  dl_integer screen_height = height;
 
   random_state r;
   double time, last_tick, delta_time;
@@ -204,7 +204,7 @@ int main(int argc, char **argv)
   al_set_window_title(display, "Tween Test");
 
   last_tick = al_get_time();
-  bool should_exit = false;
+  dl_bool should_exit = false;
 
   while (!should_exit) {
     ALLEGRO_EVENT event;
