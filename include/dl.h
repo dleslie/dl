@@ -242,17 +242,22 @@ typedef unsigned char dl_byte;
 typedef unsigned long int dl_natural;
 typedef dl_byte dl_bool;
 
-#define true 1
-#define false 0
+#define DL_INTEGER_MAX 0x7fffffffL
+#define DL_INTEGER_MIN (-DL_INTEGER_MAX - 1L)
 
-#define INTEGER_MAX 0x7fffffffL
-#define INTEGER_MIN (-INTEGER_MAX - 1L)
+#define DL_NATURAL_MAX 0xffffffffUL
+#define DL_NATURAL_MIN 0
 
-#define NATURAL_MAX 0xffffffffUL
-#define MATURAL_MIN 0
+#define DL_REAL_MAX 3.402823e+38f
+#define DL_REAL_MIN 1.175494e-38f
 
-#define REAL_MAX 3.402823e+38f
-#define REAL_MIN 1.175494e-38f
+#ifndef true
+# define true 1
+#endif
+
+#ifndef false
+# define false 0
+#endif
 
 #ifndef NULL
 # define NULL 0
@@ -1280,7 +1285,7 @@ dl_api dl_integer factorial(dl_integer n) {
 
 
 dl_api random_state *init_random(random_state *state, dl_integer seed) {
-  return init_random_custom(state, INTEGER_MAX, 1103515245, 12345, seed);
+  return init_random_custom(state, DL_INTEGER_MAX, 1103515245, 12345, seed);
 }
 
 dl_api random_state *init_random_custom(random_state *state, dl_integer m, dl_integer a, dl_integer c, dl_integer seed) {
@@ -4832,7 +4837,7 @@ dl_api dl_bool _linked_list_iterator_is_valid(const collection *dl_restrict col,
 
 dl_api iterator _vector_make_invalid_iterator(const collection *dl_restrict col) {
   iterator bad;
-  bad.vector.index = NATURAL_MAX;
+  bad.vector.index = DL_NATURAL_MAX;
   return bad;
 }
 

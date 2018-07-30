@@ -589,8 +589,8 @@ dl_bool test_collection_ref() {
 
   val = *(dl_integer *)ref;
 
-  if (!check(val != INTEGER_MIN,
-    "%s: Expected %i not to be %i", type_name, val, INTEGER_MIN))
+  if (!check(val != DL_INTEGER_MIN,
+    "%s: Expected %i not to be %i", type_name, val, DL_INTEGER_MIN))
     goto fail;
 
   SINGLE_TEST_END();
@@ -622,8 +622,8 @@ dl_bool test_collection_ref_array() {
     goto fail;
 
   first = *(dl_integer *)ref;
-  if (!check(first != INTEGER_MIN,
-    "%s: Expected %i not to be %i", type_name, first, INTEGER_MIN))
+  if (!check(first != DL_INTEGER_MIN,
+    "%s: Expected %i not to be %i", type_name, first, DL_INTEGER_MIN))
     goto fail;
 
   SINGLE_TEST_END();
@@ -702,7 +702,7 @@ dl_bool test_collection_next() {
 
   ref = NULL;
   idx = collection_begin(&c);
-  last_value = INTEGER_MIN;
+  last_value = DL_INTEGER_MIN;
   for (count = collection_count(&c); count > 1; --count) {
     if (!check(ref = collection_next(&c, &idx),
       "%s: Expected next to work at count %lu.", type_name, count))
@@ -735,7 +735,7 @@ dl_bool test_collection_prev() {
 
   ref = NULL;
   idx = collection_end(&c);
-  last_value = INTEGER_MIN;
+  last_value = DL_INTEGER_MIN;
   for (count = collection_count(&c); count > 0; --count) {
     if (!check(ref = collection_prev(&c, &idx),
       "%s: Expected next to work.", type_name))
@@ -1638,9 +1638,9 @@ dl_bool test_collection_remove_range() {
     goto fail;
 
   count = collection_count(&c1);
-  first = NATURAL_MAX;
-  second = NATURAL_MAX;
-  third = NATURAL_MAX;
+  first = DL_NATURAL_MAX;
+  second = DL_NATURAL_MAX;
+  third = DL_NATURAL_MAX;
   
   collection_get(&c1, collection_index(&c1, 2), &first);
   collection_get(&c1, collection_index(&c1, 3), &second);
@@ -1709,9 +1709,9 @@ dl_bool test_collection_destroy_range() {
     "%s: Expected 2 to be a valid index.", type_name))
     goto fail;
 
-  first = NATURAL_MAX;
-  second = NATURAL_MAX;
-  third = NATURAL_MAX;
+  first = DL_NATURAL_MAX;
+  second = DL_NATURAL_MAX;
+  third = DL_NATURAL_MAX;
   
   collection_get(&c, collection_index(&c, 2), &first);
   collection_get(&c, collection_index(&c, 3), &second);
@@ -2884,7 +2884,7 @@ dl_bool test_linked_list_index() {
       goto fail;
   }
 
-  if (!check(!linked_list_index(&list, NATURAL_MAX),
+  if (!check(!linked_list_index(&list, DL_NATURAL_MAX),
     "Expected index to fail."))
     goto fail;
 
