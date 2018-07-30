@@ -399,44 +399,36 @@ extern "C" {
    ****************************************************************************/
 
 #if DL_USE_MATH
-# ifdef M_PI
-#   undef M_PI
-# endif
-# ifdef M_INV_PI
-#   undef M_INV_PI
-# endif
-# ifdef M_E
-#   undef M_E
-# endif
-# ifdef M_INV_E
-#   undef M_INV_E
-# endif
-# ifdef M_EPSILON
-#   undef M_EPSILON
-# endif
-# ifdef min
-#   undef min
-# endif
-# ifdef max
-#   undef max
-# endif
-# ifdef clamp
-#   undef clamp
-# endif
-# ifdef clamp01
-#   undef clamp01
-# endif
+  extern const dl_real DL_PI;
+  extern const dl_real DL_INV_PI;
+  extern const dl_real DL_E;
+  extern const dl_real DL_INV_E;
+  extern const dl_real DL_EPSILON;
   
-  extern const dl_real M_PI;
-  extern const dl_real M_INV_PI;
-  extern const dl_real M_E;
-  extern const dl_real M_INV_E;
-  extern const dl_real M_EPSILON;
-  
-# define min(x, y) ((x) <= (y) ? (x) : (y))
-# define max(x, y) ((x) >= (y) ? (x) : (y))
-# define clamp(x, a, b) max(min(b, x), a)
-# define clamp01(x) clamp(x, 0, 1)
+# if DL_IS_GNUC || DL_IS_CLANG
+#   define dl_max(a,b) ({\
+      __auto_type _a = (a);\
+      __auto_type _b = (b);\
+      _a > _b ? _a : _b;\
+     })
+#   define dl_min(a,b) ({\
+      __auto_type _a = (a);\
+      __auto_type _b = (b);\
+      _a < _b ? _a : _b;\
+     })
+#   define dl_clamp(x, i, j) ({\
+      __auto_type _i = (i);\
+      __auto_type _j = (j);\
+      __auto_type _x = (x);\
+      dl_max(dl_min(_j, _x), _i);\
+    })
+#   define dl_clamp01(x) dl_clamp(x, 0, 1)
+# else
+#   define dl_min(x, y) ((x) <= (y) ? (x) : (y))
+#   define dl_max(x, y) ((x) >= (y) ? (x) : (y))
+#   define dl_clamp(x, a, b) dl_max(dl_min(b, x), a)
+#   define dl_clamp01(x) dl_clamp(x, 0, 1)
+# endif
 
   dl_api dl_bool approximately_equal(dl_real a, dl_real b, dl_real epsilon);
   dl_api dl_integer floor_to_integer(dl_real n);
@@ -1172,21 +1164,21 @@ dl_integer dl_test_count(dl_bool (**tests)(), dl_integer max) {
 
 #if DL_USE_MATH
 
-#ifndef M_PI
-const dl_real M_PI = 3.14159265359f;
+#ifndef DL_PI
+const dl_real DL_PI = 3.14159265359f;
 #endif
 #ifndef M_E
-const dl_real M_E = 2.71828182846f;
+const dl_real DL_E = 2.71828182846f;
 #endif
 
-#ifndef M_INV_PI
-const dl_real M_INV_PI = 0.318309886185f;
+#ifndef DL_INV_PI
+const dl_real DL_INV_PI = 0.318309886185f;
 #endif
-#ifndef M_INV_E
-const dl_real M_INV_E = 0.367879441171f;
+#ifndef DL_INV_E
+const dl_real DL_INV_E = 0.367879441171f;
 #endif
-#ifndef M_EPSILON
-const dl_real M_EPSILON = 0.001f;
+#ifndef DL_EPSILON
+const dl_real DL_EPSILON = 0.001f;
 #endif
 
 const mat4 mat4_identity = { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
@@ -1305,7 +1297,7 @@ dl_api dl_real random_degree(random_state *state) {
 }
 
 dl_api dl_real random_radian(random_state *state) {
-  return random_real_range(state, 0, 2 * M_PI);
+  return random_real_range(state, 0, 2 * DL_PI);
 }
 
 dl_api dl_real random_real(random_state *state, dl_real max) {
@@ -1845,7 +1837,7 @@ dl_api vec3 *vec3_normalize(const vec3 *dl_restrict left, vec3 *dl_restrict out)
 }
 
 dl_api dl_bool vec3_normalized(const vec3 *dl_restrict left) {
-  return approximately_equal(fabs(left->x) + fabs(left->y) + fabs(left->z), 1.0, M_EPSILON);
+  return approximately_equal(fabs(left->x) + fabs(left->y) + fabs(left->z), 1.0, DL_EPSILON);
 }
 
 dl_api vec3 *vec3_negate(const vec3 *dl_restrict left, vec3 *dl_restrict out) {
@@ -2210,7 +2202,7 @@ dl_api mat4 *init_mat4_rotate(mat4 * dl_restrict m, const vec3 *dl_restrict a, d
   if (dl_safety(m == NULL))
     return NULL;
   
-  if (dl_unlikely(vec3_approximately_equal(a, &vec3_zero, M_EPSILON))) {
+  if (dl_unlikely(vec3_approximately_equal(a, &vec3_zero, DL_EPSILON))) {
     *m = mat4_identity;
     return m;
   }
@@ -2324,7 +2316,7 @@ dl_api mat4 *init_mat4_perspective(mat4 * dl_restrict m, dl_real vertical_fov, d
 #if DL_USE_TWEEN
   
 dl_api dl_real tween(easing_function ease, ease_direction direction, dl_real percent) {
-  percent = clamp01(percent);
+  percent = dl_clamp01(percent);
   return ease(direction, percent);
 }
 
@@ -2406,11 +2398,11 @@ dl_api dl_real ease_quintic(ease_direction d, dl_real p) {
 dl_api dl_real ease_sinusoidal(ease_direction d, dl_real p) {
   switch (d) {
   case EASE_IN:
-    return 1.0 - _cos(p * M_PI * 0.5f);
+    return 1.0 - _cos(p * DL_PI * 0.5f);
   case EASE_OUT:
-    return _sin(p * M_PI * 0.5f);
+    return _sin(p * DL_PI * 0.5f);
   case EASE_INOUT:
-    return 0.5f * (1 - _cos(M_PI * p));
+    return 0.5f * (1 - _cos(DL_PI * p));
   }
   return 0;
 }
@@ -2457,19 +2449,19 @@ dl_api dl_real ease_elastic(ease_direction d, dl_real p) {
 
 dl_api dl_real ease_elastic_tunable(ease_direction d, dl_real p, dl_real a, dl_real k) {
   dl_real invk = 1.0 / k;
-  dl_real s = a < 1.0 ? (k * 0.25f) : (k * _asin(1.0 / a) * 0.5f * M_INV_PI);
+  dl_real s = a < 1.0 ? (k * 0.25f) : (k * _asin(1.0 / a) * 0.5f * DL_INV_PI);
 
   switch (d) {
   case EASE_IN:
     p = p - 1.0;
-    return -(a * _pow(2.0, 10.0 * p) * _sin((p - s) * 2.0 * M_PI * invk));
+    return -(a * _pow(2.0, 10.0 * p) * _sin((p - s) * 2.0 * DL_PI * invk));
   case EASE_OUT:
-    return 1.0 + (a * _pow(2.0, -10.0 * p) * _sin((p - s) * 2.0 * M_PI * invk));
+    return 1.0 + (a * _pow(2.0, -10.0 * p) * _sin((p - s) * 2.0 * DL_PI * invk));
   case EASE_INOUT:
     p = p * 2.0;
     if (p < 1)
-      return -0.5f * a * _pow(2.0, 10.0 * (p - 1.0)) * _sin((p - 1 - s) * 2.0 * M_PI * invk);
-    return 1.0 + (0.5f * a * _pow(2.0, -10.0 * (p - 1.0)) * _sin((p - 1 - s) * 2.0 * M_PI * invk));
+      return -0.5f * a * _pow(2.0, 10.0 * (p - 1.0)) * _sin((p - 1 - s) * 2.0 * DL_PI * invk);
+    return 1.0 + (0.5f * a * _pow(2.0, -10.0 * (p - 1.0)) * _sin((p - 1 - s) * 2.0 * DL_PI * invk));
   }
   return 0;
 }
@@ -2544,7 +2536,7 @@ dl_real *interpolate(const selector_function select, const dl_real *dl_restrict 
     return out;
   }
   
-  percent = clamp01(percent);
+  percent = dl_clamp01(percent);
   return select(values, length, percent, out);
 }
 
@@ -2609,7 +2601,7 @@ point2 *interpolate_point2(const selector_function_point2 select, const point2 *
     return out;
   }
   
-  percent = clamp01(percent);
+  percent = dl_clamp01(percent);
   return select(values, length, percent, out);
 }
 
@@ -2637,13 +2629,13 @@ point2 *select_bezier_point2(const point2 *dl_restrict v, dl_natural l, dl_real 
   dl_integer i, j, desired_idx;
   
   max_idx = l - 1;
-  degree = clamp(DL_BEZIER_DEGREE, 1, max_idx);
+  degree = dl_clamp(DL_BEZIER_DEGREE, 1, max_idx);
   target = (dl_real)max_idx * p;
   idx = (dl_natural)_floor(target);
 
   for (i = 0; i < degree + 1; ++i) {
     desired_idx = idx + i;
-    desired_idx = clamp(desired_idx, 0, max_idx);
+    desired_idx = dl_clamp(desired_idx, 0, max_idx);
     compute_v[i] = v[desired_idx];
   }
     
@@ -2703,7 +2695,7 @@ point3 *interpolate_point3(const selector_function_point3 select, const point3 *
     return out;
   }
   
-  percent = clamp01(percent);
+  percent = dl_clamp01(percent);
   return select(values, length, percent, out);
 }
 
@@ -2736,7 +2728,7 @@ point3 *select_bezier_point3(const point3 *dl_restrict v, dl_natural l, dl_real 
 
   for (i = 0; i < DL_BEZIER_DEGREE + 1; ++i) {
     desired_idx = idx + i;
-    desired_idx = clamp(desired_idx, 0, max_idx);
+    desired_idx = dl_clamp(desired_idx, 0, max_idx);
     compute_v[i] = v[desired_idx];
   }
     

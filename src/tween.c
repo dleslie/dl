@@ -97,7 +97,7 @@ void draw(double time, double delta_time) {
   }
 
   for (p = 0; p < 1; p += step) {
-    next_p = clamp01(p + step);
+    next_p = dl_clamp01(p + step);
     p0.x = p;
     p1.x = next_p;
     
@@ -141,11 +141,11 @@ void change(random_state *r) {
     for (idx = 0; idx < point_count; idx++) {
       t = last_x + random_real_range(r, -0.15, 0.15);
       last_x = do_random
-        ? clamp01(t)
+        ? dl_clamp01(t)
         : (float)idx/(float)(point_count - 1);
 
       t = last_y + random_real_range(r, -0.15, 0.15);
-      ys[idx] = last_y = clamp01(t);
+      ys[idx] = last_y = dl_clamp01(t);
       init_point2(&points[idx], last_x, last_y);
     }
   }
