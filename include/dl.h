@@ -5,87 +5,87 @@
 
 #if defined(__STDC__)
 # if __STDC_VERSION__ >= 201112L
-#   define IS_C11 1
-#   define IS_C99 0
-#   define IS_C90 0
-#   define IS_C89 0
+#   define DL_IS_C11 1
+#   define DL_IS_C99 0
+#   define DL_IS_C90 0
+#   define DL_IS_C89 0
 # elif __STDC_VERSION__ >= 199901L
-#   define IS_C11 0
-#   define IS_C99 1
-#   define IS_C90 0
-#   define IS_C89 0
+#   define DL_IS_C11 0
+#   define DL_IS_C99 1
+#   define DL_IS_C90 0
+#   define DL_IS_C89 0
 # elif __STDC_VERSION__ >= 199409L
-#   define IS_C11 0
-#   define IS_C99 0
-#   define IS_C90 1
-#   define IS_C89 0
+#   define DL_IS_C11 0
+#   define DL_IS_C99 0
+#   define DL_IS_C90 1
+#   define DL_IS_C89 0
 # else
-#   define IS_C11 0
-#   define IS_C99 0
-#   define IS_C90 0
-#   define IS_C89 1
+#   define DL_IS_C11 0
+#   define DL_IS_C99 0
+#   define DL_IS_C90 0
+#   define DL_IS_C89 1
 # endif
 #else
 # error "C version not determined."
-# define IS_C11 0
-# define IS_C99 0
-# define IS_C90 0
-# define IS_C89 0
+# define DL_IS_C11 0
+# define DL_IS_C99 0
+# define DL_IS_C90 0
+# define DL_IS_C89 0
 #endif
 
-#define IS_ATLEAST_C89 (IS_C11 || IS_C99 || IS_C90 || IS_C89)
-#define IS_ATLEAST_C90 (IS_C11 || IS_C99 || IS_C90)
-#define IS_ATLEAST_C99 (IS_C11 || IS_C99)
-#define IS_ATLEAST_C11 (IS_C11)
+#define DL_IS_ATLEAST_C89 (DL_IS_C11 || DL_IS_C99 || DL_IS_C90 || DL_IS_C89)
+#define DL_IS_ATLEAST_C90 (DL_IS_C11 || DL_IS_C99 || DL_IS_C90)
+#define DL_IS_ATLEAST_C99 (DL_IS_C11 || DL_IS_C99)
+#define DL_IS_ATLEAST_C11 (DL_IS_C11)
 
 
 
 #if _WIN32 || _WIN64
-# define IS_WINDOWS 1
+# define DL_IS_WINDOWS 1
 #else
-# define IS_WINDOWS 0
+# define DL_IS_WINDOWS 0
 #endif
 
 #if __linux__ || __linux || linux
-# define IS_LINUX 1
+# define DL_IS_LINUX 1
 #else
-# define IS_LINUX 0
+# define DL_IS_LINUX 0
 #endif
 
 #if __APPLE__ || __MACH__
-# define IS_APPLE 1
+# define DL_IS_APPLE 1
 #else
-# define IS_APPLE 0
+# define DL_IS_APPLE 0
 #endif
 
 #if _MSC_VER
-# define IS_MSC 1
+# define DL_IS_MSC 1
 #else
-# define IS_MSC 0
+# define DL_IS_MSC 0
 #endif
 
 #if __GNUC__ && !__clang__ && !__MINGW32__
-# define IS_GNUC 1
+# define DL_IS_GNUC 1
 #else
-# define IS_GNUC 0
+# define DL_IS_GNUC 0
 #endif
 
 #if __clang__
-# define IS_CLANG 1
+# define DL_IS_CLANG 1
 #else
-# define IS_CLANG 0
+# define DL_IS_CLANG 0
 #endif
 
 #if __MINGW32__
-# define IS_MINGW 1
+# define DL_IS_MINGW 1
 #else
-# define IS_MINGW 0
+# define DL_IS_MINGW 0
 #endif
 
 #if defined(NDEBUG) || defined(_DEBUG)
-# define IS_DEBUG 1
+# define DL_IS_DEBUG 1
 #else
-# define IS_DEBUG 0
+# define DL_IS_DEBUG 0
 #endif
 
 
@@ -95,7 +95,7 @@
 #endif
 
 #ifndef DL_USE_SAFETY_CHECKS
-# define DL_USE_SAFETY_CHECKS IS_DEBUG
+# define DL_USE_SAFETY_CHECKS DL_IS_DEBUG
 #endif
 
 #ifndef DL_USE_LEFT_HANDED
@@ -103,7 +103,7 @@
 #endif
 
 #ifndef DL_USE_LOGGING
-# if IS_ATLEAST_C99
+# if DL_IS_ATLEAST_C99
 #   define DL_USE_LOGGING 1
 # else
 #   define DL_USE_LOGGING 0
@@ -111,7 +111,7 @@
 #endif
 
 #ifndef DL_USE_TEST
-# if IS_ATLEAST_C99
+# if DL_IS_ATLEAST_C99
 #   define DL_USE_TEST 1
 # else
 #   define DL_USE_TEST 0
@@ -149,24 +149,24 @@
 #endif
 
 #if DL_USE_TIME
-# if IS_LINUX || IS_APPLE
-#   define HAS_TIME 1
+# if DL_IS_LINUX || DL_IS_APPLE
+#   define DL_HAS_TIME 1
 #   include <time.h>
 #   include <sys/time.h>
 # endif
-# if IS_WINDOWS
-#   define HAS_TIME 1
+# if DL_IS_WINDOWS
+#   define DL_HAS_TIME 1
 #   define WIN32_LEAN_AND_MEAN
 #   include <Windows.h>
 #   include <stdint.h>
 # endif
-# ifndef HAS_TIME
-#   define HAS_TIME 0
+# ifndef DL_HAS_TIME
+#   define DL_HAS_TIME 0
 # endif
 #endif
 
 #if DL_USE_MATH
-# if IS_ATLEAST_C99
+# if DL_IS_ATLEAST_C99
 #   include <tgmath.h>
 # else
 #   include <math.h>
@@ -179,58 +179,58 @@
 
 
 
-#ifndef inline
-# define inline  
-# if IS_GNUC || IS_CLANG || IS_MINGW
-#   undef inline
-#   define inline inline __attribute__((__always_inline__))
+#ifndef dl_inline
+# define dl_inline  
+# if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
+#   undef dl_inline
+#   define dl_inline inline __attribute__((__always_inline__))
 # endif
 #endif
 
-#ifndef api
-# define api  
-# if IS_GNUC || IS_CLANG || IS_MINGW
-#   undef api
-#   define api
+#ifndef dl_api
+# define dl_api  
+# if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
+#   undef dl_api
+#   define dl_api
 # endif
 #endif
 
-#ifndef restrict
-# define restrict
-# if IS_GNUC || IS_CLANG || IS_MINGW
-#   undef restrict
-#   define restrict __restrict__
+#ifndef dl_restrict
+# define dl_restrict
+# if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
+#   undef dl_restrict
+#   define dl_restrict __restrict__
 # endif
-# if IS_MSC
-#   undef restrict
-#   define restrict __restrict
-# endif
-#endif
-
-#ifndef likely
-# define likely(x) !!(x)
-# if IS_GNUC || IS_CLANG || IS_MINGW
-#   undef likely
-#   define likely(x) __builtin_expect(!!(x), 1)
+# if DL_IS_MSC
+#   undef dl_restrict
+#   define dl_restrict __restrict
 # endif
 #endif
 
-#ifndef unlikely
-# define unlikely(x) !!(x)
-# if IS_GNUC || IS_CLANG || IS_MINGW
-#   undef unlikely
-#   define unlikely(x) __builtin_expect(!!(x), 0)
+#ifndef dl_likely
+# define dl_likely(x) !!(x)
+# if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
+#   undef dl_likely
+#   define dl_likely(x) __builtin_expect(!!(x), 1)
+# endif
+#endif
+
+#ifndef dl_unlikely
+# define dl_unlikely(x) !!(x)
+# if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
+#   undef dl_unlikely
+#   define dl_unlikely(x) __builtin_expect(!!(x), 0)
 # endif
 #endif
 
 #if DL_USE_SAFETY_CHECKS
 # if DL_USE_LOGGING
-#   define safety(x) (unlikely(x) ? ERROR("Safety triggered") || 1 : 0)
+#   define dl_safety(x) (dl_unlikely(x) ? ERROR("Safety triggered") || 1 : 0)
 # else
-#   define safety(x) (unlikely(x) ? 1 : 0)
+#   define dl_safety(x) (dl_unlikely(x) ? 1 : 0)
 # endif
 #else
-# define safety(x) (1 == 0)
+# define dl_safety(x) (1 == 0)
 #endif
 
 
@@ -268,10 +268,10 @@ extern "C" {
    **  Tools
    ****************************************************************************/
 
-  api any dl_memory_swap(any target, any source, natural bytes);
+  dl_api any dl_memory_swap(any target, any source, natural bytes);
 
-  api any dl_memory_copy(any target, any source, natural bytes);
-  api any dl_memory_set(any target, byte val, natural bytes);
+  dl_api any dl_memory_copy(any target, any source, natural bytes);
+  dl_api any dl_memory_set(any target, byte val, natural bytes);
 
   typedef struct {
     integer (*func)(any data, const any value);
@@ -286,22 +286,22 @@ extern "C" {
   typedef struct {
     any (*func)(any data, any item, const any left);
     any data;
-  } folder;
+  } dl_folder;
 
   typedef struct {
     integer (*func)(any data, const any left, const any right);
     any data;
-  } comparator;
+  } dl_comparator;
 
   typedef struct {
     any (*func)(any data, const any left, const any right, any out);
     any data;
-  } zipper;
+  } dl_zipper;
 
   typedef struct {
     any (*func)(any data, const any left, any out);
     any data;
-  } converter;
+  } dl_converter;
 
 
 
@@ -310,36 +310,36 @@ extern "C" {
    ****************************************************************************/
 
 #if DL_USE_LOGGING
-# if !IS_ATLEAST_C99
+# if !DL_IS_ATLEAST_C99
 #   error "DL_USE_LOGGING not available for C90 or lower"
 #   undef DL_USE_LOGGING
 #   define DL_USE_LOGGING 0
 # endif
   
   typedef enum {
-    LOG_INFO = 1,
-    LOG_WARNING = 2,
-    LOG_ERROR = 3,
-    LOG_TEST = 4,
-    LOG_MESSAGE = 5
-  } log_channel;
+    DL_LOG_INFO = 1,
+    DL_LOG_WARNING = 2,
+    DL_LOG_ERROR = 3,
+    DL_LOG_TEST = 4,
+    DL_LOG_MESSAGE = 5
+  } dl_log_channel;
 
-  extern natural (*active_log_handler)(log_channel, const char *restrict, natural, const char *restrict, const char *restrict);
+  extern natural (*dl_active_log_handler)(dl_log_channel, const char *dl_restrict, natural, const char *dl_restrict, const char *dl_restrict);
 
-  natural log_message(log_channel ch, const char *restrict file, natural line, const char *restrict function, const char *restrict fmt, ...);
+  natural dl_log_message(dl_log_channel ch, const char *dl_restrict file, natural line, const char *dl_restrict function, const char *dl_restrict fmt, ...);
 
-# if IS_GNUC || IS_CLANG || IS_MSC || IS_MINGW
-#   define INFO(...) log_message(LOG_INFO, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define WARN(...) log_message(LOG_WARNING, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define ERROR(...) log_message(LOG_ERROR, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define TEST(...) log_message(LOG_TEST, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define MSG(...) log_message(LOG_MESSAGE, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+# if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MSC || DL_IS_MINGW
+#   define INFO(...) dl_log_message(DL_LOG_INFO, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define WARN(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define ERROR(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define TEST(...) dl_log_message(DL_LOG_TEST, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 # else
-#   define INFO(...) log_message(LOG_INFO, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define WARN(...) log_message(LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define ERROR(...) log_message(LOG_ERROR, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define TEST(...) log_message(LOG_TEST, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define MSG(...) log_message(LOG_MESSAGE, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define INFO(...) dl_log_message(DL_LOG_INFO, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define WARN(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define ERROR(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define TEST(...) dl_log_message(DL_LOG_TEST, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, "", ## __VA_ARGS__)
 # endif
 #endif /* DL_USE_LOGGING */
 
@@ -350,7 +350,7 @@ extern "C" {
    ****************************************************************************/
 
 #if DL_USE_TEST
-# if !IS_ATLEAST_C99
+# if !DL_IS_ATLEAST_C99
 #   error "DL_USE_TEST is not available for C90 or lower"
 #   undef DL_USE_TEST
 #   define DL_USE_TEST 0
@@ -433,15 +433,15 @@ extern "C" {
 # define clamp(x, a, b) max(min(b, x), a)
 # define clamp01(x) clamp(x, 0, 1)
 
-  api bool approximately_equal(real a, real b, real epsilon);
-  api integer floor_to_integer(real n);
-  api integer ceil_to_integer(real n);
-  api integer round_to_integer(real n);
-  api real rationalize(real value, natural decimal_points);
+  dl_api bool approximately_equal(real a, real b, real epsilon);
+  dl_api integer floor_to_integer(real n);
+  dl_api integer ceil_to_integer(real n);
+  dl_api integer round_to_integer(real n);
+  dl_api real rationalize(real value, natural decimal_points);
 
-  api real degree_to_radian(real degree);
-  api real radian_to_degree(real radian);
-  api integer factorial(integer n);
+  dl_api real degree_to_radian(real degree);
+  dl_api real radian_to_degree(real radian);
+  dl_api integer factorial(integer n);
   
 # define _sqrt(v) sqrt(v)
 # define _cos(v) cos(v)
@@ -456,7 +456,7 @@ extern "C" {
 # define _ceil(v) ceil(v)
 # define _abs(v) ((v) > 0 ? (v) : -(v))
 
-# if !IS_ATLEAST_C99
+# if !DL_IS_ATLEAST_C99
 #   define _hypot(a, b) _sqrt((a) * (a) + (b) * (b))
 #else
 #   define _hypot(a, b) hypot((a), (b))
@@ -467,16 +467,16 @@ extern "C" {
     integer seed;
   } random_state;
 
-  api random_state *init_random(random_state *state, integer seed);
-  api random_state *init_random_custom(random_state *state, integer m, integer a, integer c, integer seed);
-  api random_state *init_random_time(random_state *state);
+  dl_api random_state *init_random(random_state *state, integer seed);
+  dl_api random_state *init_random_custom(random_state *state, integer m, integer a, integer c, integer seed);
+  dl_api random_state *init_random_time(random_state *state);
 
-  api integer random_integer(random_state *state, integer max);
-  api integer random_integer_range(random_state *state, integer min, integer max);
-  api real random_degree(random_state *state);
-  api real random_radian(random_state *state);
-  api real random_real(random_state *state, real max);
-  api real random_real_range(random_state *state, real min, real max);
+  dl_api integer random_integer(random_state *state, integer max);
+  dl_api integer random_integer_range(random_state *state, integer min, integer max);
+  dl_api real random_degree(random_state *state);
+  dl_api real random_radian(random_state *state);
+  dl_api real random_real(random_state *state, real max);
+  dl_api real random_real_range(random_state *state, real min, real max);
 
   
   
@@ -491,26 +491,26 @@ extern "C" {
   extern const vec2 vec2_zero;
   extern const vec2 vec2_one;
 
-  api vec2 *init_vec2(vec2 * restrict v, real x, real y);
+  dl_api vec2 *init_vec2(vec2 * dl_restrict v, real x, real y);
 
-  api vec2 *vec2_add(const vec2 *restrict left, const vec2 *restrict right, vec2 *restrict out);
-  api vec2 *vec2_sub(const vec2 *restrict left, const vec2 *restrict right, vec2 *restrict out);
+  dl_api vec2 *vec2_add(const vec2 *dl_restrict left, const vec2 *dl_restrict right, vec2 *dl_restrict out);
+  dl_api vec2 *vec2_sub(const vec2 *dl_restrict left, const vec2 *dl_restrict right, vec2 *dl_restrict out);
 
-  api vec2 *vec2_mul_scalar(const vec2 *restrict left, real scalar, vec2 *restrict out);
-  api vec2 *vec2_div_scalar(const vec2 *restrict left, real scalar, vec2 *restrict out);
-  api vec2 *vec2_add_scalar(const vec2 *restrict left, real scalar, vec2 *restrict out);
-  api vec2 *vec2_sub_scalar(const vec2 *restrict left, real scalar, vec2 *restrict out);
+  dl_api vec2 *vec2_mul_scalar(const vec2 *dl_restrict left, real scalar, vec2 *dl_restrict out);
+  dl_api vec2 *vec2_div_scalar(const vec2 *dl_restrict left, real scalar, vec2 *dl_restrict out);
+  dl_api vec2 *vec2_add_scalar(const vec2 *dl_restrict left, real scalar, vec2 *dl_restrict out);
+  dl_api vec2 *vec2_sub_scalar(const vec2 *dl_restrict left, real scalar, vec2 *dl_restrict out);
 
-  api vec2 *vec2_normalize(const vec2 *restrict left, vec2 *restrict out);
-  api vec2 *vec2_negate(const vec2 *restrict left, vec2 *restrict out);
+  dl_api vec2 *vec2_normalize(const vec2 *dl_restrict left, vec2 *dl_restrict out);
+  dl_api vec2 *vec2_negate(const vec2 *dl_restrict left, vec2 *dl_restrict out);
 
-  api real vec2_dot(const vec2 *restrict left, const vec2 *restrict right);
-  api bool vec2_approximately_equal(const vec2 *restrict left, const vec2 *restrict right, real epsilon);
-  api real vec2_square_magnitude(const vec2 *restrict left);
-  api real vec2_magnitude(const vec2 *restrict left);
+  dl_api real vec2_dot(const vec2 *dl_restrict left, const vec2 *dl_restrict right);
+  dl_api bool vec2_approximately_equal(const vec2 *dl_restrict left, const vec2 *dl_restrict right, real epsilon);
+  dl_api real vec2_square_magnitude(const vec2 *dl_restrict left);
+  dl_api real vec2_magnitude(const vec2 *dl_restrict left);
 
-  api vec2 *vec2_reflect(const vec2 *restrict left, const vec2 *restrict normal, vec2 *restrict out);
-  api vec2 *vec2_refract(const vec2 *restrict left, const vec2 *restrict normal, float eta, vec2 *restrict out);
+  dl_api vec2 *vec2_reflect(const vec2 *dl_restrict left, const vec2 *dl_restrict normal, vec2 *dl_restrict out);
+  dl_api vec2 *vec2_refract(const vec2 *dl_restrict left, const vec2 *dl_restrict normal, float eta, vec2 *dl_restrict out);
 
 
   
@@ -518,21 +518,21 @@ extern "C" {
   extern const point2 point2_zero;
   extern const point2 point2_one;
 
-  api point2 *init_point2(point2 * restrict p, real x, real y);
+  dl_api point2 *init_point2(point2 * dl_restrict p, real x, real y);
 
-  api point2 *point2_add(const point2 *restrict left, const point2 *restrict right, point2 *restrict out);
-  api point2 *point2_sub(const point2 *restrict left, const point2 *restrict right, point2 *restrict out);
+  dl_api point2 *point2_add(const point2 *dl_restrict left, const point2 *dl_restrict right, point2 *dl_restrict out);
+  dl_api point2 *point2_sub(const point2 *dl_restrict left, const point2 *dl_restrict right, point2 *dl_restrict out);
 
-  api point2 *point2_negate(const point2 *restrict left, point2 *restrict out);
+  dl_api point2 *point2_negate(const point2 *dl_restrict left, point2 *dl_restrict out);
 
-  api point2 *point2_mul_scalar(const point2 *restrict left, real scalar, point2 *restrict out);
-  api point2 *point2_div_scalar(const point2 *restrict left, real scalar, point2 *restrict out);
-  api point2 *point2_add_scalar(const point2 *restrict left, real scalar, point2 *restrict out);
-  api point2 *point2_sub_scalar(const point2 *restrict left, real scalar, point2 *restrict out);
+  dl_api point2 *point2_mul_scalar(const point2 *dl_restrict left, real scalar, point2 *dl_restrict out);
+  dl_api point2 *point2_div_scalar(const point2 *dl_restrict left, real scalar, point2 *dl_restrict out);
+  dl_api point2 *point2_add_scalar(const point2 *dl_restrict left, real scalar, point2 *dl_restrict out);
+  dl_api point2 *point2_sub_scalar(const point2 *dl_restrict left, real scalar, point2 *dl_restrict out);
 
-  api bool point2_approximately_equal(const point2 *restrict left, const point2 *restrict right, real epsilon);
+  dl_api bool point2_approximately_equal(const point2 *dl_restrict left, const point2 *dl_restrict right, real epsilon);
 
-  api real point2_line_orientation(const point2 *restrict point, const point2 *restrict line_a, const point2 *restrict line_b);
+  dl_api real point2_line_orientation(const point2 *dl_restrict point, const point2 *dl_restrict line_a, const point2 *dl_restrict line_b);
   
 
   
@@ -543,45 +543,45 @@ extern "C" {
   typedef vec4 point3;
   typedef vec4 vec3;
 
-  api vec4 *init_vec4(vec4 * restrict v, real x, real y, real z, real w);
+  dl_api vec4 *init_vec4(vec4 * dl_restrict v, real x, real y, real z, real w);
 
-  api vec4 *vec4_add(const vec4 *restrict left, const vec4 *restrict right, vec4 *restrict out);
-  api vec4 *vec4_sub(const vec4 *restrict left, const vec4 *restrict right, vec4 *restrict out);
+  dl_api vec4 *vec4_add(const vec4 *dl_restrict left, const vec4 *dl_restrict right, vec4 *dl_restrict out);
+  dl_api vec4 *vec4_sub(const vec4 *dl_restrict left, const vec4 *dl_restrict right, vec4 *dl_restrict out);
 
-  api real vec4_dot(const vec4 *restrict left, const vec4 *restrict right);
-  api vec4 *vec4_normalize(const vec4 *restrict left, vec4 *restrict out);
-  api vec4 *vec4_negate(const vec4 *restrict left, vec4 *restrict out);
-  api real vec4_square_magnitude(const vec4 *restrict left);
-  api real vec4_magnitude(const vec4 *restrict left);
-  api bool vec4_approximately_equal(const vec4 *restrict left, const vec4 *restrict right, real epsilon);
+  dl_api real vec4_dot(const vec4 *dl_restrict left, const vec4 *dl_restrict right);
+  dl_api vec4 *vec4_normalize(const vec4 *dl_restrict left, vec4 *dl_restrict out);
+  dl_api vec4 *vec4_negate(const vec4 *dl_restrict left, vec4 *dl_restrict out);
+  dl_api real vec4_square_magnitude(const vec4 *dl_restrict left);
+  dl_api real vec4_magnitude(const vec4 *dl_restrict left);
+  dl_api bool vec4_approximately_equal(const vec4 *dl_restrict left, const vec4 *dl_restrict right, real epsilon);
 
-  api vec4 *vec4_mul_scalar(const vec4 *restrict left, real scalar, vec4 *restrict out);
-  api vec4 *vec4_div_scalar(const vec4 *restrict left, real scalar, vec4 *restrict out);
-  api vec4 *vec4_add_scalar(const vec4 *restrict left, real scalar, vec4 *restrict out);
-  api vec4 *vec4_sub_scalar(const vec4 *restrict left, real scalar, vec4 *restrict out);
+  dl_api vec4 *vec4_mul_scalar(const vec4 *dl_restrict left, real scalar, vec4 *dl_restrict out);
+  dl_api vec4 *vec4_div_scalar(const vec4 *dl_restrict left, real scalar, vec4 *dl_restrict out);
+  dl_api vec4 *vec4_add_scalar(const vec4 *dl_restrict left, real scalar, vec4 *dl_restrict out);
+  dl_api vec4 *vec4_sub_scalar(const vec4 *dl_restrict left, real scalar, vec4 *dl_restrict out);
 
 
   
   extern const point3 point3_zero;
   extern const point3 point3_one;
 
-  api point3 *init_point3(point3 * restrict p, real x, real y, real z);
+  dl_api point3 *init_point3(point3 * dl_restrict p, real x, real y, real z);
 
-  api point3 *point3_add(const point3 *restrict left, const point3 *restrict right, point3 *restrict out);
-  api point3 *point3_sub(const point3 *restrict left, const point3 *restrict right, point3 *restrict out);
+  dl_api point3 *point3_add(const point3 *dl_restrict left, const point3 *dl_restrict right, point3 *dl_restrict out);
+  dl_api point3 *point3_sub(const point3 *dl_restrict left, const point3 *dl_restrict right, point3 *dl_restrict out);
 
-  api point3 *point3_mul_scalar(const point3 *restrict left, real scalar, point3 *restrict out);
-  api point3 *point3_div_scalar(const point3 *restrict left, real scalar, point3 *restrict out);
-  api point3 *point3_add_scalar(const point3 *restrict left, real scalar, point3 *restrict out);
-  api point3 *point3_sub_scalar(const point3 *restrict left, real scalar, point3 *restrict out);
+  dl_api point3 *point3_mul_scalar(const point3 *dl_restrict left, real scalar, point3 *dl_restrict out);
+  dl_api point3 *point3_div_scalar(const point3 *dl_restrict left, real scalar, point3 *dl_restrict out);
+  dl_api point3 *point3_add_scalar(const point3 *dl_restrict left, real scalar, point3 *dl_restrict out);
+  dl_api point3 *point3_sub_scalar(const point3 *dl_restrict left, real scalar, point3 *dl_restrict out);
 
-  api point3 *point3_rotate(const point3 *restrict left, const vec3 *axis, const real angle, point3 *restrict out);
+  dl_api point3 *point3_rotate(const point3 *dl_restrict left, const vec3 *axis, const real angle, point3 *dl_restrict out);
 
-  api point3 *point3_negate(const point3 *restrict left, point3 *restrict out);
+  dl_api point3 *point3_negate(const point3 *dl_restrict left, point3 *dl_restrict out);
 
-  api bool point3_approximately_equal(const point3 *restrict left, const point3 *restrict out, real epsilon);
+  dl_api bool point3_approximately_equal(const point3 *dl_restrict left, const point3 *dl_restrict out, real epsilon);
 
-  /* real point3_triangle_orientation(const point3 *restrict point, const point3 *restrict triangle_a, const point3 *restrict triangle_b, const point3 *restrict triangle_c); */
+  /* real point3_triangle_orientation(const point3 *dl_restrict point, const point3 *dl_restrict triangle_a, const point3 *dl_restrict triangle_b, const point3 *dl_restrict triangle_c); */
 
 
 
@@ -594,31 +594,31 @@ extern "C" {
   extern const vec3 vec3_zero;
   extern const vec3 vec3_one;
 
-  api vec3 *init_vec3(vec3 * restrict v, real x, real y, real z);
+  dl_api vec3 *init_vec3(vec3 * dl_restrict v, real x, real y, real z);
 
-  api vec3 *vec3_reflect(const vec3 *restrict left, const vec3 *restrict right, vec3 *restrict out);
-  api vec3 *vec3_refract(const vec3 *restrict left, const vec3 *restrict right, float eta, vec3 *restrict out);
+  dl_api vec3 *vec3_reflect(const vec3 *dl_restrict left, const vec3 *dl_restrict right, vec3 *dl_restrict out);
+  dl_api vec3 *vec3_refract(const vec3 *dl_restrict left, const vec3 *dl_restrict right, float eta, vec3 *dl_restrict out);
 
-  api vec3 *vec3_add(const vec3 *restrict left, const vec3 *restrict right, vec3 *restrict out);
-  api vec3 *vec3_sub(const vec3 *restrict left, const vec3 *restrict right, vec3 *restrict out);
+  dl_api vec3 *vec3_add(const vec3 *dl_restrict left, const vec3 *dl_restrict right, vec3 *dl_restrict out);
+  dl_api vec3 *vec3_sub(const vec3 *dl_restrict left, const vec3 *dl_restrict right, vec3 *dl_restrict out);
 
-  api vec3 *vec3_cross(const vec3 *restrict left, const vec3 *restrict right, vec3 *restrict out);
-  api real vec3_dot(const vec3 *restrict left, const vec3 *restrict out);
+  dl_api vec3 *vec3_cross(const vec3 *dl_restrict left, const vec3 *dl_restrict right, vec3 *dl_restrict out);
+  dl_api real vec3_dot(const vec3 *dl_restrict left, const vec3 *dl_restrict out);
 
-  api vec3 *vec3_mul_scalar(const vec3 *restrict left, real scalar, vec3 *restrict out);
-  api vec3 *vec3_div_scalar(const vec3 *restrict left, real scalar, vec3 *restrict out);
-  api vec3 *vec3_add_scalar(const vec3 *restrict left, real scalar, vec3 *restrict out);
-  api vec3 *vec3_sub_scalar(const vec3 *restrict left, real scalar, vec3 *restrict out);
+  dl_api vec3 *vec3_mul_scalar(const vec3 *dl_restrict left, real scalar, vec3 *dl_restrict out);
+  dl_api vec3 *vec3_div_scalar(const vec3 *dl_restrict left, real scalar, vec3 *dl_restrict out);
+  dl_api vec3 *vec3_add_scalar(const vec3 *dl_restrict left, real scalar, vec3 *dl_restrict out);
+  dl_api vec3 *vec3_sub_scalar(const vec3 *dl_restrict left, real scalar, vec3 *dl_restrict out);
 
-  api vec3 *vec3_rotate(const vec3 *restrict left, const vec3 *restrict axis, const real angle, vec3 *restrict out);
+  dl_api vec3 *vec3_rotate(const vec3 *dl_restrict left, const vec3 *dl_restrict axis, const real angle, vec3 *dl_restrict out);
 
-  api vec3 *vec3_normalize(const vec3 *restrict left, vec3 *restrict out);
-  api bool vec3_normalized(const vec3 *restrict left);
-  api vec3 *vec3_negate(const vec3 *restrict left, vec3 *restrict out);
+  dl_api vec3 *vec3_normalize(const vec3 *dl_restrict left, vec3 *dl_restrict out);
+  dl_api bool vec3_normalized(const vec3 *dl_restrict left);
+  dl_api vec3 *vec3_negate(const vec3 *dl_restrict left, vec3 *dl_restrict out);
 
-  api bool vec3_approximately_equal(const vec3 *restrict left, const vec3 *restrict out, real epsilon);
-  api real vec3_square_magnitude(const vec3 *restrict left);
-  api real vec3_magnitude(const vec3 *restrict left);
+  dl_api bool vec3_approximately_equal(const vec3 *dl_restrict left, const vec3 *dl_restrict out, real epsilon);
+  dl_api real vec3_square_magnitude(const vec3 *dl_restrict left);
+  dl_api real vec3_magnitude(const vec3 *dl_restrict left);
 
 
   
@@ -630,69 +630,69 @@ extern "C" {
   
   extern const mat4 mat4_identity;
 
-  api mat4 *init_mat4(mat4 * restrict m, real c0r0, real c0r1, real c0r2, real c0r3, real c1r0, real c1r1, real c1r2, real c1r3, real c2r0, real c2r1, real c2r2, real c2r3, real c3r0, real c3r1, real c3r2, real c3r3);
+  dl_api mat4 *init_mat4(mat4 * dl_restrict m, real c0r0, real c0r1, real c0r2, real c0r3, real c1r0, real c1r1, real c1r2, real c1r3, real c2r0, real c2r1, real c2r2, real c2r3, real c3r0, real c3r1, real c3r2, real c3r3);
 
-  api mat4 *init_mat4_cols(mat4 * restrict m, const vec4 *restrict column_a, const vec4 *restrict column_b, const vec4 *restrict column_c, const vec4 *restrict column_d);
+  dl_api mat4 *init_mat4_cols(mat4 * dl_restrict m, const vec4 *dl_restrict column_a, const vec4 *dl_restrict column_b, const vec4 *dl_restrict column_c, const vec4 *dl_restrict column_d);
 
-  api mat4 *init_mat4_translate(mat4 * restrict m, real x, real y, real z);
-  api mat4 *init_mat4_rotate_x(mat4 * restrict m, real radians);
-  api mat4 *init_mat4_rotate_y(mat4 * restrict m, real radians);
-  api mat4 *init_mat4_rotate_z(mat4 * restrict m, real radians);
-  api mat4 *init_mat4_rotate(mat4 * restrict m, const vec3 *restrict axis, real radians);
-  api mat4 *init_mat4_scale(mat4 * restrict m, real x, real y, real z);
+  dl_api mat4 *init_mat4_translate(mat4 * dl_restrict m, real x, real y, real z);
+  dl_api mat4 *init_mat4_rotate_x(mat4 * dl_restrict m, real radians);
+  dl_api mat4 *init_mat4_rotate_y(mat4 * dl_restrict m, real radians);
+  dl_api mat4 *init_mat4_rotate_z(mat4 * dl_restrict m, real radians);
+  dl_api mat4 *init_mat4_rotate(mat4 * dl_restrict m, const vec3 *dl_restrict axis, real radians);
+  dl_api mat4 *init_mat4_scale(mat4 * dl_restrict m, real x, real y, real z);
 
-  api mat4 *init_mat4_look_at(mat4 * restrict m, const vec3 *restrict origin, const vec3 *restrict target, const vec3 *restrict up);
-  api mat4 *init_mat4_orthographic(mat4 * restrict m, real yop, real y_bottom, real x_left, real x_right, real z_near, real z_far);
-  api mat4 *init_mat4_perspective(mat4 * restrict m, real vertical_fov, real aspect_ratio, real z_near, real z_far);
+  dl_api mat4 *init_mat4_look_at(mat4 * dl_restrict m, const vec3 *dl_restrict origin, const vec3 *dl_restrict target, const vec3 *dl_restrict up);
+  dl_api mat4 *init_mat4_orthographic(mat4 * dl_restrict m, real yop, real y_bottom, real x_left, real x_right, real z_near, real z_far);
+  dl_api mat4 *init_mat4_perspective(mat4 * dl_restrict m, real vertical_fov, real aspect_ratio, real z_near, real z_far);
 
-  api mat4 *mat4_add(const mat4 *restrict left, const mat4 *restrict right, mat4 *restrict out);
-  api mat4 *mat4_sub(const mat4 *restrict left, const mat4 *restrict right, mat4 *restrict out);
-  api mat4 *mat4_mul(const mat4 *restrict left, const mat4 *restrict right, mat4 *restrict out);
+  dl_api mat4 *mat4_add(const mat4 *dl_restrict left, const mat4 *dl_restrict right, mat4 *dl_restrict out);
+  dl_api mat4 *mat4_sub(const mat4 *dl_restrict left, const mat4 *dl_restrict right, mat4 *dl_restrict out);
+  dl_api mat4 *mat4_mul(const mat4 *dl_restrict left, const mat4 *dl_restrict right, mat4 *dl_restrict out);
 
-  api vec4 *mat4_mul_vec4(const mat4 *restrict left, const vec4 *restrict right, vec4 *restrict out);
-  api vec3 *mat4_mul_vec3(const mat4 *restrict left, const vec3 *restrict right, vec3 *restrict out);
-  api point3 *mat4_mul_point3(const mat4 *restrict left, const point3 *restrict right, point3 *restrict out);
+  dl_api vec4 *mat4_mul_vec4(const mat4 *dl_restrict left, const vec4 *dl_restrict right, vec4 *dl_restrict out);
+  dl_api vec3 *mat4_mul_vec3(const mat4 *dl_restrict left, const vec3 *dl_restrict right, vec3 *dl_restrict out);
+  dl_api point3 *mat4_mul_point3(const mat4 *dl_restrict left, const point3 *dl_restrict right, point3 *dl_restrict out);
 
-  api mat4 *mat4_transpose(const mat4 *restrict left, mat4 *restrict out);
+  dl_api mat4 *mat4_transpose(const mat4 *dl_restrict left, mat4 *dl_restrict out);
 
-  api mat4 *mat4_mul_scalar(const mat4 *restrict left, real scalar, mat4 *restrict out);
-  api mat4 *mat4_div_scalar(const mat4 *restrict left, real scalar, mat4 *restrict out);
-  api mat4 *mat4_add_scalar(const mat4 *restrict left, real scalar, mat4 *restrict out);
-  api mat4 *mat4_sub_scalar(const mat4 *restrict left, real scalar, mat4 *restrict out);
+  dl_api mat4 *mat4_mul_scalar(const mat4 *dl_restrict left, real scalar, mat4 *dl_restrict out);
+  dl_api mat4 *mat4_div_scalar(const mat4 *dl_restrict left, real scalar, mat4 *dl_restrict out);
+  dl_api mat4 *mat4_add_scalar(const mat4 *dl_restrict left, real scalar, mat4 *dl_restrict out);
+  dl_api mat4 *mat4_sub_scalar(const mat4 *dl_restrict left, real scalar, mat4 *dl_restrict out);
 
-  api bool mat4_approximately_equal(const mat4 *restrict left, const mat4 *restrict right, real epsilon);
+  dl_api bool mat4_approximately_equal(const mat4 *dl_restrict left, const mat4 *dl_restrict right, real epsilon);
 
   
   
   /* typedef vec4 quat; */
 
-  /* quat *init_quat(quat *restrict q, real x, real y, real z, real w); */
-  /* quat *init_quat_axis_angle(quat *restrict q, const vec3 *restrict axis, real angle); */
-  /* quat *init_quat_euler_angles(quat *restrict q, const vec3 *restrict angles); */
-  /* quat *init_quat_identity(quat *restrict q); */
+  /* quat *init_quat(quat *dl_restrict q, real x, real y, real z, real w); */
+  /* quat *init_quat_axis_angle(quat *dl_restrict q, const vec3 *dl_restrict axis, real angle); */
+  /* quat *init_quat_euler_angles(quat *dl_restrict q, const vec3 *dl_restrict angles); */
+  /* quat *init_quat_identity(quat *dl_restrict q); */
 
-  /* quat *quat_add(const quat *restrict left, const quat *restrict right, quat *restrict out); */
-  /* quat *quat_sub(const quat *restrict left, const quat *restrict right, quat *restrict out); */
-  /* quat *quat_mul(const quat *restrict left, const quat *restrict right, quat *restrict out); */
-  /* quat *quat_div(const quat *restrict left, const quat *restrict right, quat *restrict out); */
+  /* quat *quat_add(const quat *dl_restrict left, const quat *dl_restrict right, quat *dl_restrict out); */
+  /* quat *quat_sub(const quat *dl_restrict left, const quat *dl_restrict right, quat *dl_restrict out); */
+  /* quat *quat_mul(const quat *dl_restrict left, const quat *dl_restrict right, quat *dl_restrict out); */
+  /* quat *quat_div(const quat *dl_restrict left, const quat *dl_restrict right, quat *dl_restrict out); */
 
-  /* quat *quat_mul_scalar(const quat *restrict left, real scalar, quat *restrict out); */
-  /* quat *quat_div_scalar(const quat *restrict left, real scalar, quat *restrict out); */
+  /* quat *quat_mul_scalar(const quat *dl_restrict left, real scalar, quat *dl_restrict out); */
+  /* quat *quat_div_scalar(const quat *dl_restrict left, real scalar, quat *dl_restrict out); */
 
-  /* real quat_dot(const quat *restrict left, const quat *restrict right); */
-  /* real quat_magnitude(const quat *restrict q); */
+  /* real quat_dot(const quat *dl_restrict left, const quat *dl_restrict right); */
+  /* real quat_magnitude(const quat *dl_restrict q); */
 
-  /* quat *quat_normalize(const quat *restrict q, quat *restrict out); */
-  /* quat *quat_conjugate(const quat *restrict q, quat *restrict out); */
-  /* quat *quat_inverse(const quat *restrict q, quat *restrict out); */
+  /* quat *quat_normalize(const quat *dl_restrict q, quat *dl_restrict out); */
+  /* quat *quat_conjugate(const quat *dl_restrict q, quat *dl_restrict out); */
+  /* quat *quat_inverse(const quat *dl_restrict q, quat *dl_restrict out); */
 
-  /* bool quat_axis_angle(const quat *restrict q, vec3 *restrict out_axis, real *out_angle); */
-  /* quat *quat_euler_angles(const quat *restrict q, vec3 *restrict out); */
+  /* bool quat_axis_angle(const quat *dl_restrict q, vec3 *dl_restrict out_axis, real *out_angle); */
+  /* quat *quat_euler_angles(const quat *dl_restrict q, vec3 *dl_restrict out); */
 
-  /* vec3 *vec3_rotate_quat(const vec3 *restrict left, const quat *restrict q, vec3 *restrict out); */
+  /* vec3 *vec3_rotate_quat(const vec3 *dl_restrict left, const quat *dl_restrict q, vec3 *dl_restrict out); */
 
-  /* mat4 *quat_to_mat4(const quat *restrict q, mat4 *restrict out); */
-  /* quat *mat4_to_quat(const mat4 *restrict m, quat *restrict out); */
+  /* mat4 *quat_to_mat4(const quat *dl_restrict q, mat4 *dl_restrict out); */
+  /* quat *mat4_to_quat(const mat4 *dl_restrict m, quat *dl_restrict out); */
 
 #endif /* DL_USE_MATH */
   
@@ -712,53 +712,53 @@ extern "C" {
 
   typedef real(*easing_function)(ease_direction d, real p);
 
-  api real tween(easing_function ease, ease_direction direction, real percent);
+  dl_api real tween(easing_function ease, ease_direction direction, real percent);
 
-  api real ease_linear(ease_direction d, real p);
-  api real ease_quadratic(ease_direction d, real p);
-  api real ease_cubic(ease_direction d, real p);
-  api real ease_quartic(ease_direction d, real p);
-  api real ease_quintic(ease_direction d, real p);
-  api real ease_sinusoidal(ease_direction d, real p);
-  api real ease_exponential(ease_direction d, real p);
-  api real ease_circular(ease_direction d, real p);
-  api real ease_elastic(ease_direction d, real p);
-  api real ease_elastic_tunable(ease_direction d, real p, real a, real k);
-  api real ease_back(ease_direction d, real p);
-  api real ease_back_tunable(ease_direction d, real p, real s, real t);
-  api real ease_bounce(ease_direction d, real p);
+  dl_api real ease_linear(ease_direction d, real p);
+  dl_api real ease_quadratic(ease_direction d, real p);
+  dl_api real ease_cubic(ease_direction d, real p);
+  dl_api real ease_quartic(ease_direction d, real p);
+  dl_api real ease_quintic(ease_direction d, real p);
+  dl_api real ease_sinusoidal(ease_direction d, real p);
+  dl_api real ease_exponential(ease_direction d, real p);
+  dl_api real ease_circular(ease_direction d, real p);
+  dl_api real ease_elastic(ease_direction d, real p);
+  dl_api real ease_elastic_tunable(ease_direction d, real p, real a, real k);
+  dl_api real ease_back(ease_direction d, real p);
+  dl_api real ease_back_tunable(ease_direction d, real p, real s, real t);
+  dl_api real ease_bounce(ease_direction d, real p);
 
-  typedef real *(*selector_function)(const real *restrict values, natural length, real percent, real *out);
+  typedef real *(*selector_function)(const real *dl_restrict values, natural length, real percent, real *out);
 
-  api real *interpolate(const selector_function select, const real *restrict values, natural length, real percent, real *restrict out);
+  dl_api real *interpolate(const selector_function select, const real *dl_restrict values, natural length, real percent, real *dl_restrict out);
 
-  api real *select_linear(const real *restrict v, natural l, real p, real *restrict out);
-  api real *select_catmullrom(const real *restrict v, natural l, real p, real *restrict out);
+  dl_api real *select_linear(const real *dl_restrict v, natural l, real p, real *dl_restrict out);
+  dl_api real *select_catmullrom(const real *dl_restrict v, natural l, real p, real *dl_restrict out);
 
-  typedef point2 *(*selector_function_point2)(const point2 *restrict values, natural length, real percent, point2 *restrict out);
+  typedef point2 *(*selector_function_point2)(const point2 *dl_restrict values, natural length, real percent, point2 *dl_restrict out);
 
-  api point2 *interpolate_point2(const selector_function_point2 select, const point2 *restrict values, natural length, real percent, point2 *restrict out);
+  dl_api point2 *interpolate_point2(const selector_function_point2 select, const point2 *dl_restrict values, natural length, real percent, point2 *dl_restrict out);
 
-  api point2 *select_linear_point2(const point2 *restrict v, natural l, real p, point2 *restrict out);
-  api point2 *select_bezier_point2(const point2 *restrict v, natural l, real p, point2 *restrict out);
-  api point2 *select_catmullrom_point2(const point2 *restrict v, natural l, real p, point2 *restrict out);
+  dl_api point2 *select_linear_point2(const point2 *dl_restrict v, natural l, real p, point2 *dl_restrict out);
+  dl_api point2 *select_bezier_point2(const point2 *dl_restrict v, natural l, real p, point2 *dl_restrict out);
+  dl_api point2 *select_catmullrom_point2(const point2 *dl_restrict v, natural l, real p, point2 *dl_restrict out);
 
-  typedef point3 *(*selector_function_point3)(const point3 *restrict values, natural length, real percent, point3 *restrict out);
+  typedef point3 *(*selector_function_point3)(const point3 *dl_restrict values, natural length, real percent, point3 *dl_restrict out);
 
-  api point3 *interpolate_point3(const selector_function_point3 select, const point3 *restrict values, natural length, real percent, point3 *restrict out);
+  dl_api point3 *interpolate_point3(const selector_function_point3 select, const point3 *dl_restrict values, natural length, real percent, point3 *dl_restrict out);
 
-  api point3 *select_linear_point3(const point3 *restrict v, natural l, real p, point3 *restrict out);
-  api point3 *select_bezier_point3(const point3 *restrict v, natural l, real p, point3 *restrict out);
-  api point3 *select_catmullrom_point3(const point3 *restrict v, natural l, real p, point3 *restrict out);
+  dl_api point3 *select_linear_point3(const point3 *dl_restrict v, natural l, real p, point3 *dl_restrict out);
+  dl_api point3 *select_bezier_point3(const point3 *dl_restrict v, natural l, real p, point3 *dl_restrict out);
+  dl_api point3 *select_catmullrom_point3(const point3 *dl_restrict v, natural l, real p, point3 *dl_restrict out);
 
 
 
-  api integer *lerp_integer(integer a, integer b, real p, integer *restrict out);
-  api real *lerp_real(real a, real b, real p, real *restrict out);
-  api point2 *lerp_point2(const point2 *restrict a, const point2 *restrict b, real p, point2 *restrict out);
-  api point3 *lerp_point3(const point3 *restrict a, const point3 *restrict b, real p, point3 *restrict out);
-  api vec2 *lerp_vec2(const vec2 *restrict a, const vec2 *restrict b, real p, vec2 *restrict out);
-  api vec3 *lerp_vec3(const vec3 *restrict a, const vec3 *restrict b, real p, vec3 *restrict out);
+  dl_api integer *lerp_integer(integer a, integer b, real p, integer *dl_restrict out);
+  dl_api real *lerp_real(real a, real b, real p, real *dl_restrict out);
+  dl_api point2 *lerp_point2(const point2 *dl_restrict a, const point2 *dl_restrict b, real p, point2 *dl_restrict out);
+  dl_api point3 *lerp_point3(const point3 *dl_restrict a, const point3 *dl_restrict b, real p, point3 *dl_restrict out);
+  dl_api vec2 *lerp_vec2(const vec2 *dl_restrict a, const vec2 *dl_restrict b, real p, vec2 *dl_restrict out);
+  dl_api vec3 *lerp_vec3(const vec3 *dl_restrict a, const vec3 *dl_restrict b, real p, vec3 *dl_restrict out);
 
 
 
@@ -789,28 +789,28 @@ extern "C" {
 
   extern vector_settings default_vector_settings;
 
-  api vector *init_vector(vector * restrict target, natural element_size, natural capacity);
-  api vector *init_vector_custom(vector * restrict target, vector_settings settings, natural capacity);
+  dl_api vector *init_vector(vector * dl_restrict target, natural element_size, natural capacity);
+  dl_api vector *init_vector_custom(vector * dl_restrict target, vector_settings settings, natural capacity);
 
-  api vector *init_vector_array(vector * restrict target, byte *data, natural element_size, natural count);
+  dl_api vector *init_vector_array(vector * dl_restrict target, byte *data, natural element_size, natural count);
 
-  api natural vector_copy(vector * restrict target, natural target_offset_index, const vector * restrict original);
-  api natural vector_copy_array(vector * restrict target, natural target_offset_index, const byte *restrict data, natural count);
+  dl_api natural vector_copy(vector * dl_restrict target, natural target_offset_index, const vector * dl_restrict original);
+  dl_api natural vector_copy_array(vector * dl_restrict target, natural target_offset_index, const byte *dl_restrict data, natural count);
 
-  api void destroy_vector(vector * restrict target, const dl_handler *restrict deconstruct_entry);
+  dl_api void destroy_vector(vector * dl_restrict target, const dl_handler *dl_restrict deconstruct_entry);
 
-  api natural vector_capacity(const vector * restrict v);
+  dl_api natural vector_capacity(const vector * dl_restrict v);
 
-  api bool vector_grow(vector * restrict v);
-  api bool vector_shrink(vector * restrict v, dl_handler *deconstruct_entry);
-  api bool vector_resize(vector * restrict v, natural minimum_capacity, dl_handler *deconstruct_entry);
+  dl_api bool vector_grow(vector * dl_restrict v);
+  dl_api bool vector_shrink(vector * dl_restrict v, dl_handler *deconstruct_entry);
+  dl_api bool vector_resize(vector * dl_restrict v, natural minimum_capacity, dl_handler *deconstruct_entry);
 
-  api any vector_get(const vector * restrict v, natural index, any out);
-  api const any vector_ref(const vector * restrict v, natural index);
-  api any vector_set(vector * restrict v, natural index, any value);
+  dl_api any vector_get(const vector * dl_restrict v, natural index, any out);
+  dl_api const any vector_ref(const vector * dl_restrict v, natural index);
+  dl_api any vector_set(vector * dl_restrict v, natural index, any value);
 
-  api bool vector_swap(vector * restrict v, natural index1, natural index2);
-  api natural vector_ref_array(vector * restrict v, natural index, any *restrict out);
+  dl_api bool vector_swap(vector * dl_restrict v, natural index1, natural index2);
+  dl_api natural vector_ref_array(vector * dl_restrict v, natural index, any *dl_restrict out);
 
 
 
@@ -844,32 +844,32 @@ extern "C" {
 
   extern linked_list_settings default_linked_list_settings;
 
-  api linked_list *init_linked_list(linked_list * restrict target, natural element_size, natural cache_length);
-  api linked_list *init_linked_list_custom(linked_list * restrict target, linked_list_settings settings);
+  dl_api linked_list *init_linked_list(linked_list * dl_restrict target, natural element_size, natural cache_length);
+  dl_api linked_list *init_linked_list_custom(linked_list * dl_restrict target, linked_list_settings settings);
 
-  api natural linked_list_copy(linked_list * restrict target, struct linked_list_node *target_position, const linked_list *restrict original);
-  api natural linked_list_copy_array(linked_list * restrict target, struct linked_list_node *target_position, const byte *restrict data, natural count);
+  dl_api natural linked_list_copy(linked_list * dl_restrict target, struct linked_list_node *target_position, const linked_list *dl_restrict original);
+  dl_api natural linked_list_copy_array(linked_list * dl_restrict target, struct linked_list_node *target_position, const byte *dl_restrict data, natural count);
 
-  api void destroy_linked_list(linked_list * restrict target, dl_handler *restrict deconstruct_entry);
+  dl_api void destroy_linked_list(linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry);
 
-  api natural linked_list_capacity(const linked_list * restrict list);
-  api natural linked_list_length(const linked_list * restrict list);
+  dl_api natural linked_list_capacity(const linked_list * dl_restrict list);
+  dl_api natural linked_list_length(const linked_list * dl_restrict list);
 
-  api bool linked_list_grow(linked_list * restrict list);
-  api bool linked_list_shrink(linked_list * restrict list, dl_handler *restrict deconstruct_entry);
-  api bool linked_list_resize(linked_list * restrict list, natural minimum_capacity, dl_handler *restrict deconstruct_entry);
+  dl_api bool linked_list_grow(linked_list * dl_restrict list);
+  dl_api bool linked_list_shrink(linked_list * dl_restrict list, dl_handler *dl_restrict deconstruct_entry);
+  dl_api bool linked_list_resize(linked_list * dl_restrict list, natural minimum_capacity, dl_handler *dl_restrict deconstruct_entry);
 
-  api any linked_list_get(const linked_list * restrict list, struct linked_list_node *restrict position, any out);
-  api const any linked_list_ref(const struct linked_list_node *restrict position);
-  api any linked_list_set(linked_list * restrict list, struct linked_list_node *restrict position, any value);
-  api struct linked_list_node *linked_list_index(linked_list * restrict list, natural position);
+  dl_api any linked_list_get(const linked_list * dl_restrict list, struct linked_list_node *dl_restrict position, any out);
+  dl_api const any linked_list_ref(const struct linked_list_node *dl_restrict position);
+  dl_api any linked_list_set(linked_list * dl_restrict list, struct linked_list_node *dl_restrict position, any value);
+  dl_api struct linked_list_node *linked_list_index(linked_list * dl_restrict list, natural position);
 
-  api struct linked_list_node *linked_list_add(linked_list * restrict list, struct linked_list_node *restrict position, any value);
-  api any linked_list_remove(linked_list * restrict list, struct linked_list_node * restrict position, any out);
-  api natural linked_list_destroy_range(linked_list * restrict list, struct linked_list_node *restrict position, natural count, dl_handler *restrict destruct_entry);
-  api bool linked_list_destroy(linked_list * restrict list, struct linked_list_node *restrict position, dl_handler *deconstruct_entry);
+  dl_api struct linked_list_node *linked_list_add(linked_list * dl_restrict list, struct linked_list_node *dl_restrict position, any value);
+  dl_api any linked_list_remove(linked_list * dl_restrict list, struct linked_list_node * dl_restrict position, any out);
+  dl_api natural linked_list_destroy_range(linked_list * dl_restrict list, struct linked_list_node *dl_restrict position, natural count, dl_handler *dl_restrict destruct_entry);
+  dl_api bool linked_list_destroy(linked_list * dl_restrict list, struct linked_list_node *dl_restrict position, dl_handler *deconstruct_entry);
 
-  api bool linked_list_swap(linked_list * restrict list, struct linked_list_node *restrict position1, struct linked_list_node *restrict position2, bool data);
+  dl_api bool linked_list_swap(linked_list * dl_restrict list, struct linked_list_node *dl_restrict position1, struct linked_list_node *dl_restrict position2, bool data);
 
 
 
@@ -908,7 +908,7 @@ extern "C" {
     collection_type type;
     storage_type storage;
     
-    comparator comparer;
+    dl_comparator comparer;
     dl_handler deconstruct_entry;
     natural capacity;
     natural element_size;
@@ -934,123 +934,123 @@ extern "C" {
   } collection;
 
   struct collection_dispatch_functions {
-    integer (*_iterator_compare)(const collection *restrict col, iterator left, iterator right);
-    bool (*_iterator_is_valid)(const collection *restrict col, iterator index);
-    iterator (*_make_invalid_iterator)(const collection *restrict col);
+    integer (*_iterator_compare)(const collection *dl_restrict col, iterator left, iterator right);
+    bool (*_iterator_is_valid)(const collection *dl_restrict col, iterator index);
+    iterator (*_make_invalid_iterator)(const collection *dl_restrict col);
 
-    any (*_collection_push_start)(collection *restrict col, iterator *iter);
-    bool (*_collection_is_empty)(const collection *restrict col);
-    any (*_collection_pop)(const collection *restrict col, any out);
-    bool (*_collection_pop_destroy)(collection *restrict col);
-    bool (*_collection_pop_forget)(collection *restrict col);
-    integer (*_collection_ref_array)(collection *restrict col, iterator iter, any *out_array);
-    any (*_collection_ref)(collection *restrict col, iterator iter);
-    bool (*_collection_swap)(collection *restrict col, iterator *iter_a, iterator *iter_b);
-    any (*_collection_get)(const collection *restrict col, iterator iter, any out);
-    any (*_collection_set)(collection *restrict col, iterator *iter, any value);
-    iterator (*_collection_index)(collection *restrict col, natural index);
-    void (*_collection_next)(const collection *restrict col, iterator *iter);
-    void (*_collection_prev)(const collection *restrict col, iterator *iter);
-    integer (*_collection_count)(const collection *restrict col);
-    iterator (*_collection_begin)(const collection *restrict col);
-    iterator (*_collection_end)(const collection *restrict col);
-    const any (*_collection_search_region)(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter);
-    bool (*_collection_destroy_at)(collection *restrict col, iterator *iter, dl_handler *destructor);
-    any (*_collection_remove_at)(collection *restrict col, iterator *iter, any out);
-    integer (*_collection_destroy_range)(collection *restrict col, iterator *iter, natural count);
-    bool (*_collection_insert)(collection *restrict col, iterator *restrict position, any item);
+    any (*_collection_push_start)(collection *dl_restrict col, iterator *iter);
+    bool (*_collection_is_empty)(const collection *dl_restrict col);
+    any (*_collection_pop)(const collection *dl_restrict col, any out);
+    bool (*_collection_pop_destroy)(collection *dl_restrict col);
+    bool (*_collection_pop_forget)(collection *dl_restrict col);
+    integer (*_collection_ref_array)(collection *dl_restrict col, iterator iter, any *out_array);
+    any (*_collection_ref)(collection *dl_restrict col, iterator iter);
+    bool (*_collection_swap)(collection *dl_restrict col, iterator *iter_a, iterator *iter_b);
+    any (*_collection_get)(const collection *dl_restrict col, iterator iter, any out);
+    any (*_collection_set)(collection *dl_restrict col, iterator *iter, any value);
+    iterator (*_collection_index)(collection *dl_restrict col, natural index);
+    void (*_collection_next)(const collection *dl_restrict col, iterator *iter);
+    void (*_collection_prev)(const collection *dl_restrict col, iterator *iter);
+    integer (*_collection_count)(const collection *dl_restrict col);
+    iterator (*_collection_begin)(const collection *dl_restrict col);
+    iterator (*_collection_end)(const collection *dl_restrict col);
+    const any (*_collection_search_region)(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter);
+    bool (*_collection_destroy_at)(collection *dl_restrict col, iterator *iter, dl_handler *destructor);
+    any (*_collection_remove_at)(collection *dl_restrict col, iterator *iter, any out);
+    integer (*_collection_destroy_range)(collection *dl_restrict col, iterator *iter, natural count);
+    bool (*_collection_insert)(collection *dl_restrict col, iterator *dl_restrict position, any item);
   };
   
-  api integer iterator_compare(const collection *restrict col, iterator left, iterator right);
-  api bool iterator_equal(const collection *restrict col, iterator left, iterator right);
-  api bool iterator_is_valid(const collection *restrict col, iterator index);
-  api iterator make_invalid_iterator(const collection *restrict col);
+  dl_api integer iterator_compare(const collection *dl_restrict col, iterator left, iterator right);
+  dl_api bool iterator_equal(const collection *dl_restrict col, iterator left, iterator right);
+  dl_api bool iterator_is_valid(const collection *dl_restrict col, iterator index);
+  dl_api iterator make_invalid_iterator(const collection *dl_restrict col);
 
-  api collection *init_collection(collection *restrict col, collection_type type, storage_type storage, comparator *restrict compare, dl_handler *restrict destructor, natural element_size);
-  api collection *init_collection_custom(collection *restrict col, collection_settings settings, natural element_size);
+  dl_api collection *init_collection(collection *dl_restrict col, collection_type type, storage_type storage, dl_comparator *dl_restrict compare, dl_handler *dl_restrict destructor, natural element_size);
+  dl_api collection *init_collection_custom(collection *dl_restrict col, collection_settings settings, natural element_size);
 
-  api collection *init_collection_array(collection *restrict col, collection_type type, comparator *restrict comp, dl_handler *restrict destruct_entry, byte * data, natural element_size, natural count);
+  dl_api collection *init_collection_array(collection *dl_restrict col, collection_type type, dl_comparator *dl_restrict comp, dl_handler *dl_restrict destruct_entry, byte * data, natural element_size, natural count);
 
-  api natural collection_element_size(const collection *restrict col);
+  dl_api natural collection_element_size(const collection *dl_restrict col);
 
-  api void destroy_collection(collection *restrict col);
+  dl_api void destroy_collection(collection *dl_restrict col);
 
-  api bool collection_is_set(const collection *restrict col);
-  api bool collection_is_sorted(const collection * restrict col);
-  api bool collection_is_queue(const collection * restrict col);
-  api bool collection_is_vector(const collection * restrict col);
-  api bool collection_is_linked_list(const collection * restrict col);
+  dl_api bool collection_is_set(const collection *dl_restrict col);
+  dl_api bool collection_is_sorted(const collection * dl_restrict col);
+  dl_api bool collection_is_queue(const collection * dl_restrict col);
+  dl_api bool collection_is_vector(const collection * dl_restrict col);
+  dl_api bool collection_is_linked_list(const collection * dl_restrict col);
 
-  api integer collection_copy(const collection *restrict original, collection *restrict target);
-  api integer collection_copy_array(const any data, natural count, collection *restrict target);
+  dl_api integer collection_copy(const collection *dl_restrict original, collection *dl_restrict target);
+  dl_api integer collection_copy_array(const any data, natural count, collection *dl_restrict target);
 
-  api iterator collection_begin(const collection *restrict col);
-  api iterator collection_end(const collection *restrict col);
+  dl_api iterator collection_begin(const collection *dl_restrict col);
+  dl_api iterator collection_end(const collection *dl_restrict col);
 
-  api any collection_pop(collection *restrict col, any out);
-  api bool collection_pop_forget(collection *restrict col);
-  api bool collection_pop_destroy(collection *restrict col);
+  dl_api any collection_pop(collection *dl_restrict col, any out);
+  dl_api bool collection_pop_forget(collection *dl_restrict col);
+  dl_api bool collection_pop_destroy(collection *dl_restrict col);
 
-  api any collection_push(collection *restrict col, const any value);
-  api any collection_push_index(collection *restrict col, const any value, iterator *out_index);
-  api any collection_push_start(collection *restrict col, iterator *iter);
-  api any collection_push_finish(collection *restrict col, iterator *iter);
+  dl_api any collection_push(collection *dl_restrict col, const any value);
+  dl_api any collection_push_index(collection *dl_restrict col, const any value, iterator *out_index);
+  dl_api any collection_push_start(collection *dl_restrict col, iterator *iter);
+  dl_api any collection_push_finish(collection *dl_restrict col, iterator *iter);
 
-  api const any collection_begin_ref(const collection *restrict col, iterator *iter);
-  api const any collection_end_ref(const collection *restrict col, iterator *iter);
+  dl_api const any collection_begin_ref(const collection *dl_restrict col, iterator *iter);
+  dl_api const any collection_end_ref(const collection *dl_restrict col, iterator *iter);
 
-  api iterator collection_index(collection *restrict col, natural index);
-  api iterator collection_index_of(const collection *restrict col, const any item);
+  dl_api iterator collection_index(collection *dl_restrict col, natural index);
+  dl_api iterator collection_index_of(const collection *dl_restrict col, const any item);
 
-  api const any collection_next(const collection *restrict col, iterator *iter);
-  api const any collection_prev(const collection *restrict col, iterator *iter);
+  dl_api const any collection_next(const collection *dl_restrict col, iterator *iter);
+  dl_api const any collection_prev(const collection *dl_restrict col, iterator *iter);
 
-  api any collection_find(const collection *restrict col, dl_filter *restrict predicate, iterator *iter);
-  api any collection_find_last(const collection *restrict col, dl_filter *restrict predicate, iterator *iter);
+  dl_api any collection_find(const collection *dl_restrict col, dl_filter *dl_restrict predicate, iterator *iter);
+  dl_api any collection_find_last(const collection *dl_restrict col, dl_filter *dl_restrict predicate, iterator *iter);
 
-  api any collection_foldl(const collection *restrict col, any initial, folder *func);
-  api any collection_foldr(const collection *restrict col, any initial, folder *func);
-  api const any collection_search(const collection *restrict col, dl_filter *predicate, iterator *iter);
-  api const any collection_search_region(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter);
+  dl_api any collection_foldl(const collection *dl_restrict col, any initial, dl_folder *func);
+  dl_api any collection_foldr(const collection *dl_restrict col, any initial, dl_folder *func);
+  dl_api const any collection_search(const collection *dl_restrict col, dl_filter *predicate, iterator *iter);
+  dl_api const any collection_search_region(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter);
 
-  api any collection_get(const collection *restrict col, iterator index, any out);
-  api any collection_insert(collection *restrict col, iterator *index, any item);
-  api const any collection_peek(const collection *restrict col);
-  api const any collection_ref(const collection *restrict col, iterator iter);
-  api any collection_remove_at(collection *restrict col, iterator *index, any out);
-  api any collection_remove_first(collection *restrict col, dl_filter *predicate, iterator *index, any out);
-  api any collection_remove_last(collection *restrict col, dl_filter *predicate, iterator *index, any out);
-  api any collection_set(collection *restrict col, iterator *index, any value);
+  dl_api any collection_get(const collection *dl_restrict col, iterator index, any out);
+  dl_api any collection_insert(collection *dl_restrict col, iterator *index, any item);
+  dl_api const any collection_peek(const collection *dl_restrict col);
+  dl_api const any collection_ref(const collection *dl_restrict col, iterator iter);
+  dl_api any collection_remove_at(collection *dl_restrict col, iterator *index, any out);
+  dl_api any collection_remove_first(collection *dl_restrict col, dl_filter *predicate, iterator *index, any out);
+  dl_api any collection_remove_last(collection *dl_restrict col, dl_filter *predicate, iterator *index, any out);
+  dl_api any collection_set(collection *dl_restrict col, iterator *index, any value);
 
-  api bool collection_all(const collection *restrict col, dl_filter *func);
-  api bool collection_any(const collection *restrict col, dl_filter *func);
-  api bool collection_contains(const collection *restrict col, const any item);
-  api bool collection_is_empty(const collection *restrict col);
+  dl_api bool collection_all(const collection *dl_restrict col, dl_filter *func);
+  dl_api bool collection_any(const collection *dl_restrict col, dl_filter *func);
+  dl_api bool collection_contains(const collection *dl_restrict col, const any item);
+  dl_api bool collection_is_empty(const collection *dl_restrict col);
 
-  api integer collection_map(const collection *restrict col, converter *func, collection *out);
-  api integer collection_zip(const collection *restrict col1, const collection *restrict col2, zipper *zip, collection *out);
+  dl_api integer collection_map(const collection *dl_restrict col, dl_converter *func, collection *out);
+  dl_api integer collection_zip(const collection *dl_restrict col1, const collection *dl_restrict col2, dl_zipper *zip, collection *out);
 
-  api bool collection_forget_at(collection *restrict col, iterator *iter);
-  api bool collection_destroy_at(collection *restrict col, iterator *iter);
-  api bool collection_destroy_first(collection *restrict col, dl_filter *predicate, iterator *iter);
-  api bool collection_destroy_last(collection *restrict col, dl_filter *predicate, iterator *iter);
-  api bool collection_swap(collection *restrict col, iterator *iter_a, iterator *iter_b);
-  api bool collection_quick_sort(collection *restrict col, comparator *compare);
-  api bool collection_quick_sort_region(collection *restrict col, comparator *compare, iterator left, iterator right);
-  api bool collection_sort(collection *restrict col);
+  dl_api bool collection_forget_at(collection *dl_restrict col, iterator *iter);
+  dl_api bool collection_destroy_at(collection *dl_restrict col, iterator *iter);
+  dl_api bool collection_destroy_first(collection *dl_restrict col, dl_filter *predicate, iterator *iter);
+  dl_api bool collection_destroy_last(collection *dl_restrict col, dl_filter *predicate, iterator *iter);
+  dl_api bool collection_swap(collection *dl_restrict col, iterator *iter_a, iterator *iter_b);
+  dl_api bool collection_quick_sort(collection *dl_restrict col, dl_comparator *compare);
+  dl_api bool collection_quick_sort_region(collection *dl_restrict col, dl_comparator *compare, iterator left, iterator right);
+  dl_api bool collection_sort(collection *dl_restrict col);
 
-  api void collection_clear(collection *restrict col);
+  dl_api void collection_clear(collection *dl_restrict col);
 
-  api integer collection_count(const collection *restrict col);
-  api integer collection_find_all(const collection *restrict col, dl_filter *predicate, collection *out);
+  dl_api integer collection_count(const collection *dl_restrict col);
+  dl_api integer collection_find_all(const collection *dl_restrict col, dl_filter *predicate, collection *out);
 
-  api integer collection_take(collection *restrict col, natural count, collection *out);
-  api integer collection_destroy_all(collection *restrict col, dl_filter *predicate);
-  api integer collection_destroy_range(collection *restrict col, iterator *index, natural count);
-  api integer collection_drop(collection *restrict col, natural count);
-  api integer collection_ref_array(collection *restrict col, iterator index, any *out_array);
-  api integer collection_remove_all(collection *restrict col, dl_filter *predicate, collection *out);
-  api integer collection_remove_range(collection *restrict col, iterator *index, natural count, collection *out);
+  dl_api integer collection_take(collection *dl_restrict col, natural count, collection *out);
+  dl_api integer collection_destroy_all(collection *dl_restrict col, dl_filter *predicate);
+  dl_api integer collection_destroy_range(collection *dl_restrict col, iterator *index, natural count);
+  dl_api integer collection_drop(collection *dl_restrict col, natural count);
+  dl_api integer collection_ref_array(collection *dl_restrict col, iterator index, any *out_array);
+  dl_api integer collection_remove_all(collection *dl_restrict col, dl_filter *predicate, collection *out);
+  dl_api integer collection_remove_range(collection *dl_restrict col, iterator *index, natural count, collection *out);
 
 #endif /* DL_USE_CONTAINERS */
 
@@ -1073,11 +1073,11 @@ extern "C" {
 
 #if DL_USE_LOGGING
 
-natural _default_log_handler(log_channel ch, const char *restrict file, natural line, const char *restrict function, const char *restrict msg) {
+natural _default_log_handler(dl_log_channel ch, const char *dl_restrict file, natural line, const char *dl_restrict function, const char *dl_restrict msg) {
   char time_buf[20];
 
-#if HAS_TIME
-# if IS_MSC
+#if DL_HAS_TIME
+# if DL_IS_MSC
   struct tm ltime;
   time_t t = time(NULL);
   localtime_s(&ltime, &t);
@@ -1091,19 +1091,19 @@ natural _default_log_handler(log_channel ch, const char *restrict file, natural 
 #endif
 
   switch (ch) {
-  case LOG_INFO:
+  case DL_LOG_INFO:
     fprintf(stdout, "%s:%lu:%s\n[LOG %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
     return ch;
-  case LOG_WARNING:
+  case DL_LOG_WARNING:
     fprintf(stdout, "%s:%lu:%s\n[WRN %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
     return ch;
-  case LOG_ERROR:
+  case DL_LOG_ERROR:
     fprintf(stderr, "%s:%lu:%s\n[ERR %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
     return ch;
-  case LOG_TEST:
+  case DL_LOG_TEST:
     fprintf(stdout, "[TST %s] %s\n", time_buf, msg);
     return ch;
-  case LOG_MESSAGE:
+  case DL_LOG_MESSAGE:
     fprintf(stdout, "[MSG %s] %s\n", time_buf, msg);
     return ch;
   default:
@@ -1111,9 +1111,9 @@ natural _default_log_handler(log_channel ch, const char *restrict file, natural 
   }
 }
 
-natural (*active_log_handler)(log_channel ch, const char *restrict, natural, const char *restrict, const char *restrict) = _default_log_handler;
+natural (*dl_active_log_handler)(dl_log_channel ch, const char *dl_restrict, natural, const char *dl_restrict, const char *dl_restrict) = _default_log_handler;
 
-natural log_message(log_channel ch, const char *restrict file, natural line, const char *restrict function, const char *restrict fmt, ...) {
+natural dl_log_message(dl_log_channel ch, const char *dl_restrict file, natural line, const char *dl_restrict function, const char *dl_restrict fmt, ...) {
   char buf[256];
   va_list args1, args2;
   va_start(args1, fmt);
@@ -1125,7 +1125,7 @@ natural log_message(log_channel ch, const char *restrict file, natural line, con
   buf[count + 1] = 0;
   va_end(args2);
 
-  return active_log_handler(ch, file, line, function, buf);
+  return dl_active_log_handler(ch, file, line, function, buf);
 }
 
 #endif /* DL_USE_LOGGING */
@@ -1213,20 +1213,20 @@ const vec2 vec2_one = { 1, 1 };
 const vec3 vec3_one = { 1, 1, 1, 0 };
 const point3 point3_one = { 1, 1, 1, 1 };
 
-api bool approximately_equal(real a, real b, real epsilon) {
+dl_api bool approximately_equal(real a, real b, real epsilon) {
   return _abs(a - b) < epsilon;
 }
 
-api integer floor_to_integer(real n) {
+dl_api integer floor_to_integer(real n) {
   return (integer)_floor(n);
 }
 
-api integer ceil_to_integer(real n) {
+dl_api integer ceil_to_integer(real n) {
   return (integer)_ceil(n);
 }
 
-api integer round_to_integer(real n) {
-#if !IS_ATLEAST_C99
+dl_api integer round_to_integer(real n) {
+#if !DL_IS_ATLEAST_C99
   real floored = _floor(n);
   real frac = n - floored;
   return frac > 0.5 ? (integer)(floored + 1) : (integer)floored;
@@ -1235,8 +1235,8 @@ api integer round_to_integer(real n) {
 #endif
 }
 
-api real rationalize(real value, natural decimal_points) {
-#if !IS_ATLEAST_C99
+dl_api real rationalize(real value, natural decimal_points) {
+#if !DL_IS_ATLEAST_C99
   real d = (real)pow(10, (real)decimal_points);
   real floored = floor(value);
   real frac = value - floored;
@@ -1253,23 +1253,23 @@ api real rationalize(real value, natural decimal_points) {
 #endif
 }
 
-api real degree_to_radian(real degree) {
+dl_api real degree_to_radian(real degree) {
   static const real factor = 0.01745329252f;
   return degree * factor;
 }
 
-api real radian_to_degree(real radian) {
+dl_api real radian_to_degree(real radian) {
   static const real factor = 57.2957795131f;
   return radian * factor;
 }
 
 integer _factorial_cache[13] = { 1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800, 39916800, 479001600 };
 
-api integer factorial(integer n) {
+dl_api integer factorial(integer n) {
   integer i;
-  if (likely((natural)n < sizeof(_factorial_cache)))
+  if (dl_likely((natural)n < sizeof(_factorial_cache)))
     return _factorial_cache[n];
-  if (unlikely(n < 0))
+  if (dl_unlikely(n < 0))
     return 1;
   for (i = n - 1; i > 0; --i) {
     n = n * i;
@@ -1279,12 +1279,12 @@ api integer factorial(integer n) {
 
 
 
-api random_state *init_random(random_state *state, integer seed) {
+dl_api random_state *init_random(random_state *state, integer seed) {
   return init_random_custom(state, INTEGER_MAX, 1103515245, 12345, seed);
 }
 
-api random_state *init_random_custom(random_state *state, integer m, integer a, integer c, integer seed) {
-  if (safety(state == NULL))
+dl_api random_state *init_random_custom(random_state *state, integer m, integer a, integer c, integer seed) {
+  if (dl_safety(state == NULL))
     return NULL;
 
   state->m = _abs(m);
@@ -1295,16 +1295,16 @@ api random_state *init_random_custom(random_state *state, integer m, integer a, 
   return state;
 }
 
-api real random_degree(random_state *state) {
+dl_api real random_degree(random_state *state) {
   return random_real_range(state, 0, 360);
 }
 
-api real random_radian(random_state *state) {
+dl_api real random_radian(random_state *state) {
   return random_real_range(state, 0, 2 * M_PI);
 }
 
-api real random_real(random_state *state, real max) {
-  if (safety(state == NULL))
+dl_api real random_real(random_state *state, real max) {
+  if (dl_safety(state == NULL))
     return 0;
 
   state->seed = (state->a * state->seed + state->c) % state->m;
@@ -1312,8 +1312,8 @@ api real random_real(random_state *state, real max) {
   return fabs((real)state->seed / (real)state->m) * max;
 }
 
-api integer random_integer(random_state *state, integer max) {
-  if (safety(state == NULL))
+dl_api integer random_integer(random_state *state, integer max) {
+  if (dl_safety(state == NULL))
     return 0;
 
   state->seed = (state->a * state->seed + state->c) % state->m;
@@ -1321,17 +1321,17 @@ api integer random_integer(random_state *state, integer max) {
   return _abs(state->seed) % max;
 }
 
-api integer random_integer_range(random_state *state, integer min, integer max) {
+dl_api integer random_integer_range(random_state *state, integer min, integer max) {
   return random_integer(state, max - min) + min;
 }
 
-api real random_real_range(random_state *state, real min, real max) {
+dl_api real random_real_range(random_state *state, real min, real max) {
   return random_real(state, max - min) + min;
 }
 
-#if IS_WINDOWS
+#if DL_IS_WINDOWS
 
-api random_state *init_random_time(random_state *state) {
+dl_api random_state *init_random_time(random_state *state) {
   static const uint64_t epoch = ((uint64_t)116444736000000000ULL);
   
   SYSTEMTIME system_time;
@@ -1352,9 +1352,9 @@ api random_state *init_random_time(random_state *state) {
 
 #endif
 
-#if (IS_LINUX || IS_APPLE) && IS_ATLEAST_C99
+#if (DL_IS_LINUX || DL_IS_APPLE) && DL_IS_ATLEAST_C99
 
-api random_state *init_random_time(random_state *state) {
+dl_api random_state *init_random_time(random_state *state) {
   struct timeval t1;
   gettimeofday(&t1, NULL);
   return init_random(state, t1.tv_usec + t1.tv_sec);
@@ -1362,7 +1362,7 @@ api random_state *init_random_time(random_state *state) {
 
 #else
 
-api random_state *init_random_time(random_state *state) {
+dl_api random_state *init_random_time(random_state *state) {
   return init_random(state, (integer)__LINE__);
 }
 
@@ -1370,8 +1370,8 @@ api random_state *init_random_time(random_state *state) {
 
 
 
-api vec2 *init_vec2(vec2 * restrict v, real x, real y) {
-  if (safety(v == NULL))
+dl_api vec2 *init_vec2(vec2 * dl_restrict v, real x, real y) {
+  if (dl_safety(v == NULL))
     return NULL;
 
   v->x = x;
@@ -1380,8 +1380,8 @@ api vec2 *init_vec2(vec2 * restrict v, real x, real y) {
   return v;
 }
 
-api vec2 *vec2_add(const vec2 *restrict left, const vec2 *restrict right, vec2 *restrict out) {
-  if (safety(left == NULL || right == NULL || out == NULL))
+dl_api vec2 *vec2_add(const vec2 *dl_restrict left, const vec2 *dl_restrict right, vec2 *dl_restrict out) {
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
   out->x = left->x + right->x;
@@ -1390,8 +1390,8 @@ api vec2 *vec2_add(const vec2 *restrict left, const vec2 *restrict right, vec2 *
   return out;
 }
 
-api vec2 *vec2_sub(const vec2 *restrict left, const vec2 *restrict right, vec2 *restrict out) {
-  if (safety(left == NULL || right == NULL || out == NULL))
+dl_api vec2 *vec2_sub(const vec2 *dl_restrict left, const vec2 *dl_restrict right, vec2 *dl_restrict out) {
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
   out->x = left->x - right->x;
@@ -1400,8 +1400,8 @@ api vec2 *vec2_sub(const vec2 *restrict left, const vec2 *restrict right, vec2 *
   return out;
 }
 
-api vec2 *vec2_mul_scalar(const vec2 *restrict left, real scalar, vec2 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api vec2 *vec2_mul_scalar(const vec2 *dl_restrict left, real scalar, vec2 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = left->x * scalar;
@@ -1410,12 +1410,12 @@ api vec2 *vec2_mul_scalar(const vec2 *restrict left, real scalar, vec2 *restrict
   return out;
 }
 
-api vec2 *vec2_div_scalar(const vec2 *restrict left, real scalar, vec2 *restrict out) {
+dl_api vec2 *vec2_div_scalar(const vec2 *dl_restrict left, real scalar, vec2 *dl_restrict out) {
   return vec2_mul_scalar(left, 1.0f / scalar, out);
 }
 
-api vec2 *vec2_add_scalar(const vec2 *restrict left, real scalar, vec2 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api vec2 *vec2_add_scalar(const vec2 *dl_restrict left, real scalar, vec2 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = left->x + scalar;
@@ -1424,13 +1424,13 @@ api vec2 *vec2_add_scalar(const vec2 *restrict left, real scalar, vec2 *restrict
   return out;
 }
 
-api vec2 *vec2_sub_scalar(const vec2 *restrict left, real scalar, vec2 *restrict out) {
+dl_api vec2 *vec2_sub_scalar(const vec2 *dl_restrict left, real scalar, vec2 *dl_restrict out) {
   return vec2_add_scalar(left, -scalar, out);
 }
 
-api vec2 *vec2_normalize(const vec2 *restrict left, vec2 *restrict out) {
+dl_api vec2 *vec2_normalize(const vec2 *dl_restrict left, vec2 *dl_restrict out) {
   real inv_magnitude;
-  if (safety(left == NULL || out == NULL))
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
 
   inv_magnitude = 1.0f / _hypot(left->x, left->y);
@@ -1439,8 +1439,8 @@ api vec2 *vec2_normalize(const vec2 *restrict left, vec2 *restrict out) {
   return out;
 }
 
-api vec2 *vec2_negate(const vec2 *restrict left, vec2 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api vec2 *vec2_negate(const vec2 *dl_restrict left, vec2 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = -left->x;
@@ -1449,48 +1449,48 @@ api vec2 *vec2_negate(const vec2 *restrict left, vec2 *restrict out) {
   return out;
 }
 
-api real vec2_dot(const vec2 *restrict left, const vec2 *restrict right) {
-  if (safety(left == NULL || right == NULL))
+dl_api real vec2_dot(const vec2 *dl_restrict left, const vec2 *dl_restrict right) {
+  if (dl_safety(left == NULL || right == NULL))
     return 0;
   return left->x * right->x + left->y * right->y;
 }
 
-api bool vec2_approximately_equal(const vec2 *restrict left, const vec2 *restrict right, real epsilon) {
-  if (safety(left == NULL || right == NULL))
+dl_api bool vec2_approximately_equal(const vec2 *dl_restrict left, const vec2 *dl_restrict right, real epsilon) {
+  if (dl_safety(left == NULL || right == NULL))
     return 0;
   return fabs(left->x - right->x) < epsilon && fabs(left->y - right->y) < epsilon;
 }
 
-api real vec2_square_magnitude(const vec2 *restrict left) {
-  if (safety(left == NULL))
+dl_api real vec2_square_magnitude(const vec2 *dl_restrict left) {
+  if (dl_safety(left == NULL))
     return 0;
   return left->x * left->x + left->y * left->y;
 }
 
-api real vec2_magnitude(const vec2 *restrict left) {
-  if (safety(left == NULL))
+dl_api real vec2_magnitude(const vec2 *dl_restrict left) {
+  if (dl_safety(left == NULL))
     return 0;
   
   return _hypot(left->x, left->y);
 }
 
-api vec2 *vec2_reflect(const vec2 *restrict left, const vec2 *restrict normal, vec2 *restrict out) {
-  if (safety(left == NULL || normal == NULL || out == NULL))
+dl_api vec2 *vec2_reflect(const vec2 *dl_restrict left, const vec2 *dl_restrict normal, vec2 *dl_restrict out) {
+  if (dl_safety(left == NULL || normal == NULL || out == NULL))
     return NULL;
   
   return vec2_sub(left, vec2_mul_scalar(normal, vec2_dot(normal, left) * 2.0f, out), out);
 }
 
-api vec2 *vec2_refract(const vec2 *restrict left, const vec2 *restrict normal, float eta, vec2 *restrict out) {
+dl_api vec2 *vec2_refract(const vec2 *dl_restrict left, const vec2 *dl_restrict normal, float eta, vec2 *dl_restrict out) {
   float dot, k;
   vec2 t;
 
-  if (safety(left == NULL || normal == NULL || out == NULL))
+  if (dl_safety(left == NULL || normal == NULL || out == NULL))
     return NULL;
 
   dot = vec2_dot(normal, left);
   k = 1.0f - (eta * eta) * (1.0f - (dot * dot));
-  if (unlikely(k < 0.0f)) {
+  if (dl_unlikely(k < 0.0f)) {
     *out = vec2_zero;
     return out;
   }
@@ -1500,46 +1500,46 @@ api vec2 *vec2_refract(const vec2 *restrict left, const vec2 *restrict normal, f
 
 
 
-api point2 *init_point2(point2 * restrict p, real x, real y) {
+dl_api point2 *init_point2(point2 * dl_restrict p, real x, real y) {
   return init_vec2((vec2 *)p, x, y);
 }
 
-api point2 *point2_add(const point2 *restrict left, const point2 *restrict right, point2 *restrict out) {
+dl_api point2 *point2_add(const point2 *dl_restrict left, const point2 *dl_restrict right, point2 *dl_restrict out) {
   return vec2_add(left, right, out);
 }
 
-api point2 *point2_sub(const point2 *restrict left, const point2 *restrict right, point2 *restrict out) {
+dl_api point2 *point2_sub(const point2 *dl_restrict left, const point2 *dl_restrict right, point2 *dl_restrict out) {
   return vec2_sub(left, right, out);
 }
 
-api point2 *point2_mul_scalar(const point2 *restrict left, real scalar, point2 *restrict out) {
+dl_api point2 *point2_mul_scalar(const point2 *dl_restrict left, real scalar, point2 *dl_restrict out) {
   return vec2_mul_scalar(left, scalar, out);
 }
 
-api point2 *point2_div_scalar(const point2 *restrict left, real scalar, point2 *restrict out) {
+dl_api point2 *point2_div_scalar(const point2 *dl_restrict left, real scalar, point2 *dl_restrict out) {
   return vec2_div_scalar(left, scalar, out);
 }
 
-api point2 *point2_add_scalar(const point2 *restrict left, real scalar, point2 *restrict out) {
+dl_api point2 *point2_add_scalar(const point2 *dl_restrict left, real scalar, point2 *dl_restrict out) {
   return vec2_add_scalar(left, scalar, out);
 }
 
-api point2 *point2_sub_scalar(const point2 *restrict left, real scalar, point2 *restrict out) {
+dl_api point2 *point2_sub_scalar(const point2 *dl_restrict left, real scalar, point2 *dl_restrict out) {
   return vec2_sub_scalar(left, scalar, out);
 }
 
-api point2 *point2_negate(const point2 *restrict left, point2 *restrict out) {
+dl_api point2 *point2_negate(const point2 *dl_restrict left, point2 *dl_restrict out) {
   return vec2_negate(left, out);
 }
 
-api bool point2_approximately_equal(const point2 *restrict left, const point2 *restrict right, real epsilon) {
+dl_api bool point2_approximately_equal(const point2 *dl_restrict left, const point2 *dl_restrict right, real epsilon) {
   return vec2_approximately_equal(left, right, epsilon);
 }
 
-api real point2_line_orientation(const point2 *restrict point, const point2 *restrict line_a, const point2 *restrict line_b) {
+dl_api real point2_line_orientation(const point2 *dl_restrict point, const point2 *dl_restrict line_a, const point2 *dl_restrict line_b) {
   real rise, run, m, b;
 
-  if (safety(point == NULL || line_a == NULL || line_b == NULL))
+  if (dl_safety(point == NULL || line_a == NULL || line_b == NULL))
     return 0;
   
   rise = line_b->y - line_a->y;
@@ -1552,8 +1552,8 @@ api real point2_line_orientation(const point2 *restrict point, const point2 *res
 
 
 
-api vec4 *init_vec4(vec4 * restrict v, real x, real y, real z, real w) {
-  if (safety(v == NULL))
+dl_api vec4 *init_vec4(vec4 * dl_restrict v, real x, real y, real z, real w) {
+  if (dl_safety(v == NULL))
     return NULL;
   
   v->x = x;
@@ -1564,8 +1564,8 @@ api vec4 *init_vec4(vec4 * restrict v, real x, real y, real z, real w) {
   return v;
 }
 
-api vec4 *vec4_add(const vec4 *restrict left, const vec4 *restrict right, vec4 *restrict out) {
-  if (safety(left == NULL || right == NULL || out == NULL))
+dl_api vec4 *vec4_add(const vec4 *dl_restrict left, const vec4 *dl_restrict right, vec4 *dl_restrict out) {
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
   out->x = left->x + right->x;
@@ -1576,8 +1576,8 @@ api vec4 *vec4_add(const vec4 *restrict left, const vec4 *restrict right, vec4 *
   return out;
 }
 
-api vec4 *vec4_sub(const vec4 *restrict left, const vec4 *restrict right, vec4 *restrict out) {
-  if (safety(left == NULL || right == NULL || out == NULL))
+dl_api vec4 *vec4_sub(const vec4 *dl_restrict left, const vec4 *dl_restrict right, vec4 *dl_restrict out) {
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
   out->x = left->x - right->x;
@@ -1588,19 +1588,19 @@ api vec4 *vec4_sub(const vec4 *restrict left, const vec4 *restrict right, vec4 *
   return out;
 }
 
-api real vec4_dot(const vec4 *restrict left, const vec4 *restrict right) {
-  if (safety(left == NULL || right == NULL))
+dl_api real vec4_dot(const vec4 *dl_restrict left, const vec4 *dl_restrict right) {
+  if (dl_safety(left == NULL || right == NULL))
     return 0;
   
   return left->x * right->x + left->y * right->y + left->z * right->z + left->w * right->w;
 }
 
-api vec4 *vec4_normalize(const vec4 *restrict left, vec4 *restrict out) {
+dl_api vec4 *vec4_normalize(const vec4 *dl_restrict left, vec4 *dl_restrict out) {
   return vec4_div_scalar(left, vec4_magnitude(left), out);
 }
 
-api vec4 *vec4_negate(const vec4 *restrict left, vec4 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api vec4 *vec4_negate(const vec4 *dl_restrict left, vec4 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = -left->x;
@@ -1611,8 +1611,8 @@ api vec4 *vec4_negate(const vec4 *restrict left, vec4 *restrict out) {
   return out;
 }
 
-api real vec4_square_magnitude(const vec4 *restrict left) {
-  if (safety(left == NULL))
+dl_api real vec4_square_magnitude(const vec4 *dl_restrict left) {
+  if (dl_safety(left == NULL))
     return 0;
   
   return (left->x * left->x)
@@ -1621,12 +1621,12 @@ api real vec4_square_magnitude(const vec4 *restrict left) {
     + (left->w * left->w);
 }
 
-api real vec4_magnitude(const vec4 *restrict left) {
+dl_api real vec4_magnitude(const vec4 *dl_restrict left) {
   return _sqrt(vec4_square_magnitude(left));
 }
 
-api bool vec4_approximately_equal(const vec4 *restrict left, const vec4 *restrict right, real epsilon) {
-  if (safety(left == NULL || right == NULL))
+dl_api bool vec4_approximately_equal(const vec4 *dl_restrict left, const vec4 *dl_restrict right, real epsilon) {
+  if (dl_safety(left == NULL || right == NULL))
     return 0;
   
   return fabs(left->x - right->x) < epsilon
@@ -1635,8 +1635,8 @@ api bool vec4_approximately_equal(const vec4 *restrict left, const vec4 *restric
     && fabs(left->w - right->w) < epsilon;
 }
 
-api vec4 *vec4_mul_scalar(const vec4 *restrict left, real scalar, vec4 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api vec4 *vec4_mul_scalar(const vec4 *dl_restrict left, real scalar, vec4 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = left->x * scalar;
@@ -1647,12 +1647,12 @@ api vec4 *vec4_mul_scalar(const vec4 *restrict left, real scalar, vec4 *restrict
   return out;
 }
 
-api vec4 *vec4_div_scalar(const vec4 *left, real scalar, vec4 *restrict out) {
+dl_api vec4 *vec4_div_scalar(const vec4 *left, real scalar, vec4 *dl_restrict out) {
   return vec4_mul_scalar(left, 1.0 / scalar, out);
 }
 
-api vec4 *vec4_add_scalar(const vec4 *restrict left, real scalar, vec4 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api vec4 *vec4_add_scalar(const vec4 *dl_restrict left, real scalar, vec4 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = left->x + scalar;
@@ -1663,18 +1663,18 @@ api vec4 *vec4_add_scalar(const vec4 *restrict left, real scalar, vec4 *restrict
   return out;
 }
 
-api vec4 *vec4_sub_scalar(const vec4 *restrict left, real scalar, vec4 *restrict out) {
+dl_api vec4 *vec4_sub_scalar(const vec4 *dl_restrict left, real scalar, vec4 *dl_restrict out) {
   return vec4_add_scalar(left, -scalar, out);
 }
 
 
 
-api point3 *init_point3(point3 * restrict p, real x, real y, real z) {
+dl_api point3 *init_point3(point3 * dl_restrict p, real x, real y, real z) {
   return init_vec4(p, x, y, z, 1);
 }
 
-api point3 *point3_add(const point3 *restrict left, const point3 *restrict right, point3 *restrict out) {
-  if (safety(left == NULL || right == NULL || out == NULL))
+dl_api point3 *point3_add(const point3 *dl_restrict left, const point3 *dl_restrict right, point3 *dl_restrict out) {
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
   out->x = left->x + right->x;
@@ -1685,8 +1685,8 @@ api point3 *point3_add(const point3 *restrict left, const point3 *restrict right
   return out;
 }
 
-api point3 *point3_sub(const point3 *restrict left, const point3 *restrict right, point3 *restrict out) {
-  if (safety(left == NULL || right == NULL || out == NULL))
+dl_api point3 *point3_sub(const point3 *dl_restrict left, const point3 *dl_restrict right, point3 *dl_restrict out) {
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
   out->x = left->x - right->x;
@@ -1697,8 +1697,8 @@ api point3 *point3_sub(const point3 *restrict left, const point3 *restrict right
   return out;
 }
 
-api point3 *point3_mul_scalar(const point3 *restrict left, real scalar, point3 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api point3 *point3_mul_scalar(const point3 *dl_restrict left, real scalar, point3 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = left->x * scalar;
@@ -1709,12 +1709,12 @@ api point3 *point3_mul_scalar(const point3 *restrict left, real scalar, point3 *
   return out;
 }
 
-api point3 *point3_div_scalar(const point3 *restrict left, real scalar, point3 *restrict out) {
+dl_api point3 *point3_div_scalar(const point3 *dl_restrict left, real scalar, point3 *dl_restrict out) {
   return point3_mul_scalar(left, 1.0 / scalar, out);
 }
 
-api point3 *point3_add_scalar(const point3 *restrict left, real scalar, point3 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api point3 *point3_add_scalar(const point3 *dl_restrict left, real scalar, point3 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = left->x + scalar;
@@ -1725,12 +1725,12 @@ api point3 *point3_add_scalar(const point3 *restrict left, real scalar, point3 *
   return out;
 }
 
-api point3 *point3_sub_scalar(const point3 *restrict left, real scalar, point3 *restrict out) {
+dl_api point3 *point3_sub_scalar(const point3 *dl_restrict left, real scalar, point3 *dl_restrict out) {
   return point3_add_scalar(left, -scalar, out);
 }
 
-api point3 *point3_negate(const point3 *restrict left, point3 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api point3 *point3_negate(const point3 *dl_restrict left, point3 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = -left->x;
@@ -1741,11 +1741,11 @@ api point3 *point3_negate(const point3 *restrict left, point3 *restrict out) {
   return out;
 }
 
-api bool point3_approximately_equal(const point3 *restrict left, const point3 *restrict right, real epsilon) {
+dl_api bool point3_approximately_equal(const point3 *dl_restrict left, const point3 *dl_restrict right, real epsilon) {
   return vec4_approximately_equal(left, right, epsilon);
 }
 
-api point3 *point3_rotate(const point3 *restrict left, const vec3 *restrict axis, const real angle, point3 *restrict out) {
+dl_api point3 *point3_rotate(const point3 *dl_restrict left, const vec3 *dl_restrict axis, const real angle, point3 *dl_restrict out) {
   mat4 mat;
 
   return mat4_mul_point3(init_mat4_rotate(&mat, axis, angle), left, out);
@@ -1753,12 +1753,12 @@ api point3 *point3_rotate(const point3 *restrict left, const vec3 *restrict axis
 
 
 
-api vec3 *init_vec3(vec3 * restrict v, real x, real y, real z) {
+dl_api vec3 *init_vec3(vec3 * dl_restrict v, real x, real y, real z) {
   return init_vec4(v, x, y, z, 0);
 }
 
-api vec3 *vec3_add(const vec3 *restrict left, const vec3 *restrict right, vec3 *restrict out) {
-  if (safety(left == NULL || right == NULL || out == NULL))
+dl_api vec3 *vec3_add(const vec3 *dl_restrict left, const vec3 *dl_restrict right, vec3 *dl_restrict out) {
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
   out->x = left->x + right->x;
@@ -1769,8 +1769,8 @@ api vec3 *vec3_add(const vec3 *restrict left, const vec3 *restrict right, vec3 *
   return out;
 }
 
-api vec3 *vec3_sub(const vec3 *restrict left, const vec3 *restrict right, vec3 *restrict out) {
-  if (safety(left == NULL || right == NULL || out == NULL))
+dl_api vec3 *vec3_sub(const vec3 *dl_restrict left, const vec3 *dl_restrict right, vec3 *dl_restrict out) {
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
   out->x = left->x - right->x;
@@ -1781,10 +1781,10 @@ api vec3 *vec3_sub(const vec3 *restrict left, const vec3 *restrict right, vec3 *
   return out;
 }
 
-api vec3 *vec3_cross(const vec3 *restrict left, const vec3 *restrict right, vec3 *restrict out) {
+dl_api vec3 *vec3_cross(const vec3 *dl_restrict left, const vec3 *dl_restrict right, vec3 *dl_restrict out) {
   real orig_x, orig_y;
   
-  if (safety(left == NULL || right == NULL || out == NULL))
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
 
   /* In case right was passed as out, as well. */
@@ -1799,12 +1799,12 @@ api vec3 *vec3_cross(const vec3 *restrict left, const vec3 *restrict right, vec3
   return out;
 }
 
-api real vec3_dot(const vec3 *restrict left, const vec3 *restrict right) {
+dl_api real vec3_dot(const vec3 *dl_restrict left, const vec3 *dl_restrict right) {
   return left->x * right->x + left->y * right->y + left->z * right->z;
 }
 
-api vec3 *vec3_mul_scalar(const vec3 *restrict left, real scalar, vec3 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api vec3 *vec3_mul_scalar(const vec3 *dl_restrict left, real scalar, vec3 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = left->x * scalar;
@@ -1815,12 +1815,12 @@ api vec3 *vec3_mul_scalar(const vec3 *restrict left, real scalar, vec3 *restrict
   return out;
 }
 
-api vec3 *vec3_div_scalar(const vec3 *restrict left, real scalar, vec3 *restrict out) {
+dl_api vec3 *vec3_div_scalar(const vec3 *dl_restrict left, real scalar, vec3 *dl_restrict out) {
   return vec3_mul_scalar(left, 1.0 / scalar, out);
 }
 
-api vec3 *vec3_add_scalar(const vec3 *restrict left, real scalar, vec3 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api vec3 *vec3_add_scalar(const vec3 *dl_restrict left, real scalar, vec3 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = left->x + scalar;
@@ -1831,20 +1831,20 @@ api vec3 *vec3_add_scalar(const vec3 *restrict left, real scalar, vec3 *restrict
   return out;
 }
 
-api vec3 *vec3_sub_scalar(const vec3 *restrict left, real scalar, vec3 *restrict out) {
+dl_api vec3 *vec3_sub_scalar(const vec3 *dl_restrict left, real scalar, vec3 *dl_restrict out) {
   return vec3_add_scalar(left, -scalar, out);
 }
 
-api vec3 *vec3_normalize(const vec3 *restrict left, vec3 *restrict out) {
+dl_api vec3 *vec3_normalize(const vec3 *dl_restrict left, vec3 *dl_restrict out) {
   return vec3_div_scalar(left, vec3_magnitude(left), out);
 }
 
-api bool vec3_normalized(const vec3 *restrict left) {
+dl_api bool vec3_normalized(const vec3 *dl_restrict left) {
   return approximately_equal(fabs(left->x) + fabs(left->y) + fabs(left->z), 1.0, M_EPSILON);
 }
 
-api vec3 *vec3_negate(const vec3 *restrict left, vec3 *restrict out) {
-  if (safety(left == NULL || out == NULL))
+dl_api vec3 *vec3_negate(const vec3 *dl_restrict left, vec3 *dl_restrict out) {
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   out->x = -left->x;
@@ -1855,12 +1855,12 @@ api vec3 *vec3_negate(const vec3 *restrict left, vec3 *restrict out) {
   return out;
 }
 
-api bool vec3_approximately_equal(const vec3 *restrict left, const vec3 *restrict right, real epsilon) {
+dl_api bool vec3_approximately_equal(const vec3 *dl_restrict left, const vec3 *dl_restrict right, real epsilon) {
   return vec4_approximately_equal(left, right, epsilon);
 }
 
-api real vec3_square_magnitude(const vec3 *restrict left) {
-  if (safety(left == NULL))
+dl_api real vec3_square_magnitude(const vec3 *dl_restrict left) {
+  if (dl_safety(left == NULL))
     return 0;
 
   return left->x * left->x
@@ -1868,33 +1868,33 @@ api real vec3_square_magnitude(const vec3 *restrict left) {
     + left->z * left->z;
 }
 
-api real vec3_magnitude(const vec3 *restrict left) {
+dl_api real vec3_magnitude(const vec3 *dl_restrict left) {
   return _sqrt(vec3_square_magnitude(left));
 }
 
-api vec3 *vec3_rotate(const vec3 *restrict left, const vec3 *restrict axis, const real angle, vec3 *restrict out) {
+dl_api vec3 *vec3_rotate(const vec3 *dl_restrict left, const vec3 *dl_restrict axis, const real angle, vec3 *dl_restrict out) {
   mat4 mat;
 
   return mat4_mul_vec3(init_mat4_rotate(&mat, axis, angle), left, out);
 }
 
-api vec3 *vec3_reflect(const vec3 *restrict left, const vec3 *restrict normal, vec3 *restrict out) {
-  if (safety(left == NULL || normal == NULL || out == NULL))
+dl_api vec3 *vec3_reflect(const vec3 *dl_restrict left, const vec3 *dl_restrict normal, vec3 *dl_restrict out) {
+  if (dl_safety(left == NULL || normal == NULL || out == NULL))
     return NULL;
 
   return vec3_sub(left, vec3_mul_scalar(normal, vec3_dot(normal, left) * 2.0, out), out);
 }
 
-api vec3 *vec3_refract(const vec3 *restrict left, const vec3 *restrict normal, float eta, vec3 *restrict out) {
+dl_api vec3 *vec3_refract(const vec3 *dl_restrict left, const vec3 *dl_restrict normal, float eta, vec3 *dl_restrict out) {
   float dot, k;
   vec3 t;
 
-  if (safety(left == NULL || normal == NULL || out == NULL))
+  if (dl_safety(left == NULL || normal == NULL || out == NULL))
     return NULL;
   
   dot = vec3_dot(normal, left);
   k = 1.0 - (eta * eta) * (1.0 - (dot * dot));
-  if (unlikely(k < 0.0)) {
+  if (dl_unlikely(k < 0.0)) {
     *out = vec3_zero;
     return out;
   }
@@ -1904,8 +1904,8 @@ api vec3 *vec3_refract(const vec3 *restrict left, const vec3 *restrict normal, f
 
 
 
-api mat4 *init_mat4(mat4 * restrict m, real c0r0, real c0r1, real c0r2, real c0r3, real c1r0, real c1r1, real c1r2, real c1r3, real c2r0, real c2r1, real c2r2, real c2r3, real c3r0, real c3r1, real c3r2, real c3r3) {
-  if (safety(m == NULL))
+dl_api mat4 *init_mat4(mat4 * dl_restrict m, real c0r0, real c0r1, real c0r2, real c0r3, real c1r0, real c1r1, real c1r2, real c1r3, real c2r0, real c2r1, real c2r2, real c2r3, real c3r0, real c3r1, real c3r2, real c3r3) {
+  if (dl_safety(m == NULL))
     return NULL;
   
   m->ary[0][0] = c0r0;
@@ -1928,8 +1928,8 @@ api mat4 *init_mat4(mat4 * restrict m, real c0r0, real c0r1, real c0r2, real c0r
   return m;
 }
 
-api mat4 *init_mat4_cols(mat4 * restrict m, const vec4 *restrict column_a, const vec4 *restrict column_b, const vec4 *restrict column_c, const vec4 *restrict column_d) {
-  if (safety(m == NULL || column_a == NULL || column_b == NULL || column_c == NULL || column_d == NULL))
+dl_api mat4 *init_mat4_cols(mat4 * dl_restrict m, const vec4 *dl_restrict column_a, const vec4 *dl_restrict column_b, const vec4 *dl_restrict column_c, const vec4 *dl_restrict column_d) {
+  if (dl_safety(m == NULL || column_a == NULL || column_b == NULL || column_c == NULL || column_d == NULL))
     return NULL;
   
   *(vec4 *)(&m->ary[0]) = *column_a;
@@ -1940,10 +1940,10 @@ api mat4 *init_mat4_cols(mat4 * restrict m, const vec4 *restrict column_a, const
   return m;
 }
 
-api mat4 *mat4_add(const mat4 *restrict left, const mat4 *restrict right, mat4 *restrict out) {
+dl_api mat4 *mat4_add(const mat4 *dl_restrict left, const mat4 *dl_restrict right, mat4 *dl_restrict out) {
   integer i, j;
   
-  if (safety(left == NULL || right == NULL || out == NULL))
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
   for (i = 0; i < 4; ++i)
@@ -1953,10 +1953,10 @@ api mat4 *mat4_add(const mat4 *restrict left, const mat4 *restrict right, mat4 *
   return out;
 }
 
-api mat4 *mat4_sub(const mat4 *restrict left, const mat4 *restrict right, mat4 *restrict out) {
+dl_api mat4 *mat4_sub(const mat4 *dl_restrict left, const mat4 *dl_restrict right, mat4 *dl_restrict out) {
   integer i, j;
   
-  if (safety(left == NULL || right == NULL || out == NULL))
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
   for (i = 0; i < 4; ++i)
@@ -1966,11 +1966,11 @@ api mat4 *mat4_sub(const mat4 *restrict left, const mat4 *restrict right, mat4 *
   return out;
 }
 
-api mat4 *mat4_mul(const mat4 *restrict left, const mat4 *restrict right, mat4 *restrict out) {
+dl_api mat4 *mat4_mul(const mat4 *dl_restrict left, const mat4 *dl_restrict right, mat4 *dl_restrict out) {
   vec4 *A, *B;
   mat4 temp;
 
-  if (safety(left == NULL || right == NULL || out == NULL))
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
 
   /* The copy prevents errors arising from right/left and out pointing at the same data. */
@@ -2001,10 +2001,10 @@ api mat4 *mat4_mul(const mat4 *restrict left, const mat4 *restrict right, mat4 *
   return out;
 }
 
-bool mat4_approximately_equal(const mat4 *restrict left, const mat4 *restrict right, real epsilon) {
+bool mat4_approximately_equal(const mat4 *dl_restrict left, const mat4 *dl_restrict right, real epsilon) {
   integer i, j;
   
-  if (safety(left == NULL || right == NULL))
+  if (dl_safety(left == NULL || right == NULL))
     return false;
 
   for (i = 0; i < 4; ++i)
@@ -2015,10 +2015,10 @@ bool mat4_approximately_equal(const mat4 *restrict left, const mat4 *restrict ri
   return true;
 }
 
-api vec4 *mat4_mul_vec4(const mat4 *restrict left, const vec4 *restrict right, vec4 *restrict out) {
+dl_api vec4 *mat4_mul_vec4(const mat4 *dl_restrict left, const vec4 *dl_restrict right, vec4 *dl_restrict out) {
   vec4 v;
 
-  if (safety(left == NULL || right == NULL || out == NULL))
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
 
   v = *right;
@@ -2030,10 +2030,10 @@ api vec4 *mat4_mul_vec4(const mat4 *restrict left, const vec4 *restrict right, v
   return out;
 }
 
-api vec3 *mat4_mul_vec3(const mat4 *restrict left, const vec3 *restrict right, vec3 *restrict out) {
+dl_api vec3 *mat4_mul_vec3(const mat4 *dl_restrict left, const vec3 *dl_restrict right, vec3 *dl_restrict out) {
   vec3 v;
   
-  if (safety(left == NULL || right == NULL || out == NULL))
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
   v = *right;
@@ -2045,10 +2045,10 @@ api vec3 *mat4_mul_vec3(const mat4 *restrict left, const vec3 *restrict right, v
   return out;
 }
 
-api point3 *mat4_mul_point3(const mat4 *restrict left, const point3 *restrict right, point3 *restrict out) {
+dl_api point3 *mat4_mul_point3(const mat4 *dl_restrict left, const point3 *dl_restrict right, point3 *dl_restrict out) {
   point3 p;
   
-  if (safety(left == NULL || right == NULL || out == NULL))
+  if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
 
   p = *right;
@@ -2060,11 +2060,11 @@ api point3 *mat4_mul_point3(const mat4 *restrict left, const point3 *restrict ri
   return out;
 }
 
-api mat4 *mat4_transpose(const mat4 *restrict left, mat4 *restrict out) {
+dl_api mat4 *mat4_transpose(const mat4 *dl_restrict left, mat4 *dl_restrict out) {
   real v[4][4];
   natural a_idx, b_idx;
 
-  if (safety(left == NULL || out == NULL))
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
 
   for (a_idx = 0; a_idx < 4; ++a_idx)
@@ -2077,10 +2077,10 @@ api mat4 *mat4_transpose(const mat4 *restrict left, mat4 *restrict out) {
   return out;
 }
 
-api mat4 *mat4_mul_scalar(const mat4 *restrict left, real scalar, mat4 *restrict out) {
+dl_api mat4 *mat4_mul_scalar(const mat4 *dl_restrict left, real scalar, mat4 *dl_restrict out) {
   integer i,j;
   
-  if (safety(left == NULL || out == NULL))
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   for (i = 0; i < 4; ++i)
@@ -2090,14 +2090,14 @@ api mat4 *mat4_mul_scalar(const mat4 *restrict left, real scalar, mat4 *restrict
   return out;
 }
 
-api mat4 *mat4_div_scalar(const mat4 *restrict left, real scalar, mat4 *restrict out) {
+dl_api mat4 *mat4_div_scalar(const mat4 *dl_restrict left, real scalar, mat4 *dl_restrict out) {
   return mat4_mul_scalar(left, 1.0 / scalar, out);
 }
 
-api mat4 *mat4_add_scalar(const mat4 *restrict left, real scalar, mat4 *restrict out) {
+dl_api mat4 *mat4_add_scalar(const mat4 *dl_restrict left, real scalar, mat4 *dl_restrict out) {
   integer i, j;
   
-  if (safety(left == NULL || out == NULL))
+  if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
   for (i = 0; i < 4; ++i)
@@ -2107,12 +2107,12 @@ api mat4 *mat4_add_scalar(const mat4 *restrict left, real scalar, mat4 *restrict
   return out;
 }
 
-api mat4 *mat4_sub_scalar(const mat4 *restrict left, real scalar, mat4 *restrict out) {
+dl_api mat4 *mat4_sub_scalar(const mat4 *dl_restrict left, real scalar, mat4 *dl_restrict out) {
   return mat4_add_scalar(left, -scalar, out);
 }
 
-api mat4 *init_mat4_translate(mat4 * restrict m, real x, real y, real z) {
-  if (safety(m == NULL))
+dl_api mat4 *init_mat4_translate(mat4 * dl_restrict m, real x, real y, real z) {
+  if (dl_safety(m == NULL))
     return NULL;
   
   *m = mat4_identity;
@@ -2123,10 +2123,10 @@ api mat4 *init_mat4_translate(mat4 * restrict m, real x, real y, real z) {
   return m;
 }
 
-api mat4 *init_mat4_rotate_x(mat4 * restrict m, real radians) {
+dl_api mat4 *init_mat4_rotate_x(mat4 * dl_restrict m, real radians) {
   real c, s;
 
-  if (safety(m == NULL))
+  if (dl_safety(m == NULL))
     return NULL;
 
 #if DL_USE_LEFT_HANDED
@@ -2139,7 +2139,7 @@ api mat4 *init_mat4_rotate_x(mat4 * restrict m, real radians) {
 		   0,  s,  c, 0,
 		   0,  0,  0, 1);
 #else
-# if !IS_ATLEAST_C99
+# if !DL_IS_ATLEAST_C99
   c = (real)cos(radians);
   s = (real)sin(radians);
 # else
@@ -2155,10 +2155,10 @@ api mat4 *init_mat4_rotate_x(mat4 * restrict m, real radians) {
 #endif
 }
 
-api mat4 *init_mat4_rotate_y(mat4 * restrict m, real radians) {
+dl_api mat4 *init_mat4_rotate_y(mat4 * dl_restrict m, real radians) {
   real c, s;
 
-  if (safety(m == NULL))
+  if (dl_safety(m == NULL))
     return NULL;
   
 #if DL_USE_LEFT_HANDED
@@ -2182,10 +2182,10 @@ api mat4 *init_mat4_rotate_y(mat4 * restrict m, real radians) {
 #endif
 }
 
-api mat4 *init_mat4_rotate_z(mat4 * restrict m, real radians) {
+dl_api mat4 *init_mat4_rotate_z(mat4 * dl_restrict m, real radians) {
   real c, s;
 
-  if (safety(m == NULL))
+  if (dl_safety(m == NULL))
     return NULL;
 
   c = _cos(radians);
@@ -2198,19 +2198,19 @@ api mat4 *init_mat4_rotate_z(mat4 * restrict m, real radians) {
 		   0,  0, 0, 1);
 }
 
-api mat4 *init_mat4_rotate(mat4 * restrict m, const vec3 *restrict a, real radians) {
+dl_api mat4 *init_mat4_rotate(mat4 * dl_restrict m, const vec3 *dl_restrict a, real radians) {
   vec3 i, t;
   real c, s;
 
-  if (safety(m == NULL))
+  if (dl_safety(m == NULL))
     return NULL;
   
-  if (unlikely(vec3_approximately_equal(a, &vec3_zero, M_EPSILON))) {
+  if (dl_unlikely(vec3_approximately_equal(a, &vec3_zero, M_EPSILON))) {
     *m = mat4_identity;
     return m;
   }
   
-  if (unlikely(!vec3_normalized(a)))
+  if (dl_unlikely(!vec3_normalized(a)))
     vec3_normalize(a, &t);
   else
     t = *a;
@@ -2238,8 +2238,8 @@ api mat4 *init_mat4_rotate(mat4 * restrict m, const vec3 *restrict a, real radia
 #endif
 }
 
-api mat4 *init_mat4_scale(mat4 * restrict m, real x, real y, real z) {
-  if (safety(m == NULL))
+dl_api mat4 *init_mat4_scale(mat4 * dl_restrict m, real x, real y, real z) {
+  if (dl_safety(m == NULL))
     return NULL;
   
   *m = mat4_identity;
@@ -2250,10 +2250,10 @@ api mat4 *init_mat4_scale(mat4 * restrict m, real x, real y, real z) {
   return m;
 }
 
-api mat4 *init_mat4_look_at(mat4 * restrict m, const vec3 *restrict origin, const vec3 *restrict target, const vec3 *restrict up) {
+dl_api mat4 *init_mat4_look_at(mat4 * dl_restrict m, const vec3 *dl_restrict origin, const vec3 *dl_restrict target, const vec3 *dl_restrict up) {
   vec3 zaxis, yaxis, xaxis, temp;
 
-  if (safety(m == NULL || origin == NULL || target == NULL || up == NULL))
+  if (dl_safety(m == NULL || origin == NULL || target == NULL || up == NULL))
     return NULL;
 
   vec3_sub(origin, target, &temp);
@@ -2269,10 +2269,10 @@ api mat4 *init_mat4_look_at(mat4 * restrict m, const vec3 *restrict origin, cons
 		   -vec3_dot(&xaxis, origin), -vec3_dot(&yaxis, origin), -vec3_dot(&zaxis, origin), 1);
 }
 
-api mat4 *init_mat4_orthographic(mat4 * restrict m, real yop, real y_bottom, real x_left, real x_right, real z_near, real z_far) {
+dl_api mat4 *init_mat4_orthographic(mat4 * dl_restrict m, real yop, real y_bottom, real x_left, real x_right, real z_near, real z_far) {
   real inv_width, inv_height, inv_depth;
 
-  if (safety(m == NULL))
+  if (dl_safety(m == NULL))
     return NULL;
 
   inv_width = 1.0 / (x_right - x_left);
@@ -2286,10 +2286,10 @@ api mat4 *init_mat4_orthographic(mat4 * restrict m, real yop, real y_bottom, rea
 		   -((x_right + x_left) * inv_width), -((yop + y_bottom) * inv_height), -((z_far + z_near) * inv_depth), 1);
 }
 
-api mat4 *init_mat4_perspective(mat4 * restrict m, real vertical_fov, real aspect_ratio, real z_near, real z_far) {
+dl_api mat4 *init_mat4_perspective(mat4 * dl_restrict m, real vertical_fov, real aspect_ratio, real z_near, real z_far) {
   real half_fov, invan_fov, neg_depth, inv_neg_depth;
 
-  if (safety(m == NULL))
+  if (dl_safety(m == NULL))
     return NULL;
 
   half_fov = vertical_fov * 0.5f;
@@ -2318,16 +2318,16 @@ api mat4 *init_mat4_perspective(mat4 * restrict m, real vertical_fov, real aspec
 
 #if DL_USE_TWEEN
   
-api real tween(easing_function ease, ease_direction direction, real percent) {
+dl_api real tween(easing_function ease, ease_direction direction, real percent) {
   percent = clamp01(percent);
   return ease(direction, percent);
 }
 
-api real ease_linear(ease_direction d, real p) {
+dl_api real ease_linear(ease_direction d, real p) {
   return p;
 }
 
-api real ease_quadratic(ease_direction d, real p) {
+dl_api real ease_quadratic(ease_direction d, real p) {
   switch (d) {
   case EASE_IN:
     return p * p;
@@ -2344,7 +2344,7 @@ api real ease_quadratic(ease_direction d, real p) {
   return 0;
 }
 
-api real ease_cubic(ease_direction d, real p) {
+dl_api real ease_cubic(ease_direction d, real p) {
   switch (d) {
   case EASE_IN:
     return (p * p * p);
@@ -2362,7 +2362,7 @@ api real ease_cubic(ease_direction d, real p) {
   return 0;
 }
 
-api real ease_quartic(ease_direction d, real p) {
+dl_api real ease_quartic(ease_direction d, real p) {
   switch (d) {
   case EASE_IN:
     return (p * p * p * p);
@@ -2380,7 +2380,7 @@ api real ease_quartic(ease_direction d, real p) {
   return 0;
 }
 
-api real ease_quintic(ease_direction d, real p) {
+dl_api real ease_quintic(ease_direction d, real p) {
   switch (d) {
   case EASE_IN:
     return (p * p * p * p * p);
@@ -2398,7 +2398,7 @@ api real ease_quintic(ease_direction d, real p) {
   return 0;
 }
 
-api real ease_sinusoidal(ease_direction d, real p) {
+dl_api real ease_sinusoidal(ease_direction d, real p) {
   switch (d) {
   case EASE_IN:
     return 1.0 - _cos(p * M_PI * 0.5f);
@@ -2410,7 +2410,7 @@ api real ease_sinusoidal(ease_direction d, real p) {
   return 0;
 }
 
-api real ease_exponential(ease_direction d, real p) {
+dl_api real ease_exponential(ease_direction d, real p) {
   switch (d) {
   case EASE_IN:
     return _pow(1024.0, (p - 1.0));
@@ -2425,7 +2425,7 @@ api real ease_exponential(ease_direction d, real p) {
   return 0;
 }
 
-api real ease_circular(ease_direction d, real p) {
+dl_api real ease_circular(ease_direction d, real p) {
   switch (d) {
   case EASE_IN:
     return 1.0 - _sqrt(1.0 - (p * p));
@@ -2443,14 +2443,14 @@ api real ease_circular(ease_direction d, real p) {
   return 0;
 }
 
-api real ease_elastic(ease_direction d, real p) {
+dl_api real ease_elastic(ease_direction d, real p) {
   static const real a = 1.0;
   static const real k = 0.4f;
 
   return ease_elastic_tunable(d, p, a, k);
 }
 
-api real ease_elastic_tunable(ease_direction d, real p, real a, real k) {
+dl_api real ease_elastic_tunable(ease_direction d, real p, real a, real k) {
   real invk = 1.0 / k;
   real s = a < 1.0 ? (k * 0.25f) : (k * _asin(1.0 / a) * 0.5f * M_INV_PI);
 
@@ -2469,14 +2469,14 @@ api real ease_elastic_tunable(ease_direction d, real p, real a, real k) {
   return 0;
 }
 
-api real ease_back(ease_direction d, real p) {
+dl_api real ease_back(ease_direction d, real p) {
   static const real s = 1.70158f;
   static const real t = 1.525f;
 
   return ease_back_tunable(d, p, s, t);
 }
 
-api real ease_back_tunable(ease_direction d, real p, real s, real t) {
+dl_api real ease_back_tunable(ease_direction d, real p, real s, real t) {
   switch (d) {
   case EASE_IN:
     return (p * p) * ((p * (s + 1)) - s);
@@ -2496,7 +2496,7 @@ api real ease_back_tunable(ease_direction d, real p, real s, real t) {
   return 0;
 }
 
-api real _ease_bounce_out(real p) {
+dl_api real _ease_bounce_out(real p) {
   if (p < 0.3636)
     return 7.5625f * p * p;
   if (p < 0.7273) {
@@ -2511,7 +2511,7 @@ api real _ease_bounce_out(real p) {
   return 0.9844f + (7.5625f * p * p);
 }
 
-api real _ease_bounce_in(real p) {
+dl_api real _ease_bounce_in(real p) {
   return 1 - _ease_bounce_out(1 - p);
 }
 
@@ -2531,10 +2531,10 @@ real ease_bounce(ease_direction d, real p) {
 
 
 
-real *interpolate(const selector_function select, const real *restrict values, natural length, real percent, real *out) {
-  if (safety(select == NULL || values == NULL || length == 0))
+real *interpolate(const selector_function select, const real *dl_restrict values, natural length, real percent, real *out) {
+  if (dl_safety(select == NULL || values == NULL || length == 0))
     return NULL;
-  if (unlikely(length == 1)) {
+  if (dl_unlikely(length == 1)) {
     *out = values[0];
     return out;
   }
@@ -2543,11 +2543,11 @@ real *interpolate(const selector_function select, const real *restrict values, n
   return select(values, length, percent, out);
 }
 
-real *select_linear(const real *restrict v, natural l, real p, real *restrict out) {
+real *select_linear(const real *dl_restrict v, natural l, real p, real *dl_restrict out) {
   natural max_idx, idx, next_idx;
   real scaled_p;
   
-  if (safety(v ==  NULL || out == NULL))
+  if (dl_safety(v ==  NULL || out == NULL))
     return NULL;
   
   max_idx = l - 1;
@@ -2555,7 +2555,7 @@ real *select_linear(const real *restrict v, natural l, real p, real *restrict ou
   idx = (natural)_floor(scaled_p);
   next_idx = idx + 1;
   
-  if (unlikely(next_idx > max_idx)) {
+  if (dl_unlikely(next_idx > max_idx)) {
     *out = v[max_idx];
     return out;
   }
@@ -2563,21 +2563,21 @@ real *select_linear(const real *restrict v, natural l, real p, real *restrict ou
   return lerp_real(v[idx], v[next_idx], (scaled_p - (real)idx), out);
 }
 
-real *select_catmullrom(const real *restrict v, natural l, real p, real *restrict out) {
+real *select_catmullrom(const real *dl_restrict v, natural l, real p, real *dl_restrict out) {
   natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   real target, t, v0, v1, t2, t3;
   
-  if (safety(v == NULL || out == NULL))
+  if (dl_safety(v == NULL || out == NULL))
     return NULL;
   
   max_idx = l - 1;
   target = (real)max_idx * p;
   idx = (natural)_floor(target);
 
-  a_idx = unlikely(0 < idx) ? idx - 1 : 0;
+  a_idx = dl_unlikely(0 < idx) ? idx - 1 : 0;
   b_idx = idx;
-  c_idx = unlikely(max_idx < idx + 1) ? max_idx : idx + 1;
-  d_idx = unlikely(max_idx < idx + 2) ? max_idx : idx + 2;
+  c_idx = dl_unlikely(max_idx < idx + 1) ? max_idx : idx + 1;
+  d_idx = dl_unlikely(max_idx < idx + 2) ? max_idx : idx + 2;
 
   t = target - (real)idx;
 
@@ -2596,10 +2596,10 @@ real *select_catmullrom(const real *restrict v, natural l, real p, real *restric
 
 
 
-point2 *interpolate_point2(const selector_function_point2 select, const point2 *restrict values, natural length, real percent, point2 *restrict out) {
-  if (safety(select == NULL || values == NULL || length == 0))
+point2 *interpolate_point2(const selector_function_point2 select, const point2 *dl_restrict values, natural length, real percent, point2 *dl_restrict out) {
+  if (dl_safety(select == NULL || values == NULL || length == 0))
     return NULL;
-  if (unlikely(length == 1)) {
+  if (dl_unlikely(length == 1)) {
     *out = values[0];
     return out;
   }
@@ -2608,7 +2608,7 @@ point2 *interpolate_point2(const selector_function_point2 select, const point2 *
   return select(values, length, percent, out);
 }
 
-point2 *select_linear_point2(const point2 *restrict v, natural l, real p, point2 *restrict out) {
+point2 *select_linear_point2(const point2 *dl_restrict v, natural l, real p, point2 *dl_restrict out) {
   natural max_idx, idx, next_idx;
   real scaled_p;
   
@@ -2617,7 +2617,7 @@ point2 *select_linear_point2(const point2 *restrict v, natural l, real p, point2
   idx = (natural)_floor(scaled_p);
   next_idx = idx + 1;
 
-  if (unlikely(next_idx > max_idx)) {
+  if (dl_unlikely(next_idx > max_idx)) {
     *out = v[max_idx];
     return out;
   }
@@ -2625,7 +2625,7 @@ point2 *select_linear_point2(const point2 *restrict v, natural l, real p, point2
   return lerp_point2(&v[idx], &v[next_idx], (scaled_p - (real)idx), out);
 }
 
-point2 *select_bezier_point2(const point2 *restrict v, natural l, real p, point2 *restrict out) {
+point2 *select_bezier_point2(const point2 *dl_restrict v, natural l, real p, point2 *dl_restrict out) {
   natural max_idx, idx, degree;
   real target;
   point2 t1, t2, compute_v[DL_BEZIER_DEGREE + 1];
@@ -2653,7 +2653,7 @@ point2 *select_bezier_point2(const point2 *restrict v, natural l, real p, point2
   return out;
 }
 
-point2 *select_catmullrom_point2(const point2 *restrict v, natural l, real p, point2 *restrict out) {
+point2 *select_catmullrom_point2(const point2 *dl_restrict v, natural l, real p, point2 *dl_restrict out) {
   natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   real target, t, t2, t3;
   point2 v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
@@ -2662,10 +2662,10 @@ point2 *select_catmullrom_point2(const point2 *restrict v, natural l, real p, po
   target = (real)max_idx * p;
   idx = (natural)_floor(target);
 
-  a_idx = unlikely(0 < idx) ? idx - 1 : 0;
+  a_idx = dl_unlikely(0 < idx) ? idx - 1 : 0;
   b_idx = idx;
-  c_idx = unlikely(max_idx < idx + 1) ? max_idx : idx + 1;
-  d_idx = unlikely(max_idx < idx + 2) ? max_idx : idx + 2;
+  c_idx = dl_unlikely(max_idx < idx + 1) ? max_idx : idx + 1;
+  d_idx = dl_unlikely(max_idx < idx + 2) ? max_idx : idx + 2;
 
   t = target - (real)idx;
   t2 = t * t;
@@ -2690,10 +2690,10 @@ point2 *select_catmullrom_point2(const point2 *restrict v, natural l, real p, po
 
 
 
-point3 *interpolate_point3(const selector_function_point3 select, const point3 *restrict values, natural length, real percent, point3 *restrict out) {
-  if (safety(select == NULL || values == NULL || length == 0))
+point3 *interpolate_point3(const selector_function_point3 select, const point3 *dl_restrict values, natural length, real percent, point3 *dl_restrict out) {
+  if (dl_safety(select == NULL || values == NULL || length == 0))
     return NULL;
-  if (unlikely(length == 1)) {
+  if (dl_unlikely(length == 1)) {
     *out = values[0];
     return out;
   }
@@ -2702,7 +2702,7 @@ point3 *interpolate_point3(const selector_function_point3 select, const point3 *
   return select(values, length, percent, out);
 }
 
-point3 *select_linear_point3(const point3 *restrict v, natural l, real p, point3 *restrict out) {
+point3 *select_linear_point3(const point3 *dl_restrict v, natural l, real p, point3 *dl_restrict out) {
   natural max_idx, idx, next_idx;
   real scaled_p;
   
@@ -2711,7 +2711,7 @@ point3 *select_linear_point3(const point3 *restrict v, natural l, real p, point3
   idx = (natural)_floor(scaled_p);
   next_idx = idx + 1;
 
-  if (unlikely(next_idx > max_idx)) {
+  if (dl_unlikely(next_idx > max_idx)) {
     *out = v[max_idx];
     return out;
   }
@@ -2719,7 +2719,7 @@ point3 *select_linear_point3(const point3 *restrict v, natural l, real p, point3
   return lerp_point3(&v[idx], &v[next_idx], (scaled_p - (real)idx), out);
 }
 
-point3 *select_bezier_point3(const point3 *restrict v, natural l, real p, point3 *restrict out) {
+point3 *select_bezier_point3(const point3 *dl_restrict v, natural l, real p, point3 *dl_restrict out) {
   natural max_idx, idx;
   real target;
   point3 temp[2], compute_v[DL_BEZIER_DEGREE + 1];
@@ -2743,7 +2743,7 @@ point3 *select_bezier_point3(const point3 *restrict v, natural l, real p, point3
   return out;
 }
 
-point3 *select_catmullrom_point3(const point3 *restrict v, natural l, real p, point3 *restrict out) {
+point3 *select_catmullrom_point3(const point3 *dl_restrict v, natural l, real p, point3 *dl_restrict out) {
   natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   real target, t, t2, t3;
   point3 v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
@@ -2752,10 +2752,10 @@ point3 *select_catmullrom_point3(const point3 *restrict v, natural l, real p, po
   target = (real)max_idx * p;
   idx = (natural)_floor(target);
 
-  a_idx = unlikely(0 < idx) ? idx - 1 : 0;
+  a_idx = dl_unlikely(0 < idx) ? idx - 1 : 0;
   b_idx = idx;
-  c_idx = unlikely(max_idx < idx + 1) ? max_idx : idx + 1;
-  d_idx = unlikely(max_idx < idx + 2) ? max_idx : idx + 2;
+  c_idx = dl_unlikely(max_idx < idx + 1) ? max_idx : idx + 1;
+  d_idx = dl_unlikely(max_idx < idx + 2) ? max_idx : idx + 2;
 
   t = target - (real)idx;
   t2 = t * t;
@@ -2780,8 +2780,8 @@ point3 *select_catmullrom_point3(const point3 *restrict v, natural l, real p, po
 
 
 
-api integer *lerp_integer(integer a, integer b, real p, integer *out) {
-  if (safety(out == NULL))
+dl_api integer *lerp_integer(integer a, integer b, real p, integer *out) {
+  if (dl_safety(out == NULL))
     return NULL;
   
   *out = b - a;
@@ -2791,8 +2791,8 @@ api integer *lerp_integer(integer a, integer b, real p, integer *out) {
   return out;
 }
 
-api real *lerp_real(real a, real b, real p, real *out) {
-  if (safety(out == NULL))
+dl_api real *lerp_real(real a, real b, real p, real *out) {
+  if (dl_safety(out == NULL))
     return NULL;
 
   *out = b - a;
@@ -2802,19 +2802,19 @@ api real *lerp_real(real a, real b, real p, real *out) {
   return out;
 }
 
-api point2 *lerp_point2(const point2 *restrict a, const point2 *restrict b, real p, point2 *restrict out) {
+dl_api point2 *lerp_point2(const point2 *dl_restrict a, const point2 *dl_restrict b, real p, point2 *dl_restrict out) {
   return point2_add(point2_mul_scalar(point2_sub(b, a, out), p, out), a, out);
 }
 
-api point3 *lerp_point3(const point3 *restrict a, const point3 *restrict b, real p, point3 *restrict out) {
+dl_api point3 *lerp_point3(const point3 *dl_restrict a, const point3 *dl_restrict b, real p, point3 *dl_restrict out) {
   return point3_add(point3_mul_scalar(point3_sub(b, a, out), p, out), a, out);
 }
 
-api vec2 *lerp_vec2(const vec2 *restrict a, const vec2 *restrict b, real p, vec2 *restrict out) {
+dl_api vec2 *lerp_vec2(const vec2 *dl_restrict a, const vec2 *dl_restrict b, real p, vec2 *dl_restrict out) {
   return vec2_add(vec2_mul_scalar(vec2_sub(b, a, out), p, out), a, out);
 }
 
-api vec3 *lerp_vec3(const vec3 *restrict a, const vec3 *restrict b, real p, vec3 *restrict out) {
+dl_api vec3 *lerp_vec3(const vec3 *dl_restrict a, const vec3 *dl_restrict b, real p, vec3 *dl_restrict out) {
   return vec3_add(vec3_mul_scalar(vec3_sub(b, a, out), p, out), a, out);
 }
 
@@ -2827,7 +2827,7 @@ api vec3 *lerp_vec3(const vec3 *restrict a, const vec3 *restrict b, real p, vec3
  ****************************************************************************/
 
 #if DL_USE_MALLOC
-#if IS_GNUC
+#if DL_IS_GNUC
 any _default_alloc(natural count, natural element_size) {
   return (any)memalign(sizeof(any), count * element_size);
 }
@@ -2845,7 +2845,7 @@ any _default_alloc(natural count, natural element_size) {
   (void (*)(any))NULL
 #endif
 
-api any dl_memory_swap(any left, any right, natural bytes) {
+dl_api any dl_memory_swap(any left, any right, natural bytes) {
 
   natural nat_count, byte_count, *nat_left, *nat_right, nat_temp;
   byte *byte_left, *byte_right, byte_temp;
@@ -2878,7 +2878,7 @@ api any dl_memory_swap(any left, any right, natural bytes) {
   return left;
 }
 
-api any dl_memory_copy(any left, any right, natural bytes) {
+dl_api any dl_memory_copy(any left, any right, natural bytes) {
   natural nat_count, byte_count, *nat_left, *nat_right;
   byte *byte_left, *byte_right;
   
@@ -2955,7 +2955,7 @@ integer _default_compare_32(any data, any left, any right) {
 }
 
 integer _default_compare_64(any data, any left, any right) {
-#if IS_ATLEAST_C99
+#if DL_IS_ATLEAST_C99
   return (integer)(*(unsigned long long int *)left - *(unsigned long long int *)right);
 #else
   return 0;
@@ -2967,7 +2967,7 @@ integer _default_compare_any(any data, any left, any right) {
 }
 
 typedef struct {
-  comparator c;
+  dl_comparator c;
   any item;
 } _collection_sorted_list_predicate_data;
 
@@ -2985,17 +2985,17 @@ vector_settings default_vector_settings = {
   DECLARE_ALLOC_MEMBERS(alloc, free)
 };
 
-api vector *init_vector(vector * restrict target, natural element_size, natural capacity) {
+dl_api vector *init_vector(vector * dl_restrict target, natural element_size, natural capacity) {
   vector_settings settings = default_vector_settings;
   settings.element_size = element_size;
   return init_vector_custom(target, settings, capacity);
 }
 
-api vector *init_vector_custom(vector * restrict target, vector_settings settings, natural capacity) {
+dl_api vector *init_vector_custom(vector * dl_restrict target, vector_settings settings, natural capacity) {
   real real_count;
   natural slice_count, idx;
   
-  if (safety(target == NULL || settings.alloc == NULL || settings.free == NULL))
+  if (dl_safety(target == NULL || settings.alloc == NULL || settings.free == NULL))
     return NULL;
 
   if (settings.element_size < 1)
@@ -3013,17 +3013,17 @@ api vector *init_vector_custom(vector * restrict target, vector_settings setting
   target->settings = settings;
 
   target->data.slices = (byte **)target->settings.alloc(target->slice_count, sizeof(byte *));
-  if (unlikely(target->data.slices == NULL))
+  if (dl_unlikely(target->data.slices == NULL))
     return NULL;
 
   for (idx = 0; idx < target->slice_count; ++idx) {
     target->data.slices[idx] = (byte *)target->settings.alloc(target->settings.slice_length, target->settings.element_size);
 
-    if (unlikely(target->data.slices[idx] == NULL))
+    if (dl_unlikely(target->data.slices[idx] == NULL))
       break;
   }
 
-  if (unlikely(idx < slice_count)) {
+  if (dl_unlikely(idx < slice_count)) {
     for (--idx; idx != 0; --idx)
       target->settings.free((any)target->data.slices[idx]);
     target->settings.free((any)target->data.slices);
@@ -3034,8 +3034,8 @@ api vector *init_vector_custom(vector * restrict target, vector_settings setting
   return target;
 }
 
-api vector *init_vector_array(vector * restrict target, byte *data, natural element_size, natural count) {
-  if (safety(target == NULL || data == NULL))
+dl_api vector *init_vector_array(vector * dl_restrict target, byte *data, natural element_size, natural count) {
+  if (dl_safety(target == NULL || data == NULL))
     return NULL;
 
   target->settings.alloc = NULL;
@@ -3049,11 +3049,11 @@ api vector *init_vector_array(vector * restrict target, byte *data, natural elem
   return target;
 }
 
-api void destroy_vector(vector * restrict target, const dl_handler *deconstruct_entry) {
+dl_api void destroy_vector(vector * dl_restrict target, const dl_handler *deconstruct_entry) {
   any entry;
   natural slice_idx, idx;
   
-  if (safety(target == NULL) || target->settings.free == NULL)
+  if (dl_safety(target == NULL) || target->settings.free == NULL)
     return;
 
   if (target->data.slices != NULL) {
@@ -3072,29 +3072,29 @@ api void destroy_vector(vector * restrict target, const dl_handler *deconstruct_
   }
 }
 
-api natural vector_capacity(const vector * restrict v) {
-  if (safety(v == NULL))
+dl_api natural vector_capacity(const vector * dl_restrict v) {
+  if (dl_safety(v == NULL))
     return 0;
 
   return v->slice_count > 0 ? v->slice_count * v->settings.slice_length : v->settings.slice_length;
 }
 
-api any vector_get(const vector * restrict v, natural index, any out) {
+dl_api any vector_get(const vector * dl_restrict v, natural index, any out) {
   natural slice, slice_index;
   byte *target_slice;
   
-  if (safety(v == NULL))
+  if (dl_safety(v == NULL))
     return NULL;
 
   if (v->slice_count == 0) {
-    if (unlikely(index >= v->settings.slice_length))
+    if (dl_unlikely(index >= v->settings.slice_length))
       return NULL;
 
     dl_memory_copy(out, (void *)&v->data.array[index * v->settings.element_size], v->settings.element_size);
   }
   else {
     slice = index / v->settings.slice_length;
-    if (unlikely(slice >= v->slice_count))
+    if (dl_unlikely(slice >= v->slice_count))
       return NULL;
 
     slice_index = index - (slice * v->settings.slice_length);
@@ -3106,22 +3106,22 @@ api any vector_get(const vector * restrict v, natural index, any out) {
   return out;
 }
 
-api const any vector_ref(const vector * restrict v, natural index) {
+dl_api const any vector_ref(const vector * dl_restrict v, natural index) {
   natural slice, slice_index;
   byte *target_slice;
   
-  if (safety(v == NULL))
+  if (dl_safety(v == NULL))
     return NULL;
 
   if (v->slice_count == 0) {
-    if (unlikely(index >= v->settings.slice_length))
+    if (dl_unlikely(index >= v->settings.slice_length))
       return NULL;
 
     return &v->data.array[index * v->settings.element_size];
   }
   else {
     slice = index / v->settings.slice_length;
-    if (unlikely(slice >= v->slice_count))
+    if (dl_unlikely(slice >= v->slice_count))
       return NULL;
 
     slice_index = index - (slice * v->settings.slice_length);
@@ -3131,15 +3131,15 @@ api const any vector_ref(const vector * restrict v, natural index) {
   }
 }
 
-api any vector_set(vector * restrict v, natural index, any value) {
+dl_api any vector_set(vector * dl_restrict v, natural index, any value) {
   natural base_index, slice, slice_index;
   byte *source, *target;
   
-  if (safety(v == NULL))
+  if (dl_safety(v == NULL))
     return NULL;
 
   if (v->slice_count == 0) {
-    if (unlikely(index >= v->settings.slice_length))
+    if (dl_unlikely(index >= v->settings.slice_length))
       return NULL;
 
     base_index = index * v->settings.element_size;
@@ -3161,22 +3161,22 @@ api any vector_set(vector * restrict v, natural index, any value) {
   }
 }
 
-api bool vector_grow(vector * restrict v) {
+dl_api bool vector_grow(vector * dl_restrict v) {
   byte **new_slices, *new_slice, **existing_slices;
   natural idx;
   
-  if (safety(v == NULL))
+  if (dl_safety(v == NULL))
     return false;
 
   if (v->settings.free == NULL || v->settings.alloc == NULL)
     return false;
 
   new_slices = (byte **)v->settings.alloc(v->slice_count + 1, sizeof(byte *));
-  if (unlikely(new_slices == NULL))
+  if (dl_unlikely(new_slices == NULL))
     return false;
 
   new_slice = v->settings.alloc(v->settings.slice_length, v->settings.element_size);
-  if (unlikely(new_slice == NULL)) {
+  if (dl_unlikely(new_slice == NULL)) {
     v->settings.free((any)new_slices);
     return false;
   }
@@ -3195,21 +3195,21 @@ api bool vector_grow(vector * restrict v) {
   return true;
 }
 
-api bool vector_swap(vector * restrict v, natural index1, natural index2) {
+dl_api bool vector_swap(vector * dl_restrict v, natural index1, natural index2) {
   any left, right;
   
-  if (safety(v == NULL))
+  if (dl_safety(v == NULL))
     return false;
 
   if (index1 == index2)
     return true;
 
   left = vector_ref(v, index1);
-  if (unlikely(left == NULL))
+  if (dl_unlikely(left == NULL))
     return false;
 
   right = vector_ref(v, index2);
-  if (unlikely(right == NULL))
+  if (dl_unlikely(right == NULL))
     return false;
 
   dl_memory_swap(left, right, v->settings.element_size);
@@ -3217,19 +3217,19 @@ api bool vector_swap(vector * restrict v, natural index1, natural index2) {
   return true;
 }
 
-api bool vector_shrink(vector * restrict v, dl_handler *restrict deconstruct_entry) {
+dl_api bool vector_shrink(vector * dl_restrict v, dl_handler *dl_restrict deconstruct_entry) {
   byte **new_slices, **existing_slices;
   natural idx;
   any entry;
   
-  if (safety(v == NULL))
+  if (dl_safety(v == NULL))
     return false;
 
   if (v->slice_count <= 1 || v->settings.free == NULL || v->settings.alloc == NULL)
     return false;
 
   new_slices = (byte **)v->settings.alloc(v->slice_count - 1, sizeof(byte *));
-  if (unlikely(new_slices == NULL))
+  if (dl_unlikely(new_slices == NULL))
     return false;
 
   if (deconstruct_entry != NULL) {
@@ -3253,14 +3253,14 @@ api bool vector_shrink(vector * restrict v, dl_handler *restrict deconstruct_ent
   return true;
 }
 
-api bool vector_resize(vector * restrict v, natural minimum_capacity, dl_handler *deconstruct_entry) {
+dl_api bool vector_resize(vector * dl_restrict v, natural minimum_capacity, dl_handler *deconstruct_entry) {
   natural current_capacity, new_slice_count, slice_idx, slice_count, item_idx;
   real needed;
   integer needed_count;
   byte **new_slices, *slice;
   any item;
   
-  if (safety(v == NULL))
+  if (dl_safety(v == NULL))
     return false;
 
   if (v->settings.free == NULL || v->settings.alloc == NULL || v->slice_count < 1 || minimum_capacity < 1)
@@ -3271,10 +3271,10 @@ api bool vector_resize(vector * restrict v, natural minimum_capacity, dl_handler
 
   needed_count = needed < 0 ? (integer)needed : (integer)needed + 1;
 
-  if (likely(needed_count != 0)) {
+  if (dl_likely(needed_count != 0)) {
     new_slice_count = v->slice_count + needed_count;
     new_slices = (byte **)v->settings.alloc(new_slice_count, sizeof(byte **));
-    if (unlikely(new_slices == NULL))
+    if (dl_unlikely(new_slices == NULL))
       return false;
 
     slice_count = new_slice_count < v->slice_count ? new_slice_count : v->slice_count;
@@ -3299,10 +3299,10 @@ api bool vector_resize(vector * restrict v, natural minimum_capacity, dl_handler
     else {
       for (; slice_idx < new_slice_count; ++slice_idx) {
         new_slices[slice_idx] = v->settings.alloc(v->settings.slice_length, v->settings.element_size);
-        if (unlikely(new_slices[slice_idx] == NULL))
+        if (dl_unlikely(new_slices[slice_idx] == NULL))
           break;
       }
-      if (unlikely(slice_idx != new_slice_count)) {
+      if (dl_unlikely(slice_idx != new_slice_count)) {
         for (slice_idx--; slice_idx >= v->slice_count; --slice_idx)
           v->settings.free((any)new_slices[slice_idx]);
         v->settings.free((any)new_slices);
@@ -3318,27 +3318,27 @@ api bool vector_resize(vector * restrict v, natural minimum_capacity, dl_handler
   return true;
 }
 
-api natural vector_copy_array(vector * restrict target, natural target_offset_index, const byte *data, natural count) {
+dl_api natural vector_copy_array(vector * dl_restrict target, natural target_offset_index, const byte *data, natural count) {
   vector source;
-  if (unlikely(!init_vector_array(&source, (byte *)data, target->settings.element_size, count)))
+  if (dl_unlikely(!init_vector_array(&source, (byte *)data, target->settings.element_size, count)))
     return 0;
 
   return vector_copy(target, target_offset_index, &source);
 }
 
-api natural vector_copy(vector * restrict target, natural target_offset_index, const vector * restrict original) {
+dl_api natural vector_copy(vector * dl_restrict target, natural target_offset_index, const vector * dl_restrict original) {
   natural original_capacity, element_size, target_length, original_length, target_remainder, original_remainder, total_remainder, target_slice_idx, original_slice_idx, min_remainder, count_to_copy;
   byte *target_slice, *original_slice;
   
-  if (safety(original == NULL || target == NULL))
+  if (dl_safety(original == NULL || target == NULL))
     return 0;
 
-  if (unlikely(original->settings.element_size != target->settings.element_size))
+  if (dl_unlikely(original->settings.element_size != target->settings.element_size))
     return 0;
 
   /* target is too small */
   original_capacity = vector_capacity(original);
-  if (unlikely(vector_capacity(target) - target_offset_index < original_capacity))
+  if (dl_unlikely(vector_capacity(target) - target_offset_index < original_capacity))
     return 0;
 
   element_size = original->settings.element_size;
@@ -3382,10 +3382,10 @@ api natural vector_copy(vector * restrict target, natural target_offset_index, c
   return original_capacity;
 }
 
-api natural vector_ref_array(vector * restrict v, natural index, any *restrict out) {
+dl_api natural vector_ref_array(vector * dl_restrict v, natural index, any *dl_restrict out) {
   natural last_idx, slice, slice_index;
   
-  if (safety(v == NULL))
+  if (dl_safety(v == NULL))
     return 0;
 
   last_idx = v->settings.slice_length - 1;
@@ -3396,7 +3396,7 @@ api natural vector_ref_array(vector * restrict v, natural index, any *restrict o
   }
   else {
     slice = index / v->settings.slice_length;
-    if (unlikely(slice >= v->slice_count))
+    if (dl_unlikely(slice >= v->slice_count))
       return 0;
 
     slice_index = index - (slice * v->settings.slice_length);
@@ -3416,7 +3416,7 @@ linked_list_settings default_linked_list_settings = {
   DECLARE_ALLOC_MEMBERS(alloc, free)
 };
 
-api struct linked_list_node *_linked_list_node_alloc(linked_list * restrict list, struct linked_list_node * restrict after) {
+dl_api struct linked_list_node *_linked_list_node_alloc(linked_list * dl_restrict list, struct linked_list_node * dl_restrict after) {
   struct linked_list_node *node;
   
   if (list->free == NULL)
@@ -3452,7 +3452,7 @@ api struct linked_list_node *_linked_list_node_alloc(linked_list * restrict list
   return node;
 }
 
-api void _linked_list_node_free(linked_list * restrict list, struct linked_list_node * restrict node) {
+dl_api void _linked_list_node_free(linked_list * dl_restrict list, struct linked_list_node * dl_restrict node) {
   if (list->first == node)
     list->first = node->next;
   if (node->next != NULL)
@@ -3469,7 +3469,7 @@ api void _linked_list_node_free(linked_list * restrict list, struct linked_list_
   list->free = node;
 }
 
-api void _linked_list_node_detach_free(linked_list *restrict list, struct linked_list_node *e) {
+dl_api void _linked_list_node_detach_free(linked_list *dl_restrict list, struct linked_list_node *e) {
   if (list->free == e)
     list->free = e->next;
   if (e->next != NULL)
@@ -3484,7 +3484,7 @@ typedef struct {
   linked_list *list;
 } _linked_list_node_deconstructor_data;
 
-api any _linked_list_node_deconstructor(any data, any element) {
+dl_api any _linked_list_node_deconstructor(any data, any element) {
   _linked_list_node_deconstructor_data *d;
   struct linked_list_node *f, *e, *new_node;
   dl_handler *destruct;
@@ -3517,10 +3517,10 @@ api any _linked_list_node_deconstructor(any data, any element) {
   return NULL;
 }
 
-api linked_list *init_linked_list(linked_list * restrict target, natural element_size, natural cache_length) {
+dl_api linked_list *init_linked_list(linked_list * dl_restrict target, natural element_size, natural cache_length) {
   linked_list_settings settings;
   
-  if (safety(target == NULL || element_size == 0))
+  if (dl_safety(target == NULL || element_size == 0))
     return false;
 
   settings = default_linked_list_settings;
@@ -3530,13 +3530,13 @@ api linked_list *init_linked_list(linked_list * restrict target, natural element
   return init_linked_list_custom(target, settings);
 }
 
-api linked_list *_linked_list_cache_grow(linked_list * restrict target) {
+dl_api linked_list *_linked_list_cache_grow(linked_list * dl_restrict target) {
   linked_list_settings settings;
   vector *v;
   natural zero, length, idx;
   struct linked_list_node *node;
   
-  if (safety(target == NULL))
+  if (dl_safety(target == NULL))
     return NULL;
 
   settings = target->settings;
@@ -3568,8 +3568,8 @@ api linked_list *_linked_list_cache_grow(linked_list * restrict target) {
   return target;
 }
 
-api linked_list *init_linked_list_custom(linked_list * restrict target, linked_list_settings settings) {
-  if (safety(target == NULL || settings.element_size < 1))
+dl_api linked_list *init_linked_list_custom(linked_list * dl_restrict target, linked_list_settings settings) {
+  if (dl_safety(target == NULL || settings.element_size < 1))
     return NULL;
 
   target->first = target->last = target->free = NULL;
@@ -3578,11 +3578,11 @@ api linked_list *init_linked_list_custom(linked_list * restrict target, linked_l
   return _linked_list_cache_grow(target);
 }
 
-api natural linked_list_copy(linked_list * restrict target, struct linked_list_node *restrict target_position, const linked_list * restrict original) {
+dl_api natural linked_list_copy(linked_list * dl_restrict target, struct linked_list_node *dl_restrict target_position, const linked_list * dl_restrict original) {
   struct linked_list_node *source_node, *next;
   natural count;
   
-  if (safety(original == NULL || target == NULL))
+  if (dl_safety(original == NULL || target == NULL))
     return 0;
 
   if (target_position == NULL)
@@ -3593,7 +3593,7 @@ api natural linked_list_copy(linked_list * restrict target, struct linked_list_n
 
   while (source_node != NULL) {
     next = linked_list_add(target, target_position, LINKED_LIST_DATA(source_node));
-    if (unlikely(next == NULL))
+    if (dl_unlikely(next == NULL))
       break;
 
     target_position = next;
@@ -3604,11 +3604,11 @@ api natural linked_list_copy(linked_list * restrict target, struct linked_list_n
   return count;
 }
 
-api natural linked_list_copy_array(linked_list * restrict target, struct linked_list_node *target_position, const byte *data, natural length) {
+dl_api natural linked_list_copy_array(linked_list * dl_restrict target, struct linked_list_node *target_position, const byte *data, natural length) {
   natural count, byte_size, idx;
   struct linked_list_node *next;
   
-  if (safety(target == NULL || data == NULL))
+  if (dl_safety(target == NULL || data == NULL))
     return 0;
 
   if (target_position == NULL)
@@ -3619,7 +3619,7 @@ api natural linked_list_copy_array(linked_list * restrict target, struct linked_
 
   for (idx = 0; idx < length; ++idx) {
     next = linked_list_add(target, target_position, (byte *)&data[idx * byte_size]);
-    if (unlikely(next == NULL))
+    if (dl_unlikely(next == NULL))
       break;
 
     target_position = next;
@@ -3629,10 +3629,10 @@ api natural linked_list_copy_array(linked_list * restrict target, struct linked_
   return count;
 }
 
-api void destroy_linked_list(linked_list * restrict target, dl_handler *restrict deconstruct_entry) {
+dl_api void destroy_linked_list(linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry) {
   struct linked_list_node *node;
   
-  if (safety(target == NULL))
+  if (dl_safety(target == NULL))
     return;
 
   if (deconstruct_entry != NULL && deconstruct_entry->func != NULL) {
@@ -3648,18 +3648,18 @@ api void destroy_linked_list(linked_list * restrict target, dl_handler *restrict
   dl_memory_set(target, 0, sizeof(linked_list));
 }
 
-api natural linked_list_capacity(const linked_list * restrict list) {
-  if (safety(list == NULL))
+dl_api natural linked_list_capacity(const linked_list * dl_restrict list) {
+  if (dl_safety(list == NULL))
     return 0;
 
   return vector_capacity(&list->node_cache);
 }
 
-api natural linked_list_length(const linked_list * restrict list) {
+dl_api natural linked_list_length(const linked_list * dl_restrict list) {
   natural length;
   struct linked_list_node *node;
   
-  if (safety(list == NULL))
+  if (dl_safety(list == NULL))
     return 0;
 
   length = 0;
@@ -3672,15 +3672,15 @@ api natural linked_list_length(const linked_list * restrict list) {
   return length;
 }
 
-api bool linked_list_grow(linked_list * restrict list) {
+dl_api bool linked_list_grow(linked_list * dl_restrict list) {
   return _linked_list_cache_grow(list) != NULL;
 }
 
-api bool linked_list_shrink(linked_list * restrict list, dl_handler *restrict deconstruct_entry) {
+dl_api bool linked_list_shrink(linked_list * dl_restrict list, dl_handler *dl_restrict deconstruct_entry) {
   _linked_list_node_deconstructor_data data;
   dl_handler destructor;
   
-  if (safety(list == NULL))
+  if (dl_safety(list == NULL))
     return false;
 
   data.original_destructor = deconstruct_entry;
@@ -3691,11 +3691,11 @@ api bool linked_list_shrink(linked_list * restrict list, dl_handler *restrict de
   return vector_shrink(&list->node_cache, &destructor);
 }
 
-api bool linked_list_resize(linked_list * restrict list, natural minimum_capacity, dl_handler *restrict deconstruct_entry) {
+dl_api bool linked_list_resize(linked_list * dl_restrict list, natural minimum_capacity, dl_handler *dl_restrict deconstruct_entry) {
   _linked_list_node_deconstructor_data data;
   dl_handler destructor;
   
-  if (safety(list == NULL))
+  if (dl_safety(list == NULL))
     return false;
 
   data.original_destructor = deconstruct_entry;
@@ -3706,38 +3706,38 @@ api bool linked_list_resize(linked_list * restrict list, natural minimum_capacit
   return vector_resize(&list->node_cache, minimum_capacity, &destructor);
 }
 
-api any linked_list_get(const linked_list * restrict list, struct linked_list_node *position, any out) {
-  if (safety(list == NULL || position == NULL || out == NULL))
+dl_api any linked_list_get(const linked_list * dl_restrict list, struct linked_list_node *position, any out) {
+  if (dl_safety(list == NULL || position == NULL || out == NULL))
     return NULL;
 
   return dl_memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size);
 }
 
-api const any linked_list_ref(const struct linked_list_node *position) {
-  if (safety(position == NULL))
+dl_api const any linked_list_ref(const struct linked_list_node *position) {
+  if (dl_safety(position == NULL))
     return NULL;
 
   return (const any)LINKED_LIST_DATA(position);
 }
 
-api any linked_list_set(linked_list * restrict list, struct linked_list_node *position, any value) {
-  if (safety(list == NULL || position == NULL || value == NULL))
+dl_api any linked_list_set(linked_list * dl_restrict list, struct linked_list_node *position, any value) {
+  if (dl_safety(list == NULL || position == NULL || value == NULL))
     return NULL;
 
   return dl_memory_copy(LINKED_LIST_DATA(position), value, list->settings.element_size);
 }
 
-api struct linked_list_node *linked_list_add(linked_list * restrict list, struct linked_list_node *position, any value) {
+dl_api struct linked_list_node *linked_list_add(linked_list * dl_restrict list, struct linked_list_node *position, any value) {
   struct linked_list_node *node;
   
-  if (safety(list == NULL))
+  if (dl_safety(list == NULL))
     return NULL;
 
   if (list->free == NULL)
     return NULL;
 
   node = _linked_list_node_alloc(list, position);
-  if (unlikely(value != NULL && !dl_memory_copy(LINKED_LIST_DATA(node), value, list->settings.element_size))) {
+  if (dl_unlikely(value != NULL && !dl_memory_copy(LINKED_LIST_DATA(node), value, list->settings.element_size))) {
     _linked_list_node_free(list, node);
     return NULL;
   }
@@ -3745,11 +3745,11 @@ api struct linked_list_node *linked_list_add(linked_list * restrict list, struct
   return node;
 }
 
-api any linked_list_remove(linked_list * restrict list, struct linked_list_node *position, any out) {
-  if (safety(list == NULL || position == NULL))
+dl_api any linked_list_remove(linked_list * dl_restrict list, struct linked_list_node *position, any out) {
+  if (dl_safety(list == NULL || position == NULL))
     return NULL;
 
-  if (unlikely(!dl_memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size)))
+  if (dl_unlikely(!dl_memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size)))
     return NULL;
 
   _linked_list_node_free(list, position);
@@ -3757,8 +3757,8 @@ api any linked_list_remove(linked_list * restrict list, struct linked_list_node 
   return out;
 }
 
-api bool linked_list_destroy(linked_list * restrict list, struct linked_list_node *position, dl_handler *deconstruct_entry) {
-  if (safety(list == NULL || position == NULL))
+dl_api bool linked_list_destroy(linked_list * dl_restrict list, struct linked_list_node *position, dl_handler *deconstruct_entry) {
+  if (dl_safety(list == NULL || position == NULL))
     return false;
   
   if (deconstruct_entry != NULL && deconstruct_entry->func != NULL)
@@ -3769,11 +3769,11 @@ api bool linked_list_destroy(linked_list * restrict list, struct linked_list_nod
   return true;
 }
 
-api natural linked_list_destroy_range(linked_list * restrict list, struct linked_list_node *position, natural count, dl_handler *deconstruct_entry) {
+dl_api natural linked_list_destroy_range(linked_list * dl_restrict list, struct linked_list_node *position, natural count, dl_handler *deconstruct_entry) {
   natural removed;
   struct linked_list_node *next;
   
-  if (safety(list == NULL || position == NULL || count == 0))
+  if (dl_safety(list == NULL || position == NULL || count == 0))
     return 0;
 
   removed = 0;
@@ -3789,10 +3789,10 @@ api natural linked_list_destroy_range(linked_list * restrict list, struct linked
   return removed;
 }
 
-api bool linked_list_swap(linked_list * restrict list, struct linked_list_node *position1, struct linked_list_node *position2, bool data) {
+dl_api bool linked_list_swap(linked_list * dl_restrict list, struct linked_list_node *position1, struct linked_list_node *position2, bool data) {
   struct linked_list_node *t;
   
-  if (safety(list == NULL || position1 == NULL || position2 == NULL))
+  if (dl_safety(list == NULL || position1 == NULL || position2 == NULL))
     return false;
 
   /* It's complicated because it is a double-linked list, and we have to be careful not to create a cycle. */
@@ -3851,10 +3851,10 @@ api bool linked_list_swap(linked_list * restrict list, struct linked_list_node *
   return true;
 }
 
-api struct linked_list_node *linked_list_index(linked_list * restrict list, natural position) {
+dl_api struct linked_list_node *linked_list_index(linked_list * dl_restrict list, natural position) {
   struct linked_list_node *node;
   
-  if (safety(list == NULL))
+  if (dl_safety(list == NULL))
     return NULL;
 
   node = list->first;
@@ -3874,7 +3874,7 @@ api struct linked_list_node *linked_list_index(linked_list * restrict list, natu
  **  Iterators
  ****************************************************************************/
 
-api integer iterator_compare(const collection *restrict col, iterator left, iterator right) {
+dl_api integer iterator_compare(const collection *dl_restrict col, iterator left, iterator right) {
   if (!iterator_is_valid(col, left) && !iterator_is_valid(col, right))
     return 0;
 
@@ -3887,18 +3887,18 @@ api integer iterator_compare(const collection *restrict col, iterator left, iter
   return col->settings.functions->_iterator_compare(col, left, right);
 }
 
-api bool iterator_equal(const collection *restrict col, const iterator left, const iterator right) {
+dl_api bool iterator_equal(const collection *dl_restrict col, const iterator left, const iterator right) {
   return 0 == iterator_compare(col, left, right);
 }
 
-api bool iterator_is_valid(const collection *restrict col, const iterator index) {
-  if (safety(col == NULL))
+dl_api bool iterator_is_valid(const collection *dl_restrict col, const iterator index) {
+  if (dl_safety(col == NULL))
     return false;
 
   return col->settings.functions->_iterator_is_valid(col, index);
 }
 
-api iterator make_invalid_iterator(const collection *restrict col) {
+dl_api iterator make_invalid_iterator(const collection *dl_restrict col) {
   return col->settings.functions->_make_invalid_iterator(col);
 }
 
@@ -3908,7 +3908,7 @@ api iterator make_invalid_iterator(const collection *restrict col) {
  **  Container Dependent
  ****************************************************************************/
 
-api void _force_collection_properties(collection *restrict col) {
+dl_api void _force_collection_properties(collection *dl_restrict col) {
   iterator current, next;
   any ref;
   
@@ -3925,21 +3925,21 @@ api void _force_collection_properties(collection *restrict col) {
   }
 }
 
-api any collection_push_start(collection *restrict col, iterator *iter) {
-  if (safety(col == NULL))
+dl_api any collection_push_start(collection *dl_restrict col, iterator *iter) {
+  if (dl_safety(col == NULL))
     return NULL;
 
   return col->settings.functions->_collection_push_start(col, iter);
 }
 
-api any collection_push_finish(collection *restrict col, iterator *iter) {
-  comparator *comp;
+dl_api any collection_push_finish(collection *dl_restrict col, iterator *iter) {
+  dl_comparator *comp;
   bool is_set;
   any ref, prev_ref;
   iterator prev;
   integer c;
 
-  if (safety(col == NULL || iter == NULL || !iterator_is_valid(col, *iter)))
+  if (dl_safety(col == NULL || iter == NULL || !iterator_is_valid(col, *iter)))
     return NULL;
 
   if (collection_is_sorted(col)) {
@@ -3974,7 +3974,7 @@ api any collection_push_finish(collection *restrict col, iterator *iter) {
   return collection_ref(col, *iter);
 }
 
-api void _vector_queue_roll_slices(collection *restrict col) {
+dl_api void _vector_queue_roll_slices(collection *dl_restrict col) {
   byte *slice_left, *slice_first;
   natural last_idx, slice_idx;
   
@@ -4003,15 +4003,15 @@ api void _vector_queue_roll_slices(collection *restrict col) {
   col->data.vector.index[1] -= col->data.vector.container.settings.slice_length;
 }
 
-api bool collection_is_empty(const collection *restrict col) {
-  if (safety(col == NULL))
+dl_api bool collection_is_empty(const collection *dl_restrict col) {
+  if (dl_safety(col == NULL))
     return true;
 
   return col->settings.functions->_collection_is_empty(col);
 }
 
-api any collection_pop(collection *restrict col, any out) {
-  if (safety(col == NULL || out == NULL))
+dl_api any collection_pop(collection *dl_restrict col, any out) {
+  if (dl_safety(col == NULL || out == NULL))
     return NULL;
 
   if (collection_is_empty(col))
@@ -4020,8 +4020,8 @@ api any collection_pop(collection *restrict col, any out) {
   return col->settings.functions->_collection_pop(col, out);
 }
 
-api bool collection_pop_destroy(collection *restrict col) {
-  if (safety(col == NULL))
+dl_api bool collection_pop_destroy(collection *dl_restrict col) {
+  if (dl_safety(col == NULL))
     return false;
 
   if (collection_is_empty(col))
@@ -4030,8 +4030,8 @@ api bool collection_pop_destroy(collection *restrict col) {
   return col->settings.functions->_collection_pop_destroy(col);
 }
 
-api bool collection_pop_forget(collection *restrict col) {
-  if (safety(col == NULL))
+dl_api bool collection_pop_forget(collection *dl_restrict col) {
+  if (dl_safety(col == NULL))
     return false;
 
   if (collection_is_empty(col))
@@ -4040,8 +4040,8 @@ api bool collection_pop_forget(collection *restrict col) {
   return col->settings.functions->_collection_pop_forget(col);
 }
 
-api integer collection_ref_array(collection *restrict col, iterator iter, any *out_array) {  
-  if (safety(col == NULL || out_array == NULL))
+dl_api integer collection_ref_array(collection *dl_restrict col, iterator iter, any *out_array) {  
+  if (dl_safety(col == NULL || out_array == NULL))
     return 0;
 
   if (!iterator_is_valid(col, iter))
@@ -4050,18 +4050,18 @@ api integer collection_ref_array(collection *restrict col, iterator iter, any *o
   return col->settings.functions->_collection_ref_array(col, iter, out_array);
 }
 
-api const any collection_ref(const collection *restrict col, iterator iter) {
-  if (safety(col == NULL))
+dl_api const any collection_ref(const collection *dl_restrict col, iterator iter) {
+  if (dl_safety(col == NULL))
     return NULL;
 
   if (!iterator_is_valid(col, iter))
     return NULL;
 
-  return col->settings.functions->_collection_ref((collection *restrict )col, iter);
+  return col->settings.functions->_collection_ref((collection *dl_restrict )col, iter);
 }
 
-api bool collection_swap(collection *restrict col, iterator *iter_a, iterator *iter_b) {
-  if (safety(col == NULL || iter_a == NULL || iter_b == NULL))
+dl_api bool collection_swap(collection *dl_restrict col, iterator *iter_a, iterator *iter_b) {
+  if (dl_safety(col == NULL || iter_a == NULL || iter_b == NULL))
     return false;
 
   if (!iterator_is_valid(col, *iter_a) || !iterator_is_valid(col, *iter_b))
@@ -4070,8 +4070,8 @@ api bool collection_swap(collection *restrict col, iterator *iter_a, iterator *i
   return col->settings.functions->_collection_swap(col, iter_a, iter_b);
 }
 
-any collection_get(const collection *restrict col, iterator iter, any out) {
-  if (safety(col == NULL))
+any collection_get(const collection *dl_restrict col, iterator iter, any out) {
+  if (dl_safety(col == NULL))
     return NULL;
 
   if (!iterator_is_valid(col, iter))
@@ -4080,8 +4080,8 @@ any collection_get(const collection *restrict col, iterator iter, any out) {
   return col->settings.functions->_collection_get(col, iter, out);
 }
 
-any collection_set(collection *restrict col, iterator *iter, any value) {
-  if (safety(col == NULL))
+any collection_set(collection *dl_restrict col, iterator *iter, any value) {
+  if (dl_safety(col == NULL))
     return NULL;
 
   if (!iterator_is_valid(col, *iter))
@@ -4098,15 +4098,15 @@ any collection_set(collection *restrict col, iterator *iter, any value) {
   return col->settings.functions->_collection_set(col, iter, value);
 }
 
-api iterator collection_index(collection *restrict col, natural index) {
-  if (safety(col == NULL || (integer)index >= collection_count(col)))
+dl_api iterator collection_index(collection *dl_restrict col, natural index) {
+  if (dl_safety(col == NULL || (integer)index >= collection_count(col)))
     return collection_end(col);
 
   return col->settings.functions->_collection_index(col, index);
 }
 
-api const any collection_next(const collection *restrict col, iterator *iter) {
-  if (safety(col == NULL || iter == NULL)) {
+dl_api const any collection_next(const collection *dl_restrict col, iterator *iter) {
+  if (dl_safety(col == NULL || iter == NULL)) {
     *iter = make_invalid_iterator(col);
     return NULL;
   }
@@ -4121,8 +4121,8 @@ api const any collection_next(const collection *restrict col, iterator *iter) {
   return collection_ref(col, *iter);
 }
 
-api const any collection_prev(const collection *restrict col, iterator *iter) {
-  if (safety(col == NULL || iter == NULL))
+dl_api const any collection_prev(const collection *dl_restrict col, iterator *iter) {
+  if (dl_safety(col == NULL || iter == NULL))
     return NULL;
 
   col->settings.functions->_collection_prev(col, iter);
@@ -4130,28 +4130,28 @@ api const any collection_prev(const collection *restrict col, iterator *iter) {
   return collection_ref(col, *iter);
 }
 
-api integer collection_count(const collection *restrict col) {
-  if (safety(col == NULL))
+dl_api integer collection_count(const collection *dl_restrict col) {
+  if (dl_safety(col == NULL))
     return 0;
 
   return col->settings.functions->_collection_count(col);
 }
 
-api iterator collection_begin(const collection *restrict col) {
-  if (safety(col == NULL))
+dl_api iterator collection_begin(const collection *dl_restrict col) {
+  if (dl_safety(col == NULL))
     return make_invalid_iterator(col);
 
   return col->settings.functions->_collection_begin(col);
 }
 
-api iterator collection_end(const collection *restrict col) {
-  if (safety(col == NULL))
+dl_api iterator collection_end(const collection *dl_restrict col) {
+  if (dl_safety(col == NULL))
     return make_invalid_iterator(col);
 
   return col->settings.functions->_collection_end(col);
 }
 
-const any _collection_search_region_vector(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
+const any _collection_search_region_vector(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
   any ref;
   integer outcome;
   iterator iter_next;
@@ -4161,7 +4161,7 @@ const any _collection_search_region_vector(const collection *restrict col, dl_fi
 
   iter->vector.index = ((right.vector.index - left.vector.index) >> 1) + left.vector.index;
 
-  if (unlikely(!(ref = vector_ref(&col->data.vector.container, iter->vector.index))))
+  if (dl_unlikely(!(ref = vector_ref(&col->data.vector.container, iter->vector.index))))
     return NULL;
 
   outcome = predicate->func(predicate->data, ref);
@@ -4176,7 +4176,7 @@ const any _collection_search_region_vector(const collection *restrict col, dl_fi
   }
 }
 
-const any _collection_linear_search(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
+const any _collection_linear_search(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
   any ref;
   integer outcome;
   
@@ -4192,21 +4192,21 @@ const any _collection_linear_search(const collection *restrict col, dl_filter *p
   return NULL;
 }
 
-const any collection_search_region(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
-  if (safety(col == NULL || predicate == NULL || iter == NULL))
+const any collection_search_region(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
+  if (dl_safety(col == NULL || predicate == NULL || iter == NULL))
     return NULL;
 
   return col->settings.functions->_collection_search_region(col, predicate, left, right, iter);
 }
 
-const any collection_search(const collection *restrict col, dl_filter *predicate, iterator *iter) {
+const any collection_search(const collection *dl_restrict col, dl_filter *predicate, iterator *iter) {
   return collection_search_region(col, predicate, collection_begin(col), collection_end(col), iter);
 }
 
-api bool collection_destroy_at(collection *restrict col, iterator *iter) {
+dl_api bool collection_destroy_at(collection *dl_restrict col, iterator *iter) {
   dl_handler *destructor;
   
-  if (safety(col == NULL || !iterator_is_valid(col, *iter)))
+  if (dl_safety(col == NULL || !iterator_is_valid(col, *iter)))
     return false;
 
   if (collection_is_empty(col))
@@ -4217,8 +4217,8 @@ api bool collection_destroy_at(collection *restrict col, iterator *iter) {
   return col->settings.functions->_collection_destroy_at(col, iter, destructor);
 }
 
-api bool collection_forget_at(collection *restrict col, iterator *iter) {
-  if (safety(col == NULL))
+dl_api bool collection_forget_at(collection *dl_restrict col, iterator *iter) {
+  if (dl_safety(col == NULL))
     return false;
 
   if (collection_is_empty(col))
@@ -4227,8 +4227,8 @@ api bool collection_forget_at(collection *restrict col, iterator *iter) {
   return col->settings.functions->_collection_destroy_at(col, iter, NULL);
 }
 
-api any collection_remove_at(collection *restrict col, iterator *iter, any out) {
-  if (safety(col == NULL || out == NULL))
+dl_api any collection_remove_at(collection *dl_restrict col, iterator *iter, any out) {
+  if (dl_safety(col == NULL || out == NULL))
     return NULL;
 
   if (collection_is_empty(col))
@@ -4237,15 +4237,15 @@ api any collection_remove_at(collection *restrict col, iterator *iter, any out) 
   return col->settings.functions->_collection_remove_at(col, iter, out);
 }
 
-api integer collection_destroy_range(collection *restrict col, iterator *index, natural count) {
-  if (safety(col == NULL || !iterator_is_valid(col, *index)))
+dl_api integer collection_destroy_range(collection *dl_restrict col, iterator *index, natural count) {
+  if (dl_safety(col == NULL || !iterator_is_valid(col, *index)))
     return 0;
 
   return col->settings.functions->_collection_destroy_range(col, index, count);
 }
 
-any collection_insert(collection *restrict col, iterator *restrict position, any item) {
-  if (safety(col == NULL || !iterator_is_valid(col, *position)))
+any collection_insert(collection *dl_restrict col, iterator *dl_restrict position, any item) {
+  if (dl_safety(col == NULL || !iterator_is_valid(col, *position)))
     return NULL;
 
   if (collection_is_set(col) && collection_contains(col, item))
@@ -4259,8 +4259,8 @@ any collection_insert(collection *restrict col, iterator *restrict position, any
   return NULL;
 }
 
-api natural collection_element_size(const collection *restrict col) {
-  if (safety(col == NULL))
+dl_api natural collection_element_size(const collection *dl_restrict col) {
+  if (dl_safety(col == NULL))
     return 0;
 
   return col->settings.element_size;
@@ -4272,61 +4272,61 @@ api natural collection_element_size(const collection *restrict col) {
  **  Container Independent
  ****************************************************************************/
 
-api bool collection_is_vector(const collection * restrict col) {
+dl_api bool collection_is_vector(const collection * dl_restrict col) {
   return col != NULL && col->settings.storage == STORAGE_TYPE_VECTOR;
 }
 
-api bool collection_is_linked_list(const collection * restrict col) {
+dl_api bool collection_is_linked_list(const collection * dl_restrict col) {
   return col != NULL && col->settings.storage == STORAGE_TYPE_LINKED_LIST;
 }
 
-api bool collection_is_queue(const collection *restrict col) {
+dl_api bool collection_is_queue(const collection *dl_restrict col) {
   return col != NULL &&
     (col->settings.type == COLLECTION_TYPE_QUEUE);
 }
 
-api bool collection_is_set(const collection *restrict col) {
+dl_api bool collection_is_set(const collection *dl_restrict col) {
   return col != NULL &&
     (col->settings.type == COLLECTION_TYPE_SET);
 }
 
-api bool collection_is_sorted(const collection *restrict col) {
+dl_api bool collection_is_sorted(const collection *dl_restrict col) {
   return col != NULL &&
     (col->settings.type == COLLECTION_TYPE_SORTED_LIST
      || col->settings.type == COLLECTION_TYPE_SET);
 }
 
-api const any collection_begin_ref(const collection *restrict col, iterator *iter) {
-  if (safety(iter == NULL || col == NULL))
+dl_api const any collection_begin_ref(const collection *dl_restrict col, iterator *iter) {
+  if (dl_safety(iter == NULL || col == NULL))
     return NULL;
 
   *iter = collection_begin(col);
   return collection_ref(col, *iter);
 }
 
-api const any collection_end_ref(const collection *restrict col, iterator *iter) {
-  if (safety(iter == NULL || col == NULL))
+dl_api const any collection_end_ref(const collection *dl_restrict col, iterator *iter) {
+  if (dl_safety(iter == NULL || col == NULL))
     return NULL;
 
   *iter = collection_end(col);
   return collection_prev(col, iter);
 }
 
-api bool collection_sort(collection *restrict col) {
-  if (safety(col == NULL))
+dl_api bool collection_sort(collection *dl_restrict col) {
+  if (dl_safety(col == NULL))
     return false;
 
   return collection_quick_sort(col, &col->settings.comparer);
 }
 
-api void collection_clear(collection *restrict col) {
+dl_api void collection_clear(collection *dl_restrict col) {
   while (collection_pop_destroy(col));
 }
 
-api const any collection_peek(const collection *restrict col) {
+dl_api const any collection_peek(const collection *dl_restrict col) {
   iterator iter;
   
-  if (safety(col == NULL))
+  if (dl_safety(col == NULL))
     return NULL;
 
   if (collection_is_empty(col))
@@ -4343,7 +4343,7 @@ api const any collection_peek(const collection *restrict col) {
   }
 }
 
-api iterator collection_index_of(const collection *restrict col, const any item) {
+dl_api iterator collection_index_of(const collection *dl_restrict col, const any item) {
   iterator bad, iter, index;
   any candidate;
   _collection_sorted_list_predicate_data data;
@@ -4351,7 +4351,7 @@ api iterator collection_index_of(const collection *restrict col, const any item)
   
   bad = make_invalid_iterator(col);
 
-  if (safety(col == NULL))
+  if (dl_safety(col == NULL))
     return bad;
 
   if (collection_is_empty(col))
@@ -4377,11 +4377,11 @@ api iterator collection_index_of(const collection *restrict col, const any item)
   }
 }
 
-api bool collection_all(const collection *restrict col, dl_filter *restrict f) {
+dl_api bool collection_all(const collection *dl_restrict col, dl_filter *dl_restrict f) {
   iterator index;
   any item;
   
-  if (safety(col == NULL || f == NULL))
+  if (dl_safety(col == NULL || f == NULL))
     return false;
 
   index = collection_begin(col);
@@ -4392,11 +4392,11 @@ api bool collection_all(const collection *restrict col, dl_filter *restrict f) {
   return true;
 }
 
-api bool collection_any(const collection *restrict col, dl_filter *restrict f) {
+dl_api bool collection_any(const collection *dl_restrict col, dl_filter *dl_restrict f) {
   iterator index;
   any item;
   
-  if (safety(col == NULL || f == NULL))
+  if (dl_safety(col == NULL || f == NULL))
     return false;
 
   index = collection_begin(col);
@@ -4409,10 +4409,10 @@ api bool collection_any(const collection *restrict col, dl_filter *restrict f) {
   return false;
 }
 
-api integer collection_drop(collection *restrict col, natural count) {
+dl_api integer collection_drop(collection *dl_restrict col, natural count) {
   natural removed = 0;
 
-  if (safety(col == NULL))
+  if (dl_safety(col == NULL))
     return 0;
 
   for (; count > 0; --count, ++removed)
@@ -4422,13 +4422,13 @@ api integer collection_drop(collection *restrict col, natural count) {
   return removed;
 }
 
-api integer collection_map(const collection *restrict col, converter *func, collection *out) {
+dl_api integer collection_map(const collection *dl_restrict col, dl_converter *func, collection *out) {
   iterator iter, new_iter;
   integer count;
   any new_ref;
   any ref;
   
-  if (safety(col == NULL || func == NULL || out == NULL))
+  if (dl_safety(col == NULL || func == NULL || out == NULL))
     return 0;
 
   count = 0;
@@ -4446,11 +4446,11 @@ api integer collection_map(const collection *restrict col, converter *func, coll
   return count;
 }
 
-api any collection_foldl(const collection *restrict col, any initial, folder *func) {
+dl_api any collection_foldl(const collection *dl_restrict col, any initial, dl_folder *func) {
   iterator index;
   any item;
   
-  if (safety(col == NULL || func == NULL))
+  if (dl_safety(col == NULL || func == NULL))
     return NULL;
 
   index = collection_begin(col);
@@ -4460,11 +4460,11 @@ api any collection_foldl(const collection *restrict col, any initial, folder *fu
   return initial;
 }
 
-api any collection_foldr(const collection *restrict col, any initial, folder *func) {
+dl_api any collection_foldr(const collection *dl_restrict col, any initial, dl_folder *func) {
   iterator index;
   any item;
   
-  if (safety(col == NULL || func == NULL))
+  if (dl_safety(col == NULL || func == NULL))
     return NULL;
 
   index = collection_end(col);
@@ -4475,12 +4475,12 @@ api any collection_foldr(const collection *restrict col, any initial, folder *fu
   return initial;
 }
 
-api integer collection_zip(const collection *restrict col1, const collection *restrict col2, zipper *zip, collection *out) {
+dl_api integer collection_zip(const collection *dl_restrict col1, const collection *dl_restrict col2, dl_zipper *zip, collection *out) {
   iterator iter1, iter2, new_iter;
   integer added;
   any ref1, ref2, new_ref;
   
-  if (safety(col1 == NULL || col2 == NULL || zip == NULL || out == NULL))
+  if (dl_safety(col1 == NULL || col2 == NULL || zip == NULL || out == NULL))
     return 0;
 
   added = 0;
@@ -4500,10 +4500,10 @@ api integer collection_zip(const collection *restrict col1, const collection *re
   return added;
 }
 
-api integer collection_take(collection *restrict col, natural count, collection *out) {
+dl_api integer collection_take(collection *dl_restrict col, natural count, collection *out) {
   any ref;
   natural added;
-  if (safety(col == NULL || out == NULL))
+  if (dl_safety(col == NULL || out == NULL))
     return 0;
 
   added = 0;
@@ -4517,10 +4517,10 @@ api integer collection_take(collection *restrict col, natural count, collection 
   return added;
 }
 
-api any collection_find(const collection *restrict col, dl_filter *f, iterator *index) {
+dl_api any collection_find(const collection *dl_restrict col, dl_filter *f, iterator *index) {
   any item;
   
-  if (safety(col == NULL || f == NULL || index == NULL))
+  if (dl_safety(col == NULL || f == NULL || index == NULL))
     return NULL;
 
   for (item = collection_ref(col, *index); item != NULL; item = collection_next(col, index))
@@ -4530,10 +4530,10 @@ api any collection_find(const collection *restrict col, dl_filter *f, iterator *
   return NULL;
 }
 
-api any collection_find_last(const collection *restrict col, dl_filter *f, iterator *index) {
+dl_api any collection_find_last(const collection *dl_restrict col, dl_filter *f, iterator *index) {
   any item;
   
-  if (safety(col == NULL || f == NULL || index == NULL))
+  if (dl_safety(col == NULL || f == NULL || index == NULL))
     return NULL;
 
   while ((item = collection_prev(col, index)))
@@ -4543,12 +4543,12 @@ api any collection_find_last(const collection *restrict col, dl_filter *f, itera
   return NULL;
 }
 
-api integer collection_find_all(const collection *restrict col, dl_filter *f, collection *out) {
+dl_api integer collection_find_all(const collection *dl_restrict col, dl_filter *f, collection *out) {
   natural start_count;
   iterator index;
   any item;
   
-  if (safety(col == NULL || f == NULL || out == NULL))
+  if (dl_safety(col == NULL || f == NULL || out == NULL))
     return 0;
 
   start_count = collection_count(out);
@@ -4562,8 +4562,8 @@ api integer collection_find_all(const collection *restrict col, dl_filter *f, co
   return collection_count(out) - start_count;
 }
 
-api any collection_remove_first(collection *restrict col, dl_filter *f, iterator *iter, any out) {
-  if (safety(col == NULL || iter == NULL))
+dl_api any collection_remove_first(collection *dl_restrict col, dl_filter *f, iterator *iter, any out) {
+  if (dl_safety(col == NULL || iter == NULL))
     return NULL;
 
   if (!collection_find(col, f, iter))
@@ -4572,8 +4572,8 @@ api any collection_remove_first(collection *restrict col, dl_filter *f, iterator
   return collection_remove_at(col, iter, out);
 }
 
-api any collection_remove_last(collection *restrict col, dl_filter *f, iterator *iter, any out) {
-  if (safety(col == NULL || iter == NULL))
+dl_api any collection_remove_last(collection *dl_restrict col, dl_filter *f, iterator *iter, any out) {
+  if (dl_safety(col == NULL || iter == NULL))
     return NULL;
 
   if (!collection_find_last(col, f, iter))
@@ -4582,8 +4582,8 @@ api any collection_remove_last(collection *restrict col, dl_filter *f, iterator 
   return collection_remove_at(col, iter, out);
 }
 
-api bool collection_destroy_first(collection *restrict col, dl_filter *f, iterator *index) {
-  if (safety(col == NULL || index == NULL))
+dl_api bool collection_destroy_first(collection *dl_restrict col, dl_filter *f, iterator *index) {
+  if (dl_safety(col == NULL || index == NULL))
     return false;
 
   if (!collection_find(col, f, index))
@@ -4592,8 +4592,8 @@ api bool collection_destroy_first(collection *restrict col, dl_filter *f, iterat
   return collection_destroy_at(col, index);
 }
 
-api bool collection_destroy_last(collection *restrict col, dl_filter *f, iterator *index) {
-  if (safety(col == NULL || index == NULL))
+dl_api bool collection_destroy_last(collection *dl_restrict col, dl_filter *f, iterator *index) {
+  if (dl_safety(col == NULL || index == NULL))
     return false;
 
   if (!collection_find_last(col, f, index))
@@ -4602,11 +4602,11 @@ api bool collection_destroy_last(collection *restrict col, dl_filter *f, iterato
   return collection_destroy_at(col, index);
 }
 
-bool collection_quick_sort_region(collection *restrict col, comparator *compare, iterator left, iterator right) {
+bool collection_quick_sort_region(collection *dl_restrict col, dl_comparator *compare, iterator left, iterator right) {
   iterator pivot, leftwall, iter;
   any pivot_ref, iter_ref;
   
-  if (safety(col == NULL || col->settings.comparer.func == NULL))
+  if (dl_safety(col == NULL || col->settings.comparer.func == NULL))
     return false;
 
   if (iterator_equal(col, left, right)
@@ -4651,16 +4651,16 @@ bool collection_quick_sort_region(collection *restrict col, comparator *compare,
   return collection_quick_sort_region(col, compare, leftwall, right);
 }
 
-api bool collection_quick_sort(collection *restrict col, comparator *compare) {
+dl_api bool collection_quick_sort(collection *dl_restrict col, dl_comparator *compare) {
   return collection_quick_sort_region(col, compare, collection_begin(col), collection_end(col));
 }
 
-api integer collection_destroy_all(collection *restrict col, dl_filter *f) {
+dl_api integer collection_destroy_all(collection *dl_restrict col, dl_filter *f) {
   natural count;
   any item;
   iterator iter;
   
-  if (safety(col == NULL || f == NULL))
+  if (dl_safety(col == NULL || f == NULL))
     return 0;
 
   if (collection_is_empty(col))
@@ -4681,18 +4681,18 @@ api integer collection_destroy_all(collection *restrict col, dl_filter *f) {
   return count;
 }
 
-api bool collection_contains(const collection *restrict col, any item) {
+dl_api bool collection_contains(const collection *dl_restrict col, any item) {
   iterator iter;
   iter= collection_index_of(col, item);
   return iterator_is_valid(col, iter);
 }
 
-api any collection_push(collection *restrict col, any value) {
+dl_api any collection_push(collection *dl_restrict col, any value) {
   iterator iter;
   return collection_push_index(col, value, &iter);
 }
 
-api any collection_push_index(collection *restrict col, any value, iterator *out_index) {
+dl_api any collection_push_index(collection *dl_restrict col, any value, iterator *out_index) {
   any ref;
   
   ref = collection_push_start(col, out_index);
@@ -4703,12 +4703,12 @@ api any collection_push_index(collection *restrict col, any value, iterator *out
   return collection_push_finish(col, out_index);
 }
 
-api integer collection_remove_range(collection *restrict col, iterator *index, natural count, collection *out) {
+dl_api integer collection_remove_range(collection *dl_restrict col, iterator *index, natural count, collection *out) {
   natural total;
   iterator new_iter;
   any ref;
   
-  if (safety(col == NULL || out == NULL || index == NULL || !iterator_is_valid(col, *index)))
+  if (dl_safety(col == NULL || out == NULL || index == NULL || !iterator_is_valid(col, *index)))
     return 0;
 
   total = 0;
@@ -4730,12 +4730,12 @@ api integer collection_remove_range(collection *restrict col, iterator *index, n
 }
 
 
-api integer collection_remove_all(collection *restrict col, dl_filter *f, collection *out) {
+dl_api integer collection_remove_all(collection *dl_restrict col, dl_filter *f, collection *out) {
   iterator index, new_iter;
   natural total;
   any ref, new_ref;
   
-  if (safety(col == NULL || out == NULL || f == NULL))
+  if (dl_safety(col == NULL || out == NULL || f == NULL))
     return 0;
 
   total = 0;
@@ -4762,13 +4762,13 @@ api integer collection_remove_all(collection *restrict col, dl_filter *f, collec
   return total;
 }
 
-api integer collection_copy(const collection *restrict original, collection *restrict target) {
+dl_api integer collection_copy(const collection *dl_restrict original, collection *dl_restrict target) {
   iterator iter, new_iter;
   integer count;
   any ref, new_ref;
   bool is_set;
   
-  if (safety(original == NULL || target == NULL))
+  if (dl_safety(original == NULL || target == NULL))
     return 0;
 
   is_set = collection_is_set(target);
@@ -4795,13 +4795,13 @@ api integer collection_copy(const collection *restrict original, collection *res
   return count;
 }
 
-api integer collection_copy_array(const any data, natural count, collection *restrict target) {
+dl_api integer collection_copy_array(const any data, natural count, collection *dl_restrict target) {
   collection source;
 
-  if (safety(target == NULL || data == NULL))
+  if (dl_safety(target == NULL || data == NULL))
     return 0;
 
-  if (unlikely(!init_collection_array(&source, COLLECTION_TYPE_LIST, NULL, NULL, data, collection_element_size(target), count)))
+  if (dl_unlikely(!init_collection_array(&source, COLLECTION_TYPE_LIST, NULL, NULL, data, collection_element_size(target), count)))
     return 0;
 
   return collection_copy(&source, target);
@@ -4813,37 +4813,37 @@ api integer collection_copy_array(const any data, natural count, collection *res
  **  Container Dispatchers
  ****************************************************************************/
 
-api integer _vector_iterator_compare(const collection *restrict col, iterator left, iterator right) {
+dl_api integer _vector_iterator_compare(const collection *dl_restrict col, iterator left, iterator right) {
   return left.vector.index - right.vector.index;
 }
 
-api integer _linked_list_iterator_compare(const collection *restrict col, iterator left, iterator right) {
+dl_api integer _linked_list_iterator_compare(const collection *dl_restrict col, iterator left, iterator right) {
   return (integer)(left.linked_list.node - right.linked_list.node);
 }
 
-api bool _vector_iterator_is_valid(const collection *restrict col, iterator index) {
+dl_api bool _vector_iterator_is_valid(const collection *dl_restrict col, iterator index) {
   return index.vector.index < col->data.vector.index[1]
     && index.vector.index >= col->data.vector.index[0];
 }
 
-api bool _linked_list_iterator_is_valid(const collection *restrict col, iterator index) {
+dl_api bool _linked_list_iterator_is_valid(const collection *dl_restrict col, iterator index) {
   return index.linked_list.node != NULL;
 }
 
-api iterator _vector_make_invalid_iterator(const collection *restrict col) {
+dl_api iterator _vector_make_invalid_iterator(const collection *dl_restrict col) {
   iterator bad;
   bad.vector.index = NATURAL_MAX;
   return bad;
 }
 
-api iterator _linked_list_make_invalid_iterator(const collection *restrict col) {
+dl_api iterator _linked_list_make_invalid_iterator(const collection *dl_restrict col) {
   iterator bad;
   bad.linked_list.node = NULL;
 
   return bad;
 }
 
-api any _vector_collection_push_start(collection *restrict col, iterator *iter) {
+dl_api any _vector_collection_push_start(collection *dl_restrict col, iterator *iter) {
   if (col->data.vector.index[1] >= vector_capacity(&col->data.vector.container)
       && !vector_grow(&col->data.vector.container))
     return NULL;
@@ -4854,7 +4854,7 @@ api any _vector_collection_push_start(collection *restrict col, iterator *iter) 
   return vector_ref(&col->data.vector.container, iter->vector.index);
 }
 
-api any _linked_list_collection_push_start(collection *restrict col, iterator *iter) {
+dl_api any _linked_list_collection_push_start(collection *dl_restrict col, iterator *iter) {
   linked_list *list;
   
   list = &col->data.linked_list.container;
@@ -4867,15 +4867,15 @@ api any _linked_list_collection_push_start(collection *restrict col, iterator *i
   }
 }
 
-api bool _vector_collection_is_empty(const collection *restrict col) {
+dl_api bool _vector_collection_is_empty(const collection *dl_restrict col) {
   return col->data.vector.index[0] == col->data.vector.index[1];
 }
 
-api bool _linked_list_collection_is_empty(const collection *restrict col) {
+dl_api bool _linked_list_collection_is_empty(const collection *dl_restrict col) {
   return col->data.linked_list.container.first == NULL;
 }
 
-api any _vector_collection_pop(collection *restrict col, any out) {
+dl_api any _vector_collection_pop(collection *dl_restrict col, any out) {
   vector *v;
   natural idx;
 
@@ -4883,7 +4883,7 @@ api any _vector_collection_pop(collection *restrict col, any out) {
     v = &col->data.vector.container;
     idx = col->data.vector.index[0];
 
-    if (unlikely(!vector_get(v, idx, out)))
+    if (dl_unlikely(!vector_get(v, idx, out)))
       return NULL;
 
     col->data.vector.index[0]++;
@@ -4901,7 +4901,7 @@ api any _vector_collection_pop(collection *restrict col, any out) {
   }
 }
 
-api any _linked_list_collection_pop(collection * restrict col, any out) {
+dl_api any _linked_list_collection_pop(collection * dl_restrict col, any out) {
   linked_list *list;
   struct linked_list_node *position;
 
@@ -4915,7 +4915,7 @@ api any _linked_list_collection_pop(collection * restrict col, any out) {
   return linked_list_remove(list, position, out);
 }
 
-api bool _vector_collection_pop_destroy(collection *restrict col) {
+dl_api bool _vector_collection_pop_destroy(collection *dl_restrict col) {
   natural index;
   any ref;
   
@@ -4951,7 +4951,7 @@ api bool _vector_collection_pop_destroy(collection *restrict col) {
   }
 }
 
-api bool _linked_list_collection_pop_destroy(collection *restrict col) {
+dl_api bool _linked_list_collection_pop_destroy(collection *dl_restrict col) {
   linked_list *list;
   struct linked_list_node *position;
 
@@ -4965,7 +4965,7 @@ api bool _linked_list_collection_pop_destroy(collection *restrict col) {
   return linked_list_destroy(list, position, &col->settings.deconstruct_entry);
 }
 
-api bool _vector_collection_pop_forget(collection *restrict col) {
+dl_api bool _vector_collection_pop_forget(collection *dl_restrict col) {
   natural index;
   
   if (collection_is_queue(col)) {
@@ -4984,7 +4984,7 @@ api bool _vector_collection_pop_forget(collection *restrict col) {
   }
 }
 
-api bool _linked_list_collection_pop_forget(collection *restrict col) {
+dl_api bool _linked_list_collection_pop_forget(collection *dl_restrict col) {
   linked_list *list;
   struct linked_list_node *position;
 
@@ -4998,7 +4998,7 @@ api bool _linked_list_collection_pop_forget(collection *restrict col) {
   return linked_list_destroy(list, position, NULL);
 }
 
-api integer _vector_collection_ref_array(collection *restrict col, iterator iter, any *out_array) {
+dl_api integer _vector_collection_ref_array(collection *dl_restrict col, iterator iter, any *out_array) {
   natural count, limit;
     
   count = vector_ref_array(&col->data.vector.container, iter.vector.index, out_array);
@@ -5007,20 +5007,20 @@ api integer _vector_collection_ref_array(collection *restrict col, iterator iter
   return count < limit ? count : limit;
 }
 
-api integer _linked_list_collection_ref_array(collection *restrict col, iterator iter, any *out_array) {
+dl_api integer _linked_list_collection_ref_array(collection *dl_restrict col, iterator iter, any *out_array) {
   out_array[0] = linked_list_ref(iter.linked_list.node);
   return 1;
 }
 
-api const any _vector_collection_ref(const collection *restrict col, iterator iter) {
+dl_api const any _vector_collection_ref(const collection *dl_restrict col, iterator iter) {
   return vector_ref(&col->data.vector.container, iter.vector.index);
 }
 
-api const any _linked_list_collection_ref(const collection *restrict col, iterator iter) {
+dl_api const any _linked_list_collection_ref(const collection *dl_restrict col, iterator iter) {
   return linked_list_ref(iter.linked_list.node);
 }
 
-api bool _vector_collection_swap(collection *restrict col, iterator *iter_a, iterator *iter_b) {
+dl_api bool _vector_collection_swap(collection *dl_restrict col, iterator *iter_a, iterator *iter_b) {
   iterator t;
 
   if (!vector_swap(&col->data.vector.container, iter_a->vector.index, iter_b->vector.index))
@@ -5031,21 +5031,21 @@ api bool _vector_collection_swap(collection *restrict col, iterator *iter_a, ite
   return true;
 }
 
-api bool _linked_list_collection_swap(collection *restrict col, iterator *iter_a, iterator *iter_b) {
+dl_api bool _linked_list_collection_swap(collection *dl_restrict col, iterator *iter_a, iterator *iter_b) {
   if (!linked_list_swap(&col->data.linked_list.container, iter_a->linked_list.node, iter_b->linked_list.node, false))
     return false;
   return true;
 }
 
-any _vector_collection_get(const collection *restrict col, iterator iter, any out) {
+any _vector_collection_get(const collection *dl_restrict col, iterator iter, any out) {
   return vector_get(&col->data.vector.container, iter.vector.index, out);
 }
 
-any _linked_list_collection_get(const collection *restrict col, iterator iter, any out) {
+any _linked_list_collection_get(const collection *dl_restrict col, iterator iter, any out) {
   return linked_list_get(&col->data.linked_list.container, iter.linked_list.node, out);
 }
 
-any _vector_collection_set(collection *restrict col, iterator *iter, any value) {
+any _vector_collection_set(collection *dl_restrict col, iterator *iter, any value) {
   any ref;
 
   if ((ref = vector_set(&col->data.vector.container, iter->vector.index, value)))
@@ -5053,7 +5053,7 @@ any _vector_collection_set(collection *restrict col, iterator *iter, any value) 
   return NULL;
 }
 
-any _linked_list_collection_set(collection *restrict col, iterator *iter, any value) {
+any _linked_list_collection_set(collection *dl_restrict col, iterator *iter, any value) {
   any ref;
 
   if ((ref = linked_list_set(&col->data.linked_list.container, iter->linked_list.node, value)))
@@ -5061,27 +5061,27 @@ any _linked_list_collection_set(collection *restrict col, iterator *iter, any va
   return NULL;
 }
 
-api iterator _vector_collection_index(collection *restrict col, natural index) {
+dl_api iterator _vector_collection_index(collection *dl_restrict col, natural index) {
   iterator iter;
   iter.vector.index = index;
   return iter;
 }
 
-api iterator _linked_list_collection_index(collection *restrict col, natural index) {
+dl_api iterator _linked_list_collection_index(collection *dl_restrict col, natural index) {
   iterator iter;
   iter.linked_list.node = linked_list_index(&col->data.linked_list.container, index);
   return iter;
 }
 
-api void _vector_collection_next(const collection *restrict col, iterator *iter) {
+dl_api void _vector_collection_next(const collection *dl_restrict col, iterator *iter) {
   iter->vector.index++;
 }
 
-api void _linked_list_collection_next(const collection *restrict col, iterator *iter) {
+dl_api void _linked_list_collection_next(const collection *dl_restrict col, iterator *iter) {
   iter->linked_list.node = iter->linked_list.node->next;
 }
 
-api void _vector_collection_prev(const collection *restrict col, iterator *iter) {
+dl_api void _vector_collection_prev(const collection *dl_restrict col, iterator *iter) {
   if (!iterator_is_valid(col, *iter))
     iter->vector.index = col->data.vector.index[1] - 1;
   else if (iter->vector.index > col->data.vector.index[0])
@@ -5090,7 +5090,7 @@ api void _vector_collection_prev(const collection *restrict col, iterator *iter)
     *iter = make_invalid_iterator(col);
 }
 
-api void _linked_list_collection_prev(const collection *restrict col, iterator *iter) {
+dl_api void _linked_list_collection_prev(const collection *dl_restrict col, iterator *iter) {
   if (!iterator_is_valid(col, *iter))
     iter->linked_list.node = col->data.linked_list.container.last;
   else if (iter->linked_list.node != col->data.linked_list.container.first)
@@ -5099,49 +5099,49 @@ api void _linked_list_collection_prev(const collection *restrict col, iterator *
     *iter = make_invalid_iterator(col);
 }
 
-api integer _vector_collection_count(const collection *restrict col) {
+dl_api integer _vector_collection_count(const collection *dl_restrict col) {
   return col->data.vector.index[1] - col->data.vector.index[0];
 }
 
-api integer _linked_list_collection_count(const collection *restrict col) {
+dl_api integer _linked_list_collection_count(const collection *dl_restrict col) {
   return linked_list_length(&col->data.linked_list.container);
 }
 
-api iterator _vector_collection_begin(const collection *restrict col) {
+dl_api iterator _vector_collection_begin(const collection *dl_restrict col) {
   iterator iter;
   iter.vector.index = col->data.vector.index[0];
   return iter;
 }
 
-api iterator _linked_list_collection_begin(const collection *restrict col) {
+dl_api iterator _linked_list_collection_begin(const collection *dl_restrict col) {
   iterator iter;
   iter.linked_list.node = col->data.linked_list.container.first;
   return iter;
 }
 
-api iterator _vector_collection_end(const collection *restrict col) {
+dl_api iterator _vector_collection_end(const collection *dl_restrict col) {
   iterator iter;
   iter.vector.index = col->data.vector.index[1];
   return iter;
 }
 
-api iterator _linked_list_collection_end(const collection *restrict col) {
+dl_api iterator _linked_list_collection_end(const collection *dl_restrict col) {
   iterator iter;
   iter.linked_list.node = NULL;
   return iter;
 }
 
-api const any _vector_collection_search_region(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
+dl_api const any _vector_collection_search_region(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
   if (collection_is_sorted(col))
     return _collection_search_region_vector(col, predicate, left, right, iter);
   return _collection_linear_search(col, predicate, left, right, iter);
 }
 
-api const any _linked_list_collection_search_region(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
+dl_api const any _linked_list_collection_search_region(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
   return _collection_linear_search(col, predicate, left, right, iter);
 }
 
-api bool _vector_collection_destroy_at(collection *restrict col, iterator *iter, dl_handler *destructor) {
+dl_api bool _vector_collection_destroy_at(collection *dl_restrict col, iterator *iter, dl_handler *destructor) {
   vector *v;
   natural index, swap_index;
   any item;
@@ -5150,7 +5150,7 @@ api bool _vector_collection_destroy_at(collection *restrict col, iterator *iter,
   index = iter->vector.index;
 
   if (destructor != NULL) {
-    if (unlikely(!(item = vector_ref(v, index))))
+    if (dl_unlikely(!(item = vector_ref(v, index))))
       return false;
     destructor->func(destructor->data, item);
   }
@@ -5163,7 +5163,7 @@ api bool _vector_collection_destroy_at(collection *restrict col, iterator *iter,
   return true;
 }
 
-api bool _linked_list_collection_destroy_at(collection *restrict col, iterator *iter, dl_handler *destructor) {
+dl_api bool _linked_list_collection_destroy_at(collection *dl_restrict col, iterator *iter, dl_handler *destructor) {
   struct linked_list_node *next;
   next = iter->linked_list.node->next;
   if (linked_list_destroy(&col->data.linked_list.container, iter->linked_list.node, destructor)) {
@@ -5173,7 +5173,7 @@ api bool _linked_list_collection_destroy_at(collection *restrict col, iterator *
   return false;
 }
   
-api any _vector_collection_remove_at(collection *restrict col, iterator *iter, any out) {
+dl_api any _vector_collection_remove_at(collection *dl_restrict col, iterator *iter, any out) {
   vector *v;
   natural index, swap_index;
   
@@ -5191,7 +5191,7 @@ api any _vector_collection_remove_at(collection *restrict col, iterator *iter, a
   return out;
 }
 
-api any _linked_list_collection_remove_at(collection *restrict col, iterator *iter, any out) {
+dl_api any _linked_list_collection_remove_at(collection *dl_restrict col, iterator *iter, any out) {
   struct linked_list_node *next;
   
   next = iter->linked_list.node->next;
@@ -5204,7 +5204,7 @@ api any _linked_list_collection_remove_at(collection *restrict col, iterator *it
 }
 
   
-api integer _vector_collection_destroy_range(collection *restrict col, iterator *iter, natural count) {
+dl_api integer _vector_collection_destroy_range(collection *dl_restrict col, iterator *iter, natural count) {
   natural index, start, total;
   dl_handler destruct;
   vector *v;
@@ -5236,7 +5236,7 @@ api integer _vector_collection_destroy_range(collection *restrict col, iterator 
   return total;
 }
   
-api integer _linked_list_collection_destroy_range(collection *restrict col, iterator *index, natural count) {
+dl_api integer _linked_list_collection_destroy_range(collection *dl_restrict col, iterator *index, natural count) {
   struct linked_list_node *next;
   natural idx;
 
@@ -5248,7 +5248,7 @@ api integer _linked_list_collection_destroy_range(collection *restrict col, iter
   return count;
 }
 
-bool _vector_collection_insert(collection *restrict col, iterator *restrict position, any item) {
+bool _vector_collection_insert(collection *dl_restrict col, iterator *dl_restrict position, any item) {
   iterator index, next;
   
   index = collection_end(col);
@@ -5265,7 +5265,7 @@ bool _vector_collection_insert(collection *restrict col, iterator *restrict posi
   return true;
 }
 
-bool _linked_list_collection_insert(collection *restrict col, iterator *restrict position, any item) {
+bool _linked_list_collection_insert(collection *dl_restrict col, iterator *dl_restrict position, any item) {
   struct linked_list_node *node;
   linked_list *list;
 
@@ -5284,57 +5284,57 @@ bool _linked_list_collection_insert(collection *restrict col, iterator *restrict
  ****************************************************************************/
 
 struct collection_dispatch_functions default_vector_collection_dispatch_functions = {
-  (integer (*)(const collection *restrict col, iterator left, iterator right))_vector_iterator_compare,
-  (bool (*)(const collection *restrict col, iterator index))_vector_iterator_is_valid,
-  (iterator (*)(const collection *restrict col))_vector_make_invalid_iterator,
-  (any (*)(collection *restrict col, iterator *iter))_vector_collection_push_start,
-  (bool (*)(const collection *restrict col))_vector_collection_is_empty,
-  (any (*)(const collection *restrict col, any out))_vector_collection_pop,
-  (bool (*)(collection *restrict col))_vector_collection_pop_destroy,
-  (bool (*)(collection *restrict col))_vector_collection_pop_forget,
-  (integer (*)(collection *restrict col, iterator iter, any *out_array))_vector_collection_ref_array,
-  (any (*)(collection *restrict col, iterator iter))_vector_collection_ref,
-  (bool (*)(collection *restrict col, iterator *iter_a, iterator *iter_b))_vector_collection_swap,
-  (any (*)(const collection *restrict col, iterator iter, any out))_vector_collection_get,
-  (any (*)(collection *restrict col, iterator *iter, any value))_vector_collection_set,
-  (iterator (*)(collection *restrict col, natural index))_vector_collection_index,
-  (void (*)(const collection *restrict col, iterator *iter))_vector_collection_next,
-  (void (*)(const collection *restrict col, iterator *iter))_vector_collection_prev,
-  (integer (*)(const collection *restrict col))_vector_collection_count,
-  (iterator (*)(const collection *restrict col))_vector_collection_begin,
-  (iterator (*)(const collection *restrict col))_vector_collection_end,
-  (const any (*)(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter))_vector_collection_search_region,
-  (bool (*)(collection *restrict col, iterator *iter, dl_handler *destructor))_vector_collection_destroy_at,
-  (any (*)(collection *restrict col, iterator *iter, any out))_vector_collection_remove_at,
-  (integer (*)(collection *restrict col, iterator *iter, natural count))_vector_collection_destroy_range,
-  (bool (*)(collection *restrict col, iterator *restrict position, any item))_vector_collection_insert
+  (integer (*)(const collection *dl_restrict col, iterator left, iterator right))_vector_iterator_compare,
+  (bool (*)(const collection *dl_restrict col, iterator index))_vector_iterator_is_valid,
+  (iterator (*)(const collection *dl_restrict col))_vector_make_invalid_iterator,
+  (any (*)(collection *dl_restrict col, iterator *iter))_vector_collection_push_start,
+  (bool (*)(const collection *dl_restrict col))_vector_collection_is_empty,
+  (any (*)(const collection *dl_restrict col, any out))_vector_collection_pop,
+  (bool (*)(collection *dl_restrict col))_vector_collection_pop_destroy,
+  (bool (*)(collection *dl_restrict col))_vector_collection_pop_forget,
+  (integer (*)(collection *dl_restrict col, iterator iter, any *out_array))_vector_collection_ref_array,
+  (any (*)(collection *dl_restrict col, iterator iter))_vector_collection_ref,
+  (bool (*)(collection *dl_restrict col, iterator *iter_a, iterator *iter_b))_vector_collection_swap,
+  (any (*)(const collection *dl_restrict col, iterator iter, any out))_vector_collection_get,
+  (any (*)(collection *dl_restrict col, iterator *iter, any value))_vector_collection_set,
+  (iterator (*)(collection *dl_restrict col, natural index))_vector_collection_index,
+  (void (*)(const collection *dl_restrict col, iterator *iter))_vector_collection_next,
+  (void (*)(const collection *dl_restrict col, iterator *iter))_vector_collection_prev,
+  (integer (*)(const collection *dl_restrict col))_vector_collection_count,
+  (iterator (*)(const collection *dl_restrict col))_vector_collection_begin,
+  (iterator (*)(const collection *dl_restrict col))_vector_collection_end,
+  (const any (*)(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter))_vector_collection_search_region,
+  (bool (*)(collection *dl_restrict col, iterator *iter, dl_handler *destructor))_vector_collection_destroy_at,
+  (any (*)(collection *dl_restrict col, iterator *iter, any out))_vector_collection_remove_at,
+  (integer (*)(collection *dl_restrict col, iterator *iter, natural count))_vector_collection_destroy_range,
+  (bool (*)(collection *dl_restrict col, iterator *dl_restrict position, any item))_vector_collection_insert
 };
 
 struct collection_dispatch_functions default_linked_list_collection_dispatch_functions = {
-  (integer (*)(const collection *restrict col, iterator left, iterator right))_linked_list_iterator_compare,
-  (bool (*)(const collection *restrict col, iterator index))_linked_list_iterator_is_valid,
-  (iterator (*)(const collection *restrict col))_linked_list_make_invalid_iterator,
-  (any (*)(collection *restrict col, iterator *iter))_linked_list_collection_push_start,
-  (bool (*)(const collection *restrict col))_linked_list_collection_is_empty,
-  (any (*)(const collection *restrict col, any out))_linked_list_collection_pop,
-  (bool (*)(collection *restrict col))_linked_list_collection_pop_destroy,
-  (bool (*)(collection *restrict col))_linked_list_collection_pop_forget,
-  (integer (*)(collection *restrict col, iterator iter, any *out_array))_linked_list_collection_ref_array,
-  (any (*)(collection *restrict col, iterator iter))_linked_list_collection_ref,
-  (bool (*)(collection *restrict col, iterator *iter_a, iterator *iter_b))_linked_list_collection_swap,
-  (any (*)(const collection *restrict col, iterator iter, any out))_linked_list_collection_get,
-  (any (*)(collection *restrict col, iterator *iter, any value))_linked_list_collection_set,
-  (iterator (*)(collection *restrict col, natural index))_linked_list_collection_index,
-  (void (*)(const collection *restrict col, iterator *iter))_linked_list_collection_next,
-  (void (*)(const collection *restrict col, iterator *iter))_linked_list_collection_prev,
-  (integer (*)(const collection *restrict col))_linked_list_collection_count,
-  (iterator (*)(const collection *restrict col))_linked_list_collection_begin,
-  (iterator (*)(const collection *restrict col))_linked_list_collection_end,
-  (const any (*)(const collection *restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter))_linked_list_collection_search_region,
-  (bool (*)(collection *restrict col, iterator *iter, dl_handler *destructor))_linked_list_collection_destroy_at,
-  (any (*)(collection *restrict col, iterator *iter, any out))_linked_list_collection_remove_at,
-  (integer (*)(collection *restrict col, iterator *iter, natural count))_linked_list_collection_destroy_range,
-  (bool (*)(collection *restrict col, iterator *restrict position, any item))_linked_list_collection_insert
+  (integer (*)(const collection *dl_restrict col, iterator left, iterator right))_linked_list_iterator_compare,
+  (bool (*)(const collection *dl_restrict col, iterator index))_linked_list_iterator_is_valid,
+  (iterator (*)(const collection *dl_restrict col))_linked_list_make_invalid_iterator,
+  (any (*)(collection *dl_restrict col, iterator *iter))_linked_list_collection_push_start,
+  (bool (*)(const collection *dl_restrict col))_linked_list_collection_is_empty,
+  (any (*)(const collection *dl_restrict col, any out))_linked_list_collection_pop,
+  (bool (*)(collection *dl_restrict col))_linked_list_collection_pop_destroy,
+  (bool (*)(collection *dl_restrict col))_linked_list_collection_pop_forget,
+  (integer (*)(collection *dl_restrict col, iterator iter, any *out_array))_linked_list_collection_ref_array,
+  (any (*)(collection *dl_restrict col, iterator iter))_linked_list_collection_ref,
+  (bool (*)(collection *dl_restrict col, iterator *iter_a, iterator *iter_b))_linked_list_collection_swap,
+  (any (*)(const collection *dl_restrict col, iterator iter, any out))_linked_list_collection_get,
+  (any (*)(collection *dl_restrict col, iterator *iter, any value))_linked_list_collection_set,
+  (iterator (*)(collection *dl_restrict col, natural index))_linked_list_collection_index,
+  (void (*)(const collection *dl_restrict col, iterator *iter))_linked_list_collection_next,
+  (void (*)(const collection *dl_restrict col, iterator *iter))_linked_list_collection_prev,
+  (integer (*)(const collection *dl_restrict col))_linked_list_collection_count,
+  (iterator (*)(const collection *dl_restrict col))_linked_list_collection_begin,
+  (iterator (*)(const collection *dl_restrict col))_linked_list_collection_end,
+  (const any (*)(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter))_linked_list_collection_search_region,
+  (bool (*)(collection *dl_restrict col, iterator *iter, dl_handler *destructor))_linked_list_collection_destroy_at,
+  (any (*)(collection *dl_restrict col, iterator *iter, any out))_linked_list_collection_remove_at,
+  (integer (*)(collection *dl_restrict col, iterator *iter, natural count))_linked_list_collection_destroy_range,
+  (bool (*)(collection *dl_restrict col, iterator *dl_restrict position, any item))_linked_list_collection_insert
 };
 
 collection_settings default_vector_collection_settings = {
@@ -5357,7 +5357,7 @@ collection_settings default_linked_list_collection_settings = {
   &default_linked_list_collection_dispatch_functions
 };
 
-void _check_init_collection(collection *restrict col, collection_settings settings, natural count) {
+void _check_init_collection(collection *dl_restrict col, collection_settings settings, natural count) {
   col->settings = settings;
   
   if (col->settings.comparer.func == NULL) {
@@ -5386,10 +5386,10 @@ void _check_init_collection(collection *restrict col, collection_settings settin
   }
 }
 
-api collection *init_collection(collection *restrict col, collection_type type, storage_type storage, comparator *compare, dl_handler *destructor, natural element_size) {
+dl_api collection *init_collection(collection *dl_restrict col, collection_type type, storage_type storage, dl_comparator *compare, dl_handler *destructor, natural element_size) {
   collection_settings settings;
   
-  if (safety(col == NULL || element_size < 1))
+  if (dl_safety(col == NULL || element_size < 1))
     return NULL;
 
   switch (storage) {
@@ -5439,8 +5439,8 @@ api collection *init_collection(collection *restrict col, collection_type type, 
   return col;
 }
 
-api collection *init_collection_custom(collection *restrict col, collection_settings settings, natural element_size) {
-  if (safety(col == NULL))
+dl_api collection *init_collection_custom(collection *dl_restrict col, collection_settings settings, natural element_size) {
+  if (dl_safety(col == NULL))
     return NULL;
 
   _check_init_collection(col, settings, 0);
@@ -5463,10 +5463,10 @@ api collection *init_collection_custom(collection *restrict col, collection_sett
   return col;
 }
 
-api collection *init_collection_array(collection *restrict col, collection_type type, comparator *comp, dl_handler *deconstruct_entry, byte *data, natural element_size, natural count) {
+dl_api collection *init_collection_array(collection *dl_restrict col, collection_type type, dl_comparator *comp, dl_handler *deconstruct_entry, byte *data, natural element_size, natural count) {
   collection_settings settings;
   
-  if (safety(col == NULL || data == NULL))
+  if (dl_safety(col == NULL || data == NULL))
     return NULL;
 
   if (!init_vector_array(&col->data.vector.container, data, element_size, count))
@@ -5493,11 +5493,11 @@ api collection *init_collection_array(collection *restrict col, collection_type 
   return col;
 }
 
-api void destroy_collection(collection *restrict col) {
+dl_api void destroy_collection(collection *dl_restrict col) {
   iterator index;
   any item;
   
-  if (safety(col == NULL))
+  if (dl_safety(col == NULL))
     return;
 
   switch (col->settings.storage) {

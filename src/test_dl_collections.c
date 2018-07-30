@@ -68,7 +68,7 @@ void _print_collection(collection *c1) {
   iterator i;
   any ref;
   for (ref = collection_begin_ref(c1, &i); ref != NULL; ref = collection_next(c1, &i)) {
-#if IS_C89 || IS_C90
+#if DL_IS_C89 || DL_IS_C90
     sprintf(buf2, "%s %i", buf, *(integer *)ref);
     sprintf(buf, "%s", buf2);
 #else
@@ -208,7 +208,7 @@ typedef struct {
   collection_type type;
   storage_type storage;
   char *name;
-  comparator comp;
+  dl_comparator comp;
   dl_handler destructor;
   bool sorted;
   bool fifo;
@@ -241,11 +241,11 @@ const natural _c_type_count = 16;
 #define DUAL_TEST_BEGIN()   collection c1, c2;										\
   natural type1_idx, type2_idx;												\
   const char *type1_name;												\
-  comparator type1_comp;												\
+  dl_comparator type1_comp;												\
   collection_type type1;												\
   dl_handler type1_destructor;												\
   const char *type2_name;												\
-  comparator type2_comp;												\
+  dl_comparator type2_comp;												\
   collection_type type2;												\
   storage_type storage2;												\
   dl_handler type2_destructor;												\
@@ -296,7 +296,7 @@ fail:								\
   collection c;												\
   natural type_idx;											\
   const char *type_name;										\
-  comparator type_comp;											\
+  dl_comparator type_comp;											\
   collection_type type;											\
   storage_type storage;											\
   dl_handler type_destructor;										\
@@ -331,7 +331,7 @@ bool test_init_collection() {
   collection c;
   collection_settings settings;
   collection_type type;
-  comparator type_comp;
+  dl_comparator type_comp;
   const char *type_name;
   dl_handler type_destructor;
   natural type_idx;
@@ -911,7 +911,7 @@ bool test_collection_drop() {
 }
 
 bool test_collection_map() {
-  converter convert;
+  dl_converter convert;
   DUAL_TEST_BEGIN();
 
   if (!check(collection_copy_array(_c_data_b, 10, &c1),
@@ -949,7 +949,7 @@ bool test_collection_map() {
 }
 
 bool test_collection_foldl() {
-  folder add;
+  dl_folder add;
   SINGLE_TEST_BEGIN();
 
   if (0 == collection_copy_array(_c_data_b, 10, &c))
@@ -977,7 +977,7 @@ bool test_collection_foldl() {
 
 bool test_collection_foldr() {
   collection reverse_c;
-  folder push;
+  dl_folder push;
   SINGLE_TEST_BEGIN();
 
   init_collection(&reverse_c, COLLECTION_TYPE_LIST, STORAGE_TYPE_VECTOR, &type_comp, &type_destructor, sizeof(integer));
@@ -1015,8 +1015,8 @@ bool test_collection_foldr() {
 
 bool test_collection_zip() {
   collection c3;
-  zipper zip;
-  folder sum;
+  dl_zipper zip;
+  dl_folder sum;
   integer total;
   DUAL_TEST_BEGIN();
 

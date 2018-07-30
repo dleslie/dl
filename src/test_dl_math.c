@@ -360,7 +360,7 @@ bool test_vec2_normalize() {
   vec2_normalize(&vec, &vec);
 
   sqr_m = a * a + b * b;
-#if IS_C89 || IS_C90
+#if DL_IS_C89 || DL_IS_C90
   inv_m = 1.0f / sqrt(sqr_m);
 #else  
   inv_m = 1.0f / sqrt(sqr_m);
@@ -502,7 +502,7 @@ bool test_vec2_magnitude() {
 
   m = vec2_magnitude(&vec);
   
-#if IS_C89 || IS_C90
+#if DL_IS_C89 || DL_IS_C90
   expected_m = sqrt(a * a + b * b);
 #else
   expected_m = hypotf(a, b);
@@ -1041,7 +1041,7 @@ bool test_vec4_normalize() {
   init_vec4(&vec, a, b, c, d);
   vec4_normalize(&vec, &vec);
 
-#if IS_C89 || IS_C90
+#if DL_IS_C89 || DL_IS_C90
   m = sqrt(a * a + b * b + c * c + d * d);
 #else
   m = sqrtf(a * a + b * b + c * c + d * d);
@@ -1223,7 +1223,7 @@ bool test_vec4_magnitude() {
 
   m = vec4_magnitude(&vec);
 
-#if IS_C89 || IS_C90
+#if DL_IS_C89 || DL_IS_C90
   expected = sqrt(a * a + b * b + c * c + d * d);
 #else
   expected = sqrtf(a * a + b * b + c * c + d * d);
@@ -1853,7 +1853,7 @@ bool test_vec3_normalize() {
 
   vec3_normalize(&vec, &vec);
 
-#if IS_C89 || IS_C90
+#if DL_IS_C89 || DL_IS_C90
   m = sqrt(a * a + b * b + c * c);
 #else
   m = sqrtf(a * a + b * b + c * c);
@@ -1981,7 +1981,7 @@ bool test_vec3_magnitude() {
 
   m = vec3_magnitude(&vec);
 
-#if IS_C89 || IS_C90
+#if DL_IS_C89 || DL_IS_C90
   expected = sqrt(a * a + b * b + c * c);
 #else
   expected = sqrtf(a * a + b * b + c * c);
