@@ -76,7 +76,7 @@ void _print_collection(collection *c1) {
     snprintf(buf, 256, "%s", buf2);
 #endif
   }
-  INFO("%s", buf2);
+  DL_INFO("%s", buf2);
 }
 
 dl_bool _confirm_properties(collection *c, const char *type_name) {
@@ -88,7 +88,7 @@ dl_bool _confirm_properties(collection *c, const char *type_name) {
   for (item = collection_ref(c, index); item != NULL; item = collection_next(c, &index)) {
     prev = index;
     collection_prev(c, &prev);
-    if (!check(iterator_equal(c, prev, last),
+    if (!dl_check(iterator_equal(c, prev, last),
 	       "%s: Expected iterators to monotonically increase.", type_name))
       return false;
     last = index;
@@ -96,7 +96,7 @@ dl_bool _confirm_properties(collection *c, const char *type_name) {
     if (iterator_is_valid(c, prev)) {
       next = prev;
       collection_next(c, &next);
-      if (!check(iterator_equal(c, next, index),
+      if (!dl_check(iterator_equal(c, next, index),
 		 "%s: Expected iterators to monotonically increase.", type_name))
 	return false;
     }
@@ -105,11 +105,11 @@ dl_bool _confirm_properties(collection *c, const char *type_name) {
     collection_next(c, &next);
     prev = next;
     collection_prev(c, &prev);
-    if (!check(iterator_equal(c, prev, index),
+    if (!dl_check(iterator_equal(c, prev, index),
 	       "%s: Expected iterators to monotonically decrease.", type_name))
       return false;
 
-    if (!check(_abs(*(dl_integer *)item) <= 20,
+    if (!dl_check(_abs(*(dl_integer *)item) <= 20,
 	       "%s: expected all test values to be -20<=x<=20, found %i.",
 	       type_name, *(dl_integer *)item))
       return false;
@@ -123,7 +123,7 @@ dl_bool _confirm_properties(collection *c, const char *type_name) {
       item != NULL;
       last_item = item, item = collection_next(c, &index)) {
       if (item != NULL && last_item != NULL
-	  && !check(c->settings.comparer.func(c->settings.comparer.data, last_item, item) <= 0,
+	  && !dl_check(c->settings.comparer.func(c->settings.comparer.data, last_item, item) <= 0,
           "%s: Expected elements to be sorted, %i came before %i.",
           type_name, *(dl_integer *)last_item, *(dl_integer *)item))
         return false;
@@ -139,7 +139,7 @@ dl_bool _confirm_properties(collection *c, const char *type_name) {
       for (next_item = collection_next(c, &next_index);
         next_item != NULL;
         next_item = collection_next(c, &next_index)) {
-        if (!check(c->settings.comparer.func(c->settings.comparer.data, item, next_item) != 0,
+        if (!dl_check(c->settings.comparer.func(c->settings.comparer.data, item, next_item) != 0,
           "%s: Expected all elements to be unique, found two %i.",
           type_name, *(dl_integer *)item))
           return false;
@@ -166,7 +166,7 @@ dl_bool _contains_only(const char *type_name, collection *c, dl_integer *data, d
 	fail = false;
 	break;
       }
-    if (!check(!fail, "%s: Expected not to see %i.", type_name, *(dl_integer *)ref))
+    if (!dl_check(!fail, "%s: Expected not to see %i.", type_name, *(dl_integer *)ref))
       return false;
   }
 
@@ -180,7 +180,7 @@ dl_bool _contains_only(const char *type_name, collection *c, dl_integer *data, d
 	fail = false;
 	break;
       }
-    if (!check(!fail, "%s: Expected to see %i.", type_name, data[didx]))
+    if (!dl_check(!fail, "%s: Expected to see %i.", type_name, data[didx]))
       return false;
   }
 
@@ -257,7 +257,7 @@ const dl_natural _c_type_count = 16;
     type1 = _c_types[type1_idx].type;											\
     type1_destructor = _c_types[type1_idx].destructor;									\
 															\
-    if (!check(init_collection_array(&c1, type1, &type1_comp, &type1_destructor, (dl_any)c1_data, sizeof(dl_integer), 20),    \
+    if (!dl_check(init_collection_array(&c1, type1, &type1_comp, &type1_destructor, (dl_any)c1_data, sizeof(dl_integer), 20),    \
                "%s: Failed to initialize.", type1_name))								\
       return false;													\
 															\
@@ -268,7 +268,7 @@ const dl_natural _c_type_count = 16;
       storage2 = _c_types[type2_idx].storage;										\
       type2_destructor = _c_types[type2_idx].destructor;								\
 															\
-      if (!check(init_collection(&c2, type2, storage2, &type2_comp, &type2_destructor, sizeof(dl_integer)),	        \
+      if (!dl_check(init_collection(&c2, type2, storage2, &type2_comp, &type2_destructor, sizeof(dl_integer)),	        \
                  "%s: Failed to initialize.", type2_name)) {								\
         destroy_collection(&c1);											\
         return false;													\
@@ -308,7 +308,7 @@ fail:								\
     storage = _c_types[type_idx].storage;								\
     type_destructor = _c_types[type_idx].destructor;							\
 													\
-    if (!check(init_collection(&c, type, storage, &type_comp, &type_destructor, sizeof(dl_integer)),	\
+    if (!dl_check(init_collection(&c, type, storage, &type_comp, &type_destructor, sizeof(dl_integer)),	\
                "%s: Failed to initialize.", type_name))							\
       return false;
 
@@ -359,20 +359,20 @@ dl_bool test_init_collection() {
     settings.comparer = type_comp;
     settings.deconstruct_entry = type_destructor;
 
-    if (!check(init_collection_custom(&c, settings, sizeof(dl_integer)),
+    if (!dl_check(init_collection_custom(&c, settings, sizeof(dl_integer)),
       "%s: Failed to initialize.", type_name))
       return false;
 
     destroy_collection(&c);
 
     if (storage == STORAGE_TYPE_VECTOR) {
-      if (!check(init_collection_array(&c, type, &type_comp, &type_destructor, (dl_byte *)_c_data_a, sizeof(dl_integer), 10),
+      if (!dl_check(init_collection_array(&c, type, &type_comp, &type_destructor, (dl_byte *)_c_data_a, sizeof(dl_integer), 10),
         "%s: Failed to initialize from array.", type_name))
         return false;
 
       destroy_collection(&c);
 
-      if (!check(init_vector(&v, sizeof(dl_integer), 0), "Failed to initialize vector."))
+      if (!dl_check(init_vector(&v, sizeof(dl_integer), 0), "Failed to initialize vector."))
         return false;
 
       destroy_vector(&v, NULL);
@@ -385,25 +385,25 @@ dl_bool test_init_collection() {
 dl_bool test_collection_push() {
   SINGLE_TEST_BEGIN();
 
-  if (!check(collection_push(&c, (dl_any)&_c_data_a[0]),
+  if (!dl_check(collection_push(&c, (dl_any)&_c_data_a[0]),
     "%s: Expected push to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check(collection_count(&c) > 0,
+  if (!dl_check(collection_count(&c) > 0,
     "%s: Expected count to increment.", type_name))
     goto fail;
 
-  if (!check(collection_push(&c, (dl_any)&_c_data_a[1]),
+  if (!dl_check(collection_push(&c, (dl_any)&_c_data_a[1]),
     "%s: Expected push to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check(collection_count(&c) > 1,
+  if (!dl_check(collection_count(&c) > 1,
     "%s: Expected count to increment.", type_name))
     goto fail;
 
@@ -430,7 +430,7 @@ dl_bool test_collection_pop() {
 
   for (idx = 10; idx > 0; --idx) {
     next_item = *(dl_integer *)collection_peek(&c);
-    if (!check(collection_pop(&c, (dl_any)&item) && item == next_item,
+    if (!dl_check(collection_pop(&c, (dl_any)&item) && item == next_item,
 	       "%s: Expected pop to work, found %i and expected %i", type_name, item, next_item))
       goto fail;
     if (!_confirm_properties(&c, type_name))
@@ -457,13 +457,13 @@ dl_bool test_collection_peek() {
     goto fail;
 
   for (idx = 10; idx > 0; --idx) {
-    if (!check(ref = collection_peek(&c),
+    if (!dl_check(ref = collection_peek(&c),
       "%s: Expected peek to work", type_name))
       goto fail;
 
     peek_item = *(dl_integer *)ref;
 
-    if (!check(collection_pop(&c, (dl_any)&pop_item) && pop_item == peek_item,
+    if (!dl_check(collection_pop(&c, (dl_any)&pop_item) && pop_item == peek_item,
       "%s: Expected %i to be %i", type_name, peek_item, pop_item))
       goto fail;
 
@@ -493,20 +493,20 @@ dl_bool test_collection_remove_at() {
     goto fail;
 
   pos = collection_index(&c, (dl_natural)random_integer_range(&r, 0, collection_count(&c)));
-  if (!check(ref = collection_ref(&c, pos),
+  if (!dl_check(ref = collection_ref(&c, pos),
     "%s: expected to ref %lui", type_name, pos))
     goto fail;
 
   original = *(dl_integer *)ref;
 
-  if (!check(collection_remove_at(&c, &pos, &removed),
+  if (!dl_check(collection_remove_at(&c, &pos, &removed),
     "%s: Expected remove to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check(original == removed,
+  if (!dl_check(original == removed,
     "%s: Expected %i to be %i", type_name, removed, original))
     goto fail;
 
@@ -529,7 +529,7 @@ dl_bool test_collection_remove_all() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check(collection_remove_all(&c, &_test_match_even, &out),
+  if (!dl_check(collection_remove_all(&c, &_test_match_even, &out),
     "%s: Expected remove all to work.", type_name))
     goto infail;
 
@@ -537,20 +537,20 @@ dl_bool test_collection_remove_all() {
     goto fail;
 
   count = collection_count(&out);
-  if (!check(count == 5,
+  if (!dl_check(count == 5,
     "%s: Expected 5 items to be removed, %lu were.", type_name, count))
     goto infail;
 
-  if (!check(collection_all(&out, &_test_match_even),
+  if (!dl_check(collection_all(&out, &_test_match_even),
     "%s: Expected all items to be even.", type_name))
     goto infail;
 
   count = collection_count(&c);
-  if (!check(count == 5,
+  if (!dl_check(count == 5,
     "%s: Expected 5 items to remain, %lu were.", type_name, count))
     goto infail;
 
-  if (!check(!collection_any(&c, &_test_match_even),
+  if (!dl_check(!collection_any(&c, &_test_match_even),
     "%s: Expected no items to be even.", type_name))
     goto infail;
 
@@ -583,13 +583,13 @@ dl_bool test_collection_ref() {
     goto fail;
 
   pos = collection_index(&c, (dl_natural)random_integer_range(&r, 0, collection_count(&c)));
-  if (!check(ref = collection_ref(&c, pos),
+  if (!dl_check(ref = collection_ref(&c, pos),
     "%s: expected to ref %lui", type_name, pos))
     goto fail;
 
   val = *(dl_integer *)ref;
 
-  if (!check(val != DL_INTEGER_MIN,
+  if (!dl_check(val != DL_INTEGER_MIN,
     "%s: Expected %i not to be %i", type_name, val, DL_INTEGER_MIN))
     goto fail;
 
@@ -613,16 +613,16 @@ dl_bool test_collection_ref_array() {
 
   ref = NULL;
   count = 0;
-  if (!check(count = collection_ref_array(&c, collection_begin(&c), &ref),
+  if (!dl_check(count = collection_ref_array(&c, collection_begin(&c), &ref),
     "%s: expected to ref %lu", type_name, 0))
     goto fail;
 
-  if (!check(count > 0,
+  if (!dl_check(count > 0,
     "%s: expected count to be more than zero.", type_name))
     goto fail;
 
   first = *(dl_integer *)ref;
-  if (!check(first != DL_INTEGER_MIN,
+  if (!dl_check(first != DL_INTEGER_MIN,
     "%s: Expected %i not to be %i", type_name, first, DL_INTEGER_MIN))
     goto fail;
 
@@ -644,13 +644,13 @@ dl_bool test_collection_clear() {
 
   before_count = collection_count(&c);
   collection_clear(&c);
-  if (!check(0 == collection_count(&c),
+  if (!dl_check(0 == collection_count(&c),
     "%s: Expected clear to work.", type_name))
     goto fail;
 
   after_count = collection_count(&c);
 
-  if (!check(after_count == 0 && after_count != before_count,
+  if (!dl_check(after_count == 0 && after_count != before_count,
     "%s: Expected clear to work; was %lu in size, is now %lu.", type_name, before_count, after_count))
     goto fail;
 
@@ -669,16 +669,16 @@ dl_bool test_collection_is_empty() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check(!collection_is_empty(&c),
+  if (!dl_check(!collection_is_empty(&c),
     "%s: Expected collection not to be empty, is %lu in size.", type_name, collection_count(&c)))
     goto fail;
 
   collection_clear(&c);
-  if (!check(0 == collection_count(&c),
+  if (!dl_check(0 == collection_count(&c),
     "%s: Expected clear to work.", type_name))
     goto fail;
 
-  if (!check(collection_is_empty(&c),
+  if (!dl_check(collection_is_empty(&c),
     "%s: Expected collection to be empty, is %lu in size.", type_name, collection_count(&c)))
     goto fail;
 
@@ -704,11 +704,11 @@ dl_bool test_collection_next() {
   idx = collection_begin(&c);
   last_value = DL_INTEGER_MIN;
   for (count = collection_count(&c); count > 1; --count) {
-    if (!check(ref = collection_next(&c, &idx),
+    if (!dl_check(ref = collection_next(&c, &idx),
       "%s: Expected next to work at count %lu.", type_name, count))
       goto fail;
 
-    if (!check(*(dl_integer *)ref != last_value,
+    if (!dl_check(*(dl_integer *)ref != last_value,
       "%s: Expected values to change.", type_name))
       goto fail;
 
@@ -737,11 +737,11 @@ dl_bool test_collection_prev() {
   idx = collection_end(&c);
   last_value = DL_INTEGER_MIN;
   for (count = collection_count(&c); count > 0; --count) {
-    if (!check(ref = collection_prev(&c, &idx),
+    if (!dl_check(ref = collection_prev(&c, &idx),
       "%s: Expected next to work.", type_name))
       goto fail;
 
-    if (!check(*(dl_integer *)ref != last_value,
+    if (!dl_check(*(dl_integer *)ref != last_value,
       "%s: Expected values to change.", type_name))
       goto fail;
 
@@ -754,7 +754,7 @@ dl_bool test_collection_prev() {
 dl_bool test_collection_count() {
   SINGLE_TEST_BEGIN();
 
-  if (!check(collection_count(&c) == 0,
+  if (!dl_check(collection_count(&c) == 0,
     "%s: Expected count to be 0, was %i.", type_name, collection_count(&c)))
     goto fail;
 
@@ -767,7 +767,7 @@ dl_bool test_collection_count() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check(collection_count(&c) == 10,
+  if (!dl_check(collection_count(&c) == 10,
     "%s: Expected count to be 10, was %i.", type_name, collection_count(&c)))
     goto fail;
 
@@ -787,7 +787,7 @@ dl_bool test_collection_copy() {
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  if (!check(collection_copy(&c1, &c2) && collection_count(&c2) > 0,
+  if (!dl_check(collection_copy(&c1, &c2) && collection_count(&c2) > 0,
     "%s, %s: Expected copy to work.", type1_name, type2_name))
     goto fail;
 
@@ -795,7 +795,7 @@ dl_bool test_collection_copy() {
     goto fail;
 
   collection_clear(&c1);
-  if (!check(collection_count(&c1) == 0,
+  if (!dl_check(collection_count(&c1) == 0,
     "%s: Expected clear to work.", type1_name))
     goto fail;
 
@@ -807,14 +807,14 @@ dl_bool test_collection_copy() {
 
   current = collection_count(&c2);
 
-  if (!check(collection_copy(&c1, &c2),
+  if (!dl_check(collection_copy(&c1, &c2),
     "%s, %s: Expected copy to work.", type1_name, type2_name))
     goto fail;
 
   if (!_confirm_properties(&c2, type2_name))
     goto fail;
 
-  if (!check((dl_integer)current < collection_count(&c2),
+  if (!dl_check((dl_integer)current < collection_count(&c2),
     "%s, %s: Expected growth in size.", type1_name, type2_name))
     goto fail;
 
@@ -833,7 +833,7 @@ dl_bool test_collection_all() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check(collection_all(&c, &_test_match_natural),
+  if (!dl_check(collection_all(&c, &_test_match_natural),
     "%s: Expected all values to be dl_natural.", type_name))
     goto fail;
 
@@ -843,7 +843,7 @@ dl_bool test_collection_all() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check(!collection_all(&c, &_test_match_natural),
+  if (!dl_check(!collection_all(&c, &_test_match_natural),
     "%s: Expected some values not to be dl_natural.", type_name))
     goto fail;
 
@@ -862,7 +862,7 @@ dl_bool test_collection_any() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check(!collection_any(&c, &_test_match_natural),
+  if (!dl_check(!collection_any(&c, &_test_match_natural),
     "%s: Expected all values not to be dl_natural.", type_name))
     goto fail;
 
@@ -872,7 +872,7 @@ dl_bool test_collection_any() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check(collection_any(&c, &_test_match_natural),
+  if (!dl_check(collection_any(&c, &_test_match_natural),
     "%s: Expected some values to be dl_natural.", type_name))
     goto fail;
 
@@ -896,14 +896,14 @@ dl_bool test_collection_drop() {
 
   dl_natural count = (dl_natural)random_integer_range(&r, 1, 9);
 
-  if (!check(collection_drop(&c, count),
+  if (!dl_check(collection_drop(&c, count),
     "%s: Expected drop to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((10 - (dl_integer)count) == collection_count(&c),
+  if (!dl_check((10 - (dl_integer)count) == collection_count(&c),
     "%s: Expected count to be %lu, was %lu.", type_name, (10 - count), collection_count(&c)))
     goto fail;
 
@@ -914,7 +914,7 @@ dl_bool test_collection_map() {
   dl_converter convert;
   DUAL_TEST_BEGIN();
 
-  if (!check(collection_copy_array(_c_data_b, 10, &c1),
+  if (!dl_check(collection_copy_array(_c_data_b, 10, &c1),
     "%s: Expected copy to work.", type1_name))
     goto fail;
 
@@ -924,24 +924,24 @@ dl_bool test_collection_map() {
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  if (!check(collection_count(&c1) == 10,
+  if (!dl_check(collection_count(&c1) == 10,
     "%s: Expected 10 values, found %lu.", type1_name, collection_count(&c1)))
     goto fail;
 
   convert.func = _test_converter;
   convert.data = NULL;
-  if (!check(collection_map(&c1, &convert, &c2),
+  if (!dl_check(collection_map(&c1, &convert, &c2),
     "%s, %s: Failed to map values.", type1_name, type2_name))
     goto fail;
 
   if (!_confirm_properties(&c2, type2_name))
     goto fail;
 
-  if (!check(collection_count(&c2) == 10,
+  if (!dl_check(collection_count(&c2) == 10,
     "%s, %s: Expected 10 values, found %lu.", type1_name, type2_name, collection_count(&c2)))
     goto fail;
 
-  if (!check(collection_all(&c2, &_test_match_even),
+  if (!dl_check(collection_all(&c2, &_test_match_even),
     "%s, %s: Expected all values to be even.", type1_name, type2_name))
     goto fail;
 
@@ -964,11 +964,11 @@ dl_bool test_collection_foldl() {
   dl_integer total = 0;
   add.func = _test_add;
   add.data = NULL;
-  if (!check(NULL != collection_foldl(&c, &total, &add),
+  if (!dl_check(NULL != collection_foldl(&c, &total, &add),
     "%s: Expected foldl to work.", type_name))
     goto fail;
 
-  if (!check(total == 10,
+  if (!dl_check(total == 10,
     "%s: Expected fold to sum properly, total is %i.", type_name, total))
     goto fail;
 
@@ -993,14 +993,14 @@ dl_bool test_collection_foldr() {
 
   push.func = _test_push;
   push.data = NULL;
-  if (!check(NULL != collection_foldr(&c, &reverse_c, &push),
+  if (!dl_check(NULL != collection_foldr(&c, &reverse_c, &push),
     "%s: Expected foldr to work.", type_name))
     goto fail;
 
   dl_any a, b;
   iterator index_a = collection_end(&c), index_b = collection_begin(&reverse_c);
   while ((a = collection_prev(&c, &index_a)) && (b = collection_ref(&reverse_c, index_b))) {
-    if (!check(*(dl_integer *)a == *(dl_integer *)b,
+    if (!dl_check(*(dl_integer *)a == *(dl_integer *)b,
       "%s: Expected %i to be %i", type_name, *(dl_integer *)a, *(dl_integer *)b)) {
       destroy_collection(&reverse_c);
       goto fail;
@@ -1020,11 +1020,11 @@ dl_bool test_collection_zip() {
   dl_integer total;
   DUAL_TEST_BEGIN();
 
-  if (!check(init_collection(&c3, type1, STORAGE_TYPE_VECTOR, &type1_comp, &type1_destructor, sizeof(dl_integer)),
+  if (!dl_check(init_collection(&c3, type1, STORAGE_TYPE_VECTOR, &type1_comp, &type1_destructor, sizeof(dl_integer)),
     "Expected init to work."))
     goto fail;
 
-  if (!check(collection_copy_array(_c_data_a, 10, &c1),
+  if (!dl_check(collection_copy_array(_c_data_a, 10, &c1),
     "%s: Expected copy to work.", type1_name))
     goto infail;
 
@@ -1034,7 +1034,7 @@ dl_bool test_collection_zip() {
   if (!_contains_only(type1_name, &c1, _c_data_a, 10))
     goto infail;
 
-  if (!check(collection_copy_array(_c_data_b, 10, &c2),
+  if (!dl_check(collection_copy_array(_c_data_b, 10, &c2),
     "%s: Expected copy to work.", type1_name))
     goto infail;
 
@@ -1046,14 +1046,14 @@ dl_bool test_collection_zip() {
 
   zip.func = _test_zip;
   zip.data = NULL;
-  if (!check(collection_zip(&c1, &c2, &zip, &c3),
+  if (!dl_check(collection_zip(&c1, &c2, &zip, &c3),
     "%s, %s: Expected zip to work.", type1_name, type2_name))
     goto infail;
 
   if (!_confirm_properties(&c3, type1_name))
     goto fail;
 
-  if (!check(10 == collection_count(&c3),
+  if (!dl_check(10 == collection_count(&c3),
     "%s, %s: Expected zip count to be 10, was %lu.", type1_name, type2_name, collection_count(&c3)))
     goto infail;
 
@@ -1063,7 +1063,7 @@ dl_bool test_collection_zip() {
   total = 0;
   sum.func = _test_sum;
   sum.data = NULL;
-  if (!check(NULL != collection_foldl(&c3, &total, &sum)
+  if (!dl_check(NULL != collection_foldl(&c3, &total, &sum)
     && total == 100,
     "%s, %s: Expected %i to be %i.", type1_name, type2_name, total, 100))
     goto infail;
@@ -1084,7 +1084,7 @@ dl_bool test_collection_take() {
   random_state r;
   init_random_time(&r);
   
-  if (!check(collection_copy_array(_c_data_a, 10, &c1),
+  if (!dl_check(collection_copy_array(_c_data_a, 10, &c1),
     "%s: Expected copy to work.", type1_name))
     goto fail;
 
@@ -1096,19 +1096,19 @@ dl_bool test_collection_take() {
 
   dl_natural count = random_integer(&r, collection_count(&c1));
   dl_integer taken = collection_take(&c1, count, &c2);
-  if (!check((dl_integer)count == taken,
+  if (!dl_check((dl_integer)count == taken,
     "%s, %s: Expected take to work, wanted %i, got %i.", type1_name, type2_name, count, taken))
     goto fail;
 
   if (!_confirm_properties(&c2, type2_name))
     goto fail;
 
-  if (!check((dl_integer)count == collection_count(&c2),
+  if (!dl_check((dl_integer)count == collection_count(&c2),
     "%s, %s: Expected %lu items, found %lu.",
     type1_name, type2_name, count, collection_count(&c2)))
     goto fail;
 
-  if (!check(10 - (dl_integer)count == collection_count(&c1),
+  if (!dl_check(10 - (dl_integer)count == collection_count(&c1),
     "%s, %s: Expected %lu items, found %lu.",
     type1_name, type2_name, 10 - count, collection_count(&c1)))
     goto fail;
@@ -1119,7 +1119,7 @@ dl_bool test_collection_take() {
 dl_bool test_collection_find() {
   SINGLE_TEST_BEGIN();
 
-  if (!check(collection_copy_array(_c_data_a, 10, &c)
+  if (!dl_check(collection_copy_array(_c_data_a, 10, &c)
     && collection_copy_array(_c_data_b, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
@@ -1129,16 +1129,16 @@ dl_bool test_collection_find() {
 
   iterator index = collection_begin(&c);
   dl_any ref;
-  if (!check(ref = collection_find(&c, &_test_match_natural, &index),
+  if (!dl_check(ref = collection_find(&c, &_test_match_natural, &index),
     "%s: Expected find to work.", type_name))
     goto fail;
 
-  if (!check(*(dl_integer *)ref > 0,
+  if (!dl_check(*(dl_integer *)ref > 0,
     "%s: Expected %i to be dl_natural.", type_name, *(dl_integer *)ref))
     goto fail;
 
   index = collection_end(&c);
-  if (!check(!(ref = collection_find(&c, &_test_match_natural, &index)),
+  if (!dl_check(!(ref = collection_find(&c, &_test_match_natural, &index)),
     "%s: Expected find to fail.", type_name))
     goto fail;
 
@@ -1148,7 +1148,7 @@ dl_bool test_collection_find() {
 dl_bool test_collection_find_last() {
   SINGLE_TEST_BEGIN();
 
-  if (!check(collection_copy_array(_c_data_b, 10, &c)
+  if (!dl_check(collection_copy_array(_c_data_b, 10, &c)
     && collection_copy_array(_c_data_a, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
@@ -1158,16 +1158,16 @@ dl_bool test_collection_find_last() {
 
   iterator index = collection_end(&c);
   dl_any ref;
-  if (!check(ref = collection_find_last(&c, &_test_match_natural, &index),
+  if (!dl_check(ref = collection_find_last(&c, &_test_match_natural, &index),
     "%s: Expected find to work.", type_name))
     goto fail;
 
-  if (!check(*(dl_integer *)ref > 0,
+  if (!dl_check(*(dl_integer *)ref > 0,
     "%s: Expected %i to be dl_natural.", type_name, *(dl_integer *)ref))
     goto fail;
 
   index = collection_begin(&c);
-  if (!check(!(ref = collection_find_last(&c, &_test_match_natural, &index)),
+  if (!dl_check(!(ref = collection_find_last(&c, &_test_match_natural, &index)),
     "%s: Expected find to fail.", type_name))
     goto fail;
 
@@ -1177,21 +1177,21 @@ dl_bool test_collection_find_last() {
 dl_bool test_collection_find_all() {
   DUAL_TEST_BEGIN();
 
-  if (!check(collection_copy_array(_c_data_b, 10, &c1),
+  if (!dl_check(collection_copy_array(_c_data_b, 10, &c1),
     "%s: Expected copy to work.", type1_name))
     goto fail;
 
   if (!_contains_only(type1_name, &c1, _c_data_b, 10))
     goto fail;
 
-  if (!check(collection_copy_array(_c_data_a, 10, &c1),
+  if (!dl_check(collection_copy_array(_c_data_a, 10, &c1),
     "%s: Expected copy to work.", type1_name))
     goto fail;
 
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  if (!check(collection_find_all(&c1, &_test_match_natural, &c2),
+  if (!dl_check(collection_find_all(&c1, &_test_match_natural, &c2),
     "%s, %s: Expected find to work.", type1_name, type2_name))
     goto fail;
 
@@ -1199,22 +1199,22 @@ dl_bool test_collection_find_all() {
     goto fail;
 
   if (collection_is_set(&c2)) {
-    if (!check(collection_count(&c2) > 0,
+    if (!dl_check(collection_count(&c2) > 0,
       "%s, %s: Expected some items, found none.", type1_name, type2_name))
       goto fail;
   }
   else if (!collection_is_set(&c1)) {
-    if (!check(collection_count(&c2) == 19,
+    if (!dl_check(collection_count(&c2) == 19,
       "%s, %s: Expected 19 items, found %lu.", type1_name, type2_name, collection_count(&c2)))
       goto fail;
   }
   else {
-    if (!check(collection_count(&c2) == 10,
+    if (!dl_check(collection_count(&c2) == 10,
       "%s, %s: Expected 10 items, found %lu.", type1_name, type2_name, collection_count(&c2)))
       goto fail;
   }
 
-  if (!check(collection_all(&c2, &_test_match_natural),
+  if (!dl_check(collection_all(&c2, &_test_match_natural),
     "%s, %s: Expected all items to be dl_natural.", type1_name, type2_name))
     goto fail;
 
@@ -1226,11 +1226,11 @@ dl_bool test_collection_remove_first() {
 
   iterator index = collection_begin(&c);
   dl_integer removed = -1;
-  if (!check(!collection_remove_first(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(!collection_remove_first(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to fail.", type_name))
     goto fail;
 
-  if (!check(collection_copy_array(_c_data_a, 10, &c)
+  if (!dl_check(collection_copy_array(_c_data_a, 10, &c)
     && collection_copy_array(_c_data_b, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
@@ -1241,45 +1241,45 @@ dl_bool test_collection_remove_first() {
   dl_natural count = collection_count(&c);
 
   index = collection_end(&c);
-  if (!check(!collection_remove_first(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(!collection_remove_first(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to fail.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count == collection_count(&c),
+  if (!dl_check((dl_integer)count == collection_count(&c),
     "%s: Expected count to remain unchanged.", type_name))
     goto fail;
 
   index = collection_begin(&c);
-  if (!check(collection_remove_first(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(collection_remove_first(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count - 1 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 1 == collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
-  if (!check(_test_match_natural_func(NULL, &removed),
+  if (!dl_check(_test_match_natural_func(NULL, &removed),
     "%s: Expected removed value to be dl_natural, was %i.", type_name, removed))
     goto fail;
 
-  if (!check(collection_remove_first(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(collection_remove_first(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count - 2 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 2 == collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
-  if (!check(_test_match_natural_func(NULL, &removed),
+  if (!dl_check(_test_match_natural_func(NULL, &removed),
     "%s: Expected removed value to be dl_natural, was %i.", type_name, removed))
     goto fail;
 
@@ -1291,11 +1291,11 @@ dl_bool test_collection_remove_last() {
 
   iterator index = collection_begin(&c);
   dl_integer removed = -1;
-  if (!check(!collection_remove_first(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(!collection_remove_first(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to fail.", type_name))
     goto fail;
 
-  if (!check(collection_copy_array(_c_data_a, 10, &c)
+  if (!dl_check(collection_copy_array(_c_data_a, 10, &c)
     && collection_copy_array(_c_data_b, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
@@ -1306,45 +1306,45 @@ dl_bool test_collection_remove_last() {
   dl_natural count = collection_count(&c);
 
   index = collection_begin(&c);
-  if (!check(!collection_remove_last(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(!collection_remove_last(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to fail.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count == collection_count(&c),
+  if (!dl_check((dl_integer)count == collection_count(&c),
     "%s: Expected count to remain unchanged.", type_name))
     goto fail;
 
   index = collection_end(&c);
-  if (!check(collection_remove_last(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(collection_remove_last(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count - 1 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 1 == collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
-  if (!check(_test_match_natural_func(NULL, &removed),
+  if (!dl_check(_test_match_natural_func(NULL, &removed),
     "%s: Expected removed value to be dl_natural, was %i.", type_name, removed))
     goto fail;
 
-  if (!check(collection_remove_last(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(collection_remove_last(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count - 2 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 2 == collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
-  if (!check(_test_match_natural_func(NULL, &removed),
+  if (!dl_check(_test_match_natural_func(NULL, &removed),
     "%s: Expected removed value to be dl_natural, was %i.", type_name, removed))
     goto fail;
 
@@ -1369,14 +1369,14 @@ dl_bool test_collection_destroy_at() {
   dl_natural before_length = collection_count(&c);
 
   iterator pos = collection_index(&c, (dl_natural)random_integer_range(&r, 0, collection_count(&c)));
-  if (!check(collection_destroy_at(&c, &pos),
+  if (!dl_check(collection_destroy_at(&c, &pos),
     "%s: Expected destroy to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)before_length == collection_count(&c) + 1,
+  if (!dl_check((dl_integer)before_length == collection_count(&c) + 1,
     "%s: Expected collection to shorten.", type_name))
     goto fail;
 
@@ -1400,18 +1400,18 @@ dl_bool test_collection_destroy_all() {
 
   dl_natural before_length = collection_count(&c);
 
-  if (!check(collection_destroy_all(&c, &_test_match_even),
+  if (!dl_check(collection_destroy_all(&c, &_test_match_even),
     "%s: Expected destroy_all to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)before_length > collection_count(&c),
+  if (!dl_check((dl_integer)before_length > collection_count(&c),
     "%s: Expected collection to shorten.", type_name))
     goto fail;
 
-  if (!check(!collection_any(&c, &_test_match_even),
+  if (!dl_check(!collection_any(&c, &_test_match_even),
     "%s: Expected collection to have no even values.", type_name))
     goto fail;
 
@@ -1423,11 +1423,11 @@ dl_bool test_collection_destroy_first() {
   SINGLE_TEST_BEGIN();
 
   iterator index = collection_begin(&c);
-  if (!check(!collection_destroy_first(&c, &_test_match_natural, &index),
+  if (!dl_check(!collection_destroy_first(&c, &_test_match_natural, &index),
     "%s: Expected destroy to fail.", type_name))
     goto fail;
 
-  if (!check(0 != collection_copy_array(_c_data_a, 10, &c)
+  if (!dl_check(0 != collection_copy_array(_c_data_a, 10, &c)
     && 0 != collection_copy_array(_c_data_b, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
@@ -1438,37 +1438,37 @@ dl_bool test_collection_destroy_first() {
   dl_natural count = collection_count(&c);
 
   index = collection_end(&c);
-  if (!check(!collection_destroy_first(&c, &_test_match_natural, &index),
+  if (!dl_check(!collection_destroy_first(&c, &_test_match_natural, &index),
     "%s: Expected destroy to fail.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count == collection_count(&c),
+  if (!dl_check((dl_integer)count == collection_count(&c),
     "%s: Expected count to remain unchanged.", type_name))
     goto fail;
 
   index = collection_begin(&c);
-  if (!check(collection_destroy_first(&c, &_test_match_natural, &index),
+  if (!dl_check(collection_destroy_first(&c, &_test_match_natural, &index),
     "%s: Expected destroy to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count - 1 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 1 == collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
-  if (!check(collection_destroy_first(&c, &_test_match_natural, &index),
+  if (!dl_check(collection_destroy_first(&c, &_test_match_natural, &index),
     "%s: Expected destroy to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count - 2 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 2 == collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
@@ -1479,11 +1479,11 @@ dl_bool test_collection_destroy_last() {
   SINGLE_TEST_BEGIN();
 
   iterator index = collection_begin(&c);
-  if (!check(!collection_destroy_first(&c, &_test_match_natural, &index),
+  if (!dl_check(!collection_destroy_first(&c, &_test_match_natural, &index),
     "%s: Expected destroy to fail.", type_name))
     goto fail;
 
-  if (!check(0 != collection_copy_array(_c_data_a, 10, &c)
+  if (!dl_check(0 != collection_copy_array(_c_data_a, 10, &c)
     && 0 != collection_copy_array(_c_data_b, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
@@ -1494,34 +1494,34 @@ dl_bool test_collection_destroy_last() {
   dl_natural count = collection_count(&c);
 
   index = collection_begin(&c);
-  if (!check(!collection_destroy_last(&c, &_test_match_natural, &index),
+  if (!dl_check(!collection_destroy_last(&c, &_test_match_natural, &index),
     "%s: Expected destroy to fail.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count == collection_count(&c),
+  if (!dl_check((dl_integer)count == collection_count(&c),
     "%s: Expected count to remain unchanged.", type_name))
     goto fail;
 
   index = collection_end(&c);
-  if (!check(collection_destroy_last(&c, &_test_match_natural, &index),
+  if (!dl_check(collection_destroy_last(&c, &_test_match_natural, &index),
     "%s: Expected destroy to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count - 1 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 1 == collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
-  if (!check(collection_destroy_last(&c, &_test_match_natural, &index),
+  if (!dl_check(collection_destroy_last(&c, &_test_match_natural, &index),
     "%s: Expected destroy to succeed.", type_name))
     goto fail;
 
-  if (!check((dl_integer)count - 2 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 2 == collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
@@ -1542,14 +1542,14 @@ dl_bool test_collection_pop_destroy() {
 
   dl_natural count = collection_count(&c);
 
-  if (!check(collection_pop_destroy(&c),
+  if (!dl_check(collection_pop_destroy(&c),
     "%s: Expected toss to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count - 1 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 1 == collection_count(&c),
     "%s: Expected count to be %lu, was %lu.", count - 1, collection_count(&c)))
     goto fail;
 
@@ -1581,11 +1581,11 @@ dl_bool test_collection_index_of() {
   ref1 = collection_ref(&c, index1);
   ref2 = collection_ref(&c, index2);
 
-  if (!check(ref1 != NULL && *(dl_integer *)ref1 == item1,
+  if (!dl_check(ref1 != NULL && *(dl_integer *)ref1 == item1,
     "%s: Expected index_of to work.", type_name))
     goto fail;
 
-  if (!check(ref2 != NULL && *(dl_integer *)ref2 == item2,
+  if (!dl_check(ref2 != NULL && *(dl_integer *)ref2 == item2,
     "%s: Expected index_of to work.", type_name))
     goto fail;
 
@@ -1605,14 +1605,14 @@ dl_bool test_collection_fifo() {
       goto fail;
 
     for (idx = 0; idx < 10; ++idx) {
-      if (!check(collection_pop(&c, &item),
+      if (!dl_check(collection_pop(&c, &item),
         "%s: Expected pop to work", type_name))
         goto fail;
 
       if (!_confirm_properties(&c, type_name))
         goto fail;
 
-      if (!check(item == _c_data_a[idx],
+      if (!dl_check(item == _c_data_a[idx],
         "%s: Expected %l to be %l at %lu",
         item, _c_data_a[idx], idx))
         goto fail;
@@ -1647,42 +1647,42 @@ dl_bool test_collection_remove_range() {
   collection_get(&c1, collection_index(&c1, 4), &third);
 
   index = collection_index(&c1, 2);
-  if (!check(3 == collection_remove_range(&c1, &index, 3, &c2),
+  if (!dl_check(3 == collection_remove_range(&c1, &index, 3, &c2),
     "%s, %s: Expected remove range to work.", type1_name, type2_name))
     goto fail;
 
   if (!_confirm_properties(&c2, type2_name))
     goto fail;
 
-  if (!check((dl_integer)count - 3 == collection_count(&c1),
+  if (!dl_check((dl_integer)count - 3 == collection_count(&c1),
     "%s, %s: Expected count to be %lu, was %lu.", type1_name, type2_name, count - 3, collection_count(&c1)))
     goto fail;
 
-  if (!check(3 == collection_count(&c2),
+  if (!dl_check(3 == collection_count(&c2),
     "%s, %s: Expected count to be 3, was %lu.", type1_name, type2_name, collection_count(&c2)))
     goto fail;
 
-  if (!check(!collection_contains(&c1, &first),
+  if (!dl_check(!collection_contains(&c1, &first),
     "%s, %s: Expected %i to be removed.", type1_name, type2_name, first))
     goto fail;
 
-  if (!check(!collection_contains(&c1, &second),
+  if (!dl_check(!collection_contains(&c1, &second),
     "%s, %s: Expected %i to be removed.", type1_name, type2_name, second))
     goto fail;
 
-  if (!check(!collection_contains(&c1, &third),
+  if (!dl_check(!collection_contains(&c1, &third),
     "%s, %s: Expected %i to be removed.", type1_name, type2_name, third))
     goto fail;
 
-  if (!check(collection_contains(&c2, &first),
+  if (!dl_check(collection_contains(&c2, &first),
     "%s, %s: Expected %i to be in output.", type1_name, type2_name, first))
     goto fail;
 
-  if (!check(collection_contains(&c2, &second),
+  if (!dl_check(collection_contains(&c2, &second),
     "%s, %s: Expected %i to be in output.", type1_name, type2_name, second))
     goto fail;
 
-  if (!check(collection_contains(&c2, &third),
+  if (!dl_check(collection_contains(&c2, &third),
     "%s, %s: Expected %i to be in output.", type1_name, type2_name, third))
     goto fail;
 
@@ -1705,7 +1705,7 @@ dl_bool test_collection_destroy_range() {
     goto fail;
 
   count = collection_count(&c);
-  if (!check(count == 10 && iterator_is_valid(&c, collection_index(&c, 2)),
+  if (!dl_check(count == 10 && iterator_is_valid(&c, collection_index(&c, 2)),
     "%s: Expected 2 to be a valid index.", type_name))
     goto fail;
 
@@ -1718,26 +1718,26 @@ dl_bool test_collection_destroy_range() {
   collection_get(&c, collection_index(&c, 4), &third);
   index = collection_index(&c, 2);
 
-  if (!check(3 == collection_destroy_range(&c, &index, 3),
+  if (!dl_check(3 == collection_destroy_range(&c, &index, 3),
     "%s: Expected remove range to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check((dl_integer)count - 3 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 3 == collection_count(&c),
     "%s: Expected count to be %lu, was %lu.", type_name, count - 3, collection_count(&c)))
     goto fail;
 
-  if (!check(!collection_contains(&c, &first),
+  if (!dl_check(!collection_contains(&c, &first),
     "%s: Expected %i to be removed.", type_name, first))
     goto fail;
 
-  if (!check(!collection_contains(&c, &second),
+  if (!dl_check(!collection_contains(&c, &second),
     "%s: Expected %i to be removed.", type_name, second))
     goto fail;
 
-  if (!check(!collection_contains(&c, &third),
+  if (!dl_check(!collection_contains(&c, &third),
     "%s: Expected %i to be removed.", type_name, third))
     goto fail;
 
@@ -1761,18 +1761,18 @@ dl_bool test_collection_insert() {
   value = 11;
   index = collection_index(&c, 5);
 
-  if (!check(collection_insert(&c, &index, &value),
+  if (!dl_check(collection_insert(&c, &index, &value),
     "%s: Expected insert to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!check(collection_count(&c) == 11,
+  if (!dl_check(collection_count(&c) == 11,
     "%s: Expected collection to grow.", type_name))
     goto fail;
 
-  if (!check(*(dl_integer *)collection_ref(&c, index) == value,
+  if (!dl_check(*(dl_integer *)collection_ref(&c, index) == value,
     "%s: Expected %i to be %i.", type_name, *(dl_integer *)collection_ref(&c, index), value))
     goto fail;
 
@@ -1786,13 +1786,13 @@ dl_bool test_collection_insert() {
 dl_bool test_init_destroy_vector() {
   vector v;
 
-  if (!check(init_vector(&v, sizeof(dl_real), 10),
+  if (!dl_check(init_vector(&v, sizeof(dl_real), 10),
     "Failed to initialize vector."))
     return false;
-  if (!check(v.settings.element_size == sizeof(dl_real),
+  if (!dl_check(v.settings.element_size == sizeof(dl_real),
     "Expected element size to be %lui.", sizeof(dl_real)))
     return false;
-  if (!check(vector_capacity(&v) >= 10,
+  if (!dl_check(vector_capacity(&v) >= 10,
     "Expected vector to have capacity of at least 10."))
     return false;
 
@@ -1805,13 +1805,13 @@ dl_bool test_init_vector_array() {
   vector v;
   char data[] = { 'v', 'e', 'c', 't', 'o', 'r' };
 
-  if (!check(init_vector_array(&v, (dl_byte *)&data, sizeof(char), 6),
+  if (!dl_check(init_vector_array(&v, (dl_byte *)&data, sizeof(char), 6),
     "Failed to initialize vector."))
     return false;
-  if (!check(v.settings.element_size == sizeof(char),
+  if (!dl_check(v.settings.element_size == sizeof(char),
     "Expected element size to be %lui.", sizeof(char)))
     return false;
-  if (!check(vector_capacity(&v) == 6,
+  if (!dl_check(vector_capacity(&v) == 6,
     "Expected vector to have capacity of 6."))
     return false;
 
@@ -1830,18 +1830,18 @@ dl_bool test_vector_get() {
 
   out = 'F';
   idx = (dl_natural)random_integer_range(&r, 0, 5);
-  if (!check(vector_get(&v1, idx, (dl_any)&out) && out == data[idx],
+  if (!dl_check(vector_get(&v1, idx, (dl_any)&out) && out == data[idx],
     "Expected %c to be %c", out, data[idx]))
     return false;
 
-  if (!check(!vector_get(&v1, 6 + idx, (dl_any)&out),
+  if (!dl_check(!vector_get(&v1, 6 + idx, (dl_any)&out),
     "Expected get to fail."))
     return false;
 
   init_vector(&v2, sizeof(char), 6);
 
   vector_set(&v2, idx, &data[idx]);
-  if (!check(vector_get(&v2, idx, (dl_any)&out) && out == data[idx],
+  if (!dl_check(vector_get(&v2, idx, (dl_any)&out) && out == data[idx],
     "Expected %c to be %c", out, data[idx])) {
     destroy_vector(&v2, NULL);
     return false;
@@ -1865,19 +1865,19 @@ dl_bool test_vector_set() {
 
   idx = (dl_natural)random_integer_range(&r, 0, 5);
   out = 'F';
-  if (!check(vector_set(&v1, idx, (dl_any)&set_data[idx]) &&
+  if (!dl_check(vector_set(&v1, idx, (dl_any)&set_data[idx]) &&
     vector_get(&v1, idx, (dl_any)&out) &&
     out == set_data[idx],
     "Expected %c to be %c", out, data[idx]))
     return false;
 
-  if (!check(!vector_set(&v1, 6 + idx, (dl_any)&set_data[idx]),
+  if (!dl_check(!vector_set(&v1, 6 + idx, (dl_any)&set_data[idx]),
     "Expected set to fail."))
     return false;
 
   init_vector(&v2, sizeof(char), 6);
 
-  if (!check(vector_set(&v2, idx, (dl_any)&set_data[idx]) &&
+  if (!dl_check(vector_set(&v2, idx, (dl_any)&set_data[idx]) &&
     vector_get(&v2, idx, (dl_any)&out) &&
     out == set_data[idx],
     "Expected %c to be %c", out, data[idx])) {
@@ -1902,14 +1902,14 @@ dl_bool test_vector_ref() {
 
   out = NULL;
   idx = (dl_natural)random_integer_range(&r, 0, 5);
-  if (!check((out = vector_ref(&v1, idx)) && *(char *)out == data[idx],
+  if (!dl_check((out = vector_ref(&v1, idx)) && *(char *)out == data[idx],
     "Expected %c to be %c", *(char *)out, data[idx]))
     return false;
 
   init_vector(&v2, sizeof(char), 6);
 
   vector_set(&v2, idx, (dl_any)&data[idx]);
-  if (!check((out = vector_ref(&v2, idx)) && *(char *)out == data[idx],
+  if (!dl_check((out = vector_ref(&v2, idx)) && *(char *)out == data[idx],
     "Expected %c to be %c", *(char *)out, data[idx]))
     return false;
 
@@ -1944,15 +1944,15 @@ dl_bool test_vector_copy() {
   init_vector_custom(&v5, settings_5, 24);
   init_vector_custom(&v6, settings_6, 28);
 
-  if (!check(vector_capacity(&v5) == 24,
+  if (!dl_check(vector_capacity(&v5) == 24,
     "Expected capacity to be 24, was %i.", vector_capacity(&v5)))
     goto vector_copy_fail;
 
-  if (!check(vector_capacity(&v6) == 28,
+  if (!dl_check(vector_capacity(&v6) == 28,
     "Expected capacity to be 28, was %i.", vector_capacity(&v6)))
     goto vector_copy_fail;
 
-  if (!check(vector_copy(&v2, 0, &v1),
+  if (!dl_check(vector_copy(&v2, 0, &v1),
     "Expected copy to succeed."))
     goto vector_copy_fail;
 
@@ -1960,16 +1960,16 @@ dl_bool test_vector_copy() {
     vector_get(&v1, idx, (dl_any)&a);
     vector_get(&v2, idx, (dl_any)&b);
 
-    if (!check(a == b,
+    if (!dl_check(a == b,
       "Expected %c to be %c.", b, a))
       goto vector_copy_fail;
   }
 
-  if (!check(!vector_copy(&v3, 0, &v1),
+  if (!dl_check(!vector_copy(&v3, 0, &v1),
     "Expected copy to fail."))
     goto vector_copy_fail;
 
-  if (!check(vector_copy(&v4, 0, &v1),
+  if (!dl_check(vector_copy(&v4, 0, &v1),
     "Expected copy to succeed."))
     goto vector_copy_fail;
 
@@ -1977,12 +1977,12 @@ dl_bool test_vector_copy() {
     vector_get(&v1, idx, (dl_any)&a);
     vector_get(&v4, idx, (dl_any)&b);
 
-    if (!check(a == b,
+    if (!dl_check(a == b,
       "Expected %c to be %c.", b, a))
       goto vector_copy_fail;
   }
 
-  if (!check(vector_copy(&v5, 0, &v1),
+  if (!dl_check(vector_copy(&v5, 0, &v1),
     "Expected copy to succeed."))
     goto vector_copy_fail;
 
@@ -1990,7 +1990,7 @@ dl_bool test_vector_copy() {
     vector_get(&v1, idx, (dl_any)&a);
     vector_get(&v5, idx, (dl_any)&b);
 
-    if (!check(a == b,
+    if (!dl_check(a == b,
       "Expected %c to be %c.", b, a))
       goto vector_copy_fail;
   }
@@ -1999,11 +1999,11 @@ dl_bool test_vector_copy() {
     vector_set(&v5, idx, &data4[idx % 7]);
   }
 
-  if (!check(vector_resize(&v6, vector_capacity(&v5) + vector_capacity(&v6), NULL),
+  if (!dl_check(vector_resize(&v6, vector_capacity(&v5) + vector_capacity(&v6), NULL),
     "Expected resize to work."))
     goto vector_copy_fail;
 
-  if (!check(vector_copy(&v6, 24, &v5),
+  if (!dl_check(vector_copy(&v6, 24, &v5),
     "Expected copy to succeed."))
     goto vector_copy_fail;
 
@@ -2011,16 +2011,16 @@ dl_bool test_vector_copy() {
     vector_get(&v5, idx, (dl_any)&a);
     vector_get(&v6, idx + 24, (dl_any)&b);
 
-    if (!check(a == b,
+    if (!dl_check(a == b,
       "Expected %c to be %c at %lu.", b, a, idx + 24))
       goto vector_copy_fail;
   }
 
-  if (!check(!vector_copy(&v1, 0, &v6),
+  if (!dl_check(!vector_copy(&v1, 0, &v6),
     "Expected copy to fail."))
     goto vector_copy_fail;
 
-  if (!check(vector_copy_array(&v5, 0, (dl_byte *)data1, 6),
+  if (!dl_check(vector_copy_array(&v5, 0, (dl_byte *)data1, 6),
     "Expected copy to work."))
     goto vector_copy_fail;
 
@@ -2028,7 +2028,7 @@ dl_bool test_vector_copy() {
     vector_get(&v5, idx, (dl_any)&a);
     b = data1[idx];
 
-    if (!check(a == b,
+    if (!dl_check(a == b,
       "Expected %c to be %c at %lu.", a, b, idx))
       goto vector_copy_fail;
   }
@@ -2058,18 +2058,18 @@ dl_bool test_vector_grow() {
   for (idx = 0; idx < original_capacity; ++idx)
     vector_set(&v1, idx, &set_data[idx % 7]);
 
-  if (!check(vector_grow(&v1) && vector_capacity(&v1) > original_capacity,
+  if (!dl_check(vector_grow(&v1) && vector_capacity(&v1) > original_capacity,
     "Expected vector to grow."))
     goto test_vector_grow_fail;
 
   for (idx = 0; idx < original_capacity; ++idx) {
     value = vector_ref(&v1, idx);
-    if (!check(*(dl_byte *)value == set_data[idx % 7],
+    if (!dl_check(*(dl_byte *)value == set_data[idx % 7],
       "Expected original values to remain."))
       goto test_vector_grow_fail;
   }
 
-  if (!check(!vector_grow(&v2),
+  if (!dl_check(!vector_grow(&v2),
     "Expected vector not to grow."))
     goto test_vector_grow_fail;
 
@@ -2102,18 +2102,18 @@ dl_bool test_vector_shrink() {
   for (idx = 0; idx < original_capacity; ++idx)
     vector_set(&v1, idx, &set_data[idx % 7]);
 
-  if (!check(vector_shrink(&v1, NULL) && vector_capacity(&v1) < original_capacity,
+  if (!dl_check(vector_shrink(&v1, NULL) && vector_capacity(&v1) < original_capacity,
     "Expected vector to shrink."))
     goto test_vector_shrink_fail;
 
   for (idx = 0; idx < vector_capacity(&v1); ++idx) {
     value = vector_ref(&v1, idx);
-    if (!check(*(dl_byte *)value == set_data[idx % 7],
+    if (!dl_check(*(dl_byte *)value == set_data[idx % 7],
       "Expected original values to remain."))
       goto test_vector_shrink_fail;
   }
 
-  if (!check(!vector_shrink(&v2, NULL),
+  if (!dl_check(!vector_shrink(&v2, NULL),
     "Expected vector not to shrink."))
     goto test_vector_shrink_fail;
 
@@ -2146,31 +2146,31 @@ dl_bool test_vector_resize() {
   for (idx = 0; idx < original_capacity; ++idx)
     vector_set(&v2, idx, &set_data[idx % 7]);
 
-  if (!check(!vector_resize(&v1, 2, NULL),
+  if (!dl_check(!vector_resize(&v1, 2, NULL),
     "Expected vector not to resize"))
     goto test_vector_resize_fail;
 
-  if (!check(!vector_resize(&v2, 0, NULL),
+  if (!dl_check(!vector_resize(&v2, 0, NULL),
     "Expected vector not to resize"))
     goto test_vector_resize_fail;
 
-  if (!check(vector_resize(&v2, 32, NULL) && vector_capacity(&v2) > original_capacity,
+  if (!dl_check(vector_resize(&v2, 32, NULL) && vector_capacity(&v2) > original_capacity,
     "Expected vector to resize"))
     goto test_vector_resize_fail;
 
   for (idx = 0; idx < original_capacity; ++idx) {
-    if (!check(vector_get(&v2, idx, (dl_any)&item) && item == set_data[idx % 7],
+    if (!dl_check(vector_get(&v2, idx, (dl_any)&item) && item == set_data[idx % 7],
       "Expected vector data not to change."))
       goto test_vector_resize_fail;
   }
 
-  if (!check(vector_resize(&v2, 8, NULL) && vector_capacity(&v2) < original_capacity,
+  if (!dl_check(vector_resize(&v2, 8, NULL) && vector_capacity(&v2) < original_capacity,
     "Expected vector to resize"))
     goto test_vector_resize_fail;
 
   new_capacity = vector_capacity(&v2);
   for (idx = 0; idx < new_capacity; ++idx) {
-    if (!check(vector_get(&v2, idx, (dl_any)&item) && item == set_data[idx % 7],
+    if (!dl_check(vector_get(&v2, idx, (dl_any)&item) && item == set_data[idx % 7],
       "Expected vector data not to change."))
       goto test_vector_resize_fail;
   }
@@ -2195,10 +2195,10 @@ dl_bool test_memory_swap() {
 
   dl_memory_swap(data_a, data_b, sizeof(char) * 47);
   for (idx = 0; idx < 47; ++idx) {
-    if (!check(data_a[idx] == data_d[idx],
+    if (!dl_check(data_a[idx] == data_d[idx],
       "Expected %c to be %c.", data_a[idx], data_d[idx]))
       return false;
-    if (!check(data_b[idx] == data_c[idx],
+    if (!dl_check(data_b[idx] == data_c[idx],
       "Expected %c to be %c.", data_b[idx], data_c[idx]))
       return false;
   }
@@ -2207,10 +2207,10 @@ dl_bool test_memory_swap() {
     dl_memory_swap(data_a + idx, data_b + idx, sizeof(char));
 
   for (idx = 0; idx < 47; ++idx) {
-    if (!check(data_a[idx] == data_c[idx],
+    if (!dl_check(data_a[idx] == data_c[idx],
       "Expected %c to be %c.", data_a[idx], data_c[idx]))
       return false;
-    if (!check(data_b[idx] == data_d[idx],
+    if (!dl_check(data_b[idx] == data_d[idx],
       "Expected %c to be %c.", data_b[idx], data_d[idx]))
       return false;
   }
@@ -2227,25 +2227,25 @@ dl_bool test_init_linked_list() {
   dl_natural count;
   struct linked_list_node *node;
   
-  if (!check(init_linked_list(&list, sizeof(dl_natural), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(dl_natural), 32),
     "Expected linked list to initialize."))
     return false;
 
-  if (!check(vector_capacity(&list.node_cache) == list.settings.cache_length,
+  if (!dl_check(vector_capacity(&list.node_cache) == list.settings.cache_length,
     "Expected node cache to be %i in length, was %i.",
     list.settings.cache_length,
     vector_capacity(&list.node_cache)))
     goto fail;
 
-  if (!check(list.free != NULL,
+  if (!dl_check(list.free != NULL,
     "Expected free list to exist."))
     goto fail;
 
-  if (!check(list.first == NULL,
+  if (!dl_check(list.first == NULL,
     "Expected first to be NULL."))
     goto fail;
 
-  if (!check(list.last == NULL,
+  if (!dl_check(list.last == NULL,
     "Expected last to be NULL."))
     goto fail;
 
@@ -2256,7 +2256,7 @@ dl_bool test_init_linked_list() {
     ++count;
   }
 
-  if (!check(count == vector_capacity(&list.node_cache),
+  if (!dl_check(count == vector_capacity(&list.node_cache),
     "Expected list node cache to fill free list, filled %i/%i.",
     count, vector_capacity(&list.node_cache)))
     goto fail;
@@ -2273,25 +2273,25 @@ dl_bool test_init_linked_list_fat() {
   dl_natural count;
   struct linked_list_node *node;
   
-  if (!check(init_linked_list(&list, sizeof(fat_data), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(fat_data), 32),
     "Expected linked list to initialize."))
     return false;
 
-  if (!check(vector_capacity(&list.node_cache) == list.settings.cache_length,
+  if (!dl_check(vector_capacity(&list.node_cache) == list.settings.cache_length,
     "Expected node cache to be %i in length, was %i.",
     list.settings.cache_length,
     vector_capacity(&list.node_cache)))
     goto fail;
 
-  if (!check(list.free != NULL,
+  if (!dl_check(list.free != NULL,
     "Expected free list to exist."))
     goto fail;
 
-  if (!check(list.first == NULL,
+  if (!dl_check(list.first == NULL,
     "Expected first to be NULL."))
     goto fail;
 
-  if (!check(list.last == NULL,
+  if (!dl_check(list.last == NULL,
     "Expected last to be NULL."))
     goto fail;
 
@@ -2302,7 +2302,7 @@ dl_bool test_init_linked_list_fat() {
     ++count;
   }
 
-  if (!check(count == vector_capacity(&list.node_cache),
+  if (!dl_check(count == vector_capacity(&list.node_cache),
     "Expected list node cache to fill free list, filled %i/%i.",
     count, vector_capacity(&list.node_cache)))
     goto fail;
@@ -2320,22 +2320,22 @@ dl_bool test_linked_list_add() {
   linked_list list;
   struct linked_list_node *node;
   
-  if (!check(init_linked_list(&list, sizeof(dl_natural), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(dl_natural), 32),
     "Expected linked list to initialize."))
     return false;
 
   count = 0;
-  if (!check(linked_list_add(&list, NULL, &count),
+  if (!dl_check(linked_list_add(&list, NULL, &count),
     "Expected add to work."))
     goto fail;
   ++count;
 
-  if (!check(linked_list_add(&list, list.first, &count),
+  if (!dl_check(linked_list_add(&list, list.first, &count),
     "Expected add to work."))
     goto fail;
   ++count;
 
-  if (!check(linked_list_add(&list, list.first, &count),
+  if (!dl_check(linked_list_add(&list, list.first, &count),
     "Expected add to work."))
     goto fail;
   ++count;
@@ -2349,15 +2349,15 @@ dl_bool test_linked_list_add() {
     ++count;
   }
 
-  if (!check(list.free == NULL,
+  if (!dl_check(list.free == NULL,
     "Expected free list to be exhausted."))
     goto fail;
 
-  if (!check(list.first != NULL,
+  if (!dl_check(list.first != NULL,
     "Expected first node to exist."))
     goto fail;
 
-  if (!check(list.last != NULL,
+  if (!dl_check(list.last != NULL,
     "Expected last node to exist."))
     goto fail;
 
@@ -2365,14 +2365,14 @@ dl_bool test_linked_list_add() {
   current = 0;
   while (node != NULL) {
     value = *(dl_natural *)LINKED_LIST_DATA(node);
-    if (!check(value == buf[current],
+    if (!dl_check(value == buf[current],
       "Expected %i to be %i.", value, buf[current]))
       goto fail;
     node = node->next;
     ++current;
   }
 
-  if (!check(current == count,
+  if (!dl_check(current == count,
     "Expected to find %i items, found %i.", count, current))
     goto fail;
 
@@ -2387,39 +2387,39 @@ dl_bool test_linked_list_add_fat() {
   fat_data count, value;
   linked_list list;
   
-  if (!check(init_linked_list(&list, sizeof(fat_data), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(fat_data), 32),
     "Expected linked list to initialize."))
     return false;
 
   count.a = 0;
   count.b = 37;
-  if (!check(linked_list_add(&list, NULL, &count),
+  if (!dl_check(linked_list_add(&list, NULL, &count),
     "Expected add to work."))
     goto fail;
   ++count.a; ++count.b;
 
-  if (!check(linked_list_add(&list, list.first, &count),
+  if (!dl_check(linked_list_add(&list, list.first, &count),
     "Expected add to work."))
     goto fail;
   ++count.a; ++count.b;
 
-  if (!check(linked_list_add(&list, list.first, &count),
+  if (!dl_check(linked_list_add(&list, list.first, &count),
     "Expected add to work."))
     goto fail;
   ++count.a; ++count.b;
 
   linked_list_get(&list, linked_list_index(&list, 0), &value);
-  if (!check(value.a == 0 && value.b == 37,
+  if (!dl_check(value.a == 0 && value.b == 37,
 	     "Expected {%ul, %ul} to be {0, 37}", value.a, value.b))
     goto fail;
 
   linked_list_get(&list, linked_list_index(&list, 2), &value);
-  if (!check(value.a == 1 && value.b == 38,
+  if (!dl_check(value.a == 1 && value.b == 38,
 	     "Expected {%ul, %ul} to be {1, 38}", value.a, value.b))
     goto fail;
 
   linked_list_get(&list, linked_list_index(&list, 1), &value);
-  if (!check(value.a == 2 && value.b == 39,
+  if (!dl_check(value.a == 2 && value.b == 39,
 	     "Expected {%u, %u} to be {2, 39}", value.a, value.b))
     goto fail;
 
@@ -2432,11 +2432,11 @@ fail:
 
 dl_bool test_linked_list_capacity() {
   linked_list list;
-  if (!check(init_linked_list(&list, sizeof(dl_natural), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(dl_natural), 32),
     "Expected linked list to initialize."))
     return false;
 
-  if (!check(linked_list_capacity(&list) == vector_capacity(&list.node_cache),
+  if (!dl_check(linked_list_capacity(&list) == vector_capacity(&list.node_cache),
     "Expected linked list capacity to be that of its node cache."))
     goto fail;
 
@@ -2449,31 +2449,31 @@ fail:
 
 dl_bool test_linked_list_length() {
   linked_list list;
-  if (!check(init_linked_list(&list, sizeof(dl_natural), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(dl_natural), 32),
     "Expected linked list to initialize."))
     return false;
 
-  if (!check(linked_list_length(&list) == 0,
+  if (!dl_check(linked_list_length(&list) == 0,
     "Expected linked list to be empty."))
     goto fail;
 
   dl_natural count = 0;
-  if (!check(linked_list_add(&list, NULL, &count),
+  if (!dl_check(linked_list_add(&list, NULL, &count),
     "Expected add to work."))
     goto fail;
   ++count;
 
-  if (!check(linked_list_add(&list, NULL, &count),
+  if (!dl_check(linked_list_add(&list, NULL, &count),
     "Expected add to work."))
     goto fail;
   ++count;
 
-  if (!check(linked_list_add(&list, NULL, &count),
+  if (!dl_check(linked_list_add(&list, NULL, &count),
     "Expected add to work."))
     goto fail;
   ++count;
 
-  if (!check(linked_list_length(&list) == count,
+  if (!dl_check(linked_list_length(&list) == count,
     "Expected length to be %i, was %i.", count, linked_list_length(&list)))
     goto fail;
 
@@ -2491,11 +2491,11 @@ dl_bool test_linked_list_copy() {
   struct linked_list_node *node_b;
   dl_bool success;
 
-  if (!check(init_linked_list(&a, sizeof(dl_natural), 32),
+  if (!dl_check(init_linked_list(&a, sizeof(dl_natural), 32),
     "Expected init to work."))
     return false;
 
-  if (!check(init_linked_list(&b, sizeof(dl_natural), 32),
+  if (!dl_check(init_linked_list(&b, sizeof(dl_natural), 32),
     "Expected init to work.")) {
     destroy_linked_list(&a, NULL);
     return false;
@@ -2503,19 +2503,19 @@ dl_bool test_linked_list_copy() {
 
   num = linked_list_capacity(&a) / 4;
   for (count = 0; count < num; ++count)
-    if (!check(linked_list_add(&a, NULL, &count),
+    if (!dl_check(linked_list_add(&a, NULL, &count),
       "Expected add to work."))
       goto fail;
 
-  if (!check(linked_list_length(&b) == 0,
+  if (!dl_check(linked_list_length(&b) == 0,
     "Expected list to be empty."))
     goto fail;
 
-  if (!check(linked_list_copy(&b, NULL, &a),
+  if (!dl_check(linked_list_copy(&b, NULL, &a),
     "Expected copy to work."))
     goto fail;
 
-  if (!check(linked_list_length(&a) == linked_list_length(&b),
+  if (!dl_check(linked_list_length(&a) == linked_list_length(&b),
     "Expected lists to be the same length."))
     goto fail;
 
@@ -2524,7 +2524,7 @@ dl_bool test_linked_list_copy() {
   while (node_a != NULL && node_b != NULL) {
     value_a = *(dl_natural *)LINKED_LIST_DATA(node_a);
     value_b = *(dl_natural *)LINKED_LIST_DATA(node_b);
-    if (!check(value_a == value_b,
+    if (!dl_check(value_a == value_b,
       "Expected data to be the same, found %i and %i.",
       value_a, value_b))
       goto fail;
@@ -2533,15 +2533,15 @@ dl_bool test_linked_list_copy() {
     node_b = node_b->next;
   }
 
-  if (!check(linked_list_copy(&b, b.first, &a),
+  if (!dl_check(linked_list_copy(&b, b.first, &a),
     "Expected copy to work."))
     goto fail;
 
-  if (!check(linked_list_copy(&b, b.last, &a),
+  if (!dl_check(linked_list_copy(&b, b.last, &a),
     "Expected copy to work."))
     goto fail;
 
-  if (!check(3 * linked_list_length(&a) == linked_list_length(&b),
+  if (!dl_check(3 * linked_list_length(&a) == linked_list_length(&b),
     "Expected lists to be the triple the length."))
     goto fail;
 
@@ -2562,21 +2562,21 @@ dl_bool test_linked_list_copy_array() {
   struct linked_list_node *node;
   dl_bool success;
 
-  if (!check(init_linked_list(&a, sizeof(dl_integer), 32),
+  if (!dl_check(init_linked_list(&a, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
   num = linked_list_capacity(&a) / 4;
 
-  if (!check(linked_list_length(&a) == 0,
+  if (!dl_check(linked_list_length(&a) == 0,
     "Expected list to be empty."))
     goto fail;
 
-  if (!check(linked_list_copy_array(&a, NULL, (dl_byte *)_c_data_a, num),
+  if (!dl_check(linked_list_copy_array(&a, NULL, (dl_byte *)_c_data_a, num),
     "Expected copy to work."))
     goto fail;
 
-  if (!check(linked_list_length(&a) == num,
+  if (!dl_check(linked_list_length(&a) == num,
     "Expected list to grow in length."))
     goto fail;
 
@@ -2586,21 +2586,21 @@ dl_bool test_linked_list_copy_array() {
     idx < num && node != NULL;
     ++idx, node = node->next) {
     value = *(dl_integer *)LINKED_LIST_DATA(node);
-    if (!check(value == _c_data_a[idx],
+    if (!dl_check(value == _c_data_a[idx],
       "Expected data to be the same, expected %i to be %i.",
       value, _c_data_a[idx]))
       goto fail;
   }
 
-  if (!check(linked_list_copy_array(&a, a.first, (dl_byte *)_c_data_a, num),
+  if (!dl_check(linked_list_copy_array(&a, a.first, (dl_byte *)_c_data_a, num),
     "Expected copy to work."))
     goto fail;
 
-  if (!check(linked_list_copy_array(&a, a.first, (dl_byte *)_c_data_a, num),
+  if (!dl_check(linked_list_copy_array(&a, a.first, (dl_byte *)_c_data_a, num),
     "Expected copy to work."))
     goto fail;
 
-  if (!check(3 * num == linked_list_length(&a),
+  if (!dl_check(3 * num == linked_list_length(&a),
     "Expected lists to be the triple the length."))
     goto fail;
 
@@ -2619,17 +2619,17 @@ dl_bool test_linked_list_grow() {
   dl_bool success;
   struct linked_list_node *node;
   
-  if (!check(init_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
   sz = linked_list_capacity(&list);
-  if (!check(linked_list_grow(&list),
+  if (!dl_check(linked_list_grow(&list),
     "Expected grow to work."))
     goto fail;
 
   new_sz = linked_list_capacity(&list);
-  if (!check(sz < new_sz,
+  if (!dl_check(sz < new_sz,
     "Expected new size to be larger."))
     goto fail;
 
@@ -2640,7 +2640,7 @@ dl_bool test_linked_list_grow() {
     ++count;
   }
 
-  if (!check(count == new_sz,
+  if (!dl_check(count == new_sz,
     "Expected node cache to be size %i, was %i.", new_sz, count))
     goto fail;
 
@@ -2659,11 +2659,11 @@ dl_bool test_linked_list_shrink() {
   dl_natural length, capacity;
   dl_bool success;
   
-  if (!check(init_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
-  if (!check(linked_list_grow(&list),
+  if (!dl_check(linked_list_grow(&list),
     "Expected grow to work."))
     goto fail;
 
@@ -2674,15 +2674,15 @@ dl_bool test_linked_list_shrink() {
   length = linked_list_length(&list);
   capacity = linked_list_capacity(&list);
 
-  if (!check(length == (dl_natural)count && length == capacity,
+  if (!dl_check(length == (dl_natural)count && length == capacity,
     "Expected list to be exhausted."))
     goto fail;
 
-  if (!check(linked_list_shrink(&list, NULL),
+  if (!dl_check(linked_list_shrink(&list, NULL),
     "Expected shrink to work."))
     goto fail;
 
-  if (!check(length > linked_list_length(&list) && capacity > linked_list_capacity(&list),
+  if (!dl_check(length > linked_list_length(&list) && capacity > linked_list_capacity(&list),
     "Expected size to change."))
     goto fail;
 
@@ -2697,11 +2697,11 @@ finish:
 
 dl_bool test_linked_list_resize() {
   linked_list list;
-  if (!check(init_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
-  if (!check(linked_list_grow(&list),
+  if (!dl_check(linked_list_grow(&list),
     "Expected grow to work."))
     goto fail;
 
@@ -2712,33 +2712,33 @@ dl_bool test_linked_list_resize() {
   dl_natural length0 = linked_list_length(&list);
   dl_natural capacity0 = linked_list_capacity(&list);
 
-  if (!check(length0 == capacity0,
+  if (!dl_check(length0 == capacity0,
     "Expected list to be exhausted."))
     goto fail;
 
-  if (!check(linked_list_resize(&list, capacity0 / 2, NULL),
+  if (!dl_check(linked_list_resize(&list, capacity0 / 2, NULL),
     "Expected resize smaller to work."))
     goto fail;
 
   dl_natural length1 = linked_list_length(&list);
   dl_natural capacity1 = linked_list_capacity(&list);
 
-  if (!check(length0 > length1 && capacity0 > capacity1,
+  if (!dl_check(length0 > length1 && capacity0 > capacity1,
     "Expected length and capacity to decrease."))
     goto fail;
 
-  if (!check(linked_list_resize(&list, capacity0, NULL),
+  if (!dl_check(linked_list_resize(&list, capacity0, NULL),
     "Expected resize larger to work."))
     goto fail;
 
   dl_natural length2 = linked_list_length(&list);
   dl_natural capacity2 = linked_list_capacity(&list);
 
-  if (!check(capacity2 >= capacity0,
+  if (!dl_check(capacity2 >= capacity0,
     "Expected capacity to increase."))
     goto fail;
 
-  if (!check(length1 == length2,
+  if (!dl_check(length1 == length2,
     "Expected length not to change."))
     goto fail;
 
@@ -2758,20 +2758,20 @@ dl_bool test_linked_list_get() {
   dl_natural idx;
   dl_bool success;
   
-  if (!check(init_linked_list(&list, sizeof(data), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(data), 32),
     "Expected init to work."))
     return false;
 
-  if (!check(linked_list_add(&list, NULL, data),
+  if (!dl_check(linked_list_add(&list, NULL, data),
     "Expected add to work."))
     goto fail;
 
-  if (!check(linked_list_get(&list, list.first, buf),
+  if (!dl_check(linked_list_get(&list, list.first, buf),
     "Expected get to work."))
     goto fail;
 
   for (idx = 0; idx < sizeof(data); ++idx)
-    if (!check(buf[idx] == data[idx],
+    if (!dl_check(buf[idx] == data[idx],
       "Expected %c to be %c", buf[idx], data[idx]))
       goto fail;
 
@@ -2792,24 +2792,24 @@ dl_bool test_linked_list_set() {
   dl_natural idx;
   dl_bool success;
   
-  if (!check(init_linked_list(&list, sizeof(data), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(data), 32),
     "Expected init to work."))
     return false;
 
-  if (!check(linked_list_add(&list, NULL, data),
+  if (!dl_check(linked_list_add(&list, NULL, data),
     "Expected add to work."))
     goto fail;
 
-  if (!check(linked_list_set(&list, list.first, atad),
+  if (!dl_check(linked_list_set(&list, list.first, atad),
     "Expected set to work."))
     goto fail;
 
-  if (!check(linked_list_get(&list, list.first, buf),
+  if (!dl_check(linked_list_get(&list, list.first, buf),
     "Expected get to work."))
     goto fail;
 
   for (idx = 0; idx < sizeof(data); ++idx)
-    if (!check(buf[idx] == atad[idx],
+    if (!dl_check(buf[idx] == atad[idx],
       "Expected %c to be %c", buf[idx], data[idx]))
       goto fail;
 
@@ -2829,20 +2829,20 @@ dl_bool test_linked_list_ref() {
   dl_natural idx;
   dl_bool success;
   
-  if (!check(init_linked_list(&list, sizeof(data), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(data), 32),
     "Expected init to work."))
     return false;
 
-  if (!check(linked_list_add(&list, NULL, data),
+  if (!dl_check(linked_list_add(&list, NULL, data),
     "Expected add to work."))
     goto fail;
 
-  if (!check((ref = linked_list_ref(list.first)),
+  if (!dl_check((ref = linked_list_ref(list.first)),
     "Expected ref to work."))
     goto fail;
 
   for (idx = 0; idx < sizeof(data); ++idx)
-    if (!check(ref[idx] == data[idx],
+    if (!dl_check(ref[idx] == data[idx],
       "Expected %c to be %c", ref[idx], data[idx]))
       goto fail;
 
@@ -2862,7 +2862,7 @@ dl_bool test_linked_list_index() {
   struct linked_list_node *node;
   dl_bool success;
   
-  if (!check(init_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
@@ -2871,20 +2871,20 @@ dl_bool test_linked_list_index() {
     ++count;
 
   for (idx = 0; idx < linked_list_length(&list); ++idx) {
-    if (!check((node = linked_list_index(&list, idx)),
+    if (!dl_check((node = linked_list_index(&list, idx)),
       "Expected index to work for %i.", idx))
       goto fail;
 
-    if (!check(linked_list_get(&list, node, &found),
+    if (!dl_check(linked_list_get(&list, node, &found),
       "Expected get to work."))
       goto fail;
 
-    if (!check(found == (dl_integer)idx,
+    if (!dl_check(found == (dl_integer)idx,
       "Expected %i to be %i.", found, (dl_integer)idx))
       goto fail;
   }
 
-  if (!check(!linked_list_index(&list, DL_NATURAL_MAX),
+  if (!dl_check(!linked_list_index(&list, DL_NATURAL_MAX),
     "Expected index to fail."))
     goto fail;
 
@@ -2904,7 +2904,7 @@ dl_bool test_linked_list_destroy_range() {
   struct linked_list_node *node;
   dl_bool success;
   
-  if (!check(init_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
@@ -2915,11 +2915,11 @@ dl_bool test_linked_list_destroy_range() {
   length = linked_list_length(&list);
   node = linked_list_index(&list, length / 4);
 
-  if (!check(linked_list_destroy_range(&list, node, length / 4, NULL) == length / 4,
+  if (!dl_check(linked_list_destroy_range(&list, node, length / 4, NULL) == length / 4,
     "Expected destroy range to work."))
     goto fail;
 
-  if (!check(linked_list_length(&list) == length / 4 * 3,
+  if (!dl_check(linked_list_length(&list) == length / 4 * 3,
     "Expected destroy range to remove items."))
     goto fail;
 
@@ -2939,7 +2939,7 @@ dl_bool test_linked_list_swap() {
   struct linked_list_node *node0, *node1, *next0, *next1, *prev0, *prev1;
   dl_bool success;
   
-  if (!check(init_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
@@ -2958,35 +2958,35 @@ dl_bool test_linked_list_swap() {
   linked_list_get(&list, node0, &value0);
   linked_list_get(&list, node1, &value1);
 
-  if (!check(linked_list_swap(&list, node0, node1, false),
+  if (!dl_check(linked_list_swap(&list, node0, node1, false),
     "Expected swap to work."))
     goto fail;
 
-  if (!check(value0 == *(dl_integer *)linked_list_ref(node0),
+  if (!dl_check(value0 == *(dl_integer *)linked_list_ref(node0),
     "Expected data not to move."))
     goto fail;
 
-  if (!check(value1 == *(dl_integer *)linked_list_ref(node1),
+  if (!dl_check(value1 == *(dl_integer *)linked_list_ref(node1),
     "Expected data not to move."))
     goto fail;
 
-  if (!check(next1 == node0->next && next0 == node1->next,
+  if (!dl_check(next1 == node0->next && next0 == node1->next,
     "Expected next to change."))
     goto fail;
 
-  if (!check(prev1 == node0->previous && prev0 == node1->previous,
+  if (!dl_check(prev1 == node0->previous && prev0 == node1->previous,
     "Expected previous to change."))
     goto fail;
 
-  if (!check(linked_list_swap(&list, node0, node1, true),
+  if (!dl_check(linked_list_swap(&list, node0, node1, true),
     "Expected swap to work."))
     goto fail;
 
-  if (!check(value1 == *(dl_integer *)linked_list_ref(node0),
+  if (!dl_check(value1 == *(dl_integer *)linked_list_ref(node0),
     "Expected data to move."))
     goto fail;
 
-  if (!check(value0 == *(dl_integer *)linked_list_ref(node1),
+  if (!dl_check(value0 == *(dl_integer *)linked_list_ref(node1),
     "Expected data to move."))
     goto fail;
 

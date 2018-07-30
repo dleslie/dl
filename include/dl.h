@@ -225,7 +225,7 @@
 
 #if DL_USE_SAFETY_CHECKS
 # if DL_USE_LOGGING
-#   define dl_safety(x) (dl_unlikely(x) ? ERROR("Safety triggered") || 1 : 0)
+#   define dl_safety(x) (dl_unlikely(x) ? DL_ERROR("Safety triggered") || 1 : 0)
 # else
 #   define dl_safety(x) (dl_unlikely(x) ? 1 : 0)
 # endif
@@ -334,17 +334,17 @@ extern "C" {
   dl_natural dl_log_message(dl_log_channel ch, const char *dl_restrict file, dl_natural line, const char *dl_restrict function, const char *dl_restrict fmt, ...);
 
 # if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MSC || DL_IS_MINGW
-#   define INFO(...) dl_log_message(DL_LOG_INFO, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define WARN(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define ERROR(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define TEST(...) dl_log_message(DL_LOG_TEST, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define DL_INFO(...) dl_log_message(DL_LOG_INFO, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define DL_WARN(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define DL_ERROR(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define DL_TEST(...) dl_log_message(DL_LOG_TEST, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
+#   define DL_MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
 # else
-#   define INFO(...) dl_log_message(DL_LOG_INFO, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define WARN(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define ERROR(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define TEST(...) dl_log_message(DL_LOG_TEST, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define DL_INFO(...) dl_log_message(DL_LOG_INFO, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define DL_WARN(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define DL_ERROR(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define DL_TEST(...) dl_log_message(DL_LOG_TEST, __FILE__, __LINE__, "", ## __VA_ARGS__)
+#   define DL_MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, "", ## __VA_ARGS__)
 # endif
 #endif /* DL_USE_LOGGING */
 
@@ -361,12 +361,12 @@ extern "C" {
 #   define DL_USE_TEST 0
 # endif
     
-  dl_integer test_run(dl_bool (**tests)(), const char **names, dl_integer count);
-  dl_integer test_count(dl_bool (**tests)(), dl_integer max);
+  dl_integer dl_test_run(dl_bool (**tests)(), const char **names, dl_integer count);
+  dl_integer dl_test_count(dl_bool (**tests)(), dl_integer max);
 
-# define check(predicate, ...) ((predicate) ? true : ERROR(__VA_ARGS__) && false)
-# define not_implemented() check(false, "Test is not implemented.")
-# define BEGIN_TEST_SUITE(name) \
+# define dl_check(predicate, ...) ((predicate) ? true : DL_ERROR(__VA_ARGS__) && false)
+# define dl_not_implemented() dl_check(false, "Test is not implemented.")
+# define DL_BEGIN_TEST_SUITE(name) \
   void _test_suite_##name(dl_integer *out_count, dl_integer *out_passed) {\
     dl_bool (*tests[256])();\
     const char *test_names[256];\
@@ -374,21 +374,21 @@ extern "C" {
     if (out_count == NULL || out_passed == NULL)\
       return;\
     dl_memory_set(tests, 0, sizeof(dl_bool (*)()) * 256);
-# define END_TEST_SUITE \
-    *out_count = test_count(tests, 256);\
-    *out_passed = test_run(tests, test_names, *out_count);\
+# define DL_END_TEST_SUITE \
+    *out_count = dl_test_count(tests, 256);\
+    *out_passed = dl_test_run(tests, test_names, *out_count);\
   }
-# define DECLARE_TEST(test_name) \
+# define DL_DECLARE_TEST(test_name) \
   dl_bool test_name();\
   tests[current] = test_name;\
   test_names[current] = #test_name;\
   current++;
-# define RUN_TEST_SUITE(name)\
+# define DL_RUN_TEST_SUITE(name)\
   do {\
     dl_integer count, passed;\
-    TEST("<<"#name ">>");\
+    DL_TEST("<<"#name ">>");\
     _test_suite_##name(&count, &passed);\
-    TEST("<<" #name ">> %i/%i", passed, count);\
+    DL_TEST("<<" #name ">> %i/%i", passed, count);\
   } while (0)
 #endif /* DL_USE_TEST */
 
@@ -1143,11 +1143,11 @@ dl_natural dl_log_message(dl_log_channel ch, const char *dl_restrict file, dl_na
 
 #if DL_USE_TEST
 
-dl_integer test_run(dl_bool (**tests)(), const char **names, dl_integer count) {
+dl_integer dl_test_run(dl_bool (**tests)(), const char **names, dl_integer count) {
   dl_integer i, passed = 0;
 
   for (i = 0; i < count; ++i) {
-    TEST("[%3i/%3i] %s", i + 1, count, names[i]);
+    DL_TEST("[%3i/%3i] %s", i + 1, count, names[i]);
     if (tests[i]())
       passed++;
   }
@@ -1155,7 +1155,7 @@ dl_integer test_run(dl_bool (**tests)(), const char **names, dl_integer count) {
   return passed;
 }
 
-dl_integer test_count(dl_bool (**tests)(), dl_integer max) {
+dl_integer dl_test_count(dl_bool (**tests)(), dl_integer max) {
   dl_integer idx;
   
   for (idx = 0; idx < max && tests[idx] != NULL; ++idx);

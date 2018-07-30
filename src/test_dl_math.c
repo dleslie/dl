@@ -7,24 +7,24 @@ dl_real MIN_REAL = -1024;
 dl_real MAX_REAL = 1024;
 
 dl_bool test_approximately_equal() {
-  if (!check(approximately_equal(0.5f, 0.51f, 0.01f),
+  if (!dl_check(approximately_equal(0.5f, 0.51f, 0.01f),
     "Expected 0.5 ~= 0.51"))
     return false;
-  if (!check(!approximately_equal(0.5f, 0.51f, 0.005f),
+  if (!dl_check(!approximately_equal(0.5f, 0.51f, 0.005f),
     "Expected 0.5 != 0.51"))
     return false;
-  if (!check(!approximately_equal(10.0f, 1000.0f, 0.1f),
+  if (!dl_check(!approximately_equal(10.0f, 1000.0f, 0.1f),
     "Expected 10.0 != 1000.0"))
     return false;
   return true;
 }
 
 dl_bool test_floor_to_integer() {
-  if (!check(floor_to_integer(0.1f) == 0,
+  if (!dl_check(floor_to_integer(0.1f) == 0,
     "Expected 0.1 to become 0"))
     return false;
 
-  if (!check(floor_to_integer(0.6f) == 0,
+  if (!dl_check(floor_to_integer(0.6f) == 0,
     "Expected 0.6 to become 0"))
     return false;
 
@@ -32,11 +32,11 @@ dl_bool test_floor_to_integer() {
 }
 
 dl_bool test_ceil_to_integer() {
-  if (!check(ceil_to_integer(0.1f) == 1,
+  if (!dl_check(ceil_to_integer(0.1f) == 1,
     "Expected 0.1 to become 1"))
     return false;
 
-  if (!check(ceil_to_integer(0.6f) == 1,
+  if (!dl_check(ceil_to_integer(0.6f) == 1,
     "Expected 0.6 to become 1"))
     return false;
 
@@ -44,11 +44,11 @@ dl_bool test_ceil_to_integer() {
 }
 
 dl_bool test_round_to_integer() {
-  if (!check(round_to_integer(0.1f) == 0,
+  if (!dl_check(round_to_integer(0.1f) == 0,
     "Expected 0.1 to become 0"))
     return false;
 
-  if (!check(round_to_integer(0.6f) == 1,
+  if (!dl_check(round_to_integer(0.6f) == 1,
     "Expected 0.6 to become 1"))
     return false;
 
@@ -56,29 +56,29 @@ dl_bool test_round_to_integer() {
 }
 
 dl_bool test_min() {
-  if (!check(min(0, 1) == 0,
+  if (!dl_check(min(0, 1) == 0,
     "Expected 0 to be less than 1"))
     return false;
   return true;
 }
 
 dl_bool test_max() {
-  if (!check(max(0, 1) == 1,
+  if (!dl_check(max(0, 1) == 1,
     "Expected 0 to be less than 1"))
     return false;
   return true;
 }
 
 dl_bool test_clamp() {
-  if (!check(clamp(5, 1, 2) == 2,
+  if (!dl_check(clamp(5, 1, 2) == 2,
     "Expected 5 to clamp to 2"))
     return false;
 
-  if (!check(clamp(0, 1, 2) == 1,
+  if (!dl_check(clamp(0, 1, 2) == 1,
     "Expected 0 to clamp to 1"))
     return false;
 
-  if (!check(clamp(1.5, 1, 2) == 1.5,
+  if (!dl_check(clamp(1.5, 1, 2) == 1.5,
     "Expected 0.5 to clamp to 0.5, not %f", clamp(1.5, 1, 2)))
     return false;
 
@@ -86,15 +86,15 @@ dl_bool test_clamp() {
 }
 
 dl_bool test_factorial() {
-  if (!check(factorial(3) == 6,
+  if (!dl_check(factorial(3) == 6,
     "Expected %i to be 6", factorial(3)))
     return false;
 
-  if (!check(factorial(-1) == 1,
+  if (!dl_check(factorial(-1) == 1,
     "Expected %i to be 1", factorial(-1)))
     return false;
 
-  if (!check(factorial(8) == 40320,
+  if (!dl_check(factorial(8) == 40320,
     "Expected %i to be 40320", factorial(8)))
     return false;
 
@@ -102,11 +102,11 @@ dl_bool test_factorial() {
 }
 
 dl_bool test_rationalize() {
-  if (!check(approximately_equal(rationalize(0.05f, 1), 0.1f, M_EPSILON),
+  if (!dl_check(approximately_equal(rationalize(0.05f, 1), 0.1f, M_EPSILON),
     "Expected %f to be 0.1", rationalize(0.05f, 1)))
     return false;
 
-  if (!check(approximately_equal(rationalize(10.5f, 1), 10.5f, M_EPSILON),
+  if (!dl_check(approximately_equal(rationalize(10.5f, 1), 10.5f, M_EPSILON),
     "Expected %f to be 10.5", rationalize(10.5f, 1)))
     return false;
 
@@ -116,14 +116,14 @@ dl_bool test_rationalize() {
 dl_bool test_degree_to_radian() {
   dl_real result;
   result = degree_to_radian(286.5);
-  return check(approximately_equal(result, 5.0f, M_EPSILON),
+  return dl_check(approximately_equal(result, 5.0f, M_EPSILON),
     "Expected %f to equal %f", result, 5.0);
 }
 
 dl_bool test_radian_to_degree() {
   dl_real result;
   result = radian_to_degree(5.0);
-  return check(approximately_equal(result, 286.5f, 0.1f),
+  return dl_check(approximately_equal(result, 286.5f, 0.1f),
     "Expected %f to equal %f", result, 286.5f);
 }
 
@@ -134,7 +134,7 @@ dl_bool test_random_degree() {
   init_random_time(&r);
   
   value = random_degree(&r);
-  if (!check(value >= 0 && value <= 360,
+  if (!dl_check(value >= 0 && value <= 360,
     "Expected %f to be between 0 and 360", value))
     return false;
   return true;
@@ -147,7 +147,7 @@ dl_bool test_random_radian() {
   init_random_time(&r);
   
   value = random_radian(&r);
-  if (!check(value >= 0 && value <= 2 * M_PI,
+  if (!dl_check(value >= 0 && value <= 2 * M_PI,
     "Expected %f to be between 0 and %f", value, 2 * M_PI))
     return false;
   return true;
@@ -159,7 +159,7 @@ dl_bool test_random_real() {
   init_random_time(&r);
   
   value = random_real(&r, M_PI);
-  if (!check(value >= 0 && value <= M_PI,
+  if (!dl_check(value >= 0 && value <= M_PI,
     "Expected %f to be between 0 and %f", value, M_PI))
     return false;
   return true;
@@ -171,7 +171,7 @@ dl_bool test_random_real_range() {
   init_random_time(&r);
   
   value = random_real_range(&r, -M_PI, 0);
-  if (!check(value >= -M_PI && value <= M_PI,
+  if (!dl_check(value >= -M_PI && value <= M_PI,
     "Expected %f to be between %f and 0", value, -M_PI))
     return false;
   return true;
@@ -183,7 +183,7 @@ dl_bool test_random() {
   init_random_time(&r);
   
   value = random_integer(&r, 1337);
-  if (!check(value >= 0 && value <= 1337,
+  if (!dl_check(value >= 0 && value <= 1337,
     "Expected %i to be between 0 and 1337", value))
     return false;
   return true;
@@ -195,7 +195,7 @@ dl_bool test_random_range() {
   init_random_time(&r);
   
   value = random_integer_range(&r, -1337, 0);
-  if (!check(value >= -1337 && value <= 0,
+  if (!dl_check(value >= -1337 && value <= 0,
     "Expected %i to be between -1337 and 1337", value))
     return false;
   return true;
@@ -214,9 +214,9 @@ dl_bool test_init_vec2() {
 
   init_vec2(&vec, a, b);
 
-  return check(approximately_equal(vec.x, a, M_EPSILON),
+  return dl_check(approximately_equal(vec.x, a, M_EPSILON),
     "Expected x to be %f, was %f", a, vec.x) &&
-    check(approximately_equal(vec.y, b, M_EPSILON),
+    dl_check(approximately_equal(vec.y, b, M_EPSILON),
       "Expected y to be %f, was %f", b, vec.y);
 }
 
@@ -237,9 +237,9 @@ dl_bool test_vec2_add() {
 
   vec2_add(&vec_a, &vec_b, &vec_b);
 
-  return check(approximately_equal(vec_b.x, a + c, M_EPSILON),
+  return dl_check(approximately_equal(vec_b.x, a + c, M_EPSILON),
     "Expected x to be %f, was %f", a + c, vec_b.x) &&
-    check(approximately_equal(vec_b.y, b + d, M_EPSILON),
+    dl_check(approximately_equal(vec_b.y, b + d, M_EPSILON),
       "Expected y to be %f, was %f", b + d, vec_b.y);
 }
 
@@ -260,9 +260,9 @@ dl_bool test_vec2_sub() {
 
   vec2_sub(&vec_a, &vec_b, &vec_b);
 
-  return check(approximately_equal(vec_b.x, a - c, M_EPSILON),
+  return dl_check(approximately_equal(vec_b.x, a - c, M_EPSILON),
     "Expected x to be %f, was %f", a - c, vec_b.x) &&
-    check(approximately_equal(vec_b.y, b - d, M_EPSILON),
+    dl_check(approximately_equal(vec_b.y, b - d, M_EPSILON),
       "Expected y to be %f, was %f", b - d, vec_b.y);
 }
 
@@ -280,9 +280,9 @@ dl_bool test_vec2_mul_scalar() {
 
   vec2_mul_scalar(&vec, c, &vec);
 
-  return check(approximately_equal(vec.x, a * c, M_EPSILON),
+  return dl_check(approximately_equal(vec.x, a * c, M_EPSILON),
     "Expected x to be %f, was %f", a * c, vec.x) &&
-    check(approximately_equal(vec.y, b * c, M_EPSILON),
+    dl_check(approximately_equal(vec.y, b * c, M_EPSILON),
       "Expected y to be %f, was %f", b * c, vec.y);
 }
 
@@ -300,9 +300,9 @@ dl_bool test_vec2_div_scalar() {
 
   vec2_div_scalar(&vec, c, &vec);
 
-  return check(approximately_equal(vec.x, a / c, M_EPSILON),
+  return dl_check(approximately_equal(vec.x, a / c, M_EPSILON),
     "Expected x to be %f, was %f", a / c, vec.x) &&
-    check(approximately_equal(vec.y, b / c, M_EPSILON),
+    dl_check(approximately_equal(vec.y, b / c, M_EPSILON),
       "Expected y to be %f, was %f", b / c, vec.y);
 }
 
@@ -320,9 +320,9 @@ dl_bool test_vec2_add_scalar() {
 
   vec2_add_scalar(&vec, c, &vec);
 
-  return check(approximately_equal(vec.x, a + c, M_EPSILON),
+  return dl_check(approximately_equal(vec.x, a + c, M_EPSILON),
     "Expected x to be %f, was %f", a + c, vec.x) &&
-    check(approximately_equal(vec.y, b + c, M_EPSILON),
+    dl_check(approximately_equal(vec.y, b + c, M_EPSILON),
       "Expected y to be %f, was %f", b + c, vec.y);
 }
 
@@ -340,9 +340,9 @@ dl_bool test_vec2_sub_scalar() {
 
   vec2_sub_scalar(&vec, c, &vec);
 
-  return check(approximately_equal(vec.x, a - c, M_EPSILON),
+  return dl_check(approximately_equal(vec.x, a - c, M_EPSILON),
     "Expected x to be %f, was %f", a - c, vec.x) &&
-    check(approximately_equal(vec.y, b - c, M_EPSILON),
+    dl_check(approximately_equal(vec.y, b - c, M_EPSILON),
       "Expected y to be %f, was %f", b - c, vec.y);
 }
 
@@ -366,11 +366,11 @@ dl_bool test_vec2_normalize() {
   inv_m = 1.0f / sqrt(sqr_m);
 #endif
 
-  return check(approximately_equal(vec.x, a * inv_m, M_EPSILON),
+  return dl_check(approximately_equal(vec.x, a * inv_m, M_EPSILON),
     "Expected x to be %f, was %f", a * inv_m, vec.x) &&
-    check(approximately_equal(vec.y, b * inv_m, M_EPSILON),
+    dl_check(approximately_equal(vec.y, b * inv_m, M_EPSILON),
       "Expected y to be %f, was %f", b * inv_m, vec.y) &&
-    check(approximately_equal(vec2_magnitude(&vec), 1.0, M_EPSILON),
+    dl_check(approximately_equal(vec2_magnitude(&vec), 1.0, M_EPSILON),
       "Expected magnitude to be 1");
 }
 
@@ -387,9 +387,9 @@ dl_bool test_vec2_negate() {
 
   vec2_negate(&vec, &vec);
 
-  return check(approximately_equal(vec.x, -a, M_EPSILON),
+  return dl_check(approximately_equal(vec.x, -a, M_EPSILON),
     "Expected x to be %f, was %f", -a, vec.x) &&
-    check(approximately_equal(vec.y, -b, M_EPSILON),
+    dl_check(approximately_equal(vec.y, -b, M_EPSILON),
       "Expected y to be %f, was %f", -b, vec.y);
 }
 
@@ -411,7 +411,7 @@ dl_bool test_vec2_dot() {
   dot = vec2_dot(&vec_a, &vec_b);
   expected = a * c + b * d;
 
-  return check(approximately_equal(dot, expected, M_EPSILON),
+  return dl_check(approximately_equal(dot, expected, M_EPSILON),
     "Expected dot product to be %f, was %f", expected, dot);
 }
 
@@ -428,43 +428,43 @@ dl_bool test_vec2_approximately_equal() {
   init_vec2(&vec_a, a, b);
   init_vec2(&vec_b, a + 0.5 * M_EPSILON, b + 0.5 * M_EPSILON);
 
-  if (!check(vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f) ~= (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
   init_vec2(&vec_b, -vec_a.x, -vec_a.y);
 
-  if (!check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
   init_vec2(&vec_b, -vec_a.x, vec_a.y);
 
-  if (!check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
   init_vec2(&vec_b, vec_a.x, -vec_a.y);
 
-  if (!check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
   init_vec2(&vec_b, vec_a.x + 2 * M_EPSILON, vec_a.y);
 
-  if (!check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
   init_vec2(&vec_b, vec_a.x, vec_a.y + 2 * M_EPSILON);
 
-  if (!check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
   init_vec2(&vec_b, vec_a.x + 2 * M_EPSILON, vec_a.y + 2 * M_EPSILON);
 
-  if (!check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
@@ -485,7 +485,7 @@ dl_bool test_vec2_square_magnitude() {
   m = vec2_square_magnitude(&vec);
   expected_m = a * a + b * b;
 
-  return check(approximately_equal(m, expected_m, M_EPSILON),
+  return dl_check(approximately_equal(m, expected_m, M_EPSILON),
     "Expected %f ~= %f", m, expected_m);
 }
 
@@ -508,7 +508,7 @@ dl_bool test_vec2_magnitude() {
   expected_m = hypotf(a, b);
 #endif
 
-  return check(approximately_equal(m, expected_m, M_EPSILON),
+  return dl_check(approximately_equal(m, expected_m, M_EPSILON),
     "Expected %f ~= %f", m, expected_m);
 }
 
@@ -521,7 +521,7 @@ dl_bool test_vec2_reflect() {
 
   vec2_reflect(&in, &vec2_up, &result);
 
-  if (!check(vec2_approximately_equal(&result, &out, M_EPSILON),
+  if (!dl_check(vec2_approximately_equal(&result, &out, M_EPSILON),
     "Expected {%f, %f} to be {%f, %f}",
     result.x, result.y,
     out.x, out.y))
@@ -530,7 +530,7 @@ dl_bool test_vec2_reflect() {
   init_vec2(&out, -0.5, 0.5);
   vec2_reflect(&in, &vec2_left, &result);
 
-  if (!check(vec2_approximately_equal(&result, &out, M_EPSILON),
+  if (!dl_check(vec2_approximately_equal(&result, &out, M_EPSILON),
     "Expected {%f, %f} to be {%f, %f}",
     result.x, result.y,
     out.x, out.y))
@@ -547,7 +547,7 @@ dl_bool test_vec2_refract() {
   out.y = 0.0;
   vec2_refract(&in, &vec2_up, 0.3, &result);
 
-  if (!check(vec2_approximately_equal(&result, &out, M_EPSILON),
+  if (!dl_check(vec2_approximately_equal(&result, &out, M_EPSILON),
     "Expected {%f, %f} to be {%f, %f}",
     result.x, result.y,
     out.x, out.y))
@@ -556,7 +556,7 @@ dl_bool test_vec2_refract() {
   init_vec2(&out, 0.0, 0.3);
   vec2_refract(&in, &vec2_left, 0.3, &result);
 
-  if (!check(vec2_approximately_equal(&result, &out, M_EPSILON),
+  if (!dl_check(vec2_approximately_equal(&result, &out, M_EPSILON),
     "Expected {%f, %f} to be {%f, %f}",
     result.x, result.y,
     out.x, out.y))
@@ -578,9 +578,9 @@ dl_bool test_init_point2() {
 
   init_point2(&point, a, b);
 
-  return check(approximately_equal(point.x, a, M_EPSILON),
+  return dl_check(approximately_equal(point.x, a, M_EPSILON),
     "Expected x to be %f, was %f", a, point.x) &&
-    check(approximately_equal(point.y, b, M_EPSILON),
+    dl_check(approximately_equal(point.y, b, M_EPSILON),
       "Expected y to be %f, was %f", b, point.y);
 }
 
@@ -601,9 +601,9 @@ dl_bool test_point2_add() {
 
   point2_add(&point_a, &point_b, &point_b);
 
-  return check(approximately_equal(point_b.x, a + c, M_EPSILON),
+  return dl_check(approximately_equal(point_b.x, a + c, M_EPSILON),
     "Expected x to be %f, was %f", a + c, point_b.x) &&
-    check(approximately_equal(point_b.y, b + d, M_EPSILON),
+    dl_check(approximately_equal(point_b.y, b + d, M_EPSILON),
       "Expected y to be %f, was %f", b + d, point_b.y);
 }
 
@@ -624,9 +624,9 @@ dl_bool test_point2_sub() {
 
   point2_sub(&point_a, &point_b, &point_b);
 
-  return check(approximately_equal(point_b.x, a - c, M_EPSILON),
+  return dl_check(approximately_equal(point_b.x, a - c, M_EPSILON),
     "Expected x to be %f, was %f", a - c, point_b.x) &&
-    check(approximately_equal(point_b.y, b - d, M_EPSILON),
+    dl_check(approximately_equal(point_b.y, b - d, M_EPSILON),
       "Expected y to be %f, was %f", b - d, point_b.y);
 }
 
@@ -644,9 +644,9 @@ dl_bool test_point2_mul_scalar() {
 
   point2_mul_scalar(&point, c, &point);
 
-  return check(approximately_equal(point.x, a * c, M_EPSILON),
+  return dl_check(approximately_equal(point.x, a * c, M_EPSILON),
     "Expected x to be %f, was %f", a * c, point.x) &&
-    check(approximately_equal(point.y, b * c, M_EPSILON),
+    dl_check(approximately_equal(point.y, b * c, M_EPSILON),
       "Expected y to be %f, was %f", b * c, point.y);
 }
 
@@ -664,9 +664,9 @@ dl_bool test_point2_div_scalar() {
 
   point2_div_scalar(&point, c, &point);
 
-  return check(approximately_equal(point.x, a / c, M_EPSILON),
+  return dl_check(approximately_equal(point.x, a / c, M_EPSILON),
     "Expected x to be %f, was %f", a / c, point.x) &&
-    check(approximately_equal(point.y, b / c, M_EPSILON),
+    dl_check(approximately_equal(point.y, b / c, M_EPSILON),
       "Expected y to be %f, was %f", b / c, point.y);
 }
 
@@ -684,9 +684,9 @@ dl_bool test_point2_add_scalar() {
 
   point2_add_scalar(&point, c, &point);
 
-  return check(approximately_equal(point.x, a + c, M_EPSILON),
+  return dl_check(approximately_equal(point.x, a + c, M_EPSILON),
     "Expected x to be %f, was %f", a + c, point.x) &&
-    check(approximately_equal(point.y, b + c, M_EPSILON),
+    dl_check(approximately_equal(point.y, b + c, M_EPSILON),
       "Expected y to be %f, was %f", b + c, point.y);
 }
 
@@ -704,9 +704,9 @@ dl_bool test_point2_sub_scalar() {
 
   point2_sub_scalar(&point, c, &point);
 
-  return check(approximately_equal(point.x, a - c, M_EPSILON),
+  return dl_check(approximately_equal(point.x, a - c, M_EPSILON),
     "Expected x to be %f, was %f", a - c, point.x) &&
-    check(approximately_equal(point.y, b - c, M_EPSILON),
+    dl_check(approximately_equal(point.y, b - c, M_EPSILON),
       "Expected y to be %f, was %f", b - c, point.y);
 }
 
@@ -723,9 +723,9 @@ dl_bool test_point2_negate() {
 
   point2_negate(&point, &point);
 
-  return check(approximately_equal(point.x, -a, M_EPSILON),
+  return dl_check(approximately_equal(point.x, -a, M_EPSILON),
     "Expected x to be %f, was %f", -a, point.x) &&
-    check(approximately_equal(point.y, -b, M_EPSILON),
+    dl_check(approximately_equal(point.y, -b, M_EPSILON),
       "Expected y to be %f, was %f", -b, point.y);
 }
 
@@ -742,43 +742,43 @@ dl_bool test_point2_approximately_equal() {
   init_point2(&point_a, a, b);
   init_point2(&point_b, a, b);
 
-  if (!check(point2_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(point2_approximately_equal(&point_a, &point_b, M_EPSILON),
     "Expected (%f, %f) ~= (%f, %f)", point_b.x, point_b.y, point_a.x, point_a.y))
     return false;
 
   init_point2(&point_b, -a, -b);
 
-  if (!check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
   init_point2(&point_b, a, -b);
 
-  if (!check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
   init_point2(&point_b, -a, b);
 
-  if (!check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
   init_point2(&point_b, a + M_EPSILON * 2, b);
 
-  if (!check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
   init_point2(&point_b, a, b + M_EPSILON * 2);
 
-  if (!check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
   init_point2(&point_b, a + M_EPSILON * 2, b + M_EPSILON * 2);
 
-  if (!check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, M_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
@@ -798,17 +798,17 @@ dl_bool test_point2_line_orientation() {
 
   /* Above is negative */
   f = point2_line_orientation(&above, &a, &b);
-  if (!check(0 > f, "Expected value to be negative, was %f", f))
+  if (!dl_check(0 > f, "Expected value to be negative, was %f", f))
     return false;
 
   /* Below is positive */
   f = point2_line_orientation(&below, &a, &b);
-  if (!check(0 < f, "Expected value to be positive, was %f", f))
+  if (!dl_check(0 < f, "Expected value to be positive, was %f", f))
     return false;
 
   /* On is approximately zero */
   f = point2_line_orientation(&on, &a, &b);
-  if (!check(approximately_equal(f, 0.0, M_EPSILON),
+  if (!dl_check(approximately_equal(f, 0.0, M_EPSILON),
     "Expected value to be zero, was %f", f))
     return false;
 
@@ -830,13 +830,13 @@ dl_bool test_init_vec4() {
 
   init_vec4(&vec, a, b, c, d);
 
-  return check(approximately_equal(vec.x, a, M_EPSILON),
+  return dl_check(approximately_equal(vec.x, a, M_EPSILON),
     "Expected x to be %f, was %f", a, vec.x) &&
-    check(approximately_equal(vec.y, b, M_EPSILON),
+    dl_check(approximately_equal(vec.y, b, M_EPSILON),
       "Expected y to be %f, was %f", b, vec.y) &&
-    check(approximately_equal(vec.z, c, M_EPSILON),
+    dl_check(approximately_equal(vec.z, c, M_EPSILON),
       "Expected z to be %f, was %f", c, vec.z) &&
-    check(approximately_equal(vec.w, d, M_EPSILON),
+    dl_check(approximately_equal(vec.w, d, M_EPSILON),
       "Expected w to be %f, was %f", d, vec.w);
 }
 
@@ -860,13 +860,13 @@ dl_bool test_vec4_add() {
 
   vec4_add(&vec_a, &vec_b, &vec_b);
 
-  return check(approximately_equal(a + e, vec_b.x, M_EPSILON),
+  return dl_check(approximately_equal(a + e, vec_b.x, M_EPSILON),
     "Expected x to be %f, was %f", a + e, vec_b.x) &&
-    check(approximately_equal(b + f, vec_b.y, M_EPSILON),
+    dl_check(approximately_equal(b + f, vec_b.y, M_EPSILON),
       "Expected y to be %f, was %f", b + f, vec_b.y) &&
-    check(approximately_equal(c + g, vec_b.z, M_EPSILON),
+    dl_check(approximately_equal(c + g, vec_b.z, M_EPSILON),
       "Expected z to be %f, was %f", c + g, vec_b.z) &&
-    check(approximately_equal(d + h, vec_b.w, M_EPSILON),
+    dl_check(approximately_equal(d + h, vec_b.w, M_EPSILON),
       "Expected w to be %f, was %f", d + h, vec_b.w);
 }
 
@@ -890,13 +890,13 @@ dl_bool test_vec4_sub() {
 
   vec4_sub(&vec_a, &vec_b, &vec_b);
 
-  return check(approximately_equal(a - e, vec_b.x, M_EPSILON),
+  return dl_check(approximately_equal(a - e, vec_b.x, M_EPSILON),
     "Expected x to be %f, was %f", a - e, vec_b.x) &&
-    check(approximately_equal(b - f, vec_b.y, M_EPSILON),
+    dl_check(approximately_equal(b - f, vec_b.y, M_EPSILON),
       "Expected y to be %f, was %f", b - f, vec_b.y) &&
-    check(approximately_equal(c - g, vec_b.z, M_EPSILON),
+    dl_check(approximately_equal(c - g, vec_b.z, M_EPSILON),
       "Expected z to be %f, was %f", c - g, vec_b.z) &&
-    check(approximately_equal(d - h, vec_b.w, M_EPSILON),
+    dl_check(approximately_equal(d - h, vec_b.w, M_EPSILON),
       "Expected w to be %f, was %f", d - h, vec_b.w);
 }
 
@@ -916,13 +916,13 @@ dl_bool test_vec4_mul_scalar() {
 
   vec4_mul_scalar(&vec, e, &vec);
 
-  return check(approximately_equal(a * e, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(a * e, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a * e, vec.x) &&
-    check(approximately_equal(b * e, vec.y, M_EPSILON),
+    dl_check(approximately_equal(b * e, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", b * e, vec.y) &&
-    check(approximately_equal(c * e, vec.z, M_EPSILON),
+    dl_check(approximately_equal(c * e, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", c * e, vec.z) &&
-    check(approximately_equal(d * e, vec.w, M_EPSILON),
+    dl_check(approximately_equal(d * e, vec.w, M_EPSILON),
       "Expected w to be %f, was %f", d * e, vec.w);
 }
 
@@ -942,13 +942,13 @@ dl_bool test_vec4_div_scalar() {
 
   vec4_div_scalar(&vec, e, &vec);
 
-  return check(approximately_equal(a / e, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(a / e, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a / e, vec.x) &&
-    check(approximately_equal(b / e, vec.y, M_EPSILON),
+    dl_check(approximately_equal(b / e, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", b / e, vec.y) &&
-    check(approximately_equal(c / e, vec.z, M_EPSILON),
+    dl_check(approximately_equal(c / e, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", c / e, vec.z) &&
-    check(approximately_equal(d / e, vec.w, M_EPSILON),
+    dl_check(approximately_equal(d / e, vec.w, M_EPSILON),
       "Expected w to be %f, was %f", d / e, vec.w);
 }
 
@@ -968,13 +968,13 @@ dl_bool test_vec4_add_scalar() {
 
   vec4_add_scalar(&vec, e, &vec);
 
-  return check(approximately_equal(a + e, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(a + e, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a + e, vec.x) &&
-    check(approximately_equal(b + e, vec.y, M_EPSILON),
+    dl_check(approximately_equal(b + e, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", b + e, vec.y) &&
-    check(approximately_equal(c + e, vec.z, M_EPSILON),
+    dl_check(approximately_equal(c + e, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", c + e, vec.z) &&
-    check(approximately_equal(d + e, vec.w, M_EPSILON),
+    dl_check(approximately_equal(d + e, vec.w, M_EPSILON),
       "Expected w to be %f, was %f", d + e, vec.w);
 }
 
@@ -994,13 +994,13 @@ dl_bool test_vec4_sub_scalar() {
 
   vec4_sub_scalar(&vec, e, &vec);
 
-  return check(approximately_equal(a - e, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(a - e, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a - e, vec.x) &&
-    check(approximately_equal(b - e, vec.y, M_EPSILON),
+    dl_check(approximately_equal(b - e, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", b - e, vec.y) &&
-    check(approximately_equal(c - e, vec.z, M_EPSILON),
+    dl_check(approximately_equal(c - e, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", c - e, vec.z) &&
-    check(approximately_equal(d - e, vec.w, M_EPSILON),
+    dl_check(approximately_equal(d - e, vec.w, M_EPSILON),
       "Expected w to be %f, was %f", d - e, vec.w);
 }
 
@@ -1023,7 +1023,7 @@ dl_bool test_vec4_dot() {
   dot = vec4_dot(&vec_a, &vec_b);
   expected = a * c + b * d + c * e + d * f;
 
-  return check(approximately_equal(dot, expected, M_EPSILON),
+  return dl_check(approximately_equal(dot, expected, M_EPSILON),
     "Expected dot product to be %f, was %f", dot, expected);
 }
 
@@ -1047,15 +1047,15 @@ dl_bool test_vec4_normalize() {
   m = sqrtf(a * a + b * b + c * c + d * d);
 #endif
 
-  return check(approximately_equal(a / m, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(a / m, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a / m, vec.x) &&
-    check(approximately_equal(b / m, vec.y, M_EPSILON),
+    dl_check(approximately_equal(b / m, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", b / m, vec.y) &&
-    check(approximately_equal(c / m, vec.z, M_EPSILON),
+    dl_check(approximately_equal(c / m, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", c / m, vec.z) &&
-    check(approximately_equal(d / m, vec.w, M_EPSILON),
+    dl_check(approximately_equal(d / m, vec.w, M_EPSILON),
       "Expected w to be %f, was %f", d / m, vec.w) &&
-    check(approximately_equal(vec4_magnitude(&vec), 1.0, M_EPSILON),
+    dl_check(approximately_equal(vec4_magnitude(&vec), 1.0, M_EPSILON),
       "Expected magnitude to be 1");
 }
 
@@ -1073,13 +1073,13 @@ dl_bool test_vec4_negate() {
   init_vec4(&vec, a, b, c, d);
   vec4_negate(&vec, &vec);
 
-  return check(approximately_equal(-a, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(-a, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", -a, vec.x) &&
-    check(approximately_equal(-b, vec.y, M_EPSILON),
+    dl_check(approximately_equal(-b, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", -b, vec.y) &&
-    check(approximately_equal(-c, vec.z, M_EPSILON),
+    dl_check(approximately_equal(-c, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", -c, vec.z) &&
-    check(approximately_equal(-d, vec.w, M_EPSILON),
+    dl_check(approximately_equal(-d, vec.w, M_EPSILON),
       "Expected w to be %f, was %f", -d, vec.w);
 }
 
@@ -1097,91 +1097,91 @@ dl_bool test_vec4_approximately_equal() {
   init_vec4(&vec_a, a, b, c, d);
   init_vec4(&vec_b, a, b, c, d);
 
-  if (!check(vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) ~= (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, -a, -b, -c, -d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, -a, -b, c, d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, -a, b, -c, d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, -a, b, c, -d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, a, -b, c, -d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, a, b, -c, -d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, a, -b, -c, d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, a, -b, c, d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, a, b, -c, d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, a, b, c, -d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
   
   init_vec4(&vec_b, a + 2 * M_EPSILON, b, c, d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, a + 2 * M_EPSILON, b + 2 * M_EPSILON, c, d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, a + 2 * M_EPSILON, b + 2 * M_EPSILON, c + 2 * M_EPSILON, d);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
   init_vec4(&vec_b, a + 2 * M_EPSILON, b + 2 * M_EPSILON, c + 2 * M_EPSILON, d + 2 * M_EPSILON);
 
-  if (!check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
+  if (!dl_check(!vec4_approximately_equal(&vec_a, &vec_b, M_EPSILON),
     "Expected (%f, %f, %f, %f) != (%f, %f, %f, %f)", vec_a.x, vec_a.y, vec_a.z, vec_a.w, vec_b.x, vec_b.y, vec_b.z, vec_b.w))
     return false;
 
@@ -1204,7 +1204,7 @@ dl_bool test_vec4_square_magnitude() {
   square_m = vec4_square_magnitude(&vec);
   expected = a * a + b * b + c * c + d * d;
 
-  return check(approximately_equal(square_m, expected, M_EPSILON),
+  return dl_check(approximately_equal(square_m, expected, M_EPSILON),
     "Expected %f to be approximately %f", square_m, expected);
 }
 
@@ -1229,7 +1229,7 @@ dl_bool test_vec4_magnitude() {
   expected = sqrtf(a * a + b * b + c * c + d * d);
 #endif
 
-  return check(approximately_equal(m, expected, M_EPSILON),
+  return dl_check(approximately_equal(m, expected, M_EPSILON),
     "Expected %f to be approximately %f", m, expected);
 }
 
@@ -1247,13 +1247,13 @@ dl_bool test_init_point3() {
 
   init_point3(&point, a, b, c);
 
-  return check(approximately_equal(point.x, a, M_EPSILON),
+  return dl_check(approximately_equal(point.x, a, M_EPSILON),
     "Expected x to be %f, was %f", a, point.x) &&
-    check(approximately_equal(point.y, b, M_EPSILON),
+    dl_check(approximately_equal(point.y, b, M_EPSILON),
       "Expected y to be %f, was %f", b, point.y) &&
-    check(approximately_equal(point.z, c, M_EPSILON),
+    dl_check(approximately_equal(point.z, c, M_EPSILON),
       "Expected z to be %f, was %f", c, point.z) &&
-    check(point.w == 1.0, "Expected w to be 1.0");
+    dl_check(point.w == 1.0, "Expected w to be 1.0");
 }
 
 dl_bool test_point3_add() {
@@ -1274,13 +1274,13 @@ dl_bool test_point3_add() {
 
   point3_add(&point_a, &point_b, &point_b);
 
-  return check(approximately_equal(a + d, point_b.x, M_EPSILON),
+  return dl_check(approximately_equal(a + d, point_b.x, M_EPSILON),
     "Expected x to be %f, was %f", a + d, point_b.x) &&
-    check(approximately_equal(b + e, point_b.y, M_EPSILON),
+    dl_check(approximately_equal(b + e, point_b.y, M_EPSILON),
       "Expected y to be %f, was %f", b + e, point_b.y) &&
-    check(approximately_equal(c + f, point_b.z, M_EPSILON),
+    dl_check(approximately_equal(c + f, point_b.z, M_EPSILON),
       "Expected z to be %f, was %f", c + f, point_b.z) &&
-    check(point_b.w == 1.0, "Expected w to be 1.0");
+    dl_check(point_b.w == 1.0, "Expected w to be 1.0");
 }
 
 dl_bool test_point3_sub() {
@@ -1301,13 +1301,13 @@ dl_bool test_point3_sub() {
 
   point3_sub(&point_a, &point_b, &point_b);
 
-  return check(approximately_equal(a - d, point_b.x, M_EPSILON),
+  return dl_check(approximately_equal(a - d, point_b.x, M_EPSILON),
     "Expected x to be %f, was %f", a - d, point_b.x) &&
-    check(approximately_equal(b - e, point_b.y, M_EPSILON),
+    dl_check(approximately_equal(b - e, point_b.y, M_EPSILON),
       "Expected y to be %f, was %f", b - e, point_b.y) &&
-    check(approximately_equal(c - f, point_b.z, M_EPSILON),
+    dl_check(approximately_equal(c - f, point_b.z, M_EPSILON),
       "Expected z to be %f, was %f", c - f, point_b.z) &&
-    check(point_b.w == 1.0, "Expected w to be 1.0");
+    dl_check(point_b.w == 1.0, "Expected w to be 1.0");
 }
 
 dl_bool test_point3_mul_scalar() {
@@ -1325,13 +1325,13 @@ dl_bool test_point3_mul_scalar() {
 
   point3_mul_scalar(&point, d, &point);
 
-  return check(approximately_equal(a * d, point.x, M_EPSILON),
+  return dl_check(approximately_equal(a * d, point.x, M_EPSILON),
     "Expected x to be %f, was %f", a * d, point.x) &&
-    check(approximately_equal(b * d, point.y, M_EPSILON),
+    dl_check(approximately_equal(b * d, point.y, M_EPSILON),
       "Expected y to be %f, was %f", b * d, point.y) &&
-    check(approximately_equal(c * d, point.z, M_EPSILON),
+    dl_check(approximately_equal(c * d, point.z, M_EPSILON),
       "Expected z to be %f, was %f", c * d, point.z) &&
-    check(point.w == 1.0, "Expected w to be 1.0");
+    dl_check(point.w == 1.0, "Expected w to be 1.0");
 }
 
 dl_bool test_point3_div_scalar() {
@@ -1349,13 +1349,13 @@ dl_bool test_point3_div_scalar() {
 
   point3_div_scalar(&point, d, &point);
 
-  return check(approximately_equal(a / d, point.x, M_EPSILON),
+  return dl_check(approximately_equal(a / d, point.x, M_EPSILON),
     "Expected x to be %f, was %f", a / d, point.x) &&
-    check(approximately_equal(b / d, point.y, M_EPSILON),
+    dl_check(approximately_equal(b / d, point.y, M_EPSILON),
       "Expected y to be %f, was %f", b / d, point.y) &&
-    check(approximately_equal(c / d, point.z, M_EPSILON),
+    dl_check(approximately_equal(c / d, point.z, M_EPSILON),
       "Expected z to be %f, was %f", c / d, point.z) &&
-    check(point.w == 1.0, "Expected w to be 1.0");
+    dl_check(point.w == 1.0, "Expected w to be 1.0");
 }
 
 dl_bool test_point3_add_scalar() {
@@ -1373,13 +1373,13 @@ dl_bool test_point3_add_scalar() {
 
   point3_add_scalar(&point, d, &point);
 
-  return check(approximately_equal(a + d, point.x, M_EPSILON),
+  return dl_check(approximately_equal(a + d, point.x, M_EPSILON),
     "Expected x to be %f, was %f", a + d, point.x) &&
-    check(approximately_equal(b + d, point.y, M_EPSILON),
+    dl_check(approximately_equal(b + d, point.y, M_EPSILON),
       "Expected y to be %f, was %f", b + d, point.y) &&
-    check(approximately_equal(c + d, point.z, M_EPSILON),
+    dl_check(approximately_equal(c + d, point.z, M_EPSILON),
       "Expected z to be %f, was %f", c + d, point.z) &&
-    check(point.w == 1.0, "Expected w to be 1.0");
+    dl_check(point.w == 1.0, "Expected w to be 1.0");
 }
 
 dl_bool test_point3_sub_scalar() {
@@ -1397,13 +1397,13 @@ dl_bool test_point3_sub_scalar() {
 
   point3_sub_scalar(&point, d, &point);
 
-  return check(approximately_equal(a - d, point.x, M_EPSILON),
+  return dl_check(approximately_equal(a - d, point.x, M_EPSILON),
     "Expected x to be %f, was %f", a - d, point.x) &&
-    check(approximately_equal(b - d, point.y, M_EPSILON),
+    dl_check(approximately_equal(b - d, point.y, M_EPSILON),
       "Expected y to be %f, was %f", b - d, point.y) &&
-    check(approximately_equal(c - d, point.z, M_EPSILON),
+    dl_check(approximately_equal(c - d, point.z, M_EPSILON),
       "Expected z to be %f, was %f", c - d, point.z) &&
-    check(point.w == 1.0, "Expected w to be 1.0");
+    dl_check(point.w == 1.0, "Expected w to be 1.0");
 }
 
 dl_bool test_point3_rotate() {
@@ -1417,7 +1417,7 @@ dl_bool test_point3_rotate() {
   point = point3_one;
   point3_rotate(&point, &vec3_up, 0.0, &out);
 
-  if (!check(point3_approximately_equal(&point3_one, &out, M_EPSILON),
+  if (!dl_check(point3_approximately_equal(&point3_one, &out, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, point3_one.x, point3_one.y, point3_one.z))
     return false;
 
@@ -1425,7 +1425,7 @@ dl_bool test_point3_rotate() {
   point = point3_one;
   point3_rotate(&point, &vec3_zero, 0.0, &out);
 
-  if (!check(point3_approximately_equal(&point3_one, &out, M_EPSILON),
+  if (!dl_check(point3_approximately_equal(&point3_one, &out, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, point3_one.x, point3_one.y, point3_one.z))
     return false;
 
@@ -1447,7 +1447,7 @@ dl_bool test_point3_rotate() {
 
   point3_rotate(&point, &vec3_right, angle, &out);
 
-  if (!check(point3_approximately_equal(&expected_x, &out, M_EPSILON),
+  if (!dl_check(point3_approximately_equal(&expected_x, &out, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, expected_x.x, expected_x.y, expected_x.z))
     return false;
 
@@ -1456,7 +1456,7 @@ dl_bool test_point3_rotate() {
 
   point3_rotate(&point, &vec3_up, angle, &out);
 
-  if (!check(point3_approximately_equal(&expected_y, &out, M_EPSILON),
+  if (!dl_check(point3_approximately_equal(&expected_y, &out, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, expected_y.x, expected_y.y, expected_y.z))
     return false;
   
@@ -1465,7 +1465,7 @@ dl_bool test_point3_rotate() {
 
   point3_rotate(&point, &vec3_forward, angle, &out);
 
-  if (!check(point3_approximately_equal(&expected_z, &out, M_EPSILON),
+  if (!dl_check(point3_approximately_equal(&expected_z, &out, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, expected_z.x, expected_z.y, expected_z.z))
     return false;
 
@@ -1486,13 +1486,13 @@ dl_bool test_point3_negate() {
 
   point3_negate(&point, &point);
 
-  return check(approximately_equal(-a, point.x, M_EPSILON),
+  return dl_check(approximately_equal(-a, point.x, M_EPSILON),
     "Expected x to be %f, was %f", -a, point.x) &&
-    check(approximately_equal(-b, point.y, M_EPSILON),
+    dl_check(approximately_equal(-b, point.y, M_EPSILON),
       "Expected y to be %f, was %f", -b, point.y) &&
-    check(approximately_equal(-c, point.z, M_EPSILON),
+    dl_check(approximately_equal(-c, point.z, M_EPSILON),
       "Expected z to be %f, was %f", -c, point.z) &&
-    check(point.w == 1.0, "Expected w to be 1.0");
+    dl_check(point.w == 1.0, "Expected w to be 1.0");
 }
 
 dl_bool test_point3_approximately_equal() {
@@ -1508,42 +1508,42 @@ dl_bool test_point3_approximately_equal() {
   init_point3(&point_a, a, b, c);
   init_point3(&point_b, a, b, c);
 
-  if (!check(point3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(point3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected points to be equal"))
     return false;
 
   init_point3(&point_b, -a, b, c);
-  if (!check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected points to be unequal"))
     return false;
 
   init_point3(&point_b, -a, -b, c);
-  if (!check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected points to be unequal"))
     return false;
 
   init_point3(&point_b, -a, b, -c);
-  if (!check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected points to be unequal"))
     return false;
 
   init_point3(&point_b, -a, -b, -c);
-  if (!check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected points to be unequal"))
     return false;
 
   init_point3(&point_b, a + M_EPSILON * 2, b, c);
-  if (!check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected points to be unequal"))
     return false;
 
   init_point3(&point_b, a, b + M_EPSILON * 2, c);
-  if (!check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected points to be unequal"))
     return false;
 
   init_point3(&point_b, a, b, c + M_EPSILON * 2);
-  if (!check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!point3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected points to be unequal"))
     return false;
 
@@ -1564,13 +1564,13 @@ dl_bool test_init_vec3() {
 
   init_vec3(&vec, a, b, c);
 
-  return check(approximately_equal(vec.x, a, M_EPSILON),
+  return dl_check(approximately_equal(vec.x, a, M_EPSILON),
     "Expected x to be %f, was %f", a, vec.x) &&
-    check(approximately_equal(vec.y, b, M_EPSILON),
+    dl_check(approximately_equal(vec.y, b, M_EPSILON),
       "Expected y to be %f, was %f", b, vec.y) &&
-    check(approximately_equal(vec.z, c, M_EPSILON),
+    dl_check(approximately_equal(vec.z, c, M_EPSILON),
       "Expected z to be %f, was %f", c, vec.z) &&
-    check(vec.w == 0.0, "Expected w to be 0.0");
+    dl_check(vec.w == 0.0, "Expected w to be 0.0");
 }
 
 dl_bool test_vec3_add() {
@@ -1591,13 +1591,13 @@ dl_bool test_vec3_add() {
 
   vec3_add(&vec_a, &vec_b, &vec_b);
 
-  return check(approximately_equal(a + d, vec_b.x, M_EPSILON),
+  return dl_check(approximately_equal(a + d, vec_b.x, M_EPSILON),
     "Expected x to be %f, was %f", a + d, vec_b.x) &&
-    check(approximately_equal(b + e, vec_b.y, M_EPSILON),
+    dl_check(approximately_equal(b + e, vec_b.y, M_EPSILON),
       "Expected y to be %f, was %f", b + e, vec_b.y) &&
-    check(approximately_equal(c + f, vec_b.z, M_EPSILON),
+    dl_check(approximately_equal(c + f, vec_b.z, M_EPSILON),
       "Expected z to be %f, was %f", c + f, vec_b.z) &&
-    check(vec_b.w == 0.0, "Expected w to be 0.0");
+    dl_check(vec_b.w == 0.0, "Expected w to be 0.0");
 }
 
 dl_bool test_vec3_sub() {
@@ -1618,13 +1618,13 @@ dl_bool test_vec3_sub() {
 
   vec3_sub(&vec_a, &vec_b, &vec_b);
 
-  return check(approximately_equal(a - d, vec_b.x, M_EPSILON),
+  return dl_check(approximately_equal(a - d, vec_b.x, M_EPSILON),
     "Expected x to be %f, was %f", a - d, vec_b.x) &&
-    check(approximately_equal(b - e, vec_b.y, M_EPSILON),
+    dl_check(approximately_equal(b - e, vec_b.y, M_EPSILON),
       "Expected y to be %f, was %f", b - e, vec_b.y) &&
-    check(approximately_equal(c - f, vec_b.z, M_EPSILON),
+    dl_check(approximately_equal(c - f, vec_b.z, M_EPSILON),
       "Expected z to be %f, was %f", c - f, vec_b.z) &&
-    check(vec_b.w == 0.0, "Expected w to be 0.0");
+    dl_check(vec_b.w == 0.0, "Expected w to be 0.0");
 }
 
 dl_bool test_vec3_cross() {
@@ -1649,13 +1649,13 @@ dl_bool test_vec3_cross() {
   cross_y = c * d - a * f;
   cross_z = a * e - b * d;
 
-  return check(approximately_equal(cross_x, vec_b.x, M_EPSILON),
+  return dl_check(approximately_equal(cross_x, vec_b.x, M_EPSILON),
     "Expected x to be %f, was %f", cross_x, vec_b.x) &&
-    check(approximately_equal(cross_y, vec_b.y, M_EPSILON),
+    dl_check(approximately_equal(cross_y, vec_b.y, M_EPSILON),
       "Expected y to be %f, was %f", cross_y, vec_b.y) &&
-    check(approximately_equal(cross_z, vec_b.z, M_EPSILON),
+    dl_check(approximately_equal(cross_z, vec_b.z, M_EPSILON),
       "Expected z to be %f, was %f", cross_z, vec_b.z) &&
-    check(vec_b.w == 0.0, "Expected w to be 0.0");
+    dl_check(vec_b.w == 0.0, "Expected w to be 0.0");
 }
 
 dl_bool test_vec3_dot() {
@@ -1677,7 +1677,7 @@ dl_bool test_vec3_dot() {
   dot = vec3_dot(&vec_a, &vec_b);
   expected = a * d + b * e + c * f;
 
-  return check(approximately_equal(dot, expected, M_EPSILON),
+  return dl_check(approximately_equal(dot, expected, M_EPSILON),
     "Expected dot product to be %f, was %f", dot, expected);
 }
 
@@ -1696,13 +1696,13 @@ dl_bool test_vec3_mul_scalar() {
 
   vec3_mul_scalar(&vec, d, &vec);
 
-  return check(approximately_equal(a * d, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(a * d, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a * d, vec.x) &&
-    check(approximately_equal(b * d, vec.y, M_EPSILON),
+    dl_check(approximately_equal(b * d, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", b * d, vec.y) &&
-    check(approximately_equal(c * d, vec.z, M_EPSILON),
+    dl_check(approximately_equal(c * d, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", c * d, vec.z) &&
-    check(vec.w == 0.0, "Expected w to be 0.0");
+    dl_check(vec.w == 0.0, "Expected w to be 0.0");
 }
 
 dl_bool test_vec3_div_scalar() {
@@ -1720,13 +1720,13 @@ dl_bool test_vec3_div_scalar() {
 
   vec3_div_scalar(&vec, d, &vec);
 
-  return check(approximately_equal(a / d, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(a / d, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a / d, vec.x) &&
-    check(approximately_equal(b / d, vec.y, M_EPSILON),
+    dl_check(approximately_equal(b / d, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", b / d, vec.y) &&
-    check(approximately_equal(c / d, vec.z, M_EPSILON),
+    dl_check(approximately_equal(c / d, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", c / d, vec.z) &&
-    check(vec.w == 0.0, "Expected w to be 0.0");
+    dl_check(vec.w == 0.0, "Expected w to be 0.0");
 }
 
 dl_bool test_vec3_add_scalar() {
@@ -1744,13 +1744,13 @@ dl_bool test_vec3_add_scalar() {
 
   vec3_add_scalar(&vec, d, &vec);
 
-  return check(approximately_equal(a + d, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(a + d, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a + d, vec.x) &&
-    check(approximately_equal(b + d, vec.y, M_EPSILON),
+    dl_check(approximately_equal(b + d, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", b + d, vec.y) &&
-    check(approximately_equal(c + d, vec.z, M_EPSILON),
+    dl_check(approximately_equal(c + d, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", c + d, vec.z) &&
-    check(vec.w == 0.0, "Expected w to be 0.0, was %f", vec.w);
+    dl_check(vec.w == 0.0, "Expected w to be 0.0, was %f", vec.w);
 }
 
 dl_bool test_vec3_sub_scalar() {
@@ -1768,13 +1768,13 @@ dl_bool test_vec3_sub_scalar() {
 
   vec3_sub_scalar(&vec, d, &vec);
 
-  return check(approximately_equal(a - d, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(a - d, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a - d, vec.x) &&
-    check(approximately_equal(b - d, vec.y, M_EPSILON),
+    dl_check(approximately_equal(b - d, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", b - d, vec.y) &&
-    check(approximately_equal(c - d, vec.z, M_EPSILON),
+    dl_check(approximately_equal(c - d, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", c - d, vec.z) &&
-    check(vec.w == 0.0, "Expected w to be 0.0, was %f", vec.w);
+    dl_check(vec.w == 0.0, "Expected w to be 0.0, was %f", vec.w);
 }
 
 dl_bool test_vec3_rotate() {
@@ -1785,7 +1785,7 @@ dl_bool test_vec3_rotate() {
   vec = vec3_one;
   vec3_rotate(&vec, &vec3_up, 0.0, &out);
 
-  if (!check(vec3_approximately_equal(&vec3_one, &out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec3_one, &out, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, vec3_one.x, vec3_one.y, vec3_one.z))
     return false;
 
@@ -1793,7 +1793,7 @@ dl_bool test_vec3_rotate() {
   vec = vec3_one;
   vec3_rotate(&vec, &vec3_zero, 0.0, &out);
 
-  if (!check(vec3_approximately_equal(&vec3_one, &out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec3_one, &out, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, vec3_one.x, vec3_one.y, vec3_one.z))
     return false;
 
@@ -1814,7 +1814,7 @@ dl_bool test_vec3_rotate() {
 
   vec3_rotate(&vec, &vec3_right, angle, &out);
 
-  if (!check(vec3_approximately_equal(&expected_x, &out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&expected_x, &out, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, expected_x.x, expected_x.y, expected_x.z))
     return false;
 
@@ -1823,7 +1823,7 @@ dl_bool test_vec3_rotate() {
 
   vec3_rotate(&vec, &vec3_up, angle, &out);
 
-  if (!check(vec3_approximately_equal(&expected_y, &out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&expected_y, &out, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, expected_y.x, expected_y.y, expected_y.z))
     return false;
 
@@ -1832,7 +1832,7 @@ dl_bool test_vec3_rotate() {
 
   vec3_rotate(&vec, &vec3_forward, angle, &out);
 
-  if (!check(vec3_approximately_equal(&expected_z, &out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&expected_z, &out, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)", out.x, out.y, out.z, expected_z.x, expected_z.y, expected_z.z))
     return false;
 
@@ -1859,14 +1859,14 @@ dl_bool test_vec3_normalize() {
   m = sqrtf(a * a + b * b + c * c);
 #endif
 
-  return check(approximately_equal(a / m, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(a / m, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", a / m, vec.x) &&
-    check(approximately_equal(b / m, vec.y, M_EPSILON),
+    dl_check(approximately_equal(b / m, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", b / m, vec.y) &&
-    check(approximately_equal(c / m, vec.z, M_EPSILON),
+    dl_check(approximately_equal(c / m, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", c / m, vec.z) &&
-    check(vec.w == 0.0, "Expected w to be 0.0, was %f", vec.w) &&
-    check(approximately_equal(vec3_magnitude(&vec), 1.0, M_EPSILON),
+    dl_check(vec.w == 0.0, "Expected w to be 0.0, was %f", vec.w) &&
+    dl_check(approximately_equal(vec3_magnitude(&vec), 1.0, M_EPSILON),
       "Expected magnitude to be 1");
 }
 
@@ -1884,13 +1884,13 @@ dl_bool test_vec3_negate() {
 
   vec3_negate(&vec, &vec);
 
-  return check(approximately_equal(-a, vec.x, M_EPSILON),
+  return dl_check(approximately_equal(-a, vec.x, M_EPSILON),
     "Expected x to be %f, was %f", -a, vec.x) &&
-    check(approximately_equal(-b, vec.y, M_EPSILON),
+    dl_check(approximately_equal(-b, vec.y, M_EPSILON),
       "Expected y to be %f, was %f", -b, vec.y) &&
-    check(approximately_equal(-c, vec.z, M_EPSILON),
+    dl_check(approximately_equal(-c, vec.z, M_EPSILON),
       "Expected z to be %f, was %f", -c, vec.z) &&
-    check(vec.w == 0.0, "Expected w to be 0.0");
+    dl_check(vec.w == 0.0, "Expected w to be 0.0");
 }
 
 dl_bool test_vec3_approximately_equal() {
@@ -1906,42 +1906,42 @@ dl_bool test_vec3_approximately_equal() {
   init_vec3(&point_a, a, b, c);
   init_vec3(&point_b, a, b, c);
 
-  if (!check(vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected vectors to be equal"))
     return false;
 
   init_vec3(&point_b, -a, b, c);
-  if (!check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected vectors to be unequal"))
     return false;
 
   init_vec3(&point_b, -a, -b, c);
-  if (!check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected vectors to be unequal"))
     return false;
 
   init_vec3(&point_b, -a, b, -c);
-  if (!check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected vectors to be unequal"))
     return false;
 
   init_vec3(&point_b, -a, -b, -c);
-  if (!check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected vectors to be unequal"))
     return false;
 
   init_vec3(&point_b, a + M_EPSILON * 2, b, c);
-  if (!check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected vectors to be unequal"))
     return false;
 
   init_vec3(&point_b, a, b + M_EPSILON * 2, c);
-  if (!check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected vectors to be unequal"))
     return false;
 
   init_vec3(&point_b, a, b, c + M_EPSILON * 2);
-  if (!check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
+  if (!dl_check(!vec3_approximately_equal(&point_a, &point_b, M_EPSILON),
 	     "Expected vectors to be unequal"))
     return false;
 
@@ -1963,7 +1963,7 @@ dl_bool test_vec3_square_magnitude() {
   square_m = vec3_square_magnitude(&vec);
   expected = a * a + b * b + c * c;
 
-  return check(approximately_equal(square_m, expected, M_EPSILON),
+  return dl_check(approximately_equal(square_m, expected, M_EPSILON),
     "Expected square magnitude to be %f, was %f", expected, square_m);
 }
 
@@ -1987,7 +1987,7 @@ dl_bool test_vec3_magnitude() {
   expected = sqrtf(a * a + b * b + c * c);
 #endif
 
-  return check(approximately_equal(m, expected, M_EPSILON),
+  return dl_check(approximately_equal(m, expected, M_EPSILON),
     "Expected square magnitude to be %f, was %f", expected, m);
 }
 
@@ -2003,7 +2003,7 @@ dl_bool test_vec3_reflect() {
   
   vec3_reflect(&in, &vec3_up, &result);
 
-  if (!check(vec3_approximately_equal(&result, &out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&result, &out, M_EPSILON),
     "Expected {%f, %f, %f} to be {%f, %f, %f}",
     result.x, result.y, result.z,
     out.x, out.y, out.z))
@@ -2012,7 +2012,7 @@ dl_bool test_vec3_reflect() {
   init_vec3(&out, -0.5, 0.5, 0.5);
   vec3_reflect(&in, &vec3_left, &result);
 
-  if (!check(vec3_approximately_equal(&result, &out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&result, &out, M_EPSILON),
     "Expected {%f, %f, %f} to be {%f, %f, %f}",
     result.x, result.y, result.z,
     out.x, out.y, out.z))
@@ -2021,7 +2021,7 @@ dl_bool test_vec3_reflect() {
   init_vec3(&out, 0.5, 0.5, -0.5);
   vec3_reflect(&in, &vec3_forward, &result);
 
-  if (!check(vec3_approximately_equal(&result, &out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&result, &out, M_EPSILON),
     "Expected {%f, %f, %f} to be {%f, %f, %f}",
     result.x, result.y, result.z,
     out.x, out.y, out.z))
@@ -2042,7 +2042,7 @@ dl_bool test_vec3_refract() {
 
   vec3_refract(&in, &vec3_up, 0.3, &result);
 
-  if (!check(vec3_approximately_equal(&result, &out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&result, &out, M_EPSILON),
     "Expected {%f, %f, %f} to be {%f, %f, %f}",
     result.x, result.y, result.z,
     out.x, out.y, out.z))
@@ -2051,7 +2051,7 @@ dl_bool test_vec3_refract() {
   init_vec3(&out, 0.0, 0.3, 0.3);
   vec3_refract(&in, &vec3_left, 0.3, &result);
 
-  if (!check(vec3_approximately_equal(&result, &out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&result, &out, M_EPSILON),
     "Expected {%f, %f, %f} to be {%f, %f, %f}",
     result.x, result.y, result.z,
     out.x, out.y, out.z))
@@ -2060,7 +2060,7 @@ dl_bool test_vec3_refract() {
   init_vec3(&out, 0.3, 0.3, 0.0);
   vec3_refract(&in, &vec3_forward, 0.3, &result);
 
-  if (!check(vec3_approximately_equal(&result, &out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&result, &out, M_EPSILON),
     "Expected {%f, %f, %f} to be {%f, %f, %f}",
     result.x, result.y, result.z,
     out.x, out.y, out.z))
@@ -2094,7 +2094,7 @@ dl_bool test_init_mat4() {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
       mat_val = mat.ary[col_idx][row_idx];
       col_val = ((dl_real *)&col[col_idx])[row_idx];
-      if (!check(approximately_equal(mat_val, col_val, M_EPSILON),
+      if (!dl_check(approximately_equal(mat_val, col_val, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
         col_idx, row_idx, col_val, mat_val))
         return false;
@@ -2130,7 +2130,7 @@ dl_bool test_mat4_add() {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
       v = ((dl_real *)&col[col_idx])[row_idx] + ((dl_real *)&col[3 - col_idx])[row_idx];
       f = mat[b].ary[col_idx][row_idx];
-      if (!check(approximately_equal(v, f, M_EPSILON),
+      if (!dl_check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
         col_idx, row_idx, v, f))
         return false;
@@ -2166,7 +2166,7 @@ dl_bool test_mat4_sub() {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
       v = ((dl_real *)&col[col_idx])[row_idx] - ((dl_real *)&col[3 - col_idx])[row_idx];
       f = mat[b].ary[col_idx][row_idx];
-      if (!check(approximately_equal(v, f, M_EPSILON),
+      if (!dl_check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
         col_idx, row_idx, v, f))
         return false;
@@ -2201,118 +2201,118 @@ dl_bool test_mat4_mul() {
   expected = col[a].x * col[d].x + col[b].x * col[d].y + col[c].x * col[d].z + col[d].x * col[d].w;
   found = mat[b].ary[0][0];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].y * col[d].x + col[b].y * col[d].y + col[c].y * col[d].z + col[d].y * col[d].w;
   found = mat[b].ary[0][1];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].z * col[d].x + col[b].z * col[d].y + col[c].z * col[d].z + col[d].z * col[d].w;
   found = mat[b].ary[0][2];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].w * col[d].x + col[b].w * col[d].y + col[c].w * col[d].z + col[d].w * col[d].w;
   found = mat[b].ary[0][3];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].x * col[c].x + col[b].x * col[c].y + col[c].x * col[c].z + col[d].x * col[c].w;
   found = mat[b].ary[1][0];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].y * col[c].x + col[b].y * col[c].y + col[c].y * col[c].z + col[d].y * col[c].w;
   found = mat[b].ary[1][1];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].z * col[c].x + col[b].z * col[c].y + col[c].z * col[c].z + col[d].z * col[c].w;
   found = mat[b].ary[1][2];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].w * col[c].x + col[b].w * col[c].y + col[c].w * col[c].z + col[d].w * col[c].w;
   found = mat[b].ary[1][3];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].x * col[b].x + col[b].x * col[b].y + col[c].x * col[b].z + col[d].x * col[b].w;
   found = mat[b].ary[2][0];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].y * col[b].x + col[b].y * col[b].y + col[c].y * col[b].z + col[d].y * col[b].w;
   found = mat[b].ary[2][1];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].z * col[b].x + col[b].z * col[b].y + col[c].z * col[b].z + col[d].z * col[b].w;
   found = mat[b].ary[2][2];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].w * col[b].x + col[b].w * col[b].y + col[c].w * col[b].z + col[d].w * col[b].w;
   found = mat[b].ary[2][3];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].x * col[a].x + col[b].x * col[a].y + col[c].x * col[a].z + col[d].x * col[a].w;
   found = mat[b].ary[3][0];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].y * col[a].x + col[b].y * col[a].y + col[c].y * col[a].z + col[d].y * col[a].w;
   found = mat[b].ary[3][1];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].z * col[a].x + col[b].z * col[a].y + col[c].z * col[a].z + col[d].z * col[a].w;
   found = mat[b].ary[3][2];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   expected = col[a].w * col[a].x + col[b].w * col[a].y + col[c].w * col[a].z + col[d].w * col[a].w;
   found = mat[b].ary[3][3];
 
-  if (!check(approximately_equal(expected, found, M_EPSILON),
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON),
     "Expected %f to be %f", expected, found))
     return false;
 
   mat4_mul(&mat[a], &mat4_identity, &mat[b]);
 
-  if (!check(mat4_approximately_equal(&mat[a], &mat[b], M_EPSILON),
+  if (!dl_check(mat4_approximately_equal(&mat[a], &mat[b], M_EPSILON),
     "Expected identity to change nothing"))
     return false;
 
@@ -2337,7 +2337,7 @@ dl_bool test_mat4_mul_vec4() {
 
   mat4_mul_vec4(&mat4_identity, &vec[0], &vec[1]);
 
-  if (!check(vec4_approximately_equal(&vec[0], &vec[1], M_EPSILON),
+  if (!dl_check(vec4_approximately_equal(&vec[0], &vec[1], M_EPSILON),
     "Expected vector/identity multiplication to work"))
     return false;
 
@@ -2347,25 +2347,25 @@ dl_bool test_mat4_mul_vec4() {
   expected = vec[a].x * vec[0].x + vec[b].x * vec[0].y + vec[c].x * vec[0].z + vec[d].x * vec[0].w;
   found = vec[1].x;
 
-  if (!check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
     return false;
 
   expected = vec[a].y * vec[0].x + vec[b].y * vec[0].y + vec[c].y * vec[0].z + vec[d].y * vec[0].w;
   found = vec[1].y;
 
-  if (!check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
     return false;
 
   expected = vec[a].z * vec[0].x + vec[b].z * vec[0].y + vec[c].z * vec[0].z + vec[d].z * vec[0].w;
   found = vec[1].z;
 
-  if (!check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
     return false;
 
   expected = vec[a].w * vec[0].x + vec[b].w * vec[0].y + vec[c].w * vec[0].z + vec[d].w * vec[0].w;
   found = vec[1].w;
 
-  if (!check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
     return false;
 
   return true;
@@ -2395,7 +2395,7 @@ dl_bool test_mat4_mul_vec3() {
 
   mat4_mul_vec3(&mat4_identity, &vec, &vec_out);
 
-  if (!check(vec3_approximately_equal(&vec, &vec_out, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &vec_out, M_EPSILON),
     "Expected vector/identity multiplication to work"))
     return false;
 
@@ -2405,22 +2405,22 @@ dl_bool test_mat4_mul_vec3() {
   expected = mat.ary[0][0] * vec.x + mat.ary[1][0] * vec.y + mat.ary[2][0] * vec.z + mat.ary[3][0] * vec.w;
   found = vec_out.x;
 
-  if (!check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
     return false;
 
   expected = mat.ary[0][1] * vec.x + mat.ary[1][1] * vec.y + mat.ary[2][1] * vec.z + mat.ary[3][1] * vec.w;
   found = vec_out.y;
 
-  if (!check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
     return false;
 
   expected = mat.ary[0][2] * vec.x + mat.ary[1][2] * vec.y + mat.ary[2][2] * vec.z + mat.ary[3][2] * vec.w;
   found = vec_out.z;
 
-  if (!check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
     return false;
 
-  if (!check(vec_out.w == 0, "Expected %f to be %f", vec_out.w, 0.0))
+  if (!dl_check(vec_out.w == 0, "Expected %f to be %f", vec_out.w, 0.0))
     return false;
 
   return true;
@@ -2450,7 +2450,7 @@ dl_bool test_mat4_mul_point3() {
 
   mat4_mul_point3(&mat4_identity, &point, &point_out);
 
-  if (!check(point3_approximately_equal(&point, &point_out, M_EPSILON),
+  if (!dl_check(point3_approximately_equal(&point, &point_out, M_EPSILON),
     "Expected point/identity multiplication to work"))
     return false;
 
@@ -2460,22 +2460,22 @@ dl_bool test_mat4_mul_point3() {
   expected = mat.ary[0][0] * point.x + mat.ary[1][0] * point.y + mat.ary[2][0] * point.z + mat.ary[3][0] * point.w;
   found = point_out.x;
 
-  if (!check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
     return false;
 
   expected = mat.ary[0][1] * point.x + mat.ary[1][1] * point.y + mat.ary[2][1] * point.z + mat.ary[3][1] * point.w;
   found = point_out.y;
 
-  if (!check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
     return false;
 
   expected = mat.ary[0][2] * point.x + mat.ary[1][2] * point.y + mat.ary[2][2] * point.z + mat.ary[3][2] * point.w;
   found = point_out.z;
 
-  if (!check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
+  if (!dl_check(approximately_equal(expected, found, M_EPSILON), "Expected %f to be %f", expected, found))
     return false;
 
-  if (!check(point_out.w == 1, "Expected %f to be %f", point_out.w, 1.0))
+  if (!dl_check(point_out.w == 1, "Expected %f to be %f", point_out.w, 1.0))
     return false;
 
   return true;
@@ -2505,7 +2505,7 @@ dl_bool test_mat4_transpose() {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
       v = ((dl_real *)&col[row_idx])[col_idx];
       f = mat.ary[col_idx][row_idx];
-      if (!check(approximately_equal(v, f, M_EPSILON),
+      if (!dl_check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
         col_idx, row_idx, v, f))
         return false;
@@ -2541,7 +2541,7 @@ dl_bool test_mat4_mul_scalar() {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
       v = ((dl_real *)&col[col_idx])[row_idx] * scalar;
       f = mat.ary[col_idx][row_idx];
-      if (!check(approximately_equal(v, f, M_EPSILON),
+      if (!dl_check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
         col_idx, row_idx, v, f))
         return false;
@@ -2577,7 +2577,7 @@ dl_bool test_mat4_div_scalar() {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
       v = ((dl_real *)&col[col_idx])[row_idx] / scalar;
       f = mat.ary[col_idx][row_idx];
-      if (!check(approximately_equal(v, f, M_EPSILON),
+      if (!dl_check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
         col_idx, row_idx, v, f))
         return false;
@@ -2613,7 +2613,7 @@ dl_bool test_mat4_add_scalar() {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
       v = ((dl_real *)&col[col_idx])[row_idx] + scalar;
       f = mat.ary[col_idx][row_idx];
-      if (!check(approximately_equal(v, f, M_EPSILON),
+      if (!dl_check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
         col_idx, row_idx, v, f))
         return false;
@@ -2649,7 +2649,7 @@ dl_bool test_mat4_sub_scalar() {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
       v = ((dl_real *)&col[col_idx])[row_idx] - scalar;
       f = mat.ary[col_idx][row_idx];
-      if (!check(approximately_equal(v, f, M_EPSILON),
+      if (!dl_check(approximately_equal(v, f, M_EPSILON),
         "Expected (%lu, %lu) to be %f, was %f",
         col_idx, row_idx, v, f))
         return false;
@@ -2677,7 +2677,7 @@ dl_bool test_mat4_translate() {
   init_mat4_translate(&mat, a, b, c);
   mat4_mul_point3(&mat, &point[0], &point[1]);
 
-  if (!check(approximately_equal(point[1].x, a + a, M_EPSILON) &&
+  if (!dl_check(approximately_equal(point[1].x, a + a, M_EPSILON) &&
     approximately_equal(point[1].y, b + b, M_EPSILON) &&
     approximately_equal(point[1].z, c + c, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2686,7 +2686,7 @@ dl_bool test_mat4_translate() {
 
   mat4_mul_vec3(&mat, &vec[0], &vec[1]);
 
-  if (!check(vec3_approximately_equal(&vec[0], &vec[1], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec[0], &vec[1], M_EPSILON),
     "Expected no change to vector"))
     return false;
 
@@ -2714,7 +2714,7 @@ dl_bool test_mat4_rotate() {
   mat4_mul_vec3(&mat[0], &vec[0], &vec[1]);
   mat4_mul_vec3(&mat[1], &vec[0], &vec[2]);
 
-  if (!check(vec3_approximately_equal(&vec[1], &vec[2], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec[1], &vec[2], M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec[1].x, vec[1].y, vec[1].z, vec[2].x, vec[2].y, vec[2].z))
     return false;
@@ -2725,7 +2725,7 @@ dl_bool test_mat4_rotate() {
   mat4_mul_vec3(&mat[0], &vec[0], &vec[1]);
   mat4_mul_vec3(&mat[1], &vec[0], &vec[2]);
 
-  if (!check(vec3_approximately_equal(&vec[1], &vec[2], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec[1], &vec[2], M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec[1].x, vec[1].y, vec[1].z, vec[2].x, vec[2].y, vec[2].z))
     return false;
@@ -2736,7 +2736,7 @@ dl_bool test_mat4_rotate() {
   mat4_mul_vec3(&mat[0], &vec[0], &vec[1]);
   mat4_mul_vec3(&mat[1], &vec[0], &vec[2]);
 
-  if (!check(vec3_approximately_equal(&vec[1], &vec[2], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec[1], &vec[2], M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec[1].x, vec[1].y, vec[1].z, vec[2].x, vec[2].y, vec[2].z))
     return false;
@@ -2769,7 +2769,7 @@ dl_bool test_mat4_rotate_x() {
   init_mat4_rotate_x(&mat, angle);
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected[0], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected[0], M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected[0].x, expected[0].y, expected[0].z))
     return false;
@@ -2777,7 +2777,7 @@ dl_bool test_mat4_rotate_x() {
   vec = expected[0];
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected[1], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected[1], M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected[1].x, expected[1].y, expected[1].z))
     return false;
@@ -2785,7 +2785,7 @@ dl_bool test_mat4_rotate_x() {
   vec = expected[1];
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected[2], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected[2], M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected[2].x, expected[2].y, expected[2].z))
     return false;
@@ -2793,7 +2793,7 @@ dl_bool test_mat4_rotate_x() {
   vec = expected[2];
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected[3], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected[3], M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected[3].x, expected[3].y, expected[3].z))
     return false;
@@ -2826,7 +2826,7 @@ dl_bool test_mat4_rotate_y() {
   init_mat4_rotate_y(&mat, angle);
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected[0], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected[0], M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected[0].x, expected[0].y, expected[0].z))
     return false;
@@ -2834,7 +2834,7 @@ dl_bool test_mat4_rotate_y() {
   vec = expected[0];
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected[1], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected[1], M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected[1].x, expected[1].y, expected[1].z))
     return false;
@@ -2842,7 +2842,7 @@ dl_bool test_mat4_rotate_y() {
   vec = expected[1];
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected[2], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected[2], M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected[2].x, expected[2].y, expected[2].z))
     return false;
@@ -2850,7 +2850,7 @@ dl_bool test_mat4_rotate_y() {
   vec = expected[2];
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected[3], M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected[3], M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected[3].x, expected[3].y, expected[3].z))
     return false;
@@ -2868,7 +2868,7 @@ dl_bool test_mat4_rotate_z() {
   init_mat4_rotate_z(&mat, angle);
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected.x, expected.y, expected.z))
     return false;
@@ -2877,7 +2877,7 @@ dl_bool test_mat4_rotate_z() {
   expected = vec3_down;
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected.x, expected.y, expected.z))
     return false;
@@ -2886,7 +2886,7 @@ dl_bool test_mat4_rotate_z() {
   expected = vec3_right;
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected.x, expected.y, expected.z))
     return false;
@@ -2895,7 +2895,7 @@ dl_bool test_mat4_rotate_z() {
   expected = vec3_up;
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(vec3_approximately_equal(&vec, &expected, M_EPSILON),
+  if (!dl_check(vec3_approximately_equal(&vec, &expected, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected.x, expected.y, expected.z))
     return false;
@@ -2916,7 +2916,7 @@ dl_bool test_mat4_scale() {
 
   mat4_mul_point3(&mat, &point, &point);
 
-  if (!check(point3_approximately_equal(&point, &expected_point, M_EPSILON),
+  if (!dl_check(point3_approximately_equal(&point, &expected_point, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     point.x, point.y, point.z, expected_point.x, expected_point.y, expected_point.z))
     return false;
@@ -2925,7 +2925,7 @@ dl_bool test_mat4_scale() {
 
   mat4_mul_vec3(&mat, &vec, &vec);
 
-  if (!check(point3_approximately_equal(&vec, &expected_vec, M_EPSILON),
+  if (!dl_check(point3_approximately_equal(&vec, &expected_vec, M_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec.x, vec.y, vec.z, expected_vec.x, expected_vec.y, expected_vec.z))
     return false;
@@ -2951,7 +2951,7 @@ dl_bool test_mat4_approximately_equal() {
   init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
   init_mat4_cols(&mat[b], &col[a], &col[b], &col[c], &col[d]);
 
-  return check(mat4_approximately_equal(&mat[a], &mat[b], M_EPSILON),
+  return dl_check(mat4_approximately_equal(&mat[a], &mat[b], M_EPSILON),
     "Expected matrices to be equal");
 }
 

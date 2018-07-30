@@ -16,7 +16,7 @@ dl_bool test_test_count_tests() {
   predicates[0] = &my_passing_test_function;
   predicates[1] = &my_passing_test_function;
 
-  return check(test_count(predicates, 3) == 2, "Expected the number of tests to be 2");
+  return dl_check(dl_test_count(predicates, 3) == 2, "Expected the number of tests to be 2");
 }
 
 dl_bool test_test_run_tests() {
@@ -33,8 +33,8 @@ dl_bool test_test_run_tests() {
   failing_predicates[0] = my_failing_test_function;
   failing_predicates[1] = my_passing_test_function;
 
-  return check(test_run(passing_predicates, passing_names, 2) == 2, "Expected the number of passing tests to be 2")
-    && check(test_run(failing_predicates, failing_names, 2) == 1, "Expected the number of passing tests to be 1");
+  return dl_check(dl_test_run(passing_predicates, passing_names, 2) == 2, "Expected the number of passing tests to be 2")
+    && dl_check(dl_test_run(failing_predicates, failing_names, 2) == 1, "Expected the number of passing tests to be 1");
 }
 
 #endif
