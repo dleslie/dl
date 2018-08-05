@@ -481,57 +481,57 @@ extern "C" {
   
   typedef struct {
     dl_real x, y;
-  } vec2;
+  } dl_vec2;
 
-  extern const vec2 vec2_up;
-  extern const vec2 vec2_right;
-  extern const vec2 vec2_down;
-  extern const vec2 vec2_left;
-  extern const vec2 vec2_zero;
-  extern const vec2 vec2_one;
+  extern const dl_vec2 dl_vec2_up;
+  extern const dl_vec2 dl_vec2_right;
+  extern const dl_vec2 dl_vec2_down;
+  extern const dl_vec2 dl_vec2_left;
+  extern const dl_vec2 dl_vec2_zero;
+  extern const dl_vec2 dl_vec2_one;
 
-  dl_api vec2 *init_vec2(vec2 * dl_restrict v, dl_real x, dl_real y);
+  dl_api dl_vec2 *dl_init_vec2(dl_vec2 * dl_restrict v, dl_real x, dl_real y);
 
-  dl_api vec2 *vec2_add(const vec2 *dl_restrict left, const vec2 *dl_restrict right, vec2 *dl_restrict out);
-  dl_api vec2 *vec2_sub(const vec2 *dl_restrict left, const vec2 *dl_restrict right, vec2 *dl_restrict out);
+  dl_api dl_vec2 *dl_vec2_add(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_vec2 *dl_restrict out);
+  dl_api dl_vec2 *dl_vec2_sub(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_vec2 *dl_restrict out);
 
-  dl_api vec2 *vec2_mul_scalar(const vec2 *dl_restrict left, dl_real scalar, vec2 *dl_restrict out);
-  dl_api vec2 *vec2_div_scalar(const vec2 *dl_restrict left, dl_real scalar, vec2 *dl_restrict out);
-  dl_api vec2 *vec2_add_scalar(const vec2 *dl_restrict left, dl_real scalar, vec2 *dl_restrict out);
-  dl_api vec2 *vec2_sub_scalar(const vec2 *dl_restrict left, dl_real scalar, vec2 *dl_restrict out);
+  dl_api dl_vec2 *dl_vec2_mul_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out);
+  dl_api dl_vec2 *dl_vec2_div_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out);
+  dl_api dl_vec2 *dl_vec2_add_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out);
+  dl_api dl_vec2 *dl_vec2_sub_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out);
 
-  dl_api vec2 *vec2_normalize(const vec2 *dl_restrict left, vec2 *dl_restrict out);
-  dl_api vec2 *vec2_negate(const vec2 *dl_restrict left, vec2 *dl_restrict out);
+  dl_api dl_vec2 *dl_vec2_normalize(const dl_vec2 *dl_restrict left, dl_vec2 *dl_restrict out);
+  dl_api dl_vec2 *dl_vec2_negate(const dl_vec2 *dl_restrict left, dl_vec2 *dl_restrict out);
 
-  dl_api dl_real vec2_dot(const vec2 *dl_restrict left, const vec2 *dl_restrict right);
-  dl_api dl_bool vec2_approximately_equal(const vec2 *dl_restrict left, const vec2 *dl_restrict right, dl_real epsilon);
-  dl_api dl_real vec2_square_magnitude(const vec2 *dl_restrict left);
-  dl_api dl_real vec2_magnitude(const vec2 *dl_restrict left);
+  dl_api dl_real dl_vec2_dot(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right);
+  dl_api dl_bool dl_vec2_approximately_equal(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_real epsilon);
+  dl_api dl_real dl_vec2_square_magnitude(const dl_vec2 *dl_restrict left);
+  dl_api dl_real dl_vec2_magnitude(const dl_vec2 *dl_restrict left);
 
-  dl_api vec2 *vec2_reflect(const vec2 *dl_restrict left, const vec2 *dl_restrict normal, vec2 *dl_restrict out);
-  dl_api vec2 *vec2_refract(const vec2 *dl_restrict left, const vec2 *dl_restrict normal, float eta, vec2 *dl_restrict out);
+  dl_api dl_vec2 *dl_vec2_reflect(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict normal, dl_vec2 *dl_restrict out);
+  dl_api dl_vec2 *dl_vec2_refract(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict normal, float eta, dl_vec2 *dl_restrict out);
 
 
   
-  typedef vec2 point2;
-  extern const point2 point2_zero;
-  extern const point2 point2_one;
+  typedef dl_vec2 dl_point2;
+  extern const dl_point2 dl_point2_zero;
+  extern const dl_point2 dl_point2_one;
 
-  dl_api point2 *init_point2(point2 * dl_restrict p, dl_real x, dl_real y);
+  dl_api dl_point2 *dl_init_point2(dl_point2 * dl_restrict p, dl_real x, dl_real y);
 
-  dl_api point2 *point2_add(const point2 *dl_restrict left, const point2 *dl_restrict right, point2 *dl_restrict out);
-  dl_api point2 *point2_sub(const point2 *dl_restrict left, const point2 *dl_restrict right, point2 *dl_restrict out);
+  dl_api dl_point2 *dl_point2_add(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *dl_point2_sub(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_point2 *dl_restrict out);
 
-  dl_api point2 *point2_negate(const point2 *dl_restrict left, point2 *dl_restrict out);
+  dl_api dl_point2 *dl_point2_negate(const dl_point2 *dl_restrict left, dl_point2 *dl_restrict out);
 
-  dl_api point2 *point2_mul_scalar(const point2 *dl_restrict left, dl_real scalar, point2 *dl_restrict out);
-  dl_api point2 *point2_div_scalar(const point2 *dl_restrict left, dl_real scalar, point2 *dl_restrict out);
-  dl_api point2 *point2_add_scalar(const point2 *dl_restrict left, dl_real scalar, point2 *dl_restrict out);
-  dl_api point2 *point2_sub_scalar(const point2 *dl_restrict left, dl_real scalar, point2 *dl_restrict out);
+  dl_api dl_point2 *dl_point2_mul_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *dl_point2_div_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *dl_point2_add_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *dl_point2_sub_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out);
 
-  dl_api dl_bool point2_approximately_equal(const point2 *dl_restrict left, const point2 *dl_restrict right, dl_real epsilon);
+  dl_api dl_bool dl_point2_approximately_equal(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_real epsilon);
 
-  dl_api dl_real point2_line_orientation(const point2 *dl_restrict point, const point2 *dl_restrict line_a, const point2 *dl_restrict line_b);
+  dl_api dl_real dl_point2_line_orientation(const dl_point2 *dl_restrict point, const dl_point2 *dl_restrict line_a, const dl_point2 *dl_restrict line_b);
   
 
   
@@ -734,13 +734,13 @@ extern "C" {
   dl_api dl_real *select_linear(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out);
   dl_api dl_real *select_catmullrom(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out);
 
-  typedef point2 *(*selector_function_point2)(const point2 *dl_restrict values, dl_natural length, dl_real percent, point2 *dl_restrict out);
+  typedef dl_point2 *(*selector_function_point2)(const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out);
 
-  dl_api point2 *interpolate_point2(const selector_function_point2 select, const point2 *dl_restrict values, dl_natural length, dl_real percent, point2 *dl_restrict out);
+  dl_api dl_point2 *interpolate_point2(const selector_function_point2 select, const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out);
 
-  dl_api point2 *select_linear_point2(const point2 *dl_restrict v, dl_natural l, dl_real p, point2 *dl_restrict out);
-  dl_api point2 *select_bezier_point2(const point2 *dl_restrict v, dl_natural l, dl_real p, point2 *dl_restrict out);
-  dl_api point2 *select_catmullrom_point2(const point2 *dl_restrict v, dl_natural l, dl_real p, point2 *dl_restrict out);
+  dl_api dl_point2 *select_linear_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *select_bezier_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *select_catmullrom_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
 
   typedef point3 *(*selector_function_point3)(const point3 *dl_restrict values, dl_natural length, dl_real percent, point3 *dl_restrict out);
 
@@ -754,9 +754,9 @@ extern "C" {
 
   dl_api dl_integer *lerp_integer(dl_integer a, dl_integer b, dl_real p, dl_integer *dl_restrict out);
   dl_api dl_real *lerp_real(dl_real a, dl_real b, dl_real p, dl_real *dl_restrict out);
-  dl_api point2 *lerp_point2(const point2 *dl_restrict a, const point2 *dl_restrict b, dl_real p, point2 *dl_restrict out);
+  dl_api dl_point2 *lerp_point2(const dl_point2 *dl_restrict a, const dl_point2 *dl_restrict b, dl_real p, dl_point2 *dl_restrict out);
   dl_api point3 *lerp_point3(const point3 *dl_restrict a, const point3 *dl_restrict b, dl_real p, point3 *dl_restrict out);
-  dl_api vec2 *lerp_vec2(const vec2 *dl_restrict a, const vec2 *dl_restrict b, dl_real p, vec2 *dl_restrict out);
+  dl_api dl_vec2 *lerp_vec2(const dl_vec2 *dl_restrict a, const dl_vec2 *dl_restrict b, dl_real p, dl_vec2 *dl_restrict out);
   dl_api vec3 *lerp_vec3(const vec3 *dl_restrict a, const vec3 *dl_restrict b, dl_real p, vec3 *dl_restrict out);
 
 
@@ -1184,15 +1184,15 @@ const dl_real DL_EPSILON = 0.001f;
 #endif
 
 const mat4 mat4_identity = { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
-const point2 point2_zero = { 0, 0 };
-const point2 point2_one = { 1, 1 };
-const vec2 vec2_up = { 0, 1 };
-const vec2 vec2_right = { 1, 0 };
+const dl_point2 dl_point2_zero = { 0, 0 };
+const dl_point2 dl_point2_one = { 1, 1 };
+const dl_vec2 dl_vec2_up = { 0, 1 };
+const dl_vec2 dl_vec2_right = { 1, 0 };
 const vec3 vec3_up = { 0, 1, 0, 0 };
 const vec3 vec3_right = { 1, 0, 0, 0 };
 
-const vec2 vec2_down = { 0, -1 };
-const vec2 vec2_left = { -1, 0 };
+const dl_vec2 dl_vec2_down = { 0, -1 };
+const dl_vec2 dl_vec2_left = { -1, 0 };
 const vec3 vec3_down = { 0, -1, 0, 0 };
 const vec3 vec3_left = { -1, 0, 0, 0 };
 
@@ -1204,11 +1204,11 @@ const vec3 vec3_forward = { 0, 0, -1, 0 };
 const vec3 vec3_backward = { 0, 0, 1, 0 };
 #endif
 
-const vec2 vec2_zero = { 0, 0 };
+const dl_vec2 dl_vec2_zero = { 0, 0 };
 const vec3 vec3_zero = { 0, 0, 0, 0 };
 const point3 point3_zero = { 0, 0, 0, 1 };
 
-const vec2 vec2_one = { 1, 1 };
+const dl_vec2 dl_vec2_one = { 1, 1 };
 const vec3 vec3_one = { 1, 1, 1, 0 };
 const point3 point3_one = { 1, 1, 1, 1 };
 
@@ -1370,7 +1370,7 @@ dl_api dl_random_state *dl_init_random_time(dl_random_state *state) {
 
 
 
-dl_api vec2 *init_vec2(vec2 * dl_restrict v, dl_real x, dl_real y) {
+dl_api dl_vec2 *dl_init_vec2(dl_vec2 * dl_restrict v, dl_real x, dl_real y) {
   if (dl_safety(v == NULL))
     return NULL;
 
@@ -1380,7 +1380,7 @@ dl_api vec2 *init_vec2(vec2 * dl_restrict v, dl_real x, dl_real y) {
   return v;
 }
 
-dl_api vec2 *vec2_add(const vec2 *dl_restrict left, const vec2 *dl_restrict right, vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_add(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_vec2 *dl_restrict out) {
   if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
@@ -1390,7 +1390,7 @@ dl_api vec2 *vec2_add(const vec2 *dl_restrict left, const vec2 *dl_restrict righ
   return out;
 }
 
-dl_api vec2 *vec2_sub(const vec2 *dl_restrict left, const vec2 *dl_restrict right, vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_sub(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_vec2 *dl_restrict out) {
   if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
@@ -1400,7 +1400,7 @@ dl_api vec2 *vec2_sub(const vec2 *dl_restrict left, const vec2 *dl_restrict righ
   return out;
 }
 
-dl_api vec2 *vec2_mul_scalar(const vec2 *dl_restrict left, dl_real scalar, vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_mul_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -1410,11 +1410,11 @@ dl_api vec2 *vec2_mul_scalar(const vec2 *dl_restrict left, dl_real scalar, vec2 
   return out;
 }
 
-dl_api vec2 *vec2_div_scalar(const vec2 *dl_restrict left, dl_real scalar, vec2 *dl_restrict out) {
-  return vec2_mul_scalar(left, 1.0f / scalar, out);
+dl_api dl_vec2 *dl_vec2_div_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out) {
+  return dl_vec2_mul_scalar(left, 1.0f / scalar, out);
 }
 
-dl_api vec2 *vec2_add_scalar(const vec2 *dl_restrict left, dl_real scalar, vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_add_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -1424,22 +1424,22 @@ dl_api vec2 *vec2_add_scalar(const vec2 *dl_restrict left, dl_real scalar, vec2 
   return out;
 }
 
-dl_api vec2 *vec2_sub_scalar(const vec2 *dl_restrict left, dl_real scalar, vec2 *dl_restrict out) {
-  return vec2_add_scalar(left, -scalar, out);
+dl_api dl_vec2 *dl_vec2_sub_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out) {
+  return dl_vec2_add_scalar(left, -scalar, out);
 }
 
-dl_api vec2 *vec2_normalize(const vec2 *dl_restrict left, vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_normalize(const dl_vec2 *dl_restrict left, dl_vec2 *dl_restrict out) {
   dl_real inv_magnitude;
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
 
   inv_magnitude = 1.0f / dl_hypot(left->x, left->y);
-  vec2_mul_scalar(left, inv_magnitude, out);
+  dl_vec2_mul_scalar(left, inv_magnitude, out);
 
   return out;
 }
 
-dl_api vec2 *vec2_negate(const vec2 *dl_restrict left, vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_negate(const dl_vec2 *dl_restrict left, dl_vec2 *dl_restrict out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -1449,94 +1449,94 @@ dl_api vec2 *vec2_negate(const vec2 *dl_restrict left, vec2 *dl_restrict out) {
   return out;
 }
 
-dl_api dl_real vec2_dot(const vec2 *dl_restrict left, const vec2 *dl_restrict right) {
+dl_api dl_real dl_vec2_dot(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right) {
   if (dl_safety(left == NULL || right == NULL))
     return 0;
   return left->x * right->x + left->y * right->y;
 }
 
-dl_api dl_bool vec2_approximately_equal(const vec2 *dl_restrict left, const vec2 *dl_restrict right, dl_real epsilon) {
+dl_api dl_bool dl_vec2_approximately_equal(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_real epsilon) {
   if (dl_safety(left == NULL || right == NULL))
     return 0;
   return fabs(left->x - right->x) < epsilon && fabs(left->y - right->y) < epsilon;
 }
 
-dl_api dl_real vec2_square_magnitude(const vec2 *dl_restrict left) {
+dl_api dl_real dl_vec2_square_magnitude(const dl_vec2 *dl_restrict left) {
   if (dl_safety(left == NULL))
     return 0;
   return left->x * left->x + left->y * left->y;
 }
 
-dl_api dl_real vec2_magnitude(const vec2 *dl_restrict left) {
+dl_api dl_real dl_vec2_magnitude(const dl_vec2 *dl_restrict left) {
   if (dl_safety(left == NULL))
     return 0;
   
   return dl_hypot(left->x, left->y);
 }
 
-dl_api vec2 *vec2_reflect(const vec2 *dl_restrict left, const vec2 *dl_restrict normal, vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_reflect(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict normal, dl_vec2 *dl_restrict out) {
   if (dl_safety(left == NULL || normal == NULL || out == NULL))
     return NULL;
   
-  return vec2_sub(left, vec2_mul_scalar(normal, vec2_dot(normal, left) * 2.0f, out), out);
+  return dl_vec2_sub(left, dl_vec2_mul_scalar(normal, dl_vec2_dot(normal, left) * 2.0f, out), out);
 }
 
-dl_api vec2 *vec2_refract(const vec2 *dl_restrict left, const vec2 *dl_restrict normal, float eta, vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_refract(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict normal, float eta, dl_vec2 *dl_restrict out) {
   float dot, k;
-  vec2 t;
+  dl_vec2 t;
 
   if (dl_safety(left == NULL || normal == NULL || out == NULL))
     return NULL;
 
-  dot = vec2_dot(normal, left);
+  dot = dl_vec2_dot(normal, left);
   k = 1.0f - (eta * eta) * (1.0f - (dot * dot));
   if (dl_unlikely(k < 0.0f)) {
-    *out = vec2_zero;
+    *out = dl_vec2_zero;
     return out;
   }
 
-  return vec2_sub(vec2_mul_scalar(left, eta, &t), vec2_mul_scalar(normal, eta * dot * dl_sqrt(k), out), out);
+  return dl_vec2_sub(dl_vec2_mul_scalar(left, eta, &t), dl_vec2_mul_scalar(normal, eta * dot * dl_sqrt(k), out), out);
 }
 
 
 
-dl_api point2 *init_point2(point2 * dl_restrict p, dl_real x, dl_real y) {
-  return init_vec2((vec2 *)p, x, y);
+dl_api dl_point2 *dl_init_point2(dl_point2 * dl_restrict p, dl_real x, dl_real y) {
+  return dl_init_vec2((dl_vec2 *)p, x, y);
 }
 
-dl_api point2 *point2_add(const point2 *dl_restrict left, const point2 *dl_restrict right, point2 *dl_restrict out) {
-  return vec2_add(left, right, out);
+dl_api dl_point2 *dl_point2_add(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_point2 *dl_restrict out) {
+  return dl_vec2_add(left, right, out);
 }
 
-dl_api point2 *point2_sub(const point2 *dl_restrict left, const point2 *dl_restrict right, point2 *dl_restrict out) {
-  return vec2_sub(left, right, out);
+dl_api dl_point2 *dl_point2_sub(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_point2 *dl_restrict out) {
+  return dl_vec2_sub(left, right, out);
 }
 
-dl_api point2 *point2_mul_scalar(const point2 *dl_restrict left, dl_real scalar, point2 *dl_restrict out) {
-  return vec2_mul_scalar(left, scalar, out);
+dl_api dl_point2 *dl_point2_mul_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out) {
+  return dl_vec2_mul_scalar(left, scalar, out);
 }
 
-dl_api point2 *point2_div_scalar(const point2 *dl_restrict left, dl_real scalar, point2 *dl_restrict out) {
-  return vec2_div_scalar(left, scalar, out);
+dl_api dl_point2 *dl_point2_div_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out) {
+  return dl_vec2_div_scalar(left, scalar, out);
 }
 
-dl_api point2 *point2_add_scalar(const point2 *dl_restrict left, dl_real scalar, point2 *dl_restrict out) {
-  return vec2_add_scalar(left, scalar, out);
+dl_api dl_point2 *dl_point2_add_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out) {
+  return dl_vec2_add_scalar(left, scalar, out);
 }
 
-dl_api point2 *point2_sub_scalar(const point2 *dl_restrict left, dl_real scalar, point2 *dl_restrict out) {
-  return vec2_sub_scalar(left, scalar, out);
+dl_api dl_point2 *dl_point2_sub_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out) {
+  return dl_vec2_sub_scalar(left, scalar, out);
 }
 
-dl_api point2 *point2_negate(const point2 *dl_restrict left, point2 *dl_restrict out) {
-  return vec2_negate(left, out);
+dl_api dl_point2 *dl_point2_negate(const dl_point2 *dl_restrict left, dl_point2 *dl_restrict out) {
+  return dl_vec2_negate(left, out);
 }
 
-dl_api dl_bool point2_approximately_equal(const point2 *dl_restrict left, const point2 *dl_restrict right, dl_real epsilon) {
-  return vec2_approximately_equal(left, right, epsilon);
+dl_api dl_bool dl_point2_approximately_equal(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_real epsilon) {
+  return dl_vec2_approximately_equal(left, right, epsilon);
 }
 
-dl_api dl_real point2_line_orientation(const point2 *dl_restrict point, const point2 *dl_restrict line_a, const point2 *dl_restrict line_b) {
+dl_api dl_real dl_point2_line_orientation(const dl_point2 *dl_restrict point, const dl_point2 *dl_restrict line_a, const dl_point2 *dl_restrict line_b) {
   dl_real rise, run, m, b;
 
   if (dl_safety(point == NULL || line_a == NULL || line_b == NULL))
@@ -2596,7 +2596,7 @@ dl_real *select_catmullrom(const dl_real *dl_restrict v, dl_natural l, dl_real p
 
 
 
-point2 *interpolate_point2(const selector_function_point2 select, const point2 *dl_restrict values, dl_natural length, dl_real percent, point2 *dl_restrict out) {
+dl_point2 *interpolate_point2(const selector_function_point2 select, const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out) {
   if (dl_safety(select == NULL || values == NULL || length == 0))
     return NULL;
   if (dl_unlikely(length == 1)) {
@@ -2608,7 +2608,7 @@ point2 *interpolate_point2(const selector_function_point2 select, const point2 *
   return select(values, length, percent, out);
 }
 
-point2 *select_linear_point2(const point2 *dl_restrict v, dl_natural l, dl_real p, point2 *dl_restrict out) {
+dl_point2 *select_linear_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
   dl_natural max_idx, idx, next_idx;
   dl_real scaled_p;
   
@@ -2625,10 +2625,10 @@ point2 *select_linear_point2(const point2 *dl_restrict v, dl_natural l, dl_real 
   return lerp_point2(&v[idx], &v[next_idx], (scaled_p - (dl_real)idx), out);
 }
 
-point2 *select_bezier_point2(const point2 *dl_restrict v, dl_natural l, dl_real p, point2 *dl_restrict out) {
+dl_point2 *select_bezier_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
   dl_natural max_idx, idx, degree;
   dl_real target;
-  point2 t1, t2, compute_v[DL_BEZIER_DEGREE + 1];
+  dl_point2 t1, t2, compute_v[DL_BEZIER_DEGREE + 1];
   dl_integer i, j, desired_idx;
   
   max_idx = l - 1;
@@ -2644,19 +2644,19 @@ point2 *select_bezier_point2(const point2 *dl_restrict v, dl_natural l, dl_real 
     
   for (i = 1; i <= degree; ++i)
     for (j = 0; j <= degree - i; ++j)
-      point2_add(
-        point2_mul_scalar(&compute_v[j], 1.0 - p, &t1),
-		    point2_mul_scalar(&compute_v[j + 1], p, &t2),
+      dl_point2_add(
+        dl_point2_mul_scalar(&compute_v[j], 1.0 - p, &t1),
+		    dl_point2_mul_scalar(&compute_v[j + 1], p, &t2),
         &compute_v[j]);
 
   *out = compute_v[0];
   return out;
 }
 
-point2 *select_catmullrom_point2(const point2 *dl_restrict v, dl_natural l, dl_real p, point2 *dl_restrict out) {
+dl_point2 *select_catmullrom_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
   dl_natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   dl_real target, t, t2, t3;
-  point2 v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
+  dl_point2 v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
   
   max_idx = l - 1;
   target = (dl_real)max_idx * p;
@@ -2671,21 +2671,21 @@ point2 *select_catmullrom_point2(const point2 *dl_restrict v, dl_natural l, dl_r
   t2 = t * t;
   t3 = t2 * t;
 
-  point2_mul_scalar(point2_sub(&v[c_idx], &v[a_idx], &v0), 0.5f, &v0);
-  point2_mul_scalar(point2_sub(&v[d_idx], &v[b_idx], &v1), 0.5f, &v1);
+  dl_point2_mul_scalar(dl_point2_sub(&v[c_idx], &v[a_idx], &v0), 0.5f, &v0);
+  dl_point2_mul_scalar(dl_point2_sub(&v[d_idx], &v[b_idx], &v1), 0.5f, &v1);
 
-  point2_mul_scalar(&v[b_idx], 3, &threev1);
-  point2_mul_scalar(&v[c_idx], 3, &threev2);
-  point2_mul_scalar(&v0, 2, &twov0);
-  point2_mul_scalar(&v[c_idx], -2, &ntwov2);
-  point2_mul_scalar(&v[b_idx], 2, &twov1);
+  dl_point2_mul_scalar(&v[b_idx], 3, &threev1);
+  dl_point2_mul_scalar(&v[c_idx], 3, &threev2);
+  dl_point2_mul_scalar(&v0, 2, &twov0);
+  dl_point2_mul_scalar(&v[c_idx], -2, &ntwov2);
+  dl_point2_mul_scalar(&v[b_idx], 2, &twov1);
 
   /* a = v[b_idx]; */
-  point2_mul_scalar(&v0, t, &b);
-  point2_mul_scalar(point2_sub(point2_add(point2_sub(point2_negate(&v1, &c), &twov0, &c), &threev2, &c), &threev1, &c), t2, &c);
-  point2_mul_scalar(point2_add(&v1, point2_add(&v0, point2_add(&twov1, &ntwov2, &d), &d), &d), t3, &d);
+  dl_point2_mul_scalar(&v0, t, &b);
+  dl_point2_mul_scalar(dl_point2_sub(dl_point2_add(dl_point2_sub(dl_point2_negate(&v1, &c), &twov0, &c), &threev2, &c), &threev1, &c), t2, &c);
+  dl_point2_mul_scalar(dl_point2_add(&v1, dl_point2_add(&v0, dl_point2_add(&twov1, &ntwov2, &d), &d), &d), t3, &d);
 
-  return point2_add(&v[b_idx], point2_add(&b, point2_add(&c, &d, &v0), &v0), out);
+  return dl_point2_add(&v[b_idx], dl_point2_add(&b, dl_point2_add(&c, &d, &v0), &v0), out);
 }
 
 
@@ -2802,16 +2802,16 @@ dl_api dl_real *lerp_real(dl_real a, dl_real b, dl_real p, dl_real *out) {
   return out;
 }
 
-dl_api point2 *lerp_point2(const point2 *dl_restrict a, const point2 *dl_restrict b, dl_real p, point2 *dl_restrict out) {
-  return point2_add(point2_mul_scalar(point2_sub(b, a, out), p, out), a, out);
+dl_api dl_point2 *lerp_point2(const dl_point2 *dl_restrict a, const dl_point2 *dl_restrict b, dl_real p, dl_point2 *dl_restrict out) {
+  return dl_point2_add(dl_point2_mul_scalar(dl_point2_sub(b, a, out), p, out), a, out);
 }
 
 dl_api point3 *lerp_point3(const point3 *dl_restrict a, const point3 *dl_restrict b, dl_real p, point3 *dl_restrict out) {
   return point3_add(point3_mul_scalar(point3_sub(b, a, out), p, out), a, out);
 }
 
-dl_api vec2 *lerp_vec2(const vec2 *dl_restrict a, const vec2 *dl_restrict b, dl_real p, vec2 *dl_restrict out) {
-  return vec2_add(vec2_mul_scalar(vec2_sub(b, a, out), p, out), a, out);
+dl_api dl_vec2 *lerp_vec2(const dl_vec2 *dl_restrict a, const dl_vec2 *dl_restrict b, dl_real p, dl_vec2 *dl_restrict out) {
+  return dl_vec2_add(dl_vec2_mul_scalar(dl_vec2_sub(b, a, out), p, out), a, out);
 }
 
 dl_api vec3 *lerp_vec3(const vec3 *dl_restrict a, const vec3 *dl_restrict b, dl_real p, vec3 *dl_restrict out) {

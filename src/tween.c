@@ -63,7 +63,7 @@ tween_method tween_methods[tween_count] = {
   { EASE_INOUT, ease_bounce, NULL, NULL, "EASE_INOUT bounce" },
 };
 
-point2 points[point_count];
+dl_point2 points[point_count];
 dl_real ys[point_count];
 
 void draw(double time, double delta_time) {
@@ -73,7 +73,7 @@ void draw(double time, double delta_time) {
   tween_method current = tween_methods[active_method];
   dl_natural idx;
   dl_real next_p, p;
-  point2 p0, p1;
+  dl_point2 p0, p1;
   const dl_real step = 1.0 / (dl_real)(point_count - 1) / 10.0;
 
   al_draw_line(0, 0.75 * height, width, 0.75 * height, green, 1.0);
@@ -146,7 +146,7 @@ void change(dl_random_state *r) {
 
       t = last_y + dl_random_real_range(r, -0.15, 0.15);
       ys[idx] = last_y = dl_clamp01(t);
-      init_point2(&points[idx], last_x, last_y);
+      dl_init_point2(&points[idx], last_x, last_y);
     }
   }
 }

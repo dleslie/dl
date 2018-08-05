@@ -204,7 +204,7 @@ dl_bool test_random_range() {
 
 
 dl_bool test_init_vec2() {
-  vec2 vec;
+  dl_vec2 vec;
   dl_random_state r;
   dl_real a,b;
   dl_init_random_time(&r);
@@ -212,7 +212,7 @@ dl_bool test_init_vec2() {
   a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec, a, b);
+  dl_init_vec2(&vec, a, b);
 
   return dl_check(dl_approximately_equal(vec.x, a, DL_EPSILON),
     "Expected x to be %f, was %f", a, vec.x) &&
@@ -221,8 +221,8 @@ dl_bool test_init_vec2() {
 }
 
 dl_bool test_vec2_add() {
-  vec2 vec_a;
-  vec2 vec_b;
+  dl_vec2 vec_a;
+  dl_vec2 vec_b;
   dl_real a,b,c,d;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -232,10 +232,10 @@ dl_bool test_vec2_add() {
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec_a, a, b);
-  init_vec2(&vec_b, c, d);
+  dl_init_vec2(&vec_a, a, b);
+  dl_init_vec2(&vec_b, c, d);
 
-  vec2_add(&vec_a, &vec_b, &vec_b);
+  dl_vec2_add(&vec_a, &vec_b, &vec_b);
 
   return dl_check(dl_approximately_equal(vec_b.x, a + c, DL_EPSILON),
     "Expected x to be %f, was %f", a + c, vec_b.x) &&
@@ -244,8 +244,8 @@ dl_bool test_vec2_add() {
 }
 
 dl_bool test_vec2_sub() {
-  vec2 vec_a;
-  vec2 vec_b;
+  dl_vec2 vec_a;
+  dl_vec2 vec_b;
   dl_real a,b,c,d;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -255,10 +255,10 @@ dl_bool test_vec2_sub() {
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec_a, a, b);
-  init_vec2(&vec_b, c, d);
+  dl_init_vec2(&vec_a, a, b);
+  dl_init_vec2(&vec_b, c, d);
 
-  vec2_sub(&vec_a, &vec_b, &vec_b);
+  dl_vec2_sub(&vec_a, &vec_b, &vec_b);
 
   return dl_check(dl_approximately_equal(vec_b.x, a - c, DL_EPSILON),
     "Expected x to be %f, was %f", a - c, vec_b.x) &&
@@ -267,7 +267,7 @@ dl_bool test_vec2_sub() {
 }
 
 dl_bool test_vec2_mul_scalar() {
-  vec2 vec;
+  dl_vec2 vec;
   dl_real a,b,c;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -276,9 +276,9 @@ dl_bool test_vec2_mul_scalar() {
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec, a, b);
+  dl_init_vec2(&vec, a, b);
 
-  vec2_mul_scalar(&vec, c, &vec);
+  dl_vec2_mul_scalar(&vec, c, &vec);
 
   return dl_check(dl_approximately_equal(vec.x, a * c, DL_EPSILON),
     "Expected x to be %f, was %f", a * c, vec.x) &&
@@ -287,7 +287,7 @@ dl_bool test_vec2_mul_scalar() {
 }
 
 dl_bool test_vec2_div_scalar() {
-  vec2 vec;
+  dl_vec2 vec;
   dl_real a,b,c;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -296,9 +296,9 @@ dl_bool test_vec2_div_scalar() {
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec, a, b);
+  dl_init_vec2(&vec, a, b);
 
-  vec2_div_scalar(&vec, c, &vec);
+  dl_vec2_div_scalar(&vec, c, &vec);
 
   return dl_check(dl_approximately_equal(vec.x, a / c, DL_EPSILON),
     "Expected x to be %f, was %f", a / c, vec.x) &&
@@ -307,7 +307,7 @@ dl_bool test_vec2_div_scalar() {
 }
 
 dl_bool test_vec2_add_scalar() {
-  vec2 vec;
+  dl_vec2 vec;
   dl_real a,b,c;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -316,9 +316,9 @@ dl_bool test_vec2_add_scalar() {
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec, a, b);
+  dl_init_vec2(&vec, a, b);
 
-  vec2_add_scalar(&vec, c, &vec);
+  dl_vec2_add_scalar(&vec, c, &vec);
 
   return dl_check(dl_approximately_equal(vec.x, a + c, DL_EPSILON),
     "Expected x to be %f, was %f", a + c, vec.x) &&
@@ -327,7 +327,7 @@ dl_bool test_vec2_add_scalar() {
 }
 
 dl_bool test_vec2_sub_scalar() {
-  vec2 vec;
+  dl_vec2 vec;
   dl_real a,b,c;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -336,9 +336,9 @@ dl_bool test_vec2_sub_scalar() {
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec, a, b);
+  dl_init_vec2(&vec, a, b);
 
-  vec2_sub_scalar(&vec, c, &vec);
+  dl_vec2_sub_scalar(&vec, c, &vec);
 
   return dl_check(dl_approximately_equal(vec.x, a - c, DL_EPSILON),
     "Expected x to be %f, was %f", a - c, vec.x) &&
@@ -347,7 +347,7 @@ dl_bool test_vec2_sub_scalar() {
 }
 
 dl_bool test_vec2_normalize() {
-  vec2 vec;
+  dl_vec2 vec;
   dl_real a,b,sqr_m,inv_m;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -355,9 +355,9 @@ dl_bool test_vec2_normalize() {
   a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec, a, b);
+  dl_init_vec2(&vec, a, b);
 
-  vec2_normalize(&vec, &vec);
+  dl_vec2_normalize(&vec, &vec);
 
   sqr_m = a * a + b * b;
 #if DL_IS_C89 || DL_IS_C90
@@ -370,12 +370,12 @@ dl_bool test_vec2_normalize() {
     "Expected x to be %f, was %f", a * inv_m, vec.x) &&
     dl_check(dl_approximately_equal(vec.y, b * inv_m, DL_EPSILON),
       "Expected y to be %f, was %f", b * inv_m, vec.y) &&
-    dl_check(dl_approximately_equal(vec2_magnitude(&vec), 1.0, DL_EPSILON),
+    dl_check(dl_approximately_equal(dl_vec2_magnitude(&vec), 1.0, DL_EPSILON),
       "Expected magnitude to be 1");
 }
 
 dl_bool test_vec2_negate() {
-  vec2 vec;
+  dl_vec2 vec;
   dl_real a,b;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -383,9 +383,9 @@ dl_bool test_vec2_negate() {
   a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec, a, b);
+  dl_init_vec2(&vec, a, b);
 
-  vec2_negate(&vec, &vec);
+  dl_vec2_negate(&vec, &vec);
 
   return dl_check(dl_approximately_equal(vec.x, -a, DL_EPSILON),
     "Expected x to be %f, was %f", -a, vec.x) &&
@@ -394,8 +394,8 @@ dl_bool test_vec2_negate() {
 }
 
 dl_bool test_vec2_dot() {
-  vec2 vec_a;
-  vec2 vec_b;
+  dl_vec2 vec_a;
+  dl_vec2 vec_b;
   dl_real a,b,c,d,dot,expected;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -405,10 +405,10 @@ dl_bool test_vec2_dot() {
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec_a, a, b);
-  init_vec2(&vec_b, c, d);
+  dl_init_vec2(&vec_a, a, b);
+  dl_init_vec2(&vec_b, c, d);
 
-  dot = vec2_dot(&vec_a, &vec_b);
+  dot = dl_vec2_dot(&vec_a, &vec_b);
   expected = a * c + b * d;
 
   return dl_check(dl_approximately_equal(dot, expected, DL_EPSILON),
@@ -416,8 +416,8 @@ dl_bool test_vec2_dot() {
 }
 
 dl_bool test_vec2_approximately_equal() {
-  vec2 vec_a;
-  vec2 vec_b;
+  dl_vec2 vec_a;
+  dl_vec2 vec_b;
   dl_real a,b;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -425,46 +425,46 @@ dl_bool test_vec2_approximately_equal() {
   a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec_a, a, b);
-  init_vec2(&vec_b, a + 0.5 * DL_EPSILON, b + 0.5 * DL_EPSILON);
+  dl_init_vec2(&vec_a, a, b);
+  dl_init_vec2(&vec_b, a + 0.5 * DL_EPSILON, b + 0.5 * DL_EPSILON);
 
-  if (!dl_check(vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
+  if (!dl_check(dl_vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
     "Expected (%f, %f) ~= (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
-  init_vec2(&vec_b, -vec_a.x, -vec_a.y);
+  dl_init_vec2(&vec_b, -vec_a.x, -vec_a.y);
 
-  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
+  if (!dl_check(!dl_vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
-  init_vec2(&vec_b, -vec_a.x, vec_a.y);
+  dl_init_vec2(&vec_b, -vec_a.x, vec_a.y);
 
-  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
+  if (!dl_check(!dl_vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
-  init_vec2(&vec_b, vec_a.x, -vec_a.y);
+  dl_init_vec2(&vec_b, vec_a.x, -vec_a.y);
 
-  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
+  if (!dl_check(!dl_vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
-  init_vec2(&vec_b, vec_a.x + 2 * DL_EPSILON, vec_a.y);
+  dl_init_vec2(&vec_b, vec_a.x + 2 * DL_EPSILON, vec_a.y);
 
-  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
+  if (!dl_check(!dl_vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
-  init_vec2(&vec_b, vec_a.x, vec_a.y + 2 * DL_EPSILON);
+  dl_init_vec2(&vec_b, vec_a.x, vec_a.y + 2 * DL_EPSILON);
 
-  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
+  if (!dl_check(!dl_vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
-  init_vec2(&vec_b, vec_a.x + 2 * DL_EPSILON, vec_a.y + 2 * DL_EPSILON);
+  dl_init_vec2(&vec_b, vec_a.x + 2 * DL_EPSILON, vec_a.y + 2 * DL_EPSILON);
 
-  if (!dl_check(!vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
+  if (!dl_check(!dl_vec2_approximately_equal(&vec_a, &vec_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", vec_a.x, vec_a.y, vec_b.x, vec_b.y))
     return false;
 
@@ -472,7 +472,7 @@ dl_bool test_vec2_approximately_equal() {
 }
 
 dl_bool test_vec2_square_magnitude() {
-  vec2 vec;
+  dl_vec2 vec;
   dl_real a,b,m,expected_m;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -480,9 +480,9 @@ dl_bool test_vec2_square_magnitude() {
   a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec, a, b);
+  dl_init_vec2(&vec, a, b);
 
-  m = vec2_square_magnitude(&vec);
+  m = dl_vec2_square_magnitude(&vec);
   expected_m = a * a + b * b;
 
   return dl_check(dl_approximately_equal(m, expected_m, DL_EPSILON),
@@ -490,7 +490,7 @@ dl_bool test_vec2_square_magnitude() {
 }
 
 dl_bool test_vec2_magnitude() {
-  vec2 vec;
+  dl_vec2 vec;
   dl_real a,b,m,expected_m;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -498,9 +498,9 @@ dl_bool test_vec2_magnitude() {
   a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_vec2(&vec, a, b);
+  dl_init_vec2(&vec, a, b);
 
-  m = vec2_magnitude(&vec);
+  m = dl_vec2_magnitude(&vec);
   
 #if DL_IS_C89 || DL_IS_C90
   expected_m = sqrt(a * a + b * b);
@@ -513,24 +513,24 @@ dl_bool test_vec2_magnitude() {
 }
 
 dl_bool test_vec2_reflect() {
-  vec2 in, out, result;
+  dl_vec2 in, out, result;
   in.x = 0.5;
   in.y = 0.5;
   out.x = 0.5;
   out.y = -0.5;
 
-  vec2_reflect(&in, &vec2_up, &result);
+  dl_vec2_reflect(&in, &dl_vec2_up, &result);
 
-  if (!dl_check(vec2_approximately_equal(&result, &out, DL_EPSILON),
+  if (!dl_check(dl_vec2_approximately_equal(&result, &out, DL_EPSILON),
     "Expected {%f, %f} to be {%f, %f}",
     result.x, result.y,
     out.x, out.y))
     return false;
 
-  init_vec2(&out, -0.5, 0.5);
-  vec2_reflect(&in, &vec2_left, &result);
+  dl_init_vec2(&out, -0.5, 0.5);
+  dl_vec2_reflect(&in, &dl_vec2_left, &result);
 
-  if (!dl_check(vec2_approximately_equal(&result, &out, DL_EPSILON),
+  if (!dl_check(dl_vec2_approximately_equal(&result, &out, DL_EPSILON),
     "Expected {%f, %f} to be {%f, %f}",
     result.x, result.y,
     out.x, out.y))
@@ -540,23 +540,23 @@ dl_bool test_vec2_reflect() {
 }
 
 dl_bool test_vec2_refract() {
-  vec2 in, out, result;
+  dl_vec2 in, out, result;
   in.x = 1.0;
   in.y = 1.0;
   out.x = 0.3;
   out.y = 0.0;
-  vec2_refract(&in, &vec2_up, 0.3, &result);
+  dl_vec2_refract(&in, &dl_vec2_up, 0.3, &result);
 
-  if (!dl_check(vec2_approximately_equal(&result, &out, DL_EPSILON),
+  if (!dl_check(dl_vec2_approximately_equal(&result, &out, DL_EPSILON),
     "Expected {%f, %f} to be {%f, %f}",
     result.x, result.y,
     out.x, out.y))
     return false;
 
-  init_vec2(&out, 0.0, 0.3);
-  vec2_refract(&in, &vec2_left, 0.3, &result);
+  dl_init_vec2(&out, 0.0, 0.3);
+  dl_vec2_refract(&in, &dl_vec2_left, 0.3, &result);
 
-  if (!dl_check(vec2_approximately_equal(&result, &out, DL_EPSILON),
+  if (!dl_check(dl_vec2_approximately_equal(&result, &out, DL_EPSILON),
     "Expected {%f, %f} to be {%f, %f}",
     result.x, result.y,
     out.x, out.y))
@@ -568,7 +568,7 @@ dl_bool test_vec2_refract() {
 
 
 dl_bool test_init_point2() {
-  point2 point;
+  dl_point2 point;
   dl_real a,b;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -576,7 +576,7 @@ dl_bool test_init_point2() {
   a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_point2(&point, a, b);
+  dl_init_point2(&point, a, b);
 
   return dl_check(dl_approximately_equal(point.x, a, DL_EPSILON),
     "Expected x to be %f, was %f", a, point.x) &&
@@ -585,8 +585,8 @@ dl_bool test_init_point2() {
 }
 
 dl_bool test_point2_add() {
-  point2 point_a;
-  point2 point_b;
+  dl_point2 point_a;
+  dl_point2 point_b;
   dl_real a,b,c,d;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -596,10 +596,10 @@ dl_bool test_point2_add() {
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_point2(&point_a, a, b);
-  init_point2(&point_b, c, d);
+  dl_init_point2(&point_a, a, b);
+  dl_init_point2(&point_b, c, d);
 
-  point2_add(&point_a, &point_b, &point_b);
+  dl_point2_add(&point_a, &point_b, &point_b);
 
   return dl_check(dl_approximately_equal(point_b.x, a + c, DL_EPSILON),
     "Expected x to be %f, was %f", a + c, point_b.x) &&
@@ -608,8 +608,8 @@ dl_bool test_point2_add() {
 }
 
 dl_bool test_point2_sub() {
-  point2 point_a;
-  point2 point_b;
+  dl_point2 point_a;
+  dl_point2 point_b;
   dl_real a,b,c,d;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -619,10 +619,10 @@ dl_bool test_point2_sub() {
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_point2(&point_a, a, b);
-  init_point2(&point_b, c, d);
+  dl_init_point2(&point_a, a, b);
+  dl_init_point2(&point_b, c, d);
 
-  point2_sub(&point_a, &point_b, &point_b);
+  dl_point2_sub(&point_a, &point_b, &point_b);
 
   return dl_check(dl_approximately_equal(point_b.x, a - c, DL_EPSILON),
     "Expected x to be %f, was %f", a - c, point_b.x) &&
@@ -631,7 +631,7 @@ dl_bool test_point2_sub() {
 }
 
 dl_bool test_point2_mul_scalar() {
-  point2 point;
+  dl_point2 point;
   dl_real a,b,c;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -640,9 +640,9 @@ dl_bool test_point2_mul_scalar() {
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_point2(&point, a, b);
+  dl_init_point2(&point, a, b);
 
-  point2_mul_scalar(&point, c, &point);
+  dl_point2_mul_scalar(&point, c, &point);
 
   return dl_check(dl_approximately_equal(point.x, a * c, DL_EPSILON),
     "Expected x to be %f, was %f", a * c, point.x) &&
@@ -651,7 +651,7 @@ dl_bool test_point2_mul_scalar() {
 }
 
 dl_bool test_point2_div_scalar() {
-  point2 point;
+  dl_point2 point;
   dl_real a,b,c;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -660,9 +660,9 @@ dl_bool test_point2_div_scalar() {
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_point2(&point, a, b);
+  dl_init_point2(&point, a, b);
 
-  point2_div_scalar(&point, c, &point);
+  dl_point2_div_scalar(&point, c, &point);
 
   return dl_check(dl_approximately_equal(point.x, a / c, DL_EPSILON),
     "Expected x to be %f, was %f", a / c, point.x) &&
@@ -671,7 +671,7 @@ dl_bool test_point2_div_scalar() {
 }
 
 dl_bool test_point2_add_scalar() {
-  point2 point;
+  dl_point2 point;
   dl_real a,b,c;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -680,9 +680,9 @@ dl_bool test_point2_add_scalar() {
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_point2(&point, a, b);
+  dl_init_point2(&point, a, b);
 
-  point2_add_scalar(&point, c, &point);
+  dl_point2_add_scalar(&point, c, &point);
 
   return dl_check(dl_approximately_equal(point.x, a + c, DL_EPSILON),
     "Expected x to be %f, was %f", a + c, point.x) &&
@@ -691,7 +691,7 @@ dl_bool test_point2_add_scalar() {
 }
 
 dl_bool test_point2_sub_scalar() {
-  point2 point;
+  dl_point2 point;
   dl_real a,b,c;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -700,9 +700,9 @@ dl_bool test_point2_sub_scalar() {
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_point2(&point, a, b);
+  dl_init_point2(&point, a, b);
 
-  point2_sub_scalar(&point, c, &point);
+  dl_point2_sub_scalar(&point, c, &point);
 
   return dl_check(dl_approximately_equal(point.x, a - c, DL_EPSILON),
     "Expected x to be %f, was %f", a - c, point.x) &&
@@ -711,7 +711,7 @@ dl_bool test_point2_sub_scalar() {
 }
 
 dl_bool test_point2_negate() {
-  point2 point;
+  dl_point2 point;
   dl_real a,b;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -719,9 +719,9 @@ dl_bool test_point2_negate() {
   a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_point2(&point, a, b);
+  dl_init_point2(&point, a, b);
 
-  point2_negate(&point, &point);
+  dl_point2_negate(&point, &point);
 
   return dl_check(dl_approximately_equal(point.x, -a, DL_EPSILON),
     "Expected x to be %f, was %f", -a, point.x) &&
@@ -730,8 +730,8 @@ dl_bool test_point2_negate() {
 }
 
 dl_bool test_point2_approximately_equal() {
-  point2 point_a;
-  point2 point_b;
+  dl_point2 point_a;
+  dl_point2 point_b;
   dl_real a,b;
   dl_random_state r;
   dl_init_random_time(&r);
@@ -739,46 +739,46 @@ dl_bool test_point2_approximately_equal() {
   a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
   b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
-  init_point2(&point_a, a, b);
-  init_point2(&point_b, a, b);
+  dl_init_point2(&point_a, a, b);
+  dl_init_point2(&point_b, a, b);
 
-  if (!dl_check(point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
+  if (!dl_check(dl_point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
     "Expected (%f, %f) ~= (%f, %f)", point_b.x, point_b.y, point_a.x, point_a.y))
     return false;
 
-  init_point2(&point_b, -a, -b);
+  dl_init_point2(&point_b, -a, -b);
 
-  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
+  if (!dl_check(!dl_point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
-  init_point2(&point_b, a, -b);
+  dl_init_point2(&point_b, a, -b);
 
-  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
+  if (!dl_check(!dl_point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
-  init_point2(&point_b, -a, b);
+  dl_init_point2(&point_b, -a, b);
 
-  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
+  if (!dl_check(!dl_point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
-  init_point2(&point_b, a + DL_EPSILON * 2, b);
+  dl_init_point2(&point_b, a + DL_EPSILON * 2, b);
 
-  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
+  if (!dl_check(!dl_point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
-  init_point2(&point_b, a, b + DL_EPSILON * 2);
+  dl_init_point2(&point_b, a, b + DL_EPSILON * 2);
 
-  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
+  if (!dl_check(!dl_point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
-  init_point2(&point_b, a + DL_EPSILON * 2, b + DL_EPSILON * 2);
+  dl_init_point2(&point_b, a + DL_EPSILON * 2, b + DL_EPSILON * 2);
 
-  if (!dl_check(!point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
+  if (!dl_check(!dl_point2_approximately_equal(&point_a, &point_b, DL_EPSILON),
     "Expected (%f, %f) != (%f, %f)", point_b.x, point_b.y, a, b))
     return false;
 
@@ -786,28 +786,28 @@ dl_bool test_point2_approximately_equal() {
 }
 
 dl_bool test_point2_line_orientation() {
-  point2 above, below, on, a, b;
+  dl_point2 above, below, on, a, b;
   dl_real f;
   
-  init_point2(&above, 0.0, 1.0);
-  init_point2(&below, 1.0, 0.0);
-  init_point2(&on, 0.5, 0.5);
+  dl_init_point2(&above, 0.0, 1.0);
+  dl_init_point2(&below, 1.0, 0.0);
+  dl_init_point2(&on, 0.5, 0.5);
 
-  init_point2(&a, 0.0, 0.0);
-  init_point2(&b, 1.0, 1.0);
+  dl_init_point2(&a, 0.0, 0.0);
+  dl_init_point2(&b, 1.0, 1.0);
 
   /* Above is negative */
-  f = point2_line_orientation(&above, &a, &b);
+  f = dl_point2_line_orientation(&above, &a, &b);
   if (!dl_check(0 > f, "Expected value to be negative, was %f", f))
     return false;
 
   /* Below is positive */
-  f = point2_line_orientation(&below, &a, &b);
+  f = dl_point2_line_orientation(&below, &a, &b);
   if (!dl_check(0 < f, "Expected value to be positive, was %f", f))
     return false;
 
   /* On is approximately zero */
-  f = point2_line_orientation(&on, &a, &b);
+  f = dl_point2_line_orientation(&on, &a, &b);
   if (!dl_check(dl_approximately_equal(f, 0.0, DL_EPSILON),
     "Expected value to be zero, was %f", f))
     return false;
