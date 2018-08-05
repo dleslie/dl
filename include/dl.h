@@ -464,18 +464,18 @@ extern "C" {
   typedef struct {
     dl_integer m, a, c;
     dl_integer seed;
-  } random_state;
+  } dl_random_state;
 
-  dl_api random_state *init_random(random_state *state, dl_integer seed);
-  dl_api random_state *init_random_custom(random_state *state, dl_integer m, dl_integer a, dl_integer c, dl_integer seed);
-  dl_api random_state *init_random_time(random_state *state);
+  dl_api dl_random_state *dl_init_random(dl_random_state *state, dl_integer seed);
+  dl_api dl_random_state *dl_init_random_custom(dl_random_state *state, dl_integer m, dl_integer a, dl_integer c, dl_integer seed);
+  dl_api dl_random_state *dl_init_random_time(dl_random_state *state);
 
-  dl_api dl_integer random_integer(random_state *state, dl_integer max);
-  dl_api dl_integer random_integer_range(random_state *state, dl_integer min, dl_integer max);
-  dl_api dl_real random_degree(random_state *state);
-  dl_api dl_real random_radian(random_state *state);
-  dl_api dl_real random_real(random_state *state, dl_real max);
-  dl_api dl_real random_real_range(random_state *state, dl_real min, dl_real max);
+  dl_api dl_integer dl_random_integer(dl_random_state *state, dl_integer max);
+  dl_api dl_integer dl_random_integer_range(dl_random_state *state, dl_integer min, dl_integer max);
+  dl_api dl_real dl_random_degree(dl_random_state *state);
+  dl_api dl_real dl_random_radian(dl_random_state *state);
+  dl_api dl_real dl_random_real(dl_random_state *state, dl_real max);
+  dl_api dl_real dl_random_real_range(dl_random_state *state, dl_real min, dl_real max);
 
   
   
@@ -1278,11 +1278,11 @@ dl_api dl_integer dl_factorial(dl_integer n) {
 
 
 
-dl_api random_state *init_random(random_state *state, dl_integer seed) {
-  return init_random_custom(state, DL_INTEGER_MAX, 1103515245, 12345, seed);
+dl_api dl_random_state *dl_init_random(dl_random_state *state, dl_integer seed) {
+  return dl_init_random_custom(state, DL_INTEGER_MAX, 1103515245, 12345, seed);
 }
 
-dl_api random_state *init_random_custom(random_state *state, dl_integer m, dl_integer a, dl_integer c, dl_integer seed) {
+dl_api dl_random_state *dl_init_random_custom(dl_random_state *state, dl_integer m, dl_integer a, dl_integer c, dl_integer seed) {
   if (dl_safety(state == NULL))
     return NULL;
 
@@ -1294,15 +1294,15 @@ dl_api random_state *init_random_custom(random_state *state, dl_integer m, dl_in
   return state;
 }
 
-dl_api dl_real random_degree(random_state *state) {
-  return random_real_range(state, 0, 360);
+dl_api dl_real dl_random_degree(dl_random_state *state) {
+  return dl_random_real_range(state, 0, 360);
 }
 
-dl_api dl_real random_radian(random_state *state) {
-  return random_real_range(state, 0, 2 * DL_PI);
+dl_api dl_real dl_random_radian(dl_random_state *state) {
+  return dl_random_real_range(state, 0, 2 * DL_PI);
 }
 
-dl_api dl_real random_real(random_state *state, dl_real max) {
+dl_api dl_real dl_random_real(dl_random_state *state, dl_real max) {
   if (dl_safety(state == NULL))
     return 0;
 
@@ -1311,7 +1311,7 @@ dl_api dl_real random_real(random_state *state, dl_real max) {
   return fabs((dl_real)state->seed / (dl_real)state->m) * max;
 }
 
-dl_api dl_integer random_integer(random_state *state, dl_integer max) {
+dl_api dl_integer dl_random_integer(dl_random_state *state, dl_integer max) {
   if (dl_safety(state == NULL))
     return 0;
 
@@ -1320,17 +1320,17 @@ dl_api dl_integer random_integer(random_state *state, dl_integer max) {
   return dl_abs(state->seed) % max;
 }
 
-dl_api dl_integer random_integer_range(random_state *state, dl_integer min, dl_integer max) {
-  return random_integer(state, max - min) + min;
+dl_api dl_integer dl_random_integer_range(dl_random_state *state, dl_integer min, dl_integer max) {
+  return dl_random_integer(state, max - min) + min;
 }
 
-dl_api dl_real random_real_range(random_state *state, dl_real min, dl_real max) {
-  return random_real(state, max - min) + min;
+dl_api dl_real dl_random_real_range(dl_random_state *state, dl_real min, dl_real max) {
+  return dl_random_real(state, max - min) + min;
 }
 
 #if DL_IS_WINDOWS
 
-dl_api random_state *init_random_time(random_state *state) {
+dl_api dl_random_state *dl_init_random_time(dl_random_state *state) {
   static const uint64_t epoch = ((uint64_t)116444736000000000ULL);
   
   SYSTEMTIME system_time;
@@ -1346,23 +1346,24 @@ dl_api random_state *init_random_time(random_state *state) {
   tv_sec = (long)((time - epoch) / 10000000L);
   tv_usec = (long)(system_time.wMilliseconds * 1000);
 
-  return init_random(state, tv_usec + tv_sec);
+  return dl_init_random(state, tv_usec + tv_sec);
 }
 
 #endif
 
 #if (DL_IS_LINUX || DL_IS_APPLE) && DL_IS_ATLEAST_C99
 
-dl_api random_state *init_random_time(random_state *state) {
+dl_api dl_random_state *dl_init_random_time(dl_random_state *state) {
   struct timeval t1;
   gettimeofday(&t1, NULL);
-  return init_random(state, t1.tv_usec + t1.tv_sec);
+  return dl_init_random(state, t1.tv_usec + t1.tv_sec);
 }
 
 #else
-
-dl_api random_state *init_random_time(random_state *state) {
-  return init_random(state, (dl_integer)__LINE__);
+#warning dl_init_random_time will use uninitialized pointer value instead of time
+dl_api dl_random_state *dl_init_random_time(dl_random_state *state) {
+  any value;
+  return dl_init_random(state, (dl_integer)value);
 }
 
 #endif

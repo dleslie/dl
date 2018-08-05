@@ -120,7 +120,7 @@ void draw(double time, double delta_time) {
   }
 }
 
-void change(random_state *r) {
+void change(dl_random_state *r) {
   dl_natural idx;
   dl_real last_x, last_y, t;
   dl_bool do_random, type_change;
@@ -139,12 +139,12 @@ void change(random_state *r) {
   
   if (type_change) {
     for (idx = 0; idx < point_count; idx++) {
-      t = last_x + random_real_range(r, -0.15, 0.15);
+      t = last_x + dl_random_real_range(r, -0.15, 0.15);
       last_x = do_random
         ? dl_clamp01(t)
         : (float)idx/(float)(point_count - 1);
 
-      t = last_y + random_real_range(r, -0.15, 0.15);
+      t = last_y + dl_random_real_range(r, -0.15, 0.15);
       ys[idx] = last_y = dl_clamp01(t);
       init_point2(&points[idx], last_x, last_y);
     }
@@ -164,7 +164,7 @@ int main(int argc, char **argv)
   dl_integer screen_width = width;
   dl_integer screen_height = height;
 
-  random_state r;
+  dl_random_state r;
   double time, last_tick, delta_time;
   
   if (!al_init()) {
@@ -192,7 +192,7 @@ int main(int argc, char **argv)
     return -1;
   }
 
-  init_random_time(&r);
+  dl_init_random_time(&r);
   
   change(&r);
   

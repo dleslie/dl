@@ -128,12 +128,12 @@ dl_bool test_radian_to_degree() {
 }
 
 dl_bool test_random_degree() {
-  random_state r;
+  dl_random_state r;
   dl_real value;
   
-  init_random_time(&r);
+  dl_init_random_time(&r);
   
-  value = random_degree(&r);
+  value = dl_random_degree(&r);
   if (!dl_check(value >= 0 && value <= 360,
     "Expected %f to be between 0 and 360", value))
     return false;
@@ -141,12 +141,12 @@ dl_bool test_random_degree() {
 }
 
 dl_bool test_random_radian() {
-  random_state r;
+  dl_random_state r;
   dl_real value;
   
-  init_random_time(&r);
+  dl_init_random_time(&r);
   
-  value = random_radian(&r);
+  value = dl_random_radian(&r);
   if (!dl_check(value >= 0 && value <= 2 * DL_PI,
     "Expected %f to be between 0 and %f", value, 2 * DL_PI))
     return false;
@@ -154,11 +154,11 @@ dl_bool test_random_radian() {
 }
 
 dl_bool test_random_real() {
-  random_state r;
+  dl_random_state r;
   dl_real value;
-  init_random_time(&r);
+  dl_init_random_time(&r);
   
-  value = random_real(&r, DL_PI);
+  value = dl_random_real(&r, DL_PI);
   if (!dl_check(value >= 0 && value <= DL_PI,
     "Expected %f to be between 0 and %f", value, DL_PI))
     return false;
@@ -166,11 +166,11 @@ dl_bool test_random_real() {
 }
 
 dl_bool test_random_real_range() {
-  random_state r;
+  dl_random_state r;
   dl_real value;
-  init_random_time(&r);
+  dl_init_random_time(&r);
   
-  value = random_real_range(&r, -M_PI, 0);
+  value = dl_random_real_range(&r, -M_PI, 0);
   if (!dl_check(value >= -M_PI && value <= DL_PI,
     "Expected %f to be between %f and 0", value, -M_PI))
     return false;
@@ -178,11 +178,11 @@ dl_bool test_random_real_range() {
 }
 
 dl_bool test_random() {
-  random_state r;
+  dl_random_state r;
   dl_integer value;
-  init_random_time(&r);
+  dl_init_random_time(&r);
   
-  value = random_integer(&r, 1337);
+  value = dl_random_integer(&r, 1337);
   if (!dl_check(value >= 0 && value <= 1337,
     "Expected %i to be between 0 and 1337", value))
     return false;
@@ -190,11 +190,11 @@ dl_bool test_random() {
 }
 
 dl_bool test_random_range() {
-  random_state r;
+  dl_random_state r;
   dl_integer value;
-  init_random_time(&r);
+  dl_init_random_time(&r);
   
-  value = random_integer_range(&r, -1337, 0);
+  value = dl_random_integer_range(&r, -1337, 0);
   if (!dl_check(value >= -1337 && value <= 0,
     "Expected %i to be between -1337 and 1337", value))
     return false;
@@ -205,12 +205,12 @@ dl_bool test_random_range() {
 
 dl_bool test_init_vec2() {
   vec2 vec;
-  random_state r;
+  dl_random_state r;
   dl_real a,b;
-  init_random_time(&r);
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec, a, b);
 
@@ -224,13 +224,13 @@ dl_bool test_vec2_add() {
   vec2 vec_a;
   vec2 vec_b;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec_a, a, b);
   init_vec2(&vec_b, c, d);
@@ -247,13 +247,13 @@ dl_bool test_vec2_sub() {
   vec2 vec_a;
   vec2 vec_b;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec_a, a, b);
   init_vec2(&vec_b, c, d);
@@ -269,12 +269,12 @@ dl_bool test_vec2_sub() {
 dl_bool test_vec2_mul_scalar() {
   vec2 vec;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec, a, b);
 
@@ -289,12 +289,12 @@ dl_bool test_vec2_mul_scalar() {
 dl_bool test_vec2_div_scalar() {
   vec2 vec;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec, a, b);
 
@@ -309,12 +309,12 @@ dl_bool test_vec2_div_scalar() {
 dl_bool test_vec2_add_scalar() {
   vec2 vec;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec, a, b);
 
@@ -329,12 +329,12 @@ dl_bool test_vec2_add_scalar() {
 dl_bool test_vec2_sub_scalar() {
   vec2 vec;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec, a, b);
 
@@ -349,11 +349,11 @@ dl_bool test_vec2_sub_scalar() {
 dl_bool test_vec2_normalize() {
   vec2 vec;
   dl_real a,b,sqr_m,inv_m;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec, a, b);
 
@@ -377,11 +377,11 @@ dl_bool test_vec2_normalize() {
 dl_bool test_vec2_negate() {
   vec2 vec;
   dl_real a,b;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec, a, b);
 
@@ -397,13 +397,13 @@ dl_bool test_vec2_dot() {
   vec2 vec_a;
   vec2 vec_b;
   dl_real a,b,c,d,dot,expected;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec_a, a, b);
   init_vec2(&vec_b, c, d);
@@ -419,11 +419,11 @@ dl_bool test_vec2_approximately_equal() {
   vec2 vec_a;
   vec2 vec_b;
   dl_real a,b;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec_a, a, b);
   init_vec2(&vec_b, a + 0.5 * DL_EPSILON, b + 0.5 * DL_EPSILON);
@@ -474,11 +474,11 @@ dl_bool test_vec2_approximately_equal() {
 dl_bool test_vec2_square_magnitude() {
   vec2 vec;
   dl_real a,b,m,expected_m;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec, a, b);
 
@@ -492,11 +492,11 @@ dl_bool test_vec2_square_magnitude() {
 dl_bool test_vec2_magnitude() {
   vec2 vec;
   dl_real a,b,m,expected_m;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec2(&vec, a, b);
 
@@ -570,11 +570,11 @@ dl_bool test_vec2_refract() {
 dl_bool test_init_point2() {
   point2 point;
   dl_real a,b;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point2(&point, a, b);
 
@@ -588,13 +588,13 @@ dl_bool test_point2_add() {
   point2 point_a;
   point2 point_b;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point2(&point_a, a, b);
   init_point2(&point_b, c, d);
@@ -611,13 +611,13 @@ dl_bool test_point2_sub() {
   point2 point_a;
   point2 point_b;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point2(&point_a, a, b);
   init_point2(&point_b, c, d);
@@ -633,12 +633,12 @@ dl_bool test_point2_sub() {
 dl_bool test_point2_mul_scalar() {
   point2 point;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point2(&point, a, b);
 
@@ -653,12 +653,12 @@ dl_bool test_point2_mul_scalar() {
 dl_bool test_point2_div_scalar() {
   point2 point;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point2(&point, a, b);
 
@@ -673,12 +673,12 @@ dl_bool test_point2_div_scalar() {
 dl_bool test_point2_add_scalar() {
   point2 point;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point2(&point, a, b);
 
@@ -693,12 +693,12 @@ dl_bool test_point2_add_scalar() {
 dl_bool test_point2_sub_scalar() {
   point2 point;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point2(&point, a, b);
 
@@ -713,11 +713,11 @@ dl_bool test_point2_sub_scalar() {
 dl_bool test_point2_negate() {
   point2 point;
   dl_real a,b;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point2(&point, a, b);
 
@@ -733,11 +733,11 @@ dl_bool test_point2_approximately_equal() {
   point2 point_a;
   point2 point_b;
   dl_real a,b;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point2(&point_a, a, b);
   init_point2(&point_b, a, b);
@@ -820,13 +820,13 @@ dl_bool test_point2_line_orientation() {
 dl_bool test_init_vec4() {
   vec4 vec;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec, a, b, c, d);
 
@@ -843,17 +843,17 @@ dl_bool test_init_vec4() {
 dl_bool test_vec4_add() {
   vec4 vec_a, vec_b;
   dl_real a,b,c,d,e,f,g,h;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
-  f = random_real_range(&r, MIN_REAL, MAX_REAL);
-  g = random_real_range(&r, MIN_REAL, MAX_REAL);
-  h = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  f = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  g = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  h = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec_a, a, b, c, d);
   init_vec4(&vec_b, e, f, g, h);
@@ -873,17 +873,17 @@ dl_bool test_vec4_add() {
 dl_bool test_vec4_sub() {
   vec4 vec_a, vec_b;
   dl_real a,b,c,d,e,f,g,h;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
-  f = random_real_range(&r, MIN_REAL, MAX_REAL);
-  g = random_real_range(&r, MIN_REAL, MAX_REAL);
-  h = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  f = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  g = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  h = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec_a, a, b, c, d);
   init_vec4(&vec_b, e, f, g, h);
@@ -903,14 +903,14 @@ dl_bool test_vec4_sub() {
 dl_bool test_vec4_mul_scalar() {
   vec4 vec;
   dl_real a,b,c,d,e;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec, a, b, c, d);
 
@@ -929,14 +929,14 @@ dl_bool test_vec4_mul_scalar() {
 dl_bool test_vec4_div_scalar() {
   vec4 vec;
   dl_real a,b,c,d,e;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec, a, b, c, d);
 
@@ -955,14 +955,14 @@ dl_bool test_vec4_div_scalar() {
 dl_bool test_vec4_add_scalar() {
   vec4 vec;
   dl_real a,b,c,d,e;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec, a, b, c, d);
 
@@ -981,14 +981,14 @@ dl_bool test_vec4_add_scalar() {
 dl_bool test_vec4_sub_scalar() {
   vec4 vec;
   dl_real a,b,c,d,e;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec, a, b, c, d);
 
@@ -1007,15 +1007,15 @@ dl_bool test_vec4_sub_scalar() {
 dl_bool test_vec4_dot() {
   vec4 vec_a, vec_b;
   dl_real a,b,c,d,e,f,dot,expected;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
-  f = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  f = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec_a, a, b, c, d);
   init_vec4(&vec_b, c, d, e, f);
@@ -1030,13 +1030,13 @@ dl_bool test_vec4_dot() {
 dl_bool test_vec4_normalize() {
   vec4 vec;
   dl_real a,b,c,d,m;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec, a, b, c, d);
   vec4_normalize(&vec, &vec);
@@ -1062,13 +1062,13 @@ dl_bool test_vec4_normalize() {
 dl_bool test_vec4_negate() {
   vec4 vec;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec, a, b, c, d);
   vec4_negate(&vec, &vec);
@@ -1086,13 +1086,13 @@ dl_bool test_vec4_negate() {
 dl_bool test_vec4_approximately_equal() {
   vec4 vec_a, vec_b;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec_a, a, b, c, d);
   init_vec4(&vec_b, a, b, c, d);
@@ -1191,13 +1191,13 @@ dl_bool test_vec4_approximately_equal() {
 dl_bool test_vec4_square_magnitude() {
   vec4 vec;
   dl_real a,b,c,d,square_m,expected;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec, a, b, c, d);
 
@@ -1211,13 +1211,13 @@ dl_bool test_vec4_square_magnitude() {
 dl_bool test_vec4_magnitude() {
   vec4 vec;
   dl_real a,b,c,d,m,expected;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec4(&vec, a, b, c, d);
 
@@ -1238,12 +1238,12 @@ dl_bool test_vec4_magnitude() {
 dl_bool test_init_point3() {
   point3 point;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point3(&point, a, b, c);
 
@@ -1259,15 +1259,15 @@ dl_bool test_init_point3() {
 dl_bool test_point3_add() {
   point3 point_a, point_b;
   dl_real a,b,c,d,e,f;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
-  f = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  f = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point3(&point_a, a, b, c);
   init_point3(&point_b, d, e, f);
@@ -1286,15 +1286,15 @@ dl_bool test_point3_add() {
 dl_bool test_point3_sub() {
   point3 point_a, point_b;
   dl_real a,b,c,d,e,f;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
-  f = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  f = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point3(&point_a, a, b, c);
   init_point3(&point_b, d, e, f);
@@ -1313,13 +1313,13 @@ dl_bool test_point3_sub() {
 dl_bool test_point3_mul_scalar() {
   point3 point;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point3(&point, a, b, c);
 
@@ -1337,13 +1337,13 @@ dl_bool test_point3_mul_scalar() {
 dl_bool test_point3_div_scalar() {
   point3 point;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point3(&point, a, b, c);
 
@@ -1361,13 +1361,13 @@ dl_bool test_point3_div_scalar() {
 dl_bool test_point3_add_scalar() {
   point3 point;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point3(&point, a, b, c);
 
@@ -1385,13 +1385,13 @@ dl_bool test_point3_add_scalar() {
 dl_bool test_point3_sub_scalar() {
   point3 point;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point3(&point, a, b, c);
 
@@ -1410,8 +1410,8 @@ dl_bool test_point3_rotate() {
   point3 point, expected_x, expected_y, expected_z, out;
   dl_real angle;
 
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
   /* Identity: no angle */
   point = point3_one;
@@ -1475,12 +1475,12 @@ dl_bool test_point3_rotate() {
 dl_bool test_point3_negate() {
   point3 point;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point3(&point, a, b, c);
 
@@ -1498,12 +1498,12 @@ dl_bool test_point3_negate() {
 dl_bool test_point3_approximately_equal() {
   point3 point_a, point_b;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_point3(&point_a, a, b, c);
   init_point3(&point_b, a, b, c);
@@ -1555,12 +1555,12 @@ dl_bool test_point3_approximately_equal() {
 dl_bool test_init_vec3() {
   vec3 vec;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec, a, b, c);
 
@@ -1576,15 +1576,15 @@ dl_bool test_init_vec3() {
 dl_bool test_vec3_add() {
   vec3 vec_a, vec_b;
   dl_real a,b,c,d,e,f;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
-  f = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  f = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec_a, a, b, c);
   init_vec3(&vec_b, d, e, f);
@@ -1603,15 +1603,15 @@ dl_bool test_vec3_add() {
 dl_bool test_vec3_sub() {
   vec3 vec_a, vec_b;
   dl_real a,b,c,d,e,f;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
-  f = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  f = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec_a, a, b, c);
   init_vec3(&vec_b, d, e, f);
@@ -1630,15 +1630,15 @@ dl_bool test_vec3_sub() {
 dl_bool test_vec3_cross() {
   vec3 vec_a, vec_b;
   dl_real a,b,c,d,e,f,cross_x,cross_y,cross_z;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
-  f = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  f = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec_a, a, b, c);
   init_vec3(&vec_b, d, e, f);
@@ -1661,15 +1661,15 @@ dl_bool test_vec3_cross() {
 dl_bool test_vec3_dot() {
   vec3 vec_a, vec_b;
   dl_real a,b,c,d,e,f,dot,expected;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
-  e = random_real_range(&r, MIN_REAL, MAX_REAL);
-  f = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  e = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  f = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec_a, a, b, c);
   init_vec3(&vec_b, d, e, f);
@@ -1684,13 +1684,13 @@ dl_bool test_vec3_dot() {
 dl_bool test_vec3_mul_scalar() {
   vec3 vec;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec, a, b, c);
 
@@ -1708,13 +1708,13 @@ dl_bool test_vec3_mul_scalar() {
 dl_bool test_vec3_div_scalar() {
   vec3 vec;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec, a, b, c);
 
@@ -1732,13 +1732,13 @@ dl_bool test_vec3_div_scalar() {
 dl_bool test_vec3_add_scalar() {
   vec3 vec;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec, a, b, c);
 
@@ -1756,13 +1756,13 @@ dl_bool test_vec3_add_scalar() {
 dl_bool test_vec3_sub_scalar() {
   vec3 vec;
   dl_real a,b,c,d;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
-  d = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  d = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec, a, b, c);
 
@@ -1842,12 +1842,12 @@ dl_bool test_vec3_rotate() {
 dl_bool test_vec3_normalize() {
   vec3 vec;
   dl_real a,b,c,m;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec, a, b, c);
 
@@ -1873,12 +1873,12 @@ dl_bool test_vec3_normalize() {
 dl_bool test_vec3_negate() {
   vec3 vec;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec, a, b, c);
 
@@ -1896,12 +1896,12 @@ dl_bool test_vec3_negate() {
 dl_bool test_vec3_approximately_equal() {
   vec3 point_a, point_b;
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&point_a, a, b, c);
   init_vec3(&point_b, a, b, c);
@@ -1951,12 +1951,12 @@ dl_bool test_vec3_approximately_equal() {
 dl_bool test_vec3_square_magnitude() {
   vec3 vec;
   dl_real a,b,c,square_m,expected;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec, a, b, c);
 
@@ -1970,12 +1970,12 @@ dl_bool test_vec3_square_magnitude() {
 dl_bool test_vec3_magnitude() {
   vec3 vec;
   dl_real a,b,c,m,expected;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec, a, b, c);
 
@@ -2077,15 +2077,15 @@ dl_bool test_init_mat4() {
   dl_natural a = 0, b = 1, c = 2, d = 3;
   dl_natural v_idx, col_idx, row_idx;
   dl_real mat_val, col_val;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
 
   for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
@@ -2110,15 +2110,15 @@ dl_bool test_mat4_add() {
   dl_natural a = 0, b = 1, c = 2, d = 3;
   dl_natural v_idx, col_idx, row_idx;
   dl_real v,f;
-  random_state r;
-  init_random_time(&r);  
+  dl_random_state r;
+  dl_init_random_time(&r);  
 
   for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
@@ -2146,15 +2146,15 @@ dl_bool test_mat4_sub() {
   dl_natural a = 0, b = 1, c = 2, d = 3;
   dl_natural v_idx, col_idx, row_idx;
   dl_real v,f;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
   for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
@@ -2181,16 +2181,16 @@ dl_bool test_mat4_mul() {
   vec4 col[4];
   dl_natural v_idx, a = 0, b = 1, c = 2, d = 3;
   dl_real expected, found;
-  random_state r;
+  dl_random_state r;
   
-  init_random_time(&r);
+  dl_init_random_time(&r);
   
   for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
@@ -2324,15 +2324,15 @@ dl_bool test_mat4_mul_vec4() {
   vec4 vec[6];
   mat4 mat;
   dl_real expected, found;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
   for (i = 0; i < 6; ++i) {
     init_vec4(&vec[i],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   mat4_mul_vec4(&mat4_identity, &vec[0], &vec[1]);
@@ -2377,21 +2377,21 @@ dl_bool test_mat4_mul_vec3() {
   mat4 mat;
   dl_natural i;
   dl_real expected, found;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
   for (i = 0; i < 4; ++i) {
     init_vec4(&mat_vec[i],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_vec3(&vec,
-    random_real_range(&r, MIN_REAL, MAX_REAL),
-    random_real_range(&r, MIN_REAL, MAX_REAL),
-    random_real_range(&r, MIN_REAL, MAX_REAL));
+    dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+    dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+    dl_random_real_range(&r, MIN_REAL, MAX_REAL));
 
   mat4_mul_vec3(&mat4_identity, &vec, &vec_out);
 
@@ -2432,21 +2432,21 @@ dl_bool test_mat4_mul_point3() {
   mat4 mat;
   dl_natural i;
   dl_real expected, found;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
   for (i = 0; i < 4; ++i) {
     init_vec4(&mat_vec[i],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_point3(&point,
-    random_real_range(&r, MIN_REAL, MAX_REAL),
-    random_real_range(&r, MIN_REAL, MAX_REAL),
-    random_real_range(&r, MIN_REAL, MAX_REAL));
+    dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+    dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+    dl_random_real_range(&r, MIN_REAL, MAX_REAL));
 
   mat4_mul_point3(&mat4_identity, &point, &point_out);
 
@@ -2486,15 +2486,15 @@ dl_bool test_mat4_transpose() {
   vec3 col[4];
   dl_natural v_idx, a = 0, b = 1, c = 2, d = 3, col_idx, row_idx;
   dl_real v,f;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
   for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
@@ -2520,17 +2520,17 @@ dl_bool test_mat4_mul_scalar() {
   vec3 col[4];
   dl_natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
   dl_real scalar, v, f;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  scalar = random_real_range(&r, MIN_REAL, MAX_REAL);
+  scalar = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
@@ -2556,17 +2556,17 @@ dl_bool test_mat4_div_scalar() {
   vec3 col[4];
   dl_natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
   dl_real scalar, v, f;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  scalar = random_real_range(&r, MIN_REAL, MAX_REAL);
+  scalar = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
@@ -2592,17 +2592,17 @@ dl_bool test_mat4_add_scalar() {
   vec3 col[4];
   dl_natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
   dl_real v, f, scalar;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  scalar = random_real_range(&r, MIN_REAL, MAX_REAL);
+  scalar = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
@@ -2628,17 +2628,17 @@ dl_bool test_mat4_sub_scalar() {
   vec3 col[4];
   dl_natural a = 0, b = 1, c = 2, d = 3, v_idx, col_idx, row_idx;
   dl_real scalar, v, f;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  scalar = random_real_range(&r, MIN_REAL, MAX_REAL);
+  scalar = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
@@ -2664,12 +2664,12 @@ dl_bool test_mat4_translate() {
   point3 point[2];
   vec3 vec[2];
   dl_real a,b,c;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec[0], a, b, c);
   init_point3(&point[0], a, b, c);
@@ -2694,17 +2694,17 @@ dl_bool test_mat4_translate() {
 }
 
 dl_bool test_mat4_rotate() {
-  random_state r;
+  dl_random_state r;
   dl_real angle, a, b, c;
   vec3 vec[3];
   mat4 mat[2];
   
-  init_random_time(&r);
+  dl_init_random_time(&r);
   
-  angle = random_radian(&r);
-  a = random_real_range(&r, MIN_REAL, MAX_REAL);
-  b = random_real_range(&r, MIN_REAL, MAX_REAL);
-  c = random_real_range(&r, MIN_REAL, MAX_REAL);
+  angle = dl_random_radian(&r);
+  a = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  b = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
+  c = dl_random_real_range(&r, MIN_REAL, MAX_REAL);
 
   init_vec3(&vec[0], a, b, c);
 
@@ -2937,15 +2937,15 @@ dl_bool test_mat4_approximately_equal() {
   mat4 mat[2];
   vec3 col[4];
   dl_natural a = 0, b = 1, c = 2, d = 3, v_idx;
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
   for (v_idx = 0; v_idx < 4; ++v_idx) {
     init_vec4(&col[v_idx],
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL),
-      random_real_range(&r, MIN_REAL, MAX_REAL));
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL),
+      dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
   init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);

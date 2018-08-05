@@ -475,13 +475,13 @@ dl_bool test_collection_peek() {
 }
 
 dl_bool test_collection_remove_at() {
-  random_state r;
+  dl_random_state r;
   dl_any ref;
   dl_integer original, removed;
   iterator pos;
   SINGLE_TEST_BEGIN();
 
-  init_random_time(&r);
+  dl_init_random_time(&r);
   
   if (0 == collection_copy_array(_c_data_a, 10, &c))
     goto fail;
@@ -492,7 +492,7 @@ dl_bool test_collection_remove_at() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  pos = collection_index(&c, (dl_natural)random_integer_range(&r, 0, collection_count(&c)));
+  pos = collection_index(&c, (dl_natural)dl_random_integer_range(&r, 0, collection_count(&c)));
   if (!dl_check(ref = collection_ref(&c, pos),
     "%s: expected to ref %lui", type_name, pos))
     goto fail;
@@ -565,13 +565,13 @@ insuccess:
 }
 
 dl_bool test_collection_ref() {
-  random_state r;
+  dl_random_state r;
   dl_any ref;
   iterator pos;
   dl_integer val;
   SINGLE_TEST_BEGIN();
   
-  init_random_time(&r);
+  dl_init_random_time(&r);
 
   if (0 == collection_copy_array(_c_data_a, 10, &c))
     goto fail;
@@ -582,7 +582,7 @@ dl_bool test_collection_ref() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  pos = collection_index(&c, (dl_natural)random_integer_range(&r, 0, collection_count(&c)));
+  pos = collection_index(&c, (dl_natural)dl_random_integer_range(&r, 0, collection_count(&c)));
   if (!dl_check(ref = collection_ref(&c, pos),
     "%s: expected to ref %lui", type_name, pos))
     goto fail;
@@ -882,8 +882,8 @@ dl_bool test_collection_any() {
 dl_bool test_collection_drop() {
   SINGLE_TEST_BEGIN();
 
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
   if (0 == collection_copy_array(_c_data_a, 10, &c))
     goto fail;
@@ -894,7 +894,7 @@ dl_bool test_collection_drop() {
   if (!_contains_only(type_name, &c, _c_data_a, 10))
     goto fail;
 
-  dl_natural count = (dl_natural)random_integer_range(&r, 1, 9);
+  dl_natural count = (dl_natural)dl_random_integer_range(&r, 1, 9);
 
   if (!dl_check(collection_drop(&c, count),
     "%s: Expected drop to work.", type_name))
@@ -1081,8 +1081,8 @@ insuccess:
 dl_bool test_collection_take() {
   DUAL_TEST_BEGIN();
 
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
   if (!dl_check(collection_copy_array(_c_data_a, 10, &c1),
     "%s: Expected copy to work.", type1_name))
@@ -1094,7 +1094,7 @@ dl_bool test_collection_take() {
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  dl_natural count = random_integer(&r, collection_count(&c1));
+  dl_natural count = dl_random_integer(&r, collection_count(&c1));
   dl_integer taken = collection_take(&c1, count, &c2);
   if (!dl_check((dl_integer)count == taken,
     "%s, %s: Expected take to work, wanted %i, got %i.", type1_name, type2_name, count, taken))
@@ -1354,8 +1354,8 @@ dl_bool test_collection_remove_last() {
 dl_bool test_collection_destroy_at() {
   SINGLE_TEST_BEGIN();
 
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
   if (0 == collection_copy_array(_c_data_a, 10, &c))
     goto fail;
@@ -1368,7 +1368,7 @@ dl_bool test_collection_destroy_at() {
 
   dl_natural before_length = collection_count(&c);
 
-  iterator pos = collection_index(&c, (dl_natural)random_integer_range(&r, 0, collection_count(&c)));
+  iterator pos = collection_index(&c, (dl_natural)dl_random_integer_range(&r, 0, collection_count(&c)));
   if (!dl_check(collection_destroy_at(&c, &pos),
     "%s: Expected destroy to work.", type_name))
     goto fail;
@@ -1559,8 +1559,8 @@ dl_bool test_collection_pop_destroy() {
 dl_bool test_collection_index_of() {
   SINGLE_TEST_BEGIN();
 
-  random_state r;
-  init_random_time(&r);
+  dl_random_state r;
+  dl_init_random_time(&r);
   
   if (0 == collection_copy_array(_c_data_a, 10, &c))
     goto fail;
@@ -1571,8 +1571,8 @@ dl_bool test_collection_index_of() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  dl_integer item1 = _c_data_a[random_integer_range(&r, 0, 4) + 5];
-  dl_integer item2 = _c_data_a[random_integer_range(&r, 0, 4)];
+  dl_integer item1 = _c_data_a[dl_random_integer_range(&r, 0, 4) + 5];
+  dl_integer item2 = _c_data_a[dl_random_integer_range(&r, 0, 4)];
   dl_any ref1, ref2;
 
   iterator index1 = collection_index_of(&c, &item1);
@@ -1821,15 +1821,15 @@ dl_bool test_init_vector_array() {
 dl_bool test_vector_get() {
   vector v1, v2;
   char data[] = { '1', '2', '3', '4', '5', '6' };
-  random_state r;
+  dl_random_state r;
   char out;
   dl_natural idx;
   
-  init_random_time(&r);  
+  dl_init_random_time(&r);  
   init_vector_array(&v1, (dl_any)&data, sizeof(char), 6);
 
   out = 'F';
-  idx = (dl_natural)random_integer_range(&r, 0, 5);
+  idx = (dl_natural)dl_random_integer_range(&r, 0, 5);
   if (!dl_check(vector_get(&v1, idx, (dl_any)&out) && out == data[idx],
     "Expected %c to be %c", out, data[idx]))
     return false;
@@ -1857,13 +1857,13 @@ dl_bool test_vector_set() {
   char data[] = { 'A', 'B', 'C', 'D', 'E', 'F' };
   char set_data[] = { '1', '2', '3', '4', '5', '6' };
   dl_natural idx;
-  random_state r;
+  dl_random_state r;
   char out;
   
-  init_random_time(&r);
+  dl_init_random_time(&r);
   init_vector_array(&v1, (dl_any)&data, sizeof(char), 6);
 
-  idx = (dl_natural)random_integer_range(&r, 0, 5);
+  idx = (dl_natural)dl_random_integer_range(&r, 0, 5);
   out = 'F';
   if (!dl_check(vector_set(&v1, idx, (dl_any)&set_data[idx]) &&
     vector_get(&v1, idx, (dl_any)&out) &&
@@ -1894,14 +1894,14 @@ dl_bool test_vector_ref() {
   vector v1, v2;
   char data[] = { '1', '2', '3', '4', '5', '6' };
   dl_any out;
-  random_state r;
+  dl_random_state r;
   dl_natural idx;
   
-  init_random_time(&r);
+  dl_init_random_time(&r);
   init_vector_array(&v1, (dl_any)&data, sizeof(char), 6);
 
   out = NULL;
-  idx = (dl_natural)random_integer_range(&r, 0, 5);
+  idx = (dl_natural)dl_random_integer_range(&r, 0, 5);
   if (!dl_check((out = vector_ref(&v1, idx)) && *(char *)out == data[idx],
     "Expected %c to be %c", *(char *)out, data[idx]))
     return false;
