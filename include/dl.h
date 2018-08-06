@@ -919,42 +919,42 @@ extern "C" {
     struct {
       struct dl_linked_list_node *node;
     } dl_linked_list;
-  } iterator;
+  } dl_iterator;
 
   enum {
     /* Unsorted */
-    COLLECTION_TYPE_LIST,
-    COLLECTION_TYPE_QUEUE,
+    DL_COLLECTION_TYPE_LIST,
+    DL_COLLECTION_TYPE_QUEUE,
     /* Sorted */
-    COLLECTION_TYPE_SORTED_LIST,
-    COLLECTION_TYPE_SET
+    DL_COLLECTION_TYPE_SORTED_LIST,
+    DL_COLLECTION_TYPE_SET
   };
-  typedef dl_byte collection_type;
+  typedef dl_byte dl_collection_type;
 
   enum {
-    STORAGE_TYPE_VECTOR,
-    STORAGE_TYPE_LINKED_LIST
+    DL_STORAGE_TYPE_VECTOR,
+    DL_STORAGE_TYPE_LINKED_LIST
   };
-  typedef dl_byte storage_type;  
+  typedef dl_byte dl_storage_type;  
 
-  struct collection_dispatch_functions;
+  struct dl_collection_dispatch_functions;
   typedef struct {
-    collection_type type;
-    storage_type storage;
+    dl_collection_type type;
+    dl_storage_type storage;
     
     dl_comparator comparer;
     dl_handler deconstruct_entry;
     dl_natural capacity;
     dl_natural element_size;
 
-    struct collection_dispatch_functions *functions;
-  } collection_settings;
+    struct dl_collection_dispatch_functions *functions;
+  } dl_collection_settings;
 
-  extern collection_settings default_vector_collection_settings;
-  extern collection_settings default_linked_list_collection_settings;
+  extern dl_collection_settings default_vector_collection_settings;
+  extern dl_collection_settings default_linked_list_collection_settings;
 
   typedef struct {
-    collection_settings settings;
+    dl_collection_settings settings;
 
     union {
       struct {
@@ -965,126 +965,126 @@ extern "C" {
         dl_linked_list container;
       } dl_linked_list;
     } data;
-  } collection;
+  } dl_collection;
 
-  struct collection_dispatch_functions {
-    dl_integer (*_iterator_compare)(const collection *dl_restrict col, iterator left, iterator right);
-    dl_bool (*_iterator_is_valid)(const collection *dl_restrict col, iterator index);
-    iterator (*_make_invalid_iterator)(const collection *dl_restrict col);
+  struct dl_collection_dispatch_functions {
+    dl_integer (*_dl_iterator_compare)(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right);
+    dl_bool (*_dl_iterator_is_valid)(const dl_collection *dl_restrict col, dl_iterator index);
+    dl_iterator (*_make_invalid_dl_iterator)(const dl_collection *dl_restrict col);
 
-    dl_any (*_collection_push_start)(collection *dl_restrict col, iterator *iter);
-    dl_bool (*_collection_is_empty)(const collection *dl_restrict col);
-    dl_any (*_collection_pop)(const collection *dl_restrict col, dl_any out);
-    dl_bool (*_collection_pop_destroy)(collection *dl_restrict col);
-    dl_bool (*_collection_pop_forget)(collection *dl_restrict col);
-    dl_integer (*_collection_ref_array)(collection *dl_restrict col, iterator iter, dl_any *out_array);
-    dl_any (*_collection_ref)(collection *dl_restrict col, iterator iter);
-    dl_bool (*_collection_swap)(collection *dl_restrict col, iterator *iter_a, iterator *iter_b);
-    dl_any (*_collection_get)(const collection *dl_restrict col, iterator iter, dl_any out);
-    dl_any (*_collection_set)(collection *dl_restrict col, iterator *iter, dl_any value);
-    iterator (*_collection_index)(collection *dl_restrict col, dl_natural index);
-    void (*_collection_next)(const collection *dl_restrict col, iterator *iter);
-    void (*_collection_prev)(const collection *dl_restrict col, iterator *iter);
-    dl_integer (*_collection_count)(const collection *dl_restrict col);
-    iterator (*_collection_begin)(const collection *dl_restrict col);
-    iterator (*_collection_end)(const collection *dl_restrict col);
-    const dl_any (*_collection_search_region)(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter);
-    dl_bool (*_collection_destroy_at)(collection *dl_restrict col, iterator *iter, dl_handler *destructor);
-    dl_any (*_collection_remove_at)(collection *dl_restrict col, iterator *iter, dl_any out);
-    dl_integer (*_collection_destroy_range)(collection *dl_restrict col, iterator *iter, dl_natural count);
-    dl_bool (*_collection_insert)(collection *dl_restrict col, iterator *dl_restrict position, dl_any item);
+    dl_any (*_collection_push_start)(dl_collection *dl_restrict col, dl_iterator *iter);
+    dl_bool (*_collection_is_empty)(const dl_collection *dl_restrict col);
+    dl_any (*_collection_pop)(const dl_collection *dl_restrict col, dl_any out);
+    dl_bool (*_collection_pop_destroy)(dl_collection *dl_restrict col);
+    dl_bool (*_collection_pop_forget)(dl_collection *dl_restrict col);
+    dl_integer (*_collection_ref_array)(dl_collection *dl_restrict col, dl_iterator iter, dl_any *out_array);
+    dl_any (*_collection_ref)(dl_collection *dl_restrict col, dl_iterator iter);
+    dl_bool (*_collection_swap)(dl_collection *dl_restrict col, dl_iterator *iter_a, dl_iterator *iter_b);
+    dl_any (*_collection_get)(const dl_collection *dl_restrict col, dl_iterator iter, dl_any out);
+    dl_any (*_collection_set)(dl_collection *dl_restrict col, dl_iterator *iter, dl_any value);
+    dl_iterator (*_collection_index)(dl_collection *dl_restrict col, dl_natural index);
+    void (*_collection_next)(const dl_collection *dl_restrict col, dl_iterator *iter);
+    void (*_collection_prev)(const dl_collection *dl_restrict col, dl_iterator *iter);
+    dl_integer (*_collection_count)(const dl_collection *dl_restrict col);
+    dl_iterator (*_collection_begin)(const dl_collection *dl_restrict col);
+    dl_iterator (*_collection_end)(const dl_collection *dl_restrict col);
+    const dl_any (*_collection_search_region)(const dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter);
+    dl_bool (*_collection_destroy_at)(dl_collection *dl_restrict col, dl_iterator *iter, dl_handler *destructor);
+    dl_any (*_collection_remove_at)(dl_collection *dl_restrict col, dl_iterator *iter, dl_any out);
+    dl_integer (*_collection_destroy_range)(dl_collection *dl_restrict col, dl_iterator *iter, dl_natural count);
+    dl_bool (*_collection_insert)(dl_collection *dl_restrict col, dl_iterator *dl_restrict position, dl_any item);
   };
   
-  dl_api dl_integer iterator_compare(const collection *dl_restrict col, iterator left, iterator right);
-  dl_api dl_bool iterator_equal(const collection *dl_restrict col, iterator left, iterator right);
-  dl_api dl_bool iterator_is_valid(const collection *dl_restrict col, iterator index);
-  dl_api iterator make_invalid_iterator(const collection *dl_restrict col);
+  dl_api dl_integer dl_iterator_compare(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right);
+  dl_api dl_bool dl_iterator_equal(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right);
+  dl_api dl_bool dl_iterator_is_valid(const dl_collection *dl_restrict col, dl_iterator index);
+  dl_api dl_iterator make_invalid_dl_iterator(const dl_collection *dl_restrict col);
 
-  dl_api collection *init_collection(collection *dl_restrict col, collection_type type, storage_type storage, dl_comparator *dl_restrict compare, dl_handler *dl_restrict destructor, dl_natural element_size);
-  dl_api collection *init_collection_custom(collection *dl_restrict col, collection_settings settings, dl_natural element_size);
+  dl_api dl_collection *dl_init_collection(dl_collection *dl_restrict col, dl_collection_type type, dl_storage_type storage, dl_comparator *dl_restrict compare, dl_handler *dl_restrict destructor, dl_natural element_size);
+  dl_api dl_collection *dl_init_collection_custom(dl_collection *dl_restrict col, dl_collection_settings settings, dl_natural element_size);
 
-  dl_api collection *init_collection_array(collection *dl_restrict col, collection_type type, dl_comparator *dl_restrict comp, dl_handler *dl_restrict destruct_entry, dl_byte * data, dl_natural element_size, dl_natural count);
+  dl_api dl_collection *dl_init_collection_array(dl_collection *dl_restrict col, dl_collection_type type, dl_comparator *dl_restrict comp, dl_handler *dl_restrict destruct_entry, dl_byte * data, dl_natural element_size, dl_natural count);
 
-  dl_api dl_natural collection_element_size(const collection *dl_restrict col);
+  dl_api dl_natural dl_collection_element_size(const dl_collection *dl_restrict col);
 
-  dl_api void destroy_collection(collection *dl_restrict col);
+  dl_api void dl_destroy_collection(dl_collection *dl_restrict col);
 
-  dl_api dl_bool collection_is_set(const collection *dl_restrict col);
-  dl_api dl_bool collection_is_sorted(const collection * dl_restrict col);
-  dl_api dl_bool collection_is_queue(const collection * dl_restrict col);
-  dl_api dl_bool collection_is_vector(const collection * dl_restrict col);
-  dl_api dl_bool collection_is_linked_list(const collection * dl_restrict col);
+  dl_api dl_bool dl_collection_is_set(const dl_collection *dl_restrict col);
+  dl_api dl_bool dl_collection_is_sorted(const dl_collection * dl_restrict col);
+  dl_api dl_bool dl_collection_is_queue(const dl_collection * dl_restrict col);
+  dl_api dl_bool dl_collection_is_vector(const dl_collection * dl_restrict col);
+  dl_api dl_bool dl_collection_is_linked_list(const dl_collection * dl_restrict col);
 
-  dl_api dl_integer collection_copy(const collection *dl_restrict original, collection *dl_restrict target);
-  dl_api dl_integer collection_copy_array(const dl_any data, dl_natural count, collection *dl_restrict target);
+  dl_api dl_integer dl_collection_copy(const dl_collection *dl_restrict original, dl_collection *dl_restrict target);
+  dl_api dl_integer dl_collection_copy_array(const dl_any data, dl_natural count, dl_collection *dl_restrict target);
 
-  dl_api iterator collection_begin(const collection *dl_restrict col);
-  dl_api iterator collection_end(const collection *dl_restrict col);
+  dl_api dl_iterator dl_collection_begin(const dl_collection *dl_restrict col);
+  dl_api dl_iterator dl_collection_end(const dl_collection *dl_restrict col);
 
-  dl_api dl_any collection_pop(collection *dl_restrict col, dl_any out);
-  dl_api dl_bool collection_pop_forget(collection *dl_restrict col);
-  dl_api dl_bool collection_pop_destroy(collection *dl_restrict col);
+  dl_api dl_any dl_collection_pop(dl_collection *dl_restrict col, dl_any out);
+  dl_api dl_bool dl_collection_pop_forget(dl_collection *dl_restrict col);
+  dl_api dl_bool dl_collection_pop_destroy(dl_collection *dl_restrict col);
 
-  dl_api dl_any collection_push(collection *dl_restrict col, const dl_any value);
-  dl_api dl_any collection_push_index(collection *dl_restrict col, const dl_any value, iterator *out_index);
-  dl_api dl_any collection_push_start(collection *dl_restrict col, iterator *iter);
-  dl_api dl_any collection_push_finish(collection *dl_restrict col, iterator *iter);
+  dl_api dl_any dl_collection_push(dl_collection *dl_restrict col, const dl_any value);
+  dl_api dl_any dl_collection_push_index(dl_collection *dl_restrict col, const dl_any value, dl_iterator *out_index);
+  dl_api dl_any dl_collection_push_start(dl_collection *dl_restrict col, dl_iterator *iter);
+  dl_api dl_any dl_collection_push_finish(dl_collection *dl_restrict col, dl_iterator *iter);
 
-  dl_api const dl_any collection_begin_ref(const collection *dl_restrict col, iterator *iter);
-  dl_api const dl_any collection_end_ref(const collection *dl_restrict col, iterator *iter);
+  dl_api const dl_any dl_collection_begin_ref(const dl_collection *dl_restrict col, dl_iterator *iter);
+  dl_api const dl_any dl_collection_end_ref(const dl_collection *dl_restrict col, dl_iterator *iter);
 
-  dl_api iterator collection_index(collection *dl_restrict col, dl_natural index);
-  dl_api iterator collection_index_of(const collection *dl_restrict col, const dl_any item);
+  dl_api dl_iterator dl_collection_index(dl_collection *dl_restrict col, dl_natural index);
+  dl_api dl_iterator dl_collection_index_of(const dl_collection *dl_restrict col, const dl_any item);
 
-  dl_api const dl_any collection_next(const collection *dl_restrict col, iterator *iter);
-  dl_api const dl_any collection_prev(const collection *dl_restrict col, iterator *iter);
+  dl_api const dl_any dl_collection_next(const dl_collection *dl_restrict col, dl_iterator *iter);
+  dl_api const dl_any dl_collection_prev(const dl_collection *dl_restrict col, dl_iterator *iter);
 
-  dl_api dl_any collection_find(const collection *dl_restrict col, dl_filter *dl_restrict predicate, iterator *iter);
-  dl_api dl_any collection_find_last(const collection *dl_restrict col, dl_filter *dl_restrict predicate, iterator *iter);
+  dl_api dl_any dl_collection_find(const dl_collection *dl_restrict col, dl_filter *dl_restrict predicate, dl_iterator *iter);
+  dl_api dl_any dl_collection_find_last(const dl_collection *dl_restrict col, dl_filter *dl_restrict predicate, dl_iterator *iter);
 
-  dl_api dl_any collection_foldl(const collection *dl_restrict col, dl_any initial, dl_folder *func);
-  dl_api dl_any collection_foldr(const collection *dl_restrict col, dl_any initial, dl_folder *func);
-  dl_api const dl_any collection_search(const collection *dl_restrict col, dl_filter *predicate, iterator *iter);
-  dl_api const dl_any collection_search_region(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter);
+  dl_api dl_any dl_collection_foldl(const dl_collection *dl_restrict col, dl_any initial, dl_folder *func);
+  dl_api dl_any dl_collection_foldr(const dl_collection *dl_restrict col, dl_any initial, dl_folder *func);
+  dl_api const dl_any dl_collection_search(const dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator *iter);
+  dl_api const dl_any dl_collection_search_region(const dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter);
 
-  dl_api dl_any collection_get(const collection *dl_restrict col, iterator index, dl_any out);
-  dl_api dl_any collection_insert(collection *dl_restrict col, iterator *index, dl_any item);
-  dl_api const dl_any collection_peek(const collection *dl_restrict col);
-  dl_api const dl_any collection_ref(const collection *dl_restrict col, iterator iter);
-  dl_api dl_any collection_remove_at(collection *dl_restrict col, iterator *index, dl_any out);
-  dl_api dl_any collection_remove_first(collection *dl_restrict col, dl_filter *predicate, iterator *index, dl_any out);
-  dl_api dl_any collection_remove_last(collection *dl_restrict col, dl_filter *predicate, iterator *index, dl_any out);
-  dl_api dl_any collection_set(collection *dl_restrict col, iterator *index, dl_any value);
+  dl_api dl_any dl_collection_get(const dl_collection *dl_restrict col, dl_iterator index, dl_any out);
+  dl_api dl_any dl_collection_insert(dl_collection *dl_restrict col, dl_iterator *index, dl_any item);
+  dl_api const dl_any dl_collection_peek(const dl_collection *dl_restrict col);
+  dl_api const dl_any dl_collection_ref(const dl_collection *dl_restrict col, dl_iterator iter);
+  dl_api dl_any dl_collection_remove_at(dl_collection *dl_restrict col, dl_iterator *index, dl_any out);
+  dl_api dl_any dl_collection_remove_first(dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator *index, dl_any out);
+  dl_api dl_any dl_collection_remove_last(dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator *index, dl_any out);
+  dl_api dl_any dl_collection_set(dl_collection *dl_restrict col, dl_iterator *index, dl_any value);
 
-  dl_api dl_bool collection_all(const collection *dl_restrict col, dl_filter *func);
-  dl_api dl_bool collection_any(const collection *dl_restrict col, dl_filter *func);
-  dl_api dl_bool collection_contains(const collection *dl_restrict col, const dl_any item);
-  dl_api dl_bool collection_is_empty(const collection *dl_restrict col);
+  dl_api dl_bool dl_collection_all(const dl_collection *dl_restrict col, dl_filter *func);
+  dl_api dl_bool dl_collection_any(const dl_collection *dl_restrict col, dl_filter *func);
+  dl_api dl_bool dl_collection_contains(const dl_collection *dl_restrict col, const dl_any item);
+  dl_api dl_bool dl_collection_is_empty(const dl_collection *dl_restrict col);
 
-  dl_api dl_integer collection_map(const collection *dl_restrict col, dl_converter *func, collection *out);
-  dl_api dl_integer collection_zip(const collection *dl_restrict col1, const collection *dl_restrict col2, dl_zipper *zip, collection *out);
+  dl_api dl_integer dl_collection_map(const dl_collection *dl_restrict col, dl_converter *func, dl_collection *out);
+  dl_api dl_integer dl_collection_zip(const dl_collection *dl_restrict col1, const dl_collection *dl_restrict col2, dl_zipper *zip, dl_collection *out);
 
-  dl_api dl_bool collection_forget_at(collection *dl_restrict col, iterator *iter);
-  dl_api dl_bool collection_destroy_at(collection *dl_restrict col, iterator *iter);
-  dl_api dl_bool collection_destroy_first(collection *dl_restrict col, dl_filter *predicate, iterator *iter);
-  dl_api dl_bool collection_destroy_last(collection *dl_restrict col, dl_filter *predicate, iterator *iter);
-  dl_api dl_bool collection_swap(collection *dl_restrict col, iterator *iter_a, iterator *iter_b);
-  dl_api dl_bool collection_quick_sort(collection *dl_restrict col, dl_comparator *compare);
-  dl_api dl_bool collection_quick_sort_region(collection *dl_restrict col, dl_comparator *compare, iterator left, iterator right);
-  dl_api dl_bool collection_sort(collection *dl_restrict col);
+  dl_api dl_bool dl_collection_forget_at(dl_collection *dl_restrict col, dl_iterator *iter);
+  dl_api dl_bool dl_collection_destroy_at(dl_collection *dl_restrict col, dl_iterator *iter);
+  dl_api dl_bool dl_collection_destroy_first(dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator *iter);
+  dl_api dl_bool dl_collection_destroy_last(dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator *iter);
+  dl_api dl_bool dl_collection_swap(dl_collection *dl_restrict col, dl_iterator *iter_a, dl_iterator *iter_b);
+  dl_api dl_bool dl_collection_quick_sort(dl_collection *dl_restrict col, dl_comparator *compare);
+  dl_api dl_bool dl_collection_quick_sort_region(dl_collection *dl_restrict col, dl_comparator *compare, dl_iterator left, dl_iterator right);
+  dl_api dl_bool dl_collection_sort(dl_collection *dl_restrict col);
 
-  dl_api void collection_clear(collection *dl_restrict col);
+  dl_api void dl_collection_clear(dl_collection *dl_restrict col);
 
-  dl_api dl_integer collection_count(const collection *dl_restrict col);
-  dl_api dl_integer collection_find_all(const collection *dl_restrict col, dl_filter *predicate, collection *out);
+  dl_api dl_integer dl_collection_count(const dl_collection *dl_restrict col);
+  dl_api dl_integer dl_collection_find_all(const dl_collection *dl_restrict col, dl_filter *predicate, dl_collection *out);
 
-  dl_api dl_integer collection_take(collection *dl_restrict col, dl_natural count, collection *out);
-  dl_api dl_integer collection_destroy_all(collection *dl_restrict col, dl_filter *predicate);
-  dl_api dl_integer collection_destroy_range(collection *dl_restrict col, iterator *index, dl_natural count);
-  dl_api dl_integer collection_drop(collection *dl_restrict col, dl_natural count);
-  dl_api dl_integer collection_ref_array(collection *dl_restrict col, iterator index, dl_any *out_array);
-  dl_api dl_integer collection_remove_all(collection *dl_restrict col, dl_filter *predicate, collection *out);
-  dl_api dl_integer collection_remove_range(collection *dl_restrict col, iterator *index, dl_natural count, collection *out);
+  dl_api dl_integer dl_collection_take(dl_collection *dl_restrict col, dl_natural count, dl_collection *out);
+  dl_api dl_integer dl_collection_destroy_all(dl_collection *dl_restrict col, dl_filter *predicate);
+  dl_api dl_integer dl_collection_destroy_range(dl_collection *dl_restrict col, dl_iterator *index, dl_natural count);
+  dl_api dl_integer dl_collection_drop(dl_collection *dl_restrict col, dl_natural count);
+  dl_api dl_integer dl_collection_ref_array(dl_collection *dl_restrict col, dl_iterator index, dl_any *out_array);
+  dl_api dl_integer dl_collection_remove_all(dl_collection *dl_restrict col, dl_filter *predicate, dl_collection *out);
+  dl_api dl_integer dl_collection_remove_range(dl_collection *dl_restrict col, dl_iterator *index, dl_natural count, dl_collection *out);
 
 #endif /* DL_USE_CONTAINERS */
 
@@ -3909,32 +3909,32 @@ dl_api struct dl_linked_list_node *dl_linked_list_index(dl_linked_list * dl_rest
  **  Iterators
  ****************************************************************************/
 
-dl_api dl_integer iterator_compare(const collection *dl_restrict col, iterator left, iterator right) {
-  if (!iterator_is_valid(col, left) && !iterator_is_valid(col, right))
+dl_api dl_integer dl_iterator_compare(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right) {
+  if (!dl_iterator_is_valid(col, left) && !dl_iterator_is_valid(col, right))
     return 0;
 
-  if (iterator_is_valid(col, left) && !iterator_is_valid(col, right))
+  if (dl_iterator_is_valid(col, left) && !dl_iterator_is_valid(col, right))
     return 1;
 
-  if (!iterator_is_valid(col, left) && iterator_is_valid(col, right))
+  if (!dl_iterator_is_valid(col, left) && dl_iterator_is_valid(col, right))
     return -1;
 
-  return col->settings.functions->_iterator_compare(col, left, right);
+  return col->settings.functions->_dl_iterator_compare(col, left, right);
 }
 
-dl_api dl_bool iterator_equal(const collection *dl_restrict col, const iterator left, const iterator right) {
-  return 0 == iterator_compare(col, left, right);
+dl_api dl_bool dl_iterator_equal(const dl_collection *dl_restrict col, const dl_iterator left, const dl_iterator right) {
+  return 0 == dl_iterator_compare(col, left, right);
 }
 
-dl_api dl_bool iterator_is_valid(const collection *dl_restrict col, const iterator index) {
+dl_api dl_bool dl_iterator_is_valid(const dl_collection *dl_restrict col, const dl_iterator index) {
   if (dl_safety(col == NULL))
     return false;
 
-  return col->settings.functions->_iterator_is_valid(col, index);
+  return col->settings.functions->_dl_iterator_is_valid(col, index);
 }
 
-dl_api iterator make_invalid_iterator(const collection *dl_restrict col) {
-  return col->settings.functions->_make_invalid_iterator(col);
+dl_api dl_iterator make_invalid_dl_iterator(const dl_collection *dl_restrict col) {
+  return col->settings.functions->_make_invalid_dl_iterator(col);
 }
 
 
@@ -3943,51 +3943,51 @@ dl_api iterator make_invalid_iterator(const collection *dl_restrict col) {
  **  Container Dependent
  ****************************************************************************/
 
-dl_api void _force_collection_properties(collection *dl_restrict col) {
-  iterator current, next;
+dl_api void _force_collection_properties(dl_collection *dl_restrict col) {
+  dl_iterator current, next;
   dl_any ref;
   
-  if (collection_is_sorted(col))
-    collection_sort(col);
-  if (collection_is_set(col)) {
-    for (ref = collection_begin_ref(col, &current); ref != NULL; ref = collection_next(col, &current)) {
+  if (dl_collection_is_sorted(col))
+    dl_collection_sort(col);
+  if (dl_collection_is_set(col)) {
+    for (ref = dl_collection_begin_ref(col, &current); ref != NULL; ref = dl_collection_next(col, &current)) {
       next = current;
-      if (!collection_next(col, &next))
+      if (!dl_collection_next(col, &next))
         break;
-      while (iterator_is_valid(col, next) && 0 == col->settings.comparer.func(col->settings.comparer.data, ref, collection_ref(col, next)))
-        collection_destroy_at(col, &next);
+      while (dl_iterator_is_valid(col, next) && 0 == col->settings.comparer.func(col->settings.comparer.data, ref, dl_collection_ref(col, next)))
+        dl_collection_destroy_at(col, &next);
     }
   }
 }
 
-dl_api dl_any collection_push_start(collection *dl_restrict col, iterator *iter) {
+dl_api dl_any dl_collection_push_start(dl_collection *dl_restrict col, dl_iterator *iter) {
   if (dl_safety(col == NULL))
     return NULL;
 
   return col->settings.functions->_collection_push_start(col, iter);
 }
 
-dl_api dl_any collection_push_finish(collection *dl_restrict col, iterator *iter) {
+dl_api dl_any dl_collection_push_finish(dl_collection *dl_restrict col, dl_iterator *iter) {
   dl_comparator *comp;
   dl_bool is_set;
   dl_any ref, prev_ref;
-  iterator prev;
+  dl_iterator prev;
   dl_integer c;
 
-  if (dl_safety(col == NULL || iter == NULL || !iterator_is_valid(col, *iter)))
+  if (dl_safety(col == NULL || iter == NULL || !dl_iterator_is_valid(col, *iter)))
     return NULL;
 
-  if (collection_is_sorted(col)) {
+  if (dl_collection_is_sorted(col)) {
     comp = &col->settings.comparer;
-    is_set = collection_is_set(col);
+    is_set = dl_collection_is_set(col);
 
-    while (iterator_is_valid(col, *iter)) {
-      ref = collection_ref(col, *iter);
+    while (dl_iterator_is_valid(col, *iter)) {
+      ref = dl_collection_ref(col, *iter);
       if (ref == NULL)
         break;
 
       prev = *iter;
-      prev_ref = collection_prev(col, &prev);
+      prev_ref = dl_collection_prev(col, &prev);
 
       if (prev_ref == NULL)
         break;
@@ -3998,18 +3998,18 @@ dl_api dl_any collection_push_finish(collection *dl_restrict col, iterator *iter
         break;
 
       if (is_set && c == 0) {
-        collection_destroy_at(col, iter);
+        dl_collection_destroy_at(col, iter);
         return NULL;
       }
 
-      collection_swap(col, &prev, iter);
+      dl_collection_swap(col, &prev, iter);
     }
   }
 
-  return collection_ref(col, *iter);
+  return dl_collection_ref(col, *iter);
 }
 
-dl_api void _vector_queue_roll_slices(collection *dl_restrict col) {
+dl_api void _vector_queue_roll_slices(dl_collection *dl_restrict col) {
   dl_byte *slice_left, *slice_first;
   dl_natural last_idx, slice_idx;
   
@@ -4038,158 +4038,158 @@ dl_api void _vector_queue_roll_slices(collection *dl_restrict col) {
   col->data.dl_vector.index[1] -= col->data.dl_vector.container.settings.slice_length;
 }
 
-dl_api dl_bool collection_is_empty(const collection *dl_restrict col) {
+dl_api dl_bool dl_collection_is_empty(const dl_collection *dl_restrict col) {
   if (dl_safety(col == NULL))
     return true;
 
   return col->settings.functions->_collection_is_empty(col);
 }
 
-dl_api dl_any collection_pop(collection *dl_restrict col, dl_any out) {
+dl_api dl_any dl_collection_pop(dl_collection *dl_restrict col, dl_any out) {
   if (dl_safety(col == NULL || out == NULL))
     return NULL;
 
-  if (collection_is_empty(col))
+  if (dl_collection_is_empty(col))
     return NULL;
 
   return col->settings.functions->_collection_pop(col, out);
 }
 
-dl_api dl_bool collection_pop_destroy(collection *dl_restrict col) {
+dl_api dl_bool dl_collection_pop_destroy(dl_collection *dl_restrict col) {
   if (dl_safety(col == NULL))
     return false;
 
-  if (collection_is_empty(col))
+  if (dl_collection_is_empty(col))
     return false;
 
   return col->settings.functions->_collection_pop_destroy(col);
 }
 
-dl_api dl_bool collection_pop_forget(collection *dl_restrict col) {
+dl_api dl_bool dl_collection_pop_forget(dl_collection *dl_restrict col) {
   if (dl_safety(col == NULL))
     return false;
 
-  if (collection_is_empty(col))
+  if (dl_collection_is_empty(col))
     return false;
 
   return col->settings.functions->_collection_pop_forget(col);
 }
 
-dl_api dl_integer collection_ref_array(collection *dl_restrict col, iterator iter, dl_any *out_array) {  
+dl_api dl_integer dl_collection_ref_array(dl_collection *dl_restrict col, dl_iterator iter, dl_any *out_array) {  
   if (dl_safety(col == NULL || out_array == NULL))
     return 0;
 
-  if (!iterator_is_valid(col, iter))
+  if (!dl_iterator_is_valid(col, iter))
     return 0;
 
   return col->settings.functions->_collection_ref_array(col, iter, out_array);
 }
 
-dl_api const dl_any collection_ref(const collection *dl_restrict col, iterator iter) {
+dl_api const dl_any dl_collection_ref(const dl_collection *dl_restrict col, dl_iterator iter) {
   if (dl_safety(col == NULL))
     return NULL;
 
-  if (!iterator_is_valid(col, iter))
+  if (!dl_iterator_is_valid(col, iter))
     return NULL;
 
-  return col->settings.functions->_collection_ref((collection *dl_restrict )col, iter);
+  return col->settings.functions->_collection_ref((dl_collection *dl_restrict )col, iter);
 }
 
-dl_api dl_bool collection_swap(collection *dl_restrict col, iterator *iter_a, iterator *iter_b) {
+dl_api dl_bool dl_collection_swap(dl_collection *dl_restrict col, dl_iterator *iter_a, dl_iterator *iter_b) {
   if (dl_safety(col == NULL || iter_a == NULL || iter_b == NULL))
     return false;
 
-  if (!iterator_is_valid(col, *iter_a) || !iterator_is_valid(col, *iter_b))
+  if (!dl_iterator_is_valid(col, *iter_a) || !dl_iterator_is_valid(col, *iter_b))
     return false;
 
   return col->settings.functions->_collection_swap(col, iter_a, iter_b);
 }
 
-dl_any collection_get(const collection *dl_restrict col, iterator iter, dl_any out) {
+dl_any dl_collection_get(const dl_collection *dl_restrict col, dl_iterator iter, dl_any out) {
   if (dl_safety(col == NULL))
     return NULL;
 
-  if (!iterator_is_valid(col, iter))
+  if (!dl_iterator_is_valid(col, iter))
     return NULL;
 
   return col->settings.functions->_collection_get(col, iter, out);
 }
 
-dl_any collection_set(collection *dl_restrict col, iterator *iter, dl_any value) {
+dl_any dl_collection_set(dl_collection *dl_restrict col, dl_iterator *iter, dl_any value) {
   if (dl_safety(col == NULL))
     return NULL;
 
-  if (!iterator_is_valid(col, *iter))
+  if (!dl_iterator_is_valid(col, *iter))
     return NULL;
 
-  if (collection_is_set(col) && collection_contains(col, value))
+  if (dl_collection_is_set(col) && dl_collection_contains(col, value))
     return NULL;
 
-  if (collection_is_sorted(col)) {
-    collection_forget_at(col, iter);
-    return collection_push_index(col, value, iter);
+  if (dl_collection_is_sorted(col)) {
+    dl_collection_forget_at(col, iter);
+    return dl_collection_push_index(col, value, iter);
   }
 
   return col->settings.functions->_collection_set(col, iter, value);
 }
 
-dl_api iterator collection_index(collection *dl_restrict col, dl_natural index) {
-  if (dl_safety(col == NULL || (dl_integer)index >= collection_count(col)))
-    return collection_end(col);
+dl_api dl_iterator dl_collection_index(dl_collection *dl_restrict col, dl_natural index) {
+  if (dl_safety(col == NULL || (dl_integer)index >= dl_collection_count(col)))
+    return dl_collection_end(col);
 
   return col->settings.functions->_collection_index(col, index);
 }
 
-dl_api const dl_any collection_next(const collection *dl_restrict col, iterator *iter) {
+dl_api const dl_any dl_collection_next(const dl_collection *dl_restrict col, dl_iterator *iter) {
   if (dl_safety(col == NULL || iter == NULL)) {
-    *iter = make_invalid_iterator(col);
+    *iter = make_invalid_dl_iterator(col);
     return NULL;
   }
 
-  if (!iterator_is_valid(col, *iter)) {
-    *iter = make_invalid_iterator(col);
+  if (!dl_iterator_is_valid(col, *iter)) {
+    *iter = make_invalid_dl_iterator(col);
     return NULL;
   }
 
   col->settings.functions->_collection_next(col, iter);
 
-  return collection_ref(col, *iter);
+  return dl_collection_ref(col, *iter);
 }
 
-dl_api const dl_any collection_prev(const collection *dl_restrict col, iterator *iter) {
+dl_api const dl_any dl_collection_prev(const dl_collection *dl_restrict col, dl_iterator *iter) {
   if (dl_safety(col == NULL || iter == NULL))
     return NULL;
 
   col->settings.functions->_collection_prev(col, iter);
   
-  return collection_ref(col, *iter);
+  return dl_collection_ref(col, *iter);
 }
 
-dl_api dl_integer collection_count(const collection *dl_restrict col) {
+dl_api dl_integer dl_collection_count(const dl_collection *dl_restrict col) {
   if (dl_safety(col == NULL))
     return 0;
 
   return col->settings.functions->_collection_count(col);
 }
 
-dl_api iterator collection_begin(const collection *dl_restrict col) {
+dl_api dl_iterator dl_collection_begin(const dl_collection *dl_restrict col) {
   if (dl_safety(col == NULL))
-    return make_invalid_iterator(col);
+    return make_invalid_dl_iterator(col);
 
   return col->settings.functions->_collection_begin(col);
 }
 
-dl_api iterator collection_end(const collection *dl_restrict col) {
+dl_api dl_iterator dl_collection_end(const dl_collection *dl_restrict col) {
   if (dl_safety(col == NULL))
-    return make_invalid_iterator(col);
+    return make_invalid_dl_iterator(col);
 
   return col->settings.functions->_collection_end(col);
 }
 
-const dl_any _collection_search_region_vector(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
+const dl_any _collection_search_region_vector(const dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter) {
   dl_any ref;
   dl_integer outcome;
-  iterator iter_next;
+  dl_iterator iter_next;
   
   if (left.dl_vector.index >= right.dl_vector.index)
     return NULL;
@@ -4211,40 +4211,40 @@ const dl_any _collection_search_region_vector(const collection *dl_restrict col,
   }
 }
 
-const dl_any _collection_linear_search(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
+const dl_any _collection_linear_search(const dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter) {
   dl_any ref;
   dl_integer outcome;
   
-  ref = collection_ref(col, left);
+  ref = dl_collection_ref(col, left);
   *iter = left;
-  while (!iterator_equal(col, *iter, right) && ref != NULL) {
+  while (!dl_iterator_equal(col, *iter, right) && ref != NULL) {
     outcome = predicate->func(predicate->data, ref);
     if (outcome == 0)
       return ref;
-    ref = collection_next(col, iter);
+    ref = dl_collection_next(col, iter);
   }
 
   return NULL;
 }
 
-const dl_any collection_search_region(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
+const dl_any dl_collection_search_region(const dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter) {
   if (dl_safety(col == NULL || predicate == NULL || iter == NULL))
     return NULL;
 
   return col->settings.functions->_collection_search_region(col, predicate, left, right, iter);
 }
 
-const dl_any collection_search(const collection *dl_restrict col, dl_filter *predicate, iterator *iter) {
-  return collection_search_region(col, predicate, collection_begin(col), collection_end(col), iter);
+const dl_any dl_collection_search(const dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator *iter) {
+  return dl_collection_search_region(col, predicate, dl_collection_begin(col), dl_collection_end(col), iter);
 }
 
-dl_api dl_bool collection_destroy_at(collection *dl_restrict col, iterator *iter) {
+dl_api dl_bool dl_collection_destroy_at(dl_collection *dl_restrict col, dl_iterator *iter) {
   dl_handler *destructor;
   
-  if (dl_safety(col == NULL || !iterator_is_valid(col, *iter)))
+  if (dl_safety(col == NULL || !dl_iterator_is_valid(col, *iter)))
     return false;
 
-  if (collection_is_empty(col))
+  if (dl_collection_is_empty(col))
     return false;
 
   destructor = col->settings.deconstruct_entry.func == NULL ? NULL : &col->settings.deconstruct_entry;
@@ -4252,49 +4252,49 @@ dl_api dl_bool collection_destroy_at(collection *dl_restrict col, iterator *iter
   return col->settings.functions->_collection_destroy_at(col, iter, destructor);
 }
 
-dl_api dl_bool collection_forget_at(collection *dl_restrict col, iterator *iter) {
+dl_api dl_bool dl_collection_forget_at(dl_collection *dl_restrict col, dl_iterator *iter) {
   if (dl_safety(col == NULL))
     return false;
 
-  if (collection_is_empty(col))
+  if (dl_collection_is_empty(col))
     return false;
 
   return col->settings.functions->_collection_destroy_at(col, iter, NULL);
 }
 
-dl_api dl_any collection_remove_at(collection *dl_restrict col, iterator *iter, dl_any out) {
+dl_api dl_any dl_collection_remove_at(dl_collection *dl_restrict col, dl_iterator *iter, dl_any out) {
   if (dl_safety(col == NULL || out == NULL))
     return NULL;
 
-  if (collection_is_empty(col))
+  if (dl_collection_is_empty(col))
     return NULL;
 
   return col->settings.functions->_collection_remove_at(col, iter, out);
 }
 
-dl_api dl_integer collection_destroy_range(collection *dl_restrict col, iterator *index, dl_natural count) {
-  if (dl_safety(col == NULL || !iterator_is_valid(col, *index)))
+dl_api dl_integer dl_collection_destroy_range(dl_collection *dl_restrict col, dl_iterator *index, dl_natural count) {
+  if (dl_safety(col == NULL || !dl_iterator_is_valid(col, *index)))
     return 0;
 
   return col->settings.functions->_collection_destroy_range(col, index, count);
 }
 
-dl_any collection_insert(collection *dl_restrict col, iterator *dl_restrict position, dl_any item) {
-  if (dl_safety(col == NULL || !iterator_is_valid(col, *position)))
+dl_any dl_collection_insert(dl_collection *dl_restrict col, dl_iterator *dl_restrict position, dl_any item) {
+  if (dl_safety(col == NULL || !dl_iterator_is_valid(col, *position)))
     return NULL;
 
-  if (collection_is_set(col) && collection_contains(col, item))
+  if (dl_collection_is_set(col) && dl_collection_contains(col, item))
     return NULL;
 
-  if (collection_is_sorted(col))
-    return collection_push_index(col, item, position);
+  if (dl_collection_is_sorted(col))
+    return dl_collection_push_index(col, item, position);
 
   if (col->settings.functions->_collection_insert(col, position, item))
-    return collection_ref(col, *position);
+    return dl_collection_ref(col, *position);
   return NULL;
 }
 
-dl_api dl_natural collection_element_size(const collection *dl_restrict col) {
+dl_api dl_natural dl_collection_element_size(const dl_collection *dl_restrict col) {
   if (dl_safety(col == NULL))
     return 0;
 
@@ -4307,104 +4307,104 @@ dl_api dl_natural collection_element_size(const collection *dl_restrict col) {
  **  Container Independent
  ****************************************************************************/
 
-dl_api dl_bool collection_is_vector(const collection * dl_restrict col) {
-  return col != NULL && col->settings.storage == STORAGE_TYPE_VECTOR;
+dl_api dl_bool dl_collection_is_vector(const dl_collection * dl_restrict col) {
+  return col != NULL && col->settings.storage == DL_STORAGE_TYPE_VECTOR;
 }
 
-dl_api dl_bool collection_is_linked_list(const collection * dl_restrict col) {
-  return col != NULL && col->settings.storage == STORAGE_TYPE_LINKED_LIST;
+dl_api dl_bool dl_collection_is_linked_list(const dl_collection * dl_restrict col) {
+  return col != NULL && col->settings.storage == DL_STORAGE_TYPE_LINKED_LIST;
 }
 
-dl_api dl_bool collection_is_queue(const collection *dl_restrict col) {
+dl_api dl_bool dl_collection_is_queue(const dl_collection *dl_restrict col) {
   return col != NULL &&
-    (col->settings.type == COLLECTION_TYPE_QUEUE);
+    (col->settings.type == DL_COLLECTION_TYPE_QUEUE);
 }
 
-dl_api dl_bool collection_is_set(const collection *dl_restrict col) {
+dl_api dl_bool dl_collection_is_set(const dl_collection *dl_restrict col) {
   return col != NULL &&
-    (col->settings.type == COLLECTION_TYPE_SET);
+    (col->settings.type == DL_COLLECTION_TYPE_SET);
 }
 
-dl_api dl_bool collection_is_sorted(const collection *dl_restrict col) {
+dl_api dl_bool dl_collection_is_sorted(const dl_collection *dl_restrict col) {
   return col != NULL &&
-    (col->settings.type == COLLECTION_TYPE_SORTED_LIST
-     || col->settings.type == COLLECTION_TYPE_SET);
+    (col->settings.type == DL_COLLECTION_TYPE_SORTED_LIST
+     || col->settings.type == DL_COLLECTION_TYPE_SET);
 }
 
-dl_api const dl_any collection_begin_ref(const collection *dl_restrict col, iterator *iter) {
+dl_api const dl_any dl_collection_begin_ref(const dl_collection *dl_restrict col, dl_iterator *iter) {
   if (dl_safety(iter == NULL || col == NULL))
     return NULL;
 
-  *iter = collection_begin(col);
-  return collection_ref(col, *iter);
+  *iter = dl_collection_begin(col);
+  return dl_collection_ref(col, *iter);
 }
 
-dl_api const dl_any collection_end_ref(const collection *dl_restrict col, iterator *iter) {
+dl_api const dl_any dl_collection_end_ref(const dl_collection *dl_restrict col, dl_iterator *iter) {
   if (dl_safety(iter == NULL || col == NULL))
     return NULL;
 
-  *iter = collection_end(col);
-  return collection_prev(col, iter);
+  *iter = dl_collection_end(col);
+  return dl_collection_prev(col, iter);
 }
 
-dl_api dl_bool collection_sort(collection *dl_restrict col) {
+dl_api dl_bool dl_collection_sort(dl_collection *dl_restrict col) {
   if (dl_safety(col == NULL))
     return false;
 
-  return collection_quick_sort(col, &col->settings.comparer);
+  return dl_collection_quick_sort(col, &col->settings.comparer);
 }
 
-dl_api void collection_clear(collection *dl_restrict col) {
-  while (collection_pop_destroy(col));
+dl_api void dl_collection_clear(dl_collection *dl_restrict col) {
+  while (dl_collection_pop_destroy(col));
 }
 
-dl_api const dl_any collection_peek(const collection *dl_restrict col) {
-  iterator iter;
+dl_api const dl_any dl_collection_peek(const dl_collection *dl_restrict col) {
+  dl_iterator iter;
   
   if (dl_safety(col == NULL))
     return NULL;
 
-  if (collection_is_empty(col))
+  if (dl_collection_is_empty(col))
     return NULL;
 
-  if (collection_is_queue(col)) {
-    iter = collection_begin(col);
+  if (dl_collection_is_queue(col)) {
+    iter = dl_collection_begin(col);
 
-    return collection_ref(col, iter);
+    return dl_collection_ref(col, iter);
   }
   else {
-    iter = collection_end(col);
-    return collection_prev(col, &iter);
+    iter = dl_collection_end(col);
+    return dl_collection_prev(col, &iter);
   }
 }
 
-dl_api iterator collection_index_of(const collection *dl_restrict col, const dl_any item) {
-  iterator bad, iter, index;
+dl_api dl_iterator dl_collection_index_of(const dl_collection *dl_restrict col, const dl_any item) {
+  dl_iterator bad, iter, index;
   dl_any candidate;
   _collection_sorted_list_predicate_data data;
   dl_filter predicate;
   
-  bad = make_invalid_iterator(col);
+  bad = make_invalid_dl_iterator(col);
 
   if (dl_safety(col == NULL))
     return bad;
 
-  if (collection_is_empty(col))
+  if (dl_collection_is_empty(col))
     return bad;
 
-  if (collection_is_sorted(col)) {
+  if (dl_collection_is_sorted(col)) {
     data.c = col->settings.comparer;
     data.item = item;
 
     predicate.func = _collection_sorted_list_predicate_func;
     predicate.data = &data;
 
-    iter = collection_begin(col);
-    return NULL != collection_search(col, &predicate, &iter) ? iter : bad;
+    iter = dl_collection_begin(col);
+    return NULL != dl_collection_search(col, &predicate, &iter) ? iter : bad;
   }
   else {
-    index = collection_begin(col);
-    for (candidate = collection_ref(col, index); candidate != NULL; candidate = collection_next(col, &index)) {
+    index = dl_collection_begin(col);
+    for (candidate = dl_collection_ref(col, index); candidate != NULL; candidate = dl_collection_next(col, &index)) {
       if (0 == col->settings.comparer.func(col->settings.comparer.data, item, candidate))
         return index;
     }
@@ -4412,53 +4412,53 @@ dl_api iterator collection_index_of(const collection *dl_restrict col, const dl_
   }
 }
 
-dl_api dl_bool collection_all(const collection *dl_restrict col, dl_filter *dl_restrict f) {
-  iterator index;
+dl_api dl_bool dl_collection_all(const dl_collection *dl_restrict col, dl_filter *dl_restrict f) {
+  dl_iterator index;
   dl_any item;
   
   if (dl_safety(col == NULL || f == NULL))
     return false;
 
-  index = collection_begin(col);
-  for (item = collection_ref(col, index); item != NULL; item = collection_next(col, &index))
+  index = dl_collection_begin(col);
+  for (item = dl_collection_ref(col, index); item != NULL; item = dl_collection_next(col, &index))
     if (!f->func(f->data, item))
       return false;
 
   return true;
 }
 
-dl_api dl_bool collection_any(const collection *dl_restrict col, dl_filter *dl_restrict f) {
-  iterator index;
+dl_api dl_bool dl_collection_any(const dl_collection *dl_restrict col, dl_filter *dl_restrict f) {
+  dl_iterator index;
   dl_any item;
   
   if (dl_safety(col == NULL || f == NULL))
     return false;
 
-  index = collection_begin(col);
-  for (item = collection_ref(col, index);
+  index = dl_collection_begin(col);
+  for (item = dl_collection_ref(col, index);
        item != NULL;
-       item = collection_next(col, &index))
+       item = dl_collection_next(col, &index))
     if (f->func(f->data, item))
       return true;
 
   return false;
 }
 
-dl_api dl_integer collection_drop(collection *dl_restrict col, dl_natural count) {
+dl_api dl_integer dl_collection_drop(dl_collection *dl_restrict col, dl_natural count) {
   dl_natural removed = 0;
 
   if (dl_safety(col == NULL))
     return 0;
 
   for (; count > 0; --count, ++removed)
-    if (!collection_pop_destroy(col))
+    if (!dl_collection_pop_destroy(col))
       return removed;
 
   return removed;
 }
 
-dl_api dl_integer collection_map(const collection *dl_restrict col, dl_converter *func, collection *out) {
-  iterator iter, new_iter;
+dl_api dl_integer dl_collection_map(const dl_collection *dl_restrict col, dl_converter *func, dl_collection *out) {
+  dl_iterator iter, new_iter;
   dl_integer count;
   dl_any new_ref;
   dl_any ref;
@@ -4467,51 +4467,51 @@ dl_api dl_integer collection_map(const collection *dl_restrict col, dl_converter
     return 0;
 
   count = 0;
-  for (ref = collection_begin_ref(col, &iter); ref != NULL; ref = collection_next(col, &iter)) {
-    new_ref = collection_push_start(out, &new_iter);
-    if (!iterator_is_valid(out, new_iter))
+  for (ref = dl_collection_begin_ref(col, &iter); ref != NULL; ref = dl_collection_next(col, &iter)) {
+    new_ref = dl_collection_push_start(out, &new_iter);
+    if (!dl_iterator_is_valid(out, new_iter))
       return -count;
 
     func->func(func->data, ref, new_ref);
 
-    collection_push_finish(out, &new_iter);
+    dl_collection_push_finish(out, &new_iter);
     ++count;
   }
 
   return count;
 }
 
-dl_api dl_any collection_foldl(const collection *dl_restrict col, dl_any initial, dl_folder *func) {
-  iterator index;
+dl_api dl_any dl_collection_foldl(const dl_collection *dl_restrict col, dl_any initial, dl_folder *func) {
+  dl_iterator index;
   dl_any item;
   
   if (dl_safety(col == NULL || func == NULL))
     return NULL;
 
-  index = collection_begin(col);
-  for (item = collection_ref(col, index); item != NULL; item = collection_next(col, &index))
+  index = dl_collection_begin(col);
+  for (item = dl_collection_ref(col, index); item != NULL; item = dl_collection_next(col, &index))
     func->func(func->data, initial, item);
 
   return initial;
 }
 
-dl_api dl_any collection_foldr(const collection *dl_restrict col, dl_any initial, dl_folder *func) {
-  iterator index;
+dl_api dl_any dl_collection_foldr(const dl_collection *dl_restrict col, dl_any initial, dl_folder *func) {
+  dl_iterator index;
   dl_any item;
   
   if (dl_safety(col == NULL || func == NULL))
     return NULL;
 
-  index = collection_end(col);
+  index = dl_collection_end(col);
 
-  while ((item = collection_prev(col, &index)))
+  while ((item = dl_collection_prev(col, &index)))
     func->func(func->data, initial, item);
 
   return initial;
 }
 
-dl_api dl_integer collection_zip(const collection *dl_restrict col1, const collection *dl_restrict col2, dl_zipper *zip, collection *out) {
-  iterator iter1, iter2, new_iter;
+dl_api dl_integer dl_collection_zip(const dl_collection *dl_restrict col1, const dl_collection *dl_restrict col2, dl_zipper *zip, dl_collection *out) {
+  dl_iterator iter1, iter2, new_iter;
   dl_integer added;
   dl_any ref1, ref2, new_ref;
   
@@ -4519,134 +4519,134 @@ dl_api dl_integer collection_zip(const collection *dl_restrict col1, const colle
     return 0;
 
   added = 0;
-  for (ref1 = collection_begin_ref(col1, &iter1), ref2 = collection_begin_ref(col2, &iter2);
+  for (ref1 = dl_collection_begin_ref(col1, &iter1), ref2 = dl_collection_begin_ref(col2, &iter2);
        ref1 != NULL && ref2 != NULL;
-       ref1 = collection_next(col1, &iter1), ref2 = collection_next(col2, &iter2)) {
-    new_ref = collection_push_start(out, &new_iter);
-    if (!iterator_is_valid(out, new_iter))
+       ref1 = dl_collection_next(col1, &iter1), ref2 = dl_collection_next(col2, &iter2)) {
+    new_ref = dl_collection_push_start(out, &new_iter);
+    if (!dl_iterator_is_valid(out, new_iter))
       return -added;
 
     zip->func(zip->data, ref1, ref2, new_ref);
 
-    collection_push_finish(out, &new_iter);
+    dl_collection_push_finish(out, &new_iter);
     ++added;
   }
 
   return added;
 }
 
-dl_api dl_integer collection_take(collection *dl_restrict col, dl_natural count, collection *out) {
+dl_api dl_integer dl_collection_take(dl_collection *dl_restrict col, dl_natural count, dl_collection *out) {
   dl_any ref;
   dl_natural added;
   if (dl_safety(col == NULL || out == NULL))
     return 0;
 
   added = 0;
-  while ((ref = collection_peek(col)) && count > added) {
-    if (!(ref = collection_push(out, ref)))
+  while ((ref = dl_collection_peek(col)) && count > added) {
+    if (!(ref = dl_collection_push(out, ref)))
       break;
-    collection_pop_forget(col);
+    dl_collection_pop_forget(col);
     ++added;
   }
 
   return added;
 }
 
-dl_api dl_any collection_find(const collection *dl_restrict col, dl_filter *f, iterator *index) {
+dl_api dl_any dl_collection_find(const dl_collection *dl_restrict col, dl_filter *f, dl_iterator *index) {
   dl_any item;
   
   if (dl_safety(col == NULL || f == NULL || index == NULL))
     return NULL;
 
-  for (item = collection_ref(col, *index); item != NULL; item = collection_next(col, index))
+  for (item = dl_collection_ref(col, *index); item != NULL; item = dl_collection_next(col, index))
     if (f->func(f->data, item))
       return item;
 
   return NULL;
 }
 
-dl_api dl_any collection_find_last(const collection *dl_restrict col, dl_filter *f, iterator *index) {
+dl_api dl_any dl_collection_find_last(const dl_collection *dl_restrict col, dl_filter *f, dl_iterator *index) {
   dl_any item;
   
   if (dl_safety(col == NULL || f == NULL || index == NULL))
     return NULL;
 
-  while ((item = collection_prev(col, index)))
+  while ((item = dl_collection_prev(col, index)))
     if (f->func(f->data, item))
       return item;
 
   return NULL;
 }
 
-dl_api dl_integer collection_find_all(const collection *dl_restrict col, dl_filter *f, collection *out) {
+dl_api dl_integer dl_collection_find_all(const dl_collection *dl_restrict col, dl_filter *f, dl_collection *out) {
   dl_natural start_count;
-  iterator index;
+  dl_iterator index;
   dl_any item;
   
   if (dl_safety(col == NULL || f == NULL || out == NULL))
     return 0;
 
-  start_count = collection_count(out);
+  start_count = dl_collection_count(out);
 
-  index = collection_begin(col);
-  for (item = collection_ref(col, index); item != NULL; item = collection_next(col, &index)) {
-    if (f->func(f->data, item) && !collection_push(out, item))
+  index = dl_collection_begin(col);
+  for (item = dl_collection_ref(col, index); item != NULL; item = dl_collection_next(col, &index)) {
+    if (f->func(f->data, item) && !dl_collection_push(out, item))
       break;
   }
 
-  return collection_count(out) - start_count;
+  return dl_collection_count(out) - start_count;
 }
 
-dl_api dl_any collection_remove_first(collection *dl_restrict col, dl_filter *f, iterator *iter, dl_any out) {
+dl_api dl_any dl_collection_remove_first(dl_collection *dl_restrict col, dl_filter *f, dl_iterator *iter, dl_any out) {
   if (dl_safety(col == NULL || iter == NULL))
     return NULL;
 
-  if (!collection_find(col, f, iter))
+  if (!dl_collection_find(col, f, iter))
     return NULL;
 
-  return collection_remove_at(col, iter, out);
+  return dl_collection_remove_at(col, iter, out);
 }
 
-dl_api dl_any collection_remove_last(collection *dl_restrict col, dl_filter *f, iterator *iter, dl_any out) {
+dl_api dl_any dl_collection_remove_last(dl_collection *dl_restrict col, dl_filter *f, dl_iterator *iter, dl_any out) {
   if (dl_safety(col == NULL || iter == NULL))
     return NULL;
 
-  if (!collection_find_last(col, f, iter))
+  if (!dl_collection_find_last(col, f, iter))
     return NULL;
 
-  return collection_remove_at(col, iter, out);
+  return dl_collection_remove_at(col, iter, out);
 }
 
-dl_api dl_bool collection_destroy_first(collection *dl_restrict col, dl_filter *f, iterator *index) {
+dl_api dl_bool dl_collection_destroy_first(dl_collection *dl_restrict col, dl_filter *f, dl_iterator *index) {
   if (dl_safety(col == NULL || index == NULL))
     return false;
 
-  if (!collection_find(col, f, index))
+  if (!dl_collection_find(col, f, index))
     return false;
 
-  return collection_destroy_at(col, index);
+  return dl_collection_destroy_at(col, index);
 }
 
-dl_api dl_bool collection_destroy_last(collection *dl_restrict col, dl_filter *f, iterator *index) {
+dl_api dl_bool dl_collection_destroy_last(dl_collection *dl_restrict col, dl_filter *f, dl_iterator *index) {
   if (dl_safety(col == NULL || index == NULL))
     return false;
 
-  if (!collection_find_last(col, f, index))
+  if (!dl_collection_find_last(col, f, index))
     return false;
 
-  return collection_destroy_at(col, index);
+  return dl_collection_destroy_at(col, index);
 }
 
-dl_bool collection_quick_sort_region(collection *dl_restrict col, dl_comparator *compare, iterator left, iterator right) {
-  iterator pivot, leftwall, iter;
+dl_bool dl_collection_quick_sort_region(dl_collection *dl_restrict col, dl_comparator *compare, dl_iterator left, dl_iterator right) {
+  dl_iterator pivot, leftwall, iter;
   dl_any pivot_ref, iter_ref;
   
   if (dl_safety(col == NULL || col->settings.comparer.func == NULL))
     return false;
 
-  if (iterator_equal(col, left, right)
-      || (!iterator_is_valid(col, left)
-	  && !iterator_is_valid(col, right)))
+  if (dl_iterator_equal(col, left, right)
+      || (!dl_iterator_is_valid(col, left)
+	  && !dl_iterator_is_valid(col, right)))
     return true;
 
   /* Partition */
@@ -4655,109 +4655,109 @@ dl_bool collection_quick_sort_region(collection *dl_restrict col, dl_comparator 
   leftwall = left;
   iter = left;
 
-  pivot_ref = collection_ref(col, pivot);
+  pivot_ref = dl_collection_ref(col, pivot);
 
-  for (iter_ref = collection_next(col, &iter);
-       iter_ref != NULL && !iterator_equal(col, iter, right);
-       iter_ref = collection_next(col, &iter)) {
+  for (iter_ref = dl_collection_next(col, &iter);
+       iter_ref != NULL && !dl_iterator_equal(col, iter, right);
+       iter_ref = dl_collection_next(col, &iter)) {
     if (compare->func(compare->data, iter_ref, pivot_ref) < 0) {
-      if (!collection_swap(col, &iter, &leftwall))
+      if (!dl_collection_swap(col, &iter, &leftwall))
         return false;
-      if (iterator_equal(col, pivot, leftwall)) {
+      if (dl_iterator_equal(col, pivot, leftwall)) {
         pivot = iter;
-        pivot_ref = collection_ref(col, pivot);
+        pivot_ref = dl_collection_ref(col, pivot);
       }
-      if (!collection_next(col, &leftwall))
+      if (!dl_collection_next(col, &leftwall))
         return false;
     }
   }
 
-  if (!collection_swap(col, &pivot, &leftwall))
+  if (!dl_collection_swap(col, &pivot, &leftwall))
     return false;
 
   /* Recurse */
 
-  if (!collection_quick_sort_region(col, compare, left, leftwall))
+  if (!dl_collection_quick_sort_region(col, compare, left, leftwall))
     return false;
 
-  if (!collection_next(col, &leftwall))
+  if (!dl_collection_next(col, &leftwall))
     return true;
 
-  return collection_quick_sort_region(col, compare, leftwall, right);
+  return dl_collection_quick_sort_region(col, compare, leftwall, right);
 }
 
-dl_api dl_bool collection_quick_sort(collection *dl_restrict col, dl_comparator *compare) {
-  return collection_quick_sort_region(col, compare, collection_begin(col), collection_end(col));
+dl_api dl_bool dl_collection_quick_sort(dl_collection *dl_restrict col, dl_comparator *compare) {
+  return dl_collection_quick_sort_region(col, compare, dl_collection_begin(col), dl_collection_end(col));
 }
 
-dl_api dl_integer collection_destroy_all(collection *dl_restrict col, dl_filter *f) {
+dl_api dl_integer dl_collection_destroy_all(dl_collection *dl_restrict col, dl_filter *f) {
   dl_natural count;
   dl_any item;
-  iterator iter;
+  dl_iterator iter;
   
   if (dl_safety(col == NULL || f == NULL))
     return 0;
 
-  if (collection_is_empty(col))
+  if (dl_collection_is_empty(col))
     return 0;
 
   count = 0;
-  iter = collection_begin(col);
+  iter = dl_collection_begin(col);
 
-  while ((item = collection_ref(col, iter))) {
+  while ((item = dl_collection_ref(col, iter))) {
     if (f->func(f->data, item)) {
-      collection_destroy_at(col, &iter);
+      dl_collection_destroy_at(col, &iter);
       count++;
     }
     else
-      collection_next(col, &iter);
+      dl_collection_next(col, &iter);
   }
 
   return count;
 }
 
-dl_api dl_bool collection_contains(const collection *dl_restrict col, dl_any item) {
-  iterator iter;
-  iter= collection_index_of(col, item);
-  return iterator_is_valid(col, iter);
+dl_api dl_bool dl_collection_contains(const dl_collection *dl_restrict col, dl_any item) {
+  dl_iterator iter;
+  iter= dl_collection_index_of(col, item);
+  return dl_iterator_is_valid(col, iter);
 }
 
-dl_api dl_any collection_push(collection *dl_restrict col, dl_any value) {
-  iterator iter;
-  return collection_push_index(col, value, &iter);
+dl_api dl_any dl_collection_push(dl_collection *dl_restrict col, dl_any value) {
+  dl_iterator iter;
+  return dl_collection_push_index(col, value, &iter);
 }
 
-dl_api dl_any collection_push_index(collection *dl_restrict col, dl_any value, iterator *out_index) {
+dl_api dl_any dl_collection_push_index(dl_collection *dl_restrict col, dl_any value, dl_iterator *out_index) {
   dl_any ref;
   
-  ref = collection_push_start(col, out_index);
-  if (!iterator_is_valid(col, *out_index))
+  ref = dl_collection_push_start(col, out_index);
+  if (!dl_iterator_is_valid(col, *out_index))
     return NULL;
 
-  dl_memory_copy(ref, value, collection_element_size(col));
-  return collection_push_finish(col, out_index);
+  dl_memory_copy(ref, value, dl_collection_element_size(col));
+  return dl_collection_push_finish(col, out_index);
 }
 
-dl_api dl_integer collection_remove_range(collection *dl_restrict col, iterator *index, dl_natural count, collection *out) {
+dl_api dl_integer dl_collection_remove_range(dl_collection *dl_restrict col, dl_iterator *index, dl_natural count, dl_collection *out) {
   dl_natural total;
-  iterator new_iter;
+  dl_iterator new_iter;
   dl_any ref;
   
-  if (dl_safety(col == NULL || out == NULL || index == NULL || !iterator_is_valid(col, *index)))
+  if (dl_safety(col == NULL || out == NULL || index == NULL || !dl_iterator_is_valid(col, *index)))
     return 0;
 
   total = 0;
-  while (total < count && iterator_is_valid(col, *index)) {
-    ref = collection_push_start(out, &new_iter);
+  while (total < count && dl_iterator_is_valid(col, *index)) {
+    ref = dl_collection_push_start(out, &new_iter);
     if (!ref)
       break;
 
-    if (!collection_remove_at(col, index, ref)) {
-      collection_forget_at(col, &new_iter);
+    if (!dl_collection_remove_at(col, index, ref)) {
+      dl_collection_forget_at(col, &new_iter);
       break;
     }
     else
-      collection_push_finish(out, &new_iter);
+      dl_collection_push_finish(out, &new_iter);
     ++total;
   }
 
@@ -4765,8 +4765,8 @@ dl_api dl_integer collection_remove_range(collection *dl_restrict col, iterator 
 }
 
 
-dl_api dl_integer collection_remove_all(collection *dl_restrict col, dl_filter *f, collection *out) {
-  iterator index, new_iter;
+dl_api dl_integer dl_collection_remove_all(dl_collection *dl_restrict col, dl_filter *f, dl_collection *out) {
+  dl_iterator index, new_iter;
   dl_natural total;
   dl_any ref, new_ref;
   
@@ -4774,31 +4774,31 @@ dl_api dl_integer collection_remove_all(collection *dl_restrict col, dl_filter *
     return 0;
 
   total = 0;
-  for (ref = collection_begin_ref(col, &index); iterator_is_valid(col, index);) {
+  for (ref = dl_collection_begin_ref(col, &index); dl_iterator_is_valid(col, index);) {
     if (f->func(f->data, ref)) {
-      new_ref = collection_push_start(out, &new_iter);
+      new_ref = dl_collection_push_start(out, &new_iter);
       if (!ref)
         break;
 
-      if (!collection_remove_at(col, &index, new_ref)) {
-        collection_forget_at(col, &new_iter);
+      if (!dl_collection_remove_at(col, &index, new_ref)) {
+        dl_collection_forget_at(col, &new_iter);
         break;
       }
       else
-        collection_push_finish(out, &new_iter);
+        dl_collection_push_finish(out, &new_iter);
 
-      ref = collection_ref(col, index);
+      ref = dl_collection_ref(col, index);
       ++total;
     }
     else
-      ref = collection_next(col, &index);
+      ref = dl_collection_next(col, &index);
   }
 
   return total;
 }
 
-dl_api dl_integer collection_copy(const collection *dl_restrict original, collection *dl_restrict target) {
-  iterator iter, new_iter;
+dl_api dl_integer dl_collection_copy(const dl_collection *dl_restrict original, dl_collection *dl_restrict target) {
+  dl_iterator iter, new_iter;
   dl_integer count;
   dl_any ref, new_ref;
   dl_bool is_set;
@@ -4806,23 +4806,23 @@ dl_api dl_integer collection_copy(const collection *dl_restrict original, collec
   if (dl_safety(original == NULL || target == NULL))
     return 0;
 
-  is_set = collection_is_set(target);
+  is_set = dl_collection_is_set(target);
 
   count = 0;
-  for (ref = collection_begin_ref(original, &iter); ref != NULL; ref = collection_next(original, &iter)) {
-    if (is_set && collection_contains(target, ref))
+  for (ref = dl_collection_begin_ref(original, &iter); ref != NULL; ref = dl_collection_next(original, &iter)) {
+    if (is_set && dl_collection_contains(target, ref))
       continue;
 
-    new_ref = collection_push_start(target, &new_iter);
+    new_ref = dl_collection_push_start(target, &new_iter);
     if (!new_ref) {
       count = -count;
       break;
     }
 
-    ref = collection_ref(original, iter);
+    ref = dl_collection_ref(original, iter);
 
-    dl_memory_copy(new_ref, ref, collection_element_size(original));
-    collection_push_finish(target, &new_iter);
+    dl_memory_copy(new_ref, ref, dl_collection_element_size(original));
+    dl_collection_push_finish(target, &new_iter);
 
     ++count;
   }
@@ -4830,16 +4830,16 @@ dl_api dl_integer collection_copy(const collection *dl_restrict original, collec
   return count;
 }
 
-dl_api dl_integer collection_copy_array(const dl_any data, dl_natural count, collection *dl_restrict target) {
-  collection source;
+dl_api dl_integer dl_collection_copy_array(const dl_any data, dl_natural count, dl_collection *dl_restrict target) {
+  dl_collection source;
 
   if (dl_safety(target == NULL || data == NULL))
     return 0;
 
-  if (dl_unlikely(!init_collection_array(&source, COLLECTION_TYPE_LIST, NULL, NULL, data, collection_element_size(target), count)))
+  if (dl_unlikely(!dl_init_collection_array(&source, DL_COLLECTION_TYPE_LIST, NULL, NULL, data, dl_collection_element_size(target), count)))
     return 0;
 
-  return collection_copy(&source, target);
+  return dl_collection_copy(&source, target);
 }
 
 
@@ -4848,37 +4848,37 @@ dl_api dl_integer collection_copy_array(const dl_any data, dl_natural count, col
  **  Container Dispatchers
  ****************************************************************************/
 
-dl_api dl_integer _vector_iterator_compare(const collection *dl_restrict col, iterator left, iterator right) {
+dl_api dl_integer _vector_dl_iterator_compare(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right) {
   return left.dl_vector.index - right.dl_vector.index;
 }
 
-dl_api dl_integer _linked_list_iterator_compare(const collection *dl_restrict col, iterator left, iterator right) {
+dl_api dl_integer _linked_list_dl_iterator_compare(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right) {
   return (dl_integer)(left.dl_linked_list.node - right.dl_linked_list.node);
 }
 
-dl_api dl_bool _vector_iterator_is_valid(const collection *dl_restrict col, iterator index) {
+dl_api dl_bool _vector_dl_iterator_is_valid(const dl_collection *dl_restrict col, dl_iterator index) {
   return index.dl_vector.index < col->data.dl_vector.index[1]
     && index.dl_vector.index >= col->data.dl_vector.index[0];
 }
 
-dl_api dl_bool _linked_list_iterator_is_valid(const collection *dl_restrict col, iterator index) {
+dl_api dl_bool _linked_list_dl_iterator_is_valid(const dl_collection *dl_restrict col, dl_iterator index) {
   return index.dl_linked_list.node != NULL;
 }
 
-dl_api iterator _vector_make_invalid_iterator(const collection *dl_restrict col) {
-  iterator bad;
+dl_api dl_iterator _vector_make_invalid_dl_iterator(const dl_collection *dl_restrict col) {
+  dl_iterator bad;
   bad.dl_vector.index = DL_NATURAL_MAX;
   return bad;
 }
 
-dl_api iterator _linked_list_make_invalid_iterator(const collection *dl_restrict col) {
-  iterator bad;
+dl_api dl_iterator _linked_list_make_invalid_dl_iterator(const dl_collection *dl_restrict col) {
+  dl_iterator bad;
   bad.dl_linked_list.node = NULL;
 
   return bad;
 }
 
-dl_api dl_any _vector_collection_push_start(collection *dl_restrict col, iterator *iter) {
+dl_api dl_any _vector_collection_push_start(dl_collection *dl_restrict col, dl_iterator *iter) {
   if (col->data.dl_vector.index[1] >= dl_vector_capacity(&col->data.dl_vector.container)
       && !dl_vector_grow(&col->data.dl_vector.container))
     return NULL;
@@ -4889,7 +4889,7 @@ dl_api dl_any _vector_collection_push_start(collection *dl_restrict col, iterato
   return dl_vector_ref(&col->data.dl_vector.container, iter->dl_vector.index);
 }
 
-dl_api dl_any _linked_list_collection_push_start(collection *dl_restrict col, iterator *iter) {
+dl_api dl_any _linked_list_collection_push_start(dl_collection *dl_restrict col, dl_iterator *iter) {
   dl_linked_list *list;
   
   list = &col->data.dl_linked_list.container;
@@ -4902,19 +4902,19 @@ dl_api dl_any _linked_list_collection_push_start(collection *dl_restrict col, it
   }
 }
 
-dl_api dl_bool _vector_collection_is_empty(const collection *dl_restrict col) {
+dl_api dl_bool _vector_collection_is_empty(const dl_collection *dl_restrict col) {
   return col->data.dl_vector.index[0] == col->data.dl_vector.index[1];
 }
 
-dl_api dl_bool _linked_list_collection_is_empty(const collection *dl_restrict col) {
+dl_api dl_bool _linked_list_collection_is_empty(const dl_collection *dl_restrict col) {
   return col->data.dl_linked_list.container.first == NULL;
 }
 
-dl_api dl_any _vector_collection_pop(collection *dl_restrict col, dl_any out) {
+dl_api dl_any _vector_collection_pop(dl_collection *dl_restrict col, dl_any out) {
   dl_vector *v;
   dl_natural idx;
 
-  if (collection_is_queue(col)) {
+  if (dl_collection_is_queue(col)) {
     v = &col->data.dl_vector.container;
     idx = col->data.dl_vector.index[0];
 
@@ -4929,20 +4929,20 @@ dl_api dl_any _vector_collection_pop(collection *dl_restrict col, dl_any out) {
   }
   else {
     v = &col->data.dl_vector.container;
-    idx = collection_end(col).dl_vector.index - 1;
+    idx = dl_collection_end(col).dl_vector.index - 1;
 
     col->data.dl_vector.index[1] = idx;
     return dl_vector_get(v, idx, out);
   }
 }
 
-dl_api dl_any _linked_list_collection_pop(collection * dl_restrict col, dl_any out) {
+dl_api dl_any _linked_list_collection_pop(dl_collection * dl_restrict col, dl_any out) {
   dl_linked_list *list;
   struct dl_linked_list_node *position;
 
   list = &col->data.dl_linked_list.container;
   
-  if (collection_is_queue(col))
+  if (dl_collection_is_queue(col))
     position = list->first;
   else
     position = list->last;
@@ -4950,11 +4950,11 @@ dl_api dl_any _linked_list_collection_pop(collection * dl_restrict col, dl_any o
   return dl_linked_list_remove(list, position, out);
 }
 
-dl_api dl_bool _vector_collection_pop_destroy(collection *dl_restrict col) {
+dl_api dl_bool _vector_collection_pop_destroy(dl_collection *dl_restrict col) {
   dl_natural index;
   dl_any ref;
   
-  if (collection_is_queue(col)) {
+  if (dl_collection_is_queue(col)) {
     index = col->data.dl_vector.index[0];
 
     if (col->settings.deconstruct_entry.func != NULL) {
@@ -4971,7 +4971,7 @@ dl_api dl_bool _vector_collection_pop_destroy(collection *dl_restrict col) {
     return true;
   }
   else {
-    index = collection_end(col).dl_vector.index - 1;
+    index = dl_collection_end(col).dl_vector.index - 1;
 
     if (col->settings.deconstruct_entry.func != NULL) {
       if (!(ref = dl_vector_ref(&col->data.dl_vector.container, index)))
@@ -4986,13 +4986,13 @@ dl_api dl_bool _vector_collection_pop_destroy(collection *dl_restrict col) {
   }
 }
 
-dl_api dl_bool _linked_list_collection_pop_destroy(collection *dl_restrict col) {
+dl_api dl_bool _linked_list_collection_pop_destroy(dl_collection *dl_restrict col) {
   dl_linked_list *list;
   struct dl_linked_list_node *position;
 
   list = &col->data.dl_linked_list.container;
   
-  if (collection_is_queue(col))
+  if (dl_collection_is_queue(col))
     position = list->first;
   else
     position = list->last;
@@ -5000,10 +5000,10 @@ dl_api dl_bool _linked_list_collection_pop_destroy(collection *dl_restrict col) 
   return dl_linked_list_destroy(list, position, &col->settings.deconstruct_entry);
 }
 
-dl_api dl_bool _vector_collection_pop_forget(collection *dl_restrict col) {
+dl_api dl_bool _vector_collection_pop_forget(dl_collection *dl_restrict col) {
   dl_natural index;
   
-  if (collection_is_queue(col)) {
+  if (dl_collection_is_queue(col)) {
     col->data.dl_vector.index[0]++;
 
     _vector_queue_roll_slices(col);
@@ -5011,7 +5011,7 @@ dl_api dl_bool _vector_collection_pop_forget(collection *dl_restrict col) {
     return true;
   }
   else {
-    index = collection_end(col).dl_vector.index - 1;
+    index = dl_collection_end(col).dl_vector.index - 1;
 
     col->data.dl_vector.index[1] = index;
 
@@ -5019,13 +5019,13 @@ dl_api dl_bool _vector_collection_pop_forget(collection *dl_restrict col) {
   }
 }
 
-dl_api dl_bool _linked_list_collection_pop_forget(collection *dl_restrict col) {
+dl_api dl_bool _linked_list_collection_pop_forget(dl_collection *dl_restrict col) {
   dl_linked_list *list;
   struct dl_linked_list_node *position;
 
   list = &col->data.dl_linked_list.container;
   
-  if (collection_is_queue(col))
+  if (dl_collection_is_queue(col))
     position = list->first;
   else
     position = list->last;
@@ -5033,7 +5033,7 @@ dl_api dl_bool _linked_list_collection_pop_forget(collection *dl_restrict col) {
   return dl_linked_list_destroy(list, position, NULL);
 }
 
-dl_api dl_integer _vector_collection_ref_array(collection *dl_restrict col, iterator iter, dl_any *out_array) {
+dl_api dl_integer _vector_collection_ref_array(dl_collection *dl_restrict col, dl_iterator iter, dl_any *out_array) {
   dl_natural count, limit;
     
   count = dl_vector_ref_array(&col->data.dl_vector.container, iter.dl_vector.index, out_array);
@@ -5042,21 +5042,21 @@ dl_api dl_integer _vector_collection_ref_array(collection *dl_restrict col, iter
   return count < limit ? count : limit;
 }
 
-dl_api dl_integer _linked_list_collection_ref_array(collection *dl_restrict col, iterator iter, dl_any *out_array) {
+dl_api dl_integer _linked_list_collection_ref_array(dl_collection *dl_restrict col, dl_iterator iter, dl_any *out_array) {
   out_array[0] = dl_linked_list_ref(iter.dl_linked_list.node);
   return 1;
 }
 
-dl_api const dl_any _vector_collection_ref(const collection *dl_restrict col, iterator iter) {
+dl_api const dl_any _vector_collection_ref(const dl_collection *dl_restrict col, dl_iterator iter) {
   return dl_vector_ref(&col->data.dl_vector.container, iter.dl_vector.index);
 }
 
-dl_api const dl_any _linked_list_collection_ref(const collection *dl_restrict col, iterator iter) {
+dl_api const dl_any _linked_list_collection_ref(const dl_collection *dl_restrict col, dl_iterator iter) {
   return dl_linked_list_ref(iter.dl_linked_list.node);
 }
 
-dl_api dl_bool _vector_collection_swap(collection *dl_restrict col, iterator *iter_a, iterator *iter_b) {
-  iterator t;
+dl_api dl_bool _vector_collection_swap(dl_collection *dl_restrict col, dl_iterator *iter_a, dl_iterator *iter_b) {
+  dl_iterator t;
 
   if (!dl_vector_swap(&col->data.dl_vector.container, iter_a->dl_vector.index, iter_b->dl_vector.index))
     return false;
@@ -5066,117 +5066,117 @@ dl_api dl_bool _vector_collection_swap(collection *dl_restrict col, iterator *it
   return true;
 }
 
-dl_api dl_bool _linked_list_collection_swap(collection *dl_restrict col, iterator *iter_a, iterator *iter_b) {
+dl_api dl_bool _linked_list_collection_swap(dl_collection *dl_restrict col, dl_iterator *iter_a, dl_iterator *iter_b) {
   if (!dl_linked_list_swap(&col->data.dl_linked_list.container, iter_a->dl_linked_list.node, iter_b->dl_linked_list.node, false))
     return false;
   return true;
 }
 
-dl_any _vector_collection_get(const collection *dl_restrict col, iterator iter, dl_any out) {
+dl_any _vector_collection_get(const dl_collection *dl_restrict col, dl_iterator iter, dl_any out) {
   return dl_vector_get(&col->data.dl_vector.container, iter.dl_vector.index, out);
 }
 
-dl_any _linked_list_collection_get(const collection *dl_restrict col, iterator iter, dl_any out) {
+dl_any _linked_list_collection_get(const dl_collection *dl_restrict col, dl_iterator iter, dl_any out) {
   return dl_linked_list_get(&col->data.dl_linked_list.container, iter.dl_linked_list.node, out);
 }
 
-dl_any _vector_collection_set(collection *dl_restrict col, iterator *iter, dl_any value) {
+dl_any _vector_collection_set(dl_collection *dl_restrict col, dl_iterator *iter, dl_any value) {
   dl_any ref;
 
   if ((ref = dl_vector_set(&col->data.dl_vector.container, iter->dl_vector.index, value)))
-    return collection_ref(col, *iter);
+    return dl_collection_ref(col, *iter);
   return NULL;
 }
 
-dl_any _linked_list_collection_set(collection *dl_restrict col, iterator *iter, dl_any value) {
+dl_any _linked_list_collection_set(dl_collection *dl_restrict col, dl_iterator *iter, dl_any value) {
   dl_any ref;
 
   if ((ref = dl_linked_list_set(&col->data.dl_linked_list.container, iter->dl_linked_list.node, value)))
-    return collection_ref(col, *iter);
+    return dl_collection_ref(col, *iter);
   return NULL;
 }
 
-dl_api iterator _vector_collection_index(collection *dl_restrict col, dl_natural index) {
-  iterator iter;
+dl_api dl_iterator _vector_collection_index(dl_collection *dl_restrict col, dl_natural index) {
+  dl_iterator iter;
   iter.dl_vector.index = index;
   return iter;
 }
 
-dl_api iterator _linked_list_collection_index(collection *dl_restrict col, dl_natural index) {
-  iterator iter;
+dl_api dl_iterator _linked_list_collection_index(dl_collection *dl_restrict col, dl_natural index) {
+  dl_iterator iter;
   iter.dl_linked_list.node = dl_linked_list_index(&col->data.dl_linked_list.container, index);
   return iter;
 }
 
-dl_api void _vector_collection_next(const collection *dl_restrict col, iterator *iter) {
+dl_api void _vector_collection_next(const dl_collection *dl_restrict col, dl_iterator *iter) {
   iter->dl_vector.index++;
 }
 
-dl_api void _linked_list_collection_next(const collection *dl_restrict col, iterator *iter) {
+dl_api void _linked_list_collection_next(const dl_collection *dl_restrict col, dl_iterator *iter) {
   iter->dl_linked_list.node = iter->dl_linked_list.node->next;
 }
 
-dl_api void _vector_collection_prev(const collection *dl_restrict col, iterator *iter) {
-  if (!iterator_is_valid(col, *iter))
+dl_api void _vector_collection_prev(const dl_collection *dl_restrict col, dl_iterator *iter) {
+  if (!dl_iterator_is_valid(col, *iter))
     iter->dl_vector.index = col->data.dl_vector.index[1] - 1;
   else if (iter->dl_vector.index > col->data.dl_vector.index[0])
     iter->dl_vector.index--;
   else
-    *iter = make_invalid_iterator(col);
+    *iter = make_invalid_dl_iterator(col);
 }
 
-dl_api void _linked_list_collection_prev(const collection *dl_restrict col, iterator *iter) {
-  if (!iterator_is_valid(col, *iter))
+dl_api void _linked_list_collection_prev(const dl_collection *dl_restrict col, dl_iterator *iter) {
+  if (!dl_iterator_is_valid(col, *iter))
     iter->dl_linked_list.node = col->data.dl_linked_list.container.last;
   else if (iter->dl_linked_list.node != col->data.dl_linked_list.container.first)
     iter->dl_linked_list.node = iter->dl_linked_list.node->previous;
   else
-    *iter = make_invalid_iterator(col);
+    *iter = make_invalid_dl_iterator(col);
 }
 
-dl_api dl_integer _vector_collection_count(const collection *dl_restrict col) {
+dl_api dl_integer _vector_collection_count(const dl_collection *dl_restrict col) {
   return col->data.dl_vector.index[1] - col->data.dl_vector.index[0];
 }
 
-dl_api dl_integer _linked_list_collection_count(const collection *dl_restrict col) {
+dl_api dl_integer _linked_list_collection_count(const dl_collection *dl_restrict col) {
   return dl_linked_list_length(&col->data.dl_linked_list.container);
 }
 
-dl_api iterator _vector_collection_begin(const collection *dl_restrict col) {
-  iterator iter;
+dl_api dl_iterator _vector_collection_begin(const dl_collection *dl_restrict col) {
+  dl_iterator iter;
   iter.dl_vector.index = col->data.dl_vector.index[0];
   return iter;
 }
 
-dl_api iterator _linked_list_collection_begin(const collection *dl_restrict col) {
-  iterator iter;
+dl_api dl_iterator _linked_list_collection_begin(const dl_collection *dl_restrict col) {
+  dl_iterator iter;
   iter.dl_linked_list.node = col->data.dl_linked_list.container.first;
   return iter;
 }
 
-dl_api iterator _vector_collection_end(const collection *dl_restrict col) {
-  iterator iter;
+dl_api dl_iterator _vector_collection_end(const dl_collection *dl_restrict col) {
+  dl_iterator iter;
   iter.dl_vector.index = col->data.dl_vector.index[1];
   return iter;
 }
 
-dl_api iterator _linked_list_collection_end(const collection *dl_restrict col) {
-  iterator iter;
+dl_api dl_iterator _linked_list_collection_end(const dl_collection *dl_restrict col) {
+  dl_iterator iter;
   iter.dl_linked_list.node = NULL;
   return iter;
 }
 
-dl_api const dl_any _vector_collection_search_region(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
-  if (collection_is_sorted(col))
+dl_api const dl_any _vector_collection_search_region(const dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter) {
+  if (dl_collection_is_sorted(col))
     return _collection_search_region_vector(col, predicate, left, right, iter);
   return _collection_linear_search(col, predicate, left, right, iter);
 }
 
-dl_api const dl_any _linked_list_collection_search_region(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter) {
+dl_api const dl_any _linked_list_collection_search_region(const dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter) {
   return _collection_linear_search(col, predicate, left, right, iter);
 }
 
-dl_api dl_bool _vector_collection_destroy_at(collection *dl_restrict col, iterator *iter, dl_handler *destructor) {
+dl_api dl_bool _vector_collection_destroy_at(dl_collection *dl_restrict col, dl_iterator *iter, dl_handler *destructor) {
   dl_vector *v;
   dl_natural index, swap_index;
   dl_any item;
@@ -5190,7 +5190,7 @@ dl_api dl_bool _vector_collection_destroy_at(collection *dl_restrict col, iterat
     destructor->func(destructor->data, item);
   }
 
-  if (collection_count(col) > 1)
+  if (dl_collection_count(col) > 1)
     for (swap_index = col->data.dl_vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
       dl_vector_swap(v, swap_index, index);
   col->data.dl_vector.index[1]--;
@@ -5198,7 +5198,7 @@ dl_api dl_bool _vector_collection_destroy_at(collection *dl_restrict col, iterat
   return true;
 }
 
-dl_api dl_bool _linked_list_collection_destroy_at(collection *dl_restrict col, iterator *iter, dl_handler *destructor) {
+dl_api dl_bool _linked_list_collection_destroy_at(dl_collection *dl_restrict col, dl_iterator *iter, dl_handler *destructor) {
   struct dl_linked_list_node *next;
   next = iter->dl_linked_list.node->next;
   if (dl_linked_list_destroy(&col->data.dl_linked_list.container, iter->dl_linked_list.node, destructor)) {
@@ -5208,7 +5208,7 @@ dl_api dl_bool _linked_list_collection_destroy_at(collection *dl_restrict col, i
   return false;
 }
   
-dl_api dl_any _vector_collection_remove_at(collection *dl_restrict col, iterator *iter, dl_any out) {
+dl_api dl_any _vector_collection_remove_at(dl_collection *dl_restrict col, dl_iterator *iter, dl_any out) {
   dl_vector *v;
   dl_natural index, swap_index;
   
@@ -5218,7 +5218,7 @@ dl_api dl_any _vector_collection_remove_at(collection *dl_restrict col, iterator
   if (!(out = dl_vector_get(v, index, out)))
     return NULL;
 
-  if (collection_count(col) > 1)
+  if (dl_collection_count(col) > 1)
     for (swap_index = col->data.dl_vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
       dl_vector_swap(v, swap_index, index);
   col->data.dl_vector.index[1]--;
@@ -5226,7 +5226,7 @@ dl_api dl_any _vector_collection_remove_at(collection *dl_restrict col, iterator
   return out;
 }
 
-dl_api dl_any _linked_list_collection_remove_at(collection *dl_restrict col, iterator *iter, dl_any out) {
+dl_api dl_any _linked_list_collection_remove_at(dl_collection *dl_restrict col, dl_iterator *iter, dl_any out) {
   struct dl_linked_list_node *next;
   
   next = iter->dl_linked_list.node->next;
@@ -5239,7 +5239,7 @@ dl_api dl_any _linked_list_collection_remove_at(collection *dl_restrict col, ite
 }
 
   
-dl_api dl_integer _vector_collection_destroy_range(collection *dl_restrict col, iterator *iter, dl_natural count) {
+dl_api dl_integer _vector_collection_destroy_range(dl_collection *dl_restrict col, dl_iterator *iter, dl_natural count) {
   dl_natural index, start, total;
   dl_handler destruct;
   dl_vector *v;
@@ -5271,7 +5271,7 @@ dl_api dl_integer _vector_collection_destroy_range(collection *dl_restrict col, 
   return total;
 }
   
-dl_api dl_integer _linked_list_collection_destroy_range(collection *dl_restrict col, iterator *index, dl_natural count) {
+dl_api dl_integer _linked_list_collection_destroy_range(dl_collection *dl_restrict col, dl_iterator *index, dl_natural count) {
   struct dl_linked_list_node *next;
   dl_natural idx;
 
@@ -5283,24 +5283,24 @@ dl_api dl_integer _linked_list_collection_destroy_range(collection *dl_restrict 
   return count;
 }
 
-dl_bool _vector_collection_insert(collection *dl_restrict col, iterator *dl_restrict position, dl_any item) {
-  iterator index, next;
+dl_bool _vector_collection_insert(dl_collection *dl_restrict col, dl_iterator *dl_restrict position, dl_any item) {
+  dl_iterator index, next;
   
-  index = collection_end(col);
+  index = dl_collection_end(col);
 
-  if (!collection_push(col, item))
+  if (!dl_collection_push(col, item))
     return false;
 
-  while (!iterator_equal(col, index, *position)) {
+  while (!dl_iterator_equal(col, index, *position)) {
     next = index;
-    collection_prev(col, &next);
-    collection_swap(col, &next, &index);
+    dl_collection_prev(col, &next);
+    dl_collection_swap(col, &next, &index);
   }
 
   return true;
 }
 
-dl_bool _linked_list_collection_insert(collection *dl_restrict col, iterator *dl_restrict position, dl_any item) {
+dl_bool _linked_list_collection_insert(dl_collection *dl_restrict col, dl_iterator *dl_restrict position, dl_any item) {
   struct dl_linked_list_node *node;
   dl_linked_list *list;
 
@@ -5318,81 +5318,81 @@ dl_bool _linked_list_collection_insert(collection *dl_restrict col, iterator *dl
  **  Init/Destroy Collections
  ****************************************************************************/
 
-struct collection_dispatch_functions default_vector_collection_dispatch_functions = {
-  (dl_integer (*)(const collection *dl_restrict col, iterator left, iterator right))_vector_iterator_compare,
-  (dl_bool (*)(const collection *dl_restrict col, iterator index))_vector_iterator_is_valid,
-  (iterator (*)(const collection *dl_restrict col))_vector_make_invalid_iterator,
-  (dl_any (*)(collection *dl_restrict col, iterator *iter))_vector_collection_push_start,
-  (dl_bool (*)(const collection *dl_restrict col))_vector_collection_is_empty,
-  (dl_any (*)(const collection *dl_restrict col, dl_any out))_vector_collection_pop,
-  (dl_bool (*)(collection *dl_restrict col))_vector_collection_pop_destroy,
-  (dl_bool (*)(collection *dl_restrict col))_vector_collection_pop_forget,
-  (dl_integer (*)(collection *dl_restrict col, iterator iter, dl_any *out_array))_vector_collection_ref_array,
-  (dl_any (*)(collection *dl_restrict col, iterator iter))_vector_collection_ref,
-  (dl_bool (*)(collection *dl_restrict col, iterator *iter_a, iterator *iter_b))_vector_collection_swap,
-  (dl_any (*)(const collection *dl_restrict col, iterator iter, dl_any out))_vector_collection_get,
-  (dl_any (*)(collection *dl_restrict col, iterator *iter, dl_any value))_vector_collection_set,
-  (iterator (*)(collection *dl_restrict col, dl_natural index))_vector_collection_index,
-  (void (*)(const collection *dl_restrict col, iterator *iter))_vector_collection_next,
-  (void (*)(const collection *dl_restrict col, iterator *iter))_vector_collection_prev,
-  (dl_integer (*)(const collection *dl_restrict col))_vector_collection_count,
-  (iterator (*)(const collection *dl_restrict col))_vector_collection_begin,
-  (iterator (*)(const collection *dl_restrict col))_vector_collection_end,
-  (const dl_any (*)(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter))_vector_collection_search_region,
-  (dl_bool (*)(collection *dl_restrict col, iterator *iter, dl_handler *destructor))_vector_collection_destroy_at,
-  (dl_any (*)(collection *dl_restrict col, iterator *iter, dl_any out))_vector_collection_remove_at,
-  (dl_integer (*)(collection *dl_restrict col, iterator *iter, dl_natural count))_vector_collection_destroy_range,
-  (dl_bool (*)(collection *dl_restrict col, iterator *dl_restrict position, dl_any item))_vector_collection_insert
+struct dl_collection_dispatch_functions default_vector_dl_collection_dispatch_functions = {
+  (dl_integer (*)(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right))_vector_dl_iterator_compare,
+  (dl_bool (*)(const dl_collection *dl_restrict col, dl_iterator index))_vector_dl_iterator_is_valid,
+  (dl_iterator (*)(const dl_collection *dl_restrict col))_vector_make_invalid_dl_iterator,
+  (dl_any (*)(dl_collection *dl_restrict col, dl_iterator *iter))_vector_collection_push_start,
+  (dl_bool (*)(const dl_collection *dl_restrict col))_vector_collection_is_empty,
+  (dl_any (*)(const dl_collection *dl_restrict col, dl_any out))_vector_collection_pop,
+  (dl_bool (*)(dl_collection *dl_restrict col))_vector_collection_pop_destroy,
+  (dl_bool (*)(dl_collection *dl_restrict col))_vector_collection_pop_forget,
+  (dl_integer (*)(dl_collection *dl_restrict col, dl_iterator iter, dl_any *out_array))_vector_collection_ref_array,
+  (dl_any (*)(dl_collection *dl_restrict col, dl_iterator iter))_vector_collection_ref,
+  (dl_bool (*)(dl_collection *dl_restrict col, dl_iterator *iter_a, dl_iterator *iter_b))_vector_collection_swap,
+  (dl_any (*)(const dl_collection *dl_restrict col, dl_iterator iter, dl_any out))_vector_collection_get,
+  (dl_any (*)(dl_collection *dl_restrict col, dl_iterator *iter, dl_any value))_vector_collection_set,
+  (dl_iterator (*)(dl_collection *dl_restrict col, dl_natural index))_vector_collection_index,
+  (void (*)(const dl_collection *dl_restrict col, dl_iterator *iter))_vector_collection_next,
+  (void (*)(const dl_collection *dl_restrict col, dl_iterator *iter))_vector_collection_prev,
+  (dl_integer (*)(const dl_collection *dl_restrict col))_vector_collection_count,
+  (dl_iterator (*)(const dl_collection *dl_restrict col))_vector_collection_begin,
+  (dl_iterator (*)(const dl_collection *dl_restrict col))_vector_collection_end,
+  (const dl_any (*)(const dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter))_vector_collection_search_region,
+  (dl_bool (*)(dl_collection *dl_restrict col, dl_iterator *iter, dl_handler *destructor))_vector_collection_destroy_at,
+  (dl_any (*)(dl_collection *dl_restrict col, dl_iterator *iter, dl_any out))_vector_collection_remove_at,
+  (dl_integer (*)(dl_collection *dl_restrict col, dl_iterator *iter, dl_natural count))_vector_collection_destroy_range,
+  (dl_bool (*)(dl_collection *dl_restrict col, dl_iterator *dl_restrict position, dl_any item))_vector_collection_insert
 };
 
-struct collection_dispatch_functions default_linked_list_collection_dispatch_functions = {
-  (dl_integer (*)(const collection *dl_restrict col, iterator left, iterator right))_linked_list_iterator_compare,
-  (dl_bool (*)(const collection *dl_restrict col, iterator index))_linked_list_iterator_is_valid,
-  (iterator (*)(const collection *dl_restrict col))_linked_list_make_invalid_iterator,
-  (dl_any (*)(collection *dl_restrict col, iterator *iter))_linked_list_collection_push_start,
-  (dl_bool (*)(const collection *dl_restrict col))_linked_list_collection_is_empty,
-  (dl_any (*)(const collection *dl_restrict col, dl_any out))_linked_list_collection_pop,
-  (dl_bool (*)(collection *dl_restrict col))_linked_list_collection_pop_destroy,
-  (dl_bool (*)(collection *dl_restrict col))_linked_list_collection_pop_forget,
-  (dl_integer (*)(collection *dl_restrict col, iterator iter, dl_any *out_array))_linked_list_collection_ref_array,
-  (dl_any (*)(collection *dl_restrict col, iterator iter))_linked_list_collection_ref,
-  (dl_bool (*)(collection *dl_restrict col, iterator *iter_a, iterator *iter_b))_linked_list_collection_swap,
-  (dl_any (*)(const collection *dl_restrict col, iterator iter, dl_any out))_linked_list_collection_get,
-  (dl_any (*)(collection *dl_restrict col, iterator *iter, dl_any value))_linked_list_collection_set,
-  (iterator (*)(collection *dl_restrict col, dl_natural index))_linked_list_collection_index,
-  (void (*)(const collection *dl_restrict col, iterator *iter))_linked_list_collection_next,
-  (void (*)(const collection *dl_restrict col, iterator *iter))_linked_list_collection_prev,
-  (dl_integer (*)(const collection *dl_restrict col))_linked_list_collection_count,
-  (iterator (*)(const collection *dl_restrict col))_linked_list_collection_begin,
-  (iterator (*)(const collection *dl_restrict col))_linked_list_collection_end,
-  (const dl_any (*)(const collection *dl_restrict col, dl_filter *predicate, iterator left, iterator right, iterator *iter))_linked_list_collection_search_region,
-  (dl_bool (*)(collection *dl_restrict col, iterator *iter, dl_handler *destructor))_linked_list_collection_destroy_at,
-  (dl_any (*)(collection *dl_restrict col, iterator *iter, dl_any out))_linked_list_collection_remove_at,
-  (dl_integer (*)(collection *dl_restrict col, iterator *iter, dl_natural count))_linked_list_collection_destroy_range,
-  (dl_bool (*)(collection *dl_restrict col, iterator *dl_restrict position, dl_any item))_linked_list_collection_insert
+struct dl_collection_dispatch_functions default_linked_list_dl_collection_dispatch_functions = {
+  (dl_integer (*)(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right))_linked_list_dl_iterator_compare,
+  (dl_bool (*)(const dl_collection *dl_restrict col, dl_iterator index))_linked_list_dl_iterator_is_valid,
+  (dl_iterator (*)(const dl_collection *dl_restrict col))_linked_list_make_invalid_dl_iterator,
+  (dl_any (*)(dl_collection *dl_restrict col, dl_iterator *iter))_linked_list_collection_push_start,
+  (dl_bool (*)(const dl_collection *dl_restrict col))_linked_list_collection_is_empty,
+  (dl_any (*)(const dl_collection *dl_restrict col, dl_any out))_linked_list_collection_pop,
+  (dl_bool (*)(dl_collection *dl_restrict col))_linked_list_collection_pop_destroy,
+  (dl_bool (*)(dl_collection *dl_restrict col))_linked_list_collection_pop_forget,
+  (dl_integer (*)(dl_collection *dl_restrict col, dl_iterator iter, dl_any *out_array))_linked_list_collection_ref_array,
+  (dl_any (*)(dl_collection *dl_restrict col, dl_iterator iter))_linked_list_collection_ref,
+  (dl_bool (*)(dl_collection *dl_restrict col, dl_iterator *iter_a, dl_iterator *iter_b))_linked_list_collection_swap,
+  (dl_any (*)(const dl_collection *dl_restrict col, dl_iterator iter, dl_any out))_linked_list_collection_get,
+  (dl_any (*)(dl_collection *dl_restrict col, dl_iterator *iter, dl_any value))_linked_list_collection_set,
+  (dl_iterator (*)(dl_collection *dl_restrict col, dl_natural index))_linked_list_collection_index,
+  (void (*)(const dl_collection *dl_restrict col, dl_iterator *iter))_linked_list_collection_next,
+  (void (*)(const dl_collection *dl_restrict col, dl_iterator *iter))_linked_list_collection_prev,
+  (dl_integer (*)(const dl_collection *dl_restrict col))_linked_list_collection_count,
+  (dl_iterator (*)(const dl_collection *dl_restrict col))_linked_list_collection_begin,
+  (dl_iterator (*)(const dl_collection *dl_restrict col))_linked_list_collection_end,
+  (const dl_any (*)(const dl_collection *dl_restrict col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter))_linked_list_collection_search_region,
+  (dl_bool (*)(dl_collection *dl_restrict col, dl_iterator *iter, dl_handler *destructor))_linked_list_collection_destroy_at,
+  (dl_any (*)(dl_collection *dl_restrict col, dl_iterator *iter, dl_any out))_linked_list_collection_remove_at,
+  (dl_integer (*)(dl_collection *dl_restrict col, dl_iterator *iter, dl_natural count))_linked_list_collection_destroy_range,
+  (dl_bool (*)(dl_collection *dl_restrict col, dl_iterator *dl_restrict position, dl_any item))_linked_list_collection_insert
 };
 
-collection_settings default_vector_collection_settings = {
-  COLLECTION_TYPE_LIST,
-  STORAGE_TYPE_VECTOR,
+dl_collection_settings default_vector_collection_settings = {
+  DL_COLLECTION_TYPE_LIST,
+  DL_STORAGE_TYPE_VECTOR,
   {0},
   {0},
   32,
   sizeof(dl_byte),
-  &default_vector_collection_dispatch_functions
+  &default_vector_dl_collection_dispatch_functions
 };
 
-collection_settings default_linked_list_collection_settings = {
-  COLLECTION_TYPE_LIST,
-  STORAGE_TYPE_LINKED_LIST,
+dl_collection_settings default_linked_list_collection_settings = {
+  DL_COLLECTION_TYPE_LIST,
+  DL_STORAGE_TYPE_LINKED_LIST,
   {0},
   {0},
   32,
   sizeof(dl_byte),
-  &default_linked_list_collection_dispatch_functions
+  &default_linked_list_dl_collection_dispatch_functions
 };
 
-void _check_init_collection(collection *dl_restrict col, collection_settings settings, dl_natural count) {
+void _check_init_collection(dl_collection *dl_restrict col, dl_collection_settings settings, dl_natural count) {
   col->settings = settings;
   
   if (col->settings.comparer.func == NULL) {
@@ -5415,24 +5415,24 @@ void _check_init_collection(collection *dl_restrict col, collection_settings set
     }
   }
 
-  if (col->settings.storage == STORAGE_TYPE_VECTOR) {
+  if (col->settings.storage == DL_STORAGE_TYPE_VECTOR) {
     col->data.dl_vector.index[0] = 0;
     col->data.dl_vector.index[1] = count;
   }
 }
 
-dl_api collection *init_collection(collection *dl_restrict col, collection_type type, storage_type storage, dl_comparator *compare, dl_handler *destructor, dl_natural element_size) {
-  collection_settings settings;
+dl_api dl_collection *dl_init_collection(dl_collection *dl_restrict col, dl_collection_type type, dl_storage_type storage, dl_comparator *compare, dl_handler *destructor, dl_natural element_size) {
+  dl_collection_settings settings;
   
   if (dl_safety(col == NULL || element_size < 1))
     return NULL;
 
   switch (storage) {
-  case STORAGE_TYPE_VECTOR: {
+  case DL_STORAGE_TYPE_VECTOR: {
     settings = default_vector_collection_settings;
     break;
   }
-  case STORAGE_TYPE_LINKED_LIST: {
+  case DL_STORAGE_TYPE_LINKED_LIST: {
     settings = default_linked_list_collection_settings;
     break;
   }
@@ -5455,12 +5455,12 @@ dl_api collection *init_collection(collection *dl_restrict col, collection_type 
   _check_init_collection(col, settings, 0);
   
   switch (settings.storage) {
-  case STORAGE_TYPE_VECTOR: {
+  case DL_STORAGE_TYPE_VECTOR: {
     if (!dl_init_vector(&col->data.dl_vector.container, element_size, col->settings.capacity))
       return NULL;
     break;
   }
-  case STORAGE_TYPE_LINKED_LIST: {
+  case DL_STORAGE_TYPE_LINKED_LIST: {
     if (!dl_init_linked_list(&col->data.dl_linked_list.container, element_size, col->settings.capacity))
       return NULL;
     break;
@@ -5474,18 +5474,18 @@ dl_api collection *init_collection(collection *dl_restrict col, collection_type 
   return col;
 }
 
-dl_api collection *init_collection_custom(collection *dl_restrict col, collection_settings settings, dl_natural element_size) {
+dl_api dl_collection *dl_init_collection_custom(dl_collection *dl_restrict col, dl_collection_settings settings, dl_natural element_size) {
   if (dl_safety(col == NULL))
     return NULL;
 
   _check_init_collection(col, settings, 0);
 
   switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
+  case DL_STORAGE_TYPE_VECTOR:
     if (!dl_init_vector(&col->data.dl_vector.container, element_size, col->settings.capacity))
       return NULL;
     break;
-  case STORAGE_TYPE_LINKED_LIST:
+  case DL_STORAGE_TYPE_LINKED_LIST:
     if (!dl_init_linked_list(&col->data.dl_linked_list.container, element_size, col->settings.capacity))
       return NULL;
     break;
@@ -5498,8 +5498,8 @@ dl_api collection *init_collection_custom(collection *dl_restrict col, collectio
   return col;
 }
 
-dl_api collection *init_collection_array(collection *dl_restrict col, collection_type type, dl_comparator *comp, dl_handler *deconstruct_entry, dl_byte *data, dl_natural element_size, dl_natural count) {
-  collection_settings settings;
+dl_api dl_collection *dl_init_collection_array(dl_collection *dl_restrict col, dl_collection_type type, dl_comparator *comp, dl_handler *deconstruct_entry, dl_byte *data, dl_natural element_size, dl_natural count) {
+  dl_collection_settings settings;
   
   if (dl_safety(col == NULL || data == NULL))
     return NULL;
@@ -5508,7 +5508,7 @@ dl_api collection *init_collection_array(collection *dl_restrict col, collection
     return NULL;
 
   settings = default_vector_collection_settings;
-  settings.storage = STORAGE_TYPE_VECTOR;
+  settings.storage = DL_STORAGE_TYPE_VECTOR;
   settings.type = type;
   settings.element_size = element_size;
   
@@ -5528,24 +5528,24 @@ dl_api collection *init_collection_array(collection *dl_restrict col, collection
   return col;
 }
 
-dl_api void destroy_collection(collection *dl_restrict col) {
-  iterator index;
+dl_api void dl_destroy_collection(dl_collection *dl_restrict col) {
+  dl_iterator index;
   dl_any item;
   
   if (dl_safety(col == NULL))
     return;
 
   switch (col->settings.storage) {
-  case STORAGE_TYPE_VECTOR:
+  case DL_STORAGE_TYPE_VECTOR:
     if (col->settings.deconstruct_entry.func != NULL) {
-      index = collection_begin(col);
-      for (item = collection_ref(col, index); item != NULL; item = collection_next(col, &index))
+      index = dl_collection_begin(col);
+      for (item = dl_collection_ref(col, index); item != NULL; item = dl_collection_next(col, &index))
 	col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, item);
     }
 
     dl_destroy_vector(&col->data.dl_vector.container, NULL);
     break;
-  case STORAGE_TYPE_LINKED_LIST:
+  case DL_STORAGE_TYPE_LINKED_LIST:
     dl_destroy_linked_list(&col->data.dl_linked_list.container, &col->settings.deconstruct_entry);
     break;
   }

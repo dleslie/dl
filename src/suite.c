@@ -125,12 +125,12 @@ DL_DECLARE_TEST(test_test_run_tests)
 DL_END_TEST_SUITE
 
 /*******************************************************************************
- collections
+ dl_collections
 *******************************************************************************/
 
 #if DL_USE_CONTAINERS
 
-DL_BEGIN_TEST_SUITE(collections)
+DL_BEGIN_TEST_SUITE(dl_collections)
 DL_DECLARE_TEST(test_memory_swap)
 DL_DECLARE_TEST(test_init_linked_list_fat)
 DL_DECLARE_TEST(test_linked_list_add_fat)
@@ -212,7 +212,7 @@ int main(int argc, char **argv) {
 #if DL_USE_TEST
   DL_RUN_TEST_SUITE(tester);
   DL_RUN_TEST_SUITE(math);
-  DL_RUN_TEST_SUITE(collections);
+  DL_RUN_TEST_SUITE(dl_collections);
 #endif
   
   return 0;

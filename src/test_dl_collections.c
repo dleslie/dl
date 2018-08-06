@@ -24,7 +24,7 @@ dl_any _test_add(dl_any data, dl_any item, dl_any left) {
 }
 
 dl_any _test_push(dl_any data, dl_any item, dl_any left) {
-  return collection_push((collection *)item, left);
+  return dl_collection_push((dl_collection *)item, left);
 }
 
 dl_integer _test_match_even_func(dl_any data, dl_any value) {
@@ -62,12 +62,12 @@ dl_any _test_do_nothing(dl_any data, dl_any value) {
   return value;
 }
 
-void _print_collection(collection *c1) {
+void _print_collection(dl_collection *c1) {
   char buf[256]; buf[0] = 0;
   char buf2[256]; buf2[0] = 0;
-  iterator i;
+  dl_iterator i;
   dl_any ref;
-  for (ref = collection_begin_ref(c1, &i); ref != NULL; ref = collection_next(c1, &i)) {
+  for (ref = dl_collection_begin_ref(c1, &i); ref != NULL; ref = dl_collection_next(c1, &i)) {
 #if DL_IS_C89 || DL_IS_C90
     sprintf(buf2, "%s %i", buf, *(dl_integer *)ref);
     sprintf(buf, "%s", buf2);
@@ -79,34 +79,34 @@ void _print_collection(collection *c1) {
   DL_INFO("%s", buf2);
 }
 
-dl_bool _confirm_properties(collection *c, const char *type_name) {
-  iterator index = collection_begin(c);
-  iterator last = make_invalid_iterator(c);
-  iterator next_index, next, prev;
+dl_bool _confirm_properties(dl_collection *c, const char *type_name) {
+  dl_iterator index = dl_collection_begin(c);
+  dl_iterator last = make_invalid_dl_iterator(c);
+  dl_iterator next_index, next, prev;
   dl_any item, next_item, last_item;
 
-  for (item = collection_ref(c, index); item != NULL; item = collection_next(c, &index)) {
+  for (item = dl_collection_ref(c, index); item != NULL; item = dl_collection_next(c, &index)) {
     prev = index;
-    collection_prev(c, &prev);
-    if (!dl_check(iterator_equal(c, prev, last),
-	       "%s: Expected iterators to monotonically increase.", type_name))
+    dl_collection_prev(c, &prev);
+    if (!dl_check(dl_iterator_equal(c, prev, last),
+	       "%s: Expected dl_iterators to monotonically increase.", type_name))
       return false;
     last = index;
       
-    if (iterator_is_valid(c, prev)) {
+    if (dl_iterator_is_valid(c, prev)) {
       next = prev;
-      collection_next(c, &next);
-      if (!dl_check(iterator_equal(c, next, index),
-		 "%s: Expected iterators to monotonically increase.", type_name))
+      dl_collection_next(c, &next);
+      if (!dl_check(dl_iterator_equal(c, next, index),
+		 "%s: Expected dl_iterators to monotonically increase.", type_name))
 	return false;
     }
 
     next = index;
-    collection_next(c, &next);
+    dl_collection_next(c, &next);
     prev = next;
-    collection_prev(c, &prev);
-    if (!dl_check(iterator_equal(c, prev, index),
-	       "%s: Expected iterators to monotonically decrease.", type_name))
+    dl_collection_prev(c, &prev);
+    if (!dl_check(dl_iterator_equal(c, prev, index),
+	       "%s: Expected dl_iterators to monotonically decrease.", type_name))
       return false;
 
     if (!dl_check(dl_abs(*(dl_integer *)item) <= 20,
@@ -115,13 +115,13 @@ dl_bool _confirm_properties(collection *c, const char *type_name) {
       return false;
   }
 
-  if (collection_is_sorted(c)) {
+  if (dl_collection_is_sorted(c)) {
     last_item = NULL;
-    index = collection_begin(c);
+    index = dl_collection_begin(c);
     
-    for (item = collection_ref(c, index);
+    for (item = dl_collection_ref(c, index);
       item != NULL;
-      last_item = item, item = collection_next(c, &index)) {
+      last_item = item, item = dl_collection_next(c, &index)) {
       if (item != NULL && last_item != NULL
 	  && !dl_check(c->settings.comparer.func(c->settings.comparer.data, last_item, item) <= 0,
           "%s: Expected elements to be sorted, %i came before %i.",
@@ -130,15 +130,15 @@ dl_bool _confirm_properties(collection *c, const char *type_name) {
     }
   }
 
-  if (collection_is_set(c)) {
-    index = collection_begin(c);
-    for (item = collection_ref(c, index);
+  if (dl_collection_is_set(c)) {
+    index = dl_collection_begin(c);
+    for (item = dl_collection_ref(c, index);
       item != NULL;
-      item = collection_next(c, &index)) {
+      item = dl_collection_next(c, &index)) {
       next_index = index;
-      for (next_item = collection_next(c, &next_index);
+      for (next_item = dl_collection_next(c, &next_index);
         next_item != NULL;
-        next_item = collection_next(c, &next_index)) {
+        next_item = dl_collection_next(c, &next_index)) {
         if (!dl_check(c->settings.comparer.func(c->settings.comparer.data, item, next_item) != 0,
           "%s: Expected all elements to be unique, found two %i.",
           type_name, *(dl_integer *)item))
@@ -150,16 +150,16 @@ dl_bool _confirm_properties(collection *c, const char *type_name) {
   return true;
 }
 
-dl_bool _contains_only(const char *type_name, collection *c, dl_integer *data, dl_natural count) {
-  iterator idx;
+dl_bool _contains_only(const char *type_name, dl_collection *c, dl_integer *data, dl_natural count) {
+  dl_iterator idx;
   dl_any ref;
   dl_bool fail;
   dl_natural didx;
   
-  idx = collection_begin(c);
-  for (ref = collection_ref(c, idx);
+  idx = dl_collection_begin(c);
+  for (ref = dl_collection_ref(c, idx);
        ref != NULL;
-       ref = collection_next(c, &idx)) {
+       ref = dl_collection_next(c, &idx)) {
     fail = true;
     for (didx = 0; didx < count; ++didx)
       if (*(dl_integer *)ref == data[didx]) {
@@ -172,10 +172,10 @@ dl_bool _contains_only(const char *type_name, collection *c, dl_integer *data, d
 
   for (didx = 0; didx < count; ++didx) {
     fail = true;
-    idx = collection_begin(c);
-    for (ref = collection_ref(c, idx);
+    idx = dl_collection_begin(c);
+    for (ref = dl_collection_ref(c, idx);
 	 ref != NULL;
-	 ref = collection_next(c, &idx))
+	 ref = dl_collection_next(c, &idx))
       if (*(dl_integer *)ref == data[didx]) {
 	fail = false;
 	break;
@@ -205,32 +205,32 @@ typedef struct {
 } fat_data;
 
 typedef struct {
-  collection_type type;
-  storage_type storage;
+  dl_collection_type type;
+  dl_storage_type storage;
   char *name;
   dl_comparator comp;
   dl_handler destructor;
   dl_bool sorted;
   dl_bool fifo;
-} _collection_type_info;
+} _dl_collection_type_info;
 
-_collection_type_info _c_types[] = {
-  {.type = COLLECTION_TYPE_LIST,.storage = STORAGE_TYPE_VECTOR,.name = "VECTOR_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = false,.fifo = false },
-  {.type = COLLECTION_TYPE_LIST,.storage = STORAGE_TYPE_VECTOR,.name = "~VECTOR_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = false,.fifo = false },
-  {.type = COLLECTION_TYPE_QUEUE,.storage = STORAGE_TYPE_VECTOR,.name = "VECTOR_QUEUE",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = false,.fifo = true },
-  {.type = COLLECTION_TYPE_QUEUE,.storage = STORAGE_TYPE_VECTOR,.name = "~VECTOR_QUEUE",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = false,.fifo = true },
-  {.type = COLLECTION_TYPE_SORTED_LIST,.storage = STORAGE_TYPE_VECTOR,.name = "VECTOR_SORTED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = true,.fifo = false },
-  {.type = COLLECTION_TYPE_SORTED_LIST,.storage = STORAGE_TYPE_VECTOR,.name = "~VECTOR_SORTED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = true,.fifo = false },
-  {.type = COLLECTION_TYPE_SET,.storage = STORAGE_TYPE_VECTOR,.name = "VECTOR_SET",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = true,.fifo = false },
-  {.type = COLLECTION_TYPE_SET,.storage = STORAGE_TYPE_VECTOR,.name = "~VECTOR_SET",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = true,.fifo = false },
-  {.type = COLLECTION_TYPE_LIST,.storage = STORAGE_TYPE_LINKED_LIST,.name = "LINKED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = false,.fifo = false },
-  {.type = COLLECTION_TYPE_LIST,.storage = STORAGE_TYPE_LINKED_LIST,.name = "~LINKED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = false,.fifo = false },
-  {.type = COLLECTION_TYPE_QUEUE,.storage = STORAGE_TYPE_LINKED_LIST,.name = "LINKED_QUEUE",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = false,.fifo = true },
-  {.type = COLLECTION_TYPE_QUEUE,.storage = STORAGE_TYPE_LINKED_LIST,.name = "~LINKED_QUEUE",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = false,.fifo = true },
-  {.type = COLLECTION_TYPE_SET,.storage = STORAGE_TYPE_LINKED_LIST,.name = "LINKED_SET",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = true,.fifo = false },
-  {.type = COLLECTION_TYPE_SET,.storage = STORAGE_TYPE_LINKED_LIST,.name = "~LINKED_SET",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = true,.fifo = false },
-  {.type = COLLECTION_TYPE_SORTED_LIST,.storage = STORAGE_TYPE_LINKED_LIST,.name = "LINKED_SORTED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = true,.fifo = false },
-  {.type = COLLECTION_TYPE_SORTED_LIST,.storage = STORAGE_TYPE_LINKED_LIST,.name = "~LINKED_SORTED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = true,.fifo = false },
+_dl_collection_type_info _c_types[] = {
+  {.type = DL_COLLECTION_TYPE_LIST,.storage = DL_STORAGE_TYPE_VECTOR,.name = "VECTOR_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = false,.fifo = false },
+  {.type = DL_COLLECTION_TYPE_LIST,.storage = DL_STORAGE_TYPE_VECTOR,.name = "~VECTOR_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = false,.fifo = false },
+  {.type = DL_COLLECTION_TYPE_QUEUE,.storage = DL_STORAGE_TYPE_VECTOR,.name = "VECTOR_QUEUE",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = false,.fifo = true },
+  {.type = DL_COLLECTION_TYPE_QUEUE,.storage = DL_STORAGE_TYPE_VECTOR,.name = "~VECTOR_QUEUE",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = false,.fifo = true },
+  {.type = DL_COLLECTION_TYPE_SORTED_LIST,.storage = DL_STORAGE_TYPE_VECTOR,.name = "VECTOR_SORTED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = true,.fifo = false },
+  {.type = DL_COLLECTION_TYPE_SORTED_LIST,.storage = DL_STORAGE_TYPE_VECTOR,.name = "~VECTOR_SORTED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = true,.fifo = false },
+  {.type = DL_COLLECTION_TYPE_SET,.storage = DL_STORAGE_TYPE_VECTOR,.name = "VECTOR_SET",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = true,.fifo = false },
+  {.type = DL_COLLECTION_TYPE_SET,.storage = DL_STORAGE_TYPE_VECTOR,.name = "~VECTOR_SET",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = true,.fifo = false },
+  {.type = DL_COLLECTION_TYPE_LIST,.storage = DL_STORAGE_TYPE_LINKED_LIST,.name = "LINKED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = false,.fifo = false },
+  {.type = DL_COLLECTION_TYPE_LIST,.storage = DL_STORAGE_TYPE_LINKED_LIST,.name = "~LINKED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = false,.fifo = false },
+  {.type = DL_COLLECTION_TYPE_QUEUE,.storage = DL_STORAGE_TYPE_LINKED_LIST,.name = "LINKED_QUEUE",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = false,.fifo = true },
+  {.type = DL_COLLECTION_TYPE_QUEUE,.storage = DL_STORAGE_TYPE_LINKED_LIST,.name = "~LINKED_QUEUE",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = false,.fifo = true },
+  {.type = DL_COLLECTION_TYPE_SET,.storage = DL_STORAGE_TYPE_LINKED_LIST,.name = "LINKED_SET",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = true,.fifo = false },
+  {.type = DL_COLLECTION_TYPE_SET,.storage = DL_STORAGE_TYPE_LINKED_LIST,.name = "~LINKED_SET",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = true,.fifo = false },
+  {.type = DL_COLLECTION_TYPE_SORTED_LIST,.storage = DL_STORAGE_TYPE_LINKED_LIST,.name = "LINKED_SORTED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = NULL},.sorted = true,.fifo = false },
+  {.type = DL_COLLECTION_TYPE_SORTED_LIST,.storage = DL_STORAGE_TYPE_LINKED_LIST,.name = "~LINKED_SORTED_LIST",.comp = {.func = _test_compare_integer},.destructor = {.func = _test_do_nothing},.sorted = true,.fifo = false },
 };
 const dl_natural _c_type_count = 16;
 
@@ -238,16 +238,16 @@ const dl_natural _c_type_count = 16;
  * Macros
  **************************************/
 
-#define DUAL_TEST_BEGIN()   collection c1, c2;										\
+#define DUAL_TEST_BEGIN()   dl_collection c1, c2;										\
   dl_natural type1_idx, type2_idx;												\
   const char *type1_name;												\
   dl_comparator type1_comp;												\
-  collection_type type1;												\
+  dl_collection_type type1;												\
   dl_handler type1_destructor;												\
   const char *type2_name;												\
   dl_comparator type2_comp;												\
-  collection_type type2;												\
-  storage_type storage2;												\
+  dl_collection_type type2;												\
+  dl_storage_type storage2;												\
   dl_handler type2_destructor;												\
   dl_natural c1_data[20] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };					\
 															\
@@ -257,7 +257,7 @@ const dl_natural _c_type_count = 16;
     type1 = _c_types[type1_idx].type;											\
     type1_destructor = _c_types[type1_idx].destructor;									\
 															\
-    if (!dl_check(init_collection_array(&c1, type1, &type1_comp, &type1_destructor, (dl_any)c1_data, sizeof(dl_integer), 20),    \
+    if (!dl_check(dl_init_collection_array(&c1, type1, &type1_comp, &type1_destructor, (dl_any)c1_data, sizeof(dl_integer), 20),    \
                "%s: Failed to initialize.", type1_name))								\
       return false;													\
 															\
@@ -268,37 +268,37 @@ const dl_natural _c_type_count = 16;
       storage2 = _c_types[type2_idx].storage;										\
       type2_destructor = _c_types[type2_idx].destructor;								\
 															\
-      if (!dl_check(init_collection(&c2, type2, storage2, &type2_comp, &type2_destructor, sizeof(dl_integer)),	        \
+      if (!dl_check(dl_init_collection(&c2, type2, storage2, &type2_comp, &type2_destructor, sizeof(dl_integer)),	        \
                  "%s: Failed to initialize.", type2_name)) {								\
-        destroy_collection(&c1);											\
+        dl_destroy_collection(&c1);											\
         return false;													\
       }															\
-      collection_clear(&c1);												
+      dl_collection_clear(&c1);												
 
 #define DUAL_TEST_END()						\
     if (!_confirm_properties(&c1, type1_name)) goto fail;	\
     if (!_confirm_properties(&c2, type2_name)) goto fail;	\
-    destroy_collection(&c2);					\
+    dl_destroy_collection(&c2);					\
   }								\
 								\
-    destroy_collection(&c1);					\
+    dl_destroy_collection(&c1);					\
     }								\
 								\
   return true;							\
 fail:								\
  _print_collection(&c1);					\
  _print_collection(&c2);					\
- destroy_collection(&c1);					\
- destroy_collection(&c2);					\
+ dl_destroy_collection(&c1);					\
+ dl_destroy_collection(&c2);					\
  return false;
 
 #define SINGLE_TEST_BEGIN()										\
-  collection c;												\
+  dl_collection c;												\
   dl_natural type_idx;											\
   const char *type_name;										\
   dl_comparator type_comp;											\
-  collection_type type;											\
-  storage_type storage;											\
+  dl_collection_type type;											\
+  dl_storage_type storage;											\
   dl_handler type_destructor;										\
 													\
   for (type_idx = 0; type_idx < _c_type_count; ++type_idx) {						\
@@ -308,19 +308,19 @@ fail:								\
     storage = _c_types[type_idx].storage;								\
     type_destructor = _c_types[type_idx].destructor;							\
 													\
-    if (!dl_check(init_collection(&c, type, storage, &type_comp, &type_destructor, sizeof(dl_integer)),	\
+    if (!dl_check(dl_init_collection(&c, type, storage, &type_comp, &type_destructor, sizeof(dl_integer)),	\
                "%s: Failed to initialize.", type_name))							\
       return false;
 
 #define SINGLE_TEST_END()				\
   if (!_confirm_properties(&c, type_name)) goto fail;	\
-  destroy_collection(&c);				\
+  dl_destroy_collection(&c);				\
   }							\
 							\
   return true;						\
 fail:							\
  _print_collection(&c);					\
- destroy_collection(&c);				\
+ dl_destroy_collection(&c);				\
  return false;
 
 /***************************************
@@ -328,14 +328,14 @@ fail:							\
  **************************************/
 
 dl_bool test_init_collection() {
-  collection c;
-  collection_settings settings;
-  collection_type type;
+  dl_collection c;
+  dl_collection_settings settings;
+  dl_collection_type type;
   dl_comparator type_comp;
   const char *type_name;
   dl_handler type_destructor;
   dl_natural type_idx;
-  storage_type storage;
+  dl_storage_type storage;
   dl_vector v;
   
   for (type_idx = 0; type_idx < _c_type_count; ++type_idx) {
@@ -346,10 +346,10 @@ dl_bool test_init_collection() {
     type_destructor = _c_types[type_idx].destructor;
 
     switch (storage) {
-    case STORAGE_TYPE_LINKED_LIST:
+    case DL_STORAGE_TYPE_LINKED_LIST:
       settings = default_linked_list_collection_settings;
       break;
-    case STORAGE_TYPE_VECTOR:
+    case DL_STORAGE_TYPE_VECTOR:
       settings = default_vector_collection_settings;
       break;
     }
@@ -359,18 +359,18 @@ dl_bool test_init_collection() {
     settings.comparer = type_comp;
     settings.deconstruct_entry = type_destructor;
 
-    if (!dl_check(init_collection_custom(&c, settings, sizeof(dl_integer)),
+    if (!dl_check(dl_init_collection_custom(&c, settings, sizeof(dl_integer)),
       "%s: Failed to initialize.", type_name))
       return false;
 
-    destroy_collection(&c);
+    dl_destroy_collection(&c);
 
-    if (storage == STORAGE_TYPE_VECTOR) {
-      if (!dl_check(init_collection_array(&c, type, &type_comp, &type_destructor, (dl_byte *)_c_data_a, sizeof(dl_integer), 10),
+    if (storage == DL_STORAGE_TYPE_VECTOR) {
+      if (!dl_check(dl_init_collection_array(&c, type, &type_comp, &type_destructor, (dl_byte *)_c_data_a, sizeof(dl_integer), 10),
         "%s: Failed to initialize from array.", type_name))
         return false;
 
-      destroy_collection(&c);
+      dl_destroy_collection(&c);
 
       if (!dl_check(dl_init_vector(&v, sizeof(dl_integer), 0), "Failed to initialize dl_vector."))
         return false;
@@ -385,25 +385,25 @@ dl_bool test_init_collection() {
 dl_bool test_collection_push() {
   SINGLE_TEST_BEGIN();
 
-  if (!dl_check(collection_push(&c, (dl_any)&_c_data_a[0]),
+  if (!dl_check(dl_collection_push(&c, (dl_any)&_c_data_a[0]),
     "%s: Expected push to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check(collection_count(&c) > 0,
+  if (!dl_check(dl_collection_count(&c) > 0,
     "%s: Expected count to increment.", type_name))
     goto fail;
 
-  if (!dl_check(collection_push(&c, (dl_any)&_c_data_a[1]),
+  if (!dl_check(dl_collection_push(&c, (dl_any)&_c_data_a[1]),
     "%s: Expected push to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check(collection_count(&c) > 1,
+  if (!dl_check(dl_collection_count(&c) > 1,
     "%s: Expected count to increment.", type_name))
     goto fail;
 
@@ -416,7 +416,7 @@ dl_bool test_collection_pop() {
   dl_integer next_item;
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
@@ -429,8 +429,8 @@ dl_bool test_collection_pop() {
     goto fail;
 
   for (idx = 10; idx > 0; --idx) {
-    next_item = *(dl_integer *)collection_peek(&c);
-    if (!dl_check(collection_pop(&c, (dl_any)&item) && item == next_item,
+    next_item = *(dl_integer *)dl_collection_peek(&c);
+    if (!dl_check(dl_collection_pop(&c, (dl_any)&item) && item == next_item,
 	       "%s: Expected pop to work, found %i and expected %i", type_name, item, next_item))
       goto fail;
     if (!_confirm_properties(&c, type_name))
@@ -447,7 +447,7 @@ dl_bool test_collection_peek() {
   dl_natural idx;
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -457,13 +457,13 @@ dl_bool test_collection_peek() {
     goto fail;
 
   for (idx = 10; idx > 0; --idx) {
-    if (!dl_check(ref = collection_peek(&c),
+    if (!dl_check(ref = dl_collection_peek(&c),
       "%s: Expected peek to work", type_name))
       goto fail;
 
     peek_item = *(dl_integer *)ref;
 
-    if (!dl_check(collection_pop(&c, (dl_any)&pop_item) && pop_item == peek_item,
+    if (!dl_check(dl_collection_pop(&c, (dl_any)&pop_item) && pop_item == peek_item,
       "%s: Expected %i to be %i", type_name, peek_item, pop_item))
       goto fail;
 
@@ -478,12 +478,12 @@ dl_bool test_collection_remove_at() {
   dl_random_state r;
   dl_any ref;
   dl_integer original, removed;
-  iterator pos;
+  dl_iterator pos;
   SINGLE_TEST_BEGIN();
 
   dl_init_random_time(&r);
   
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -492,14 +492,14 @@ dl_bool test_collection_remove_at() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  pos = collection_index(&c, (dl_natural)dl_random_integer_range(&r, 0, collection_count(&c)));
-  if (!dl_check(ref = collection_ref(&c, pos),
+  pos = dl_collection_index(&c, (dl_natural)dl_random_integer_range(&r, 0, dl_collection_count(&c)));
+  if (!dl_check(ref = dl_collection_ref(&c, pos),
     "%s: expected to ref %lui", type_name, pos))
     goto fail;
 
   original = *(dl_integer *)ref;
 
-  if (!dl_check(collection_remove_at(&c, &pos, &removed),
+  if (!dl_check(dl_collection_remove_at(&c, &pos, &removed),
     "%s: Expected remove to work.", type_name))
     goto fail;
 
@@ -514,13 +514,13 @@ dl_bool test_collection_remove_at() {
 }
 
 dl_bool test_collection_remove_all() {
-  collection out;
+  dl_collection out;
   dl_natural count;
   SINGLE_TEST_BEGIN();
 
-  init_collection(&out, COLLECTION_TYPE_LIST, STORAGE_TYPE_VECTOR, NULL, &type_destructor, sizeof(dl_integer));
+  dl_init_collection(&out, DL_COLLECTION_TYPE_LIST, DL_STORAGE_TYPE_VECTOR, NULL, &type_destructor, sizeof(dl_integer));
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -529,35 +529,35 @@ dl_bool test_collection_remove_all() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check(collection_remove_all(&c, &_test_match_even, &out),
+  if (!dl_check(dl_collection_remove_all(&c, &_test_match_even, &out),
     "%s: Expected remove all to work.", type_name))
     goto infail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  count = collection_count(&out);
+  count = dl_collection_count(&out);
   if (!dl_check(count == 5,
     "%s: Expected 5 items to be removed, %lu were.", type_name, count))
     goto infail;
 
-  if (!dl_check(collection_all(&out, &_test_match_even),
+  if (!dl_check(dl_collection_all(&out, &_test_match_even),
     "%s: Expected all items to be even.", type_name))
     goto infail;
 
-  count = collection_count(&c);
+  count = dl_collection_count(&c);
   if (!dl_check(count == 5,
     "%s: Expected 5 items to remain, %lu were.", type_name, count))
     goto infail;
 
-  if (!dl_check(!collection_any(&c, &_test_match_even),
+  if (!dl_check(!dl_collection_any(&c, &_test_match_even),
     "%s: Expected no items to be even.", type_name))
     goto infail;
 
-  destroy_collection(&out);
+  dl_destroy_collection(&out);
   goto insuccess;
 infail:
-  destroy_collection(&out);
+  dl_destroy_collection(&out);
   goto fail;
 insuccess:
 
@@ -567,13 +567,13 @@ insuccess:
 dl_bool test_collection_ref() {
   dl_random_state r;
   dl_any ref;
-  iterator pos;
+  dl_iterator pos;
   dl_integer val;
   SINGLE_TEST_BEGIN();
   
   dl_init_random_time(&r);
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -582,8 +582,8 @@ dl_bool test_collection_ref() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  pos = collection_index(&c, (dl_natural)dl_random_integer_range(&r, 0, collection_count(&c)));
-  if (!dl_check(ref = collection_ref(&c, pos),
+  pos = dl_collection_index(&c, (dl_natural)dl_random_integer_range(&r, 0, dl_collection_count(&c)));
+  if (!dl_check(ref = dl_collection_ref(&c, pos),
     "%s: expected to ref %lui", type_name, pos))
     goto fail;
 
@@ -602,7 +602,7 @@ dl_bool test_collection_ref_array() {
   dl_integer first;
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -613,7 +613,7 @@ dl_bool test_collection_ref_array() {
 
   ref = NULL;
   count = 0;
-  if (!dl_check(count = collection_ref_array(&c, collection_begin(&c), &ref),
+  if (!dl_check(count = dl_collection_ref_array(&c, dl_collection_begin(&c), &ref),
     "%s: expected to ref %lu", type_name, 0))
     goto fail;
 
@@ -633,7 +633,7 @@ dl_bool test_collection_clear() {
   dl_natural before_count, after_count;
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -642,13 +642,13 @@ dl_bool test_collection_clear() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  before_count = collection_count(&c);
-  collection_clear(&c);
-  if (!dl_check(0 == collection_count(&c),
+  before_count = dl_collection_count(&c);
+  dl_collection_clear(&c);
+  if (!dl_check(0 == dl_collection_count(&c),
     "%s: Expected clear to work.", type_name))
     goto fail;
 
-  after_count = collection_count(&c);
+  after_count = dl_collection_count(&c);
 
   if (!dl_check(after_count == 0 && after_count != before_count,
     "%s: Expected clear to work; was %lu in size, is now %lu.", type_name, before_count, after_count))
@@ -660,7 +660,7 @@ dl_bool test_collection_clear() {
 dl_bool test_collection_is_empty() {
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -669,17 +669,17 @@ dl_bool test_collection_is_empty() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check(!collection_is_empty(&c),
-    "%s: Expected collection not to be empty, is %lu in size.", type_name, collection_count(&c)))
+  if (!dl_check(!dl_collection_is_empty(&c),
+    "%s: Expected dl_collection not to be empty, is %lu in size.", type_name, dl_collection_count(&c)))
     goto fail;
 
-  collection_clear(&c);
-  if (!dl_check(0 == collection_count(&c),
+  dl_collection_clear(&c);
+  if (!dl_check(0 == dl_collection_count(&c),
     "%s: Expected clear to work.", type_name))
     goto fail;
 
-  if (!dl_check(collection_is_empty(&c),
-    "%s: Expected collection to be empty, is %lu in size.", type_name, collection_count(&c)))
+  if (!dl_check(dl_collection_is_empty(&c),
+    "%s: Expected dl_collection to be empty, is %lu in size.", type_name, dl_collection_count(&c)))
     goto fail;
 
   SINGLE_TEST_END();
@@ -687,11 +687,11 @@ dl_bool test_collection_is_empty() {
 
 dl_bool test_collection_next() {
   dl_any ref;
-  iterator idx;
+  dl_iterator idx;
   dl_natural last_value, count;
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -701,10 +701,10 @@ dl_bool test_collection_next() {
     goto fail;
 
   ref = NULL;
-  idx = collection_begin(&c);
+  idx = dl_collection_begin(&c);
   last_value = DL_INTEGER_MIN;
-  for (count = collection_count(&c); count > 1; --count) {
-    if (!dl_check(ref = collection_next(&c, &idx),
+  for (count = dl_collection_count(&c); count > 1; --count) {
+    if (!dl_check(ref = dl_collection_next(&c, &idx),
       "%s: Expected next to work at count %lu.", type_name, count))
       goto fail;
 
@@ -720,11 +720,11 @@ dl_bool test_collection_next() {
 
 dl_bool test_collection_prev() {
   dl_any ref;
-  iterator idx;
+  dl_iterator idx;
   dl_natural last_value, count;
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -734,10 +734,10 @@ dl_bool test_collection_prev() {
     goto fail;
 
   ref = NULL;
-  idx = collection_end(&c);
+  idx = dl_collection_end(&c);
   last_value = DL_INTEGER_MIN;
-  for (count = collection_count(&c); count > 0; --count) {
-    if (!dl_check(ref = collection_prev(&c, &idx),
+  for (count = dl_collection_count(&c); count > 0; --count) {
+    if (!dl_check(ref = dl_collection_prev(&c, &idx),
       "%s: Expected next to work.", type_name))
       goto fail;
 
@@ -754,11 +754,11 @@ dl_bool test_collection_prev() {
 dl_bool test_collection_count() {
   SINGLE_TEST_BEGIN();
 
-  if (!dl_check(collection_count(&c) == 0,
-    "%s: Expected count to be 0, was %i.", type_name, collection_count(&c)))
+  if (!dl_check(dl_collection_count(&c) == 0,
+    "%s: Expected count to be 0, was %i.", type_name, dl_collection_count(&c)))
     goto fail;
 
-  if (10 != collection_copy_array(_c_data_a, 10, &c))
+  if (10 != dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -767,8 +767,8 @@ dl_bool test_collection_count() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check(collection_count(&c) == 10,
-    "%s: Expected count to be 10, was %i.", type_name, collection_count(&c)))
+  if (!dl_check(dl_collection_count(&c) == 10,
+    "%s: Expected count to be 10, was %i.", type_name, dl_collection_count(&c)))
     goto fail;
 
   SINGLE_TEST_END();
@@ -778,7 +778,7 @@ dl_bool test_collection_copy() {
   dl_natural current;
   DUAL_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c1))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c1))
     goto fail;
 
   if (!_contains_only(type1_name, &c1, _c_data_a, 10))
@@ -787,34 +787,34 @@ dl_bool test_collection_copy() {
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  if (!dl_check(collection_copy(&c1, &c2) && collection_count(&c2) > 0,
+  if (!dl_check(dl_collection_copy(&c1, &c2) && dl_collection_count(&c2) > 0,
     "%s, %s: Expected copy to work.", type1_name, type2_name))
     goto fail;
 
   if (!_confirm_properties(&c2, type2_name))
     goto fail;
 
-  collection_clear(&c1);
-  if (!dl_check(collection_count(&c1) == 0,
+  dl_collection_clear(&c1);
+  if (!dl_check(dl_collection_count(&c1) == 0,
     "%s: Expected clear to work.", type1_name))
     goto fail;
 
-  if (0 == collection_copy_array(_c_data_b, 10, &c1))
+  if (0 == dl_collection_copy_array(_c_data_b, 10, &c1))
     goto fail;
 
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  current = collection_count(&c2);
+  current = dl_collection_count(&c2);
 
-  if (!dl_check(collection_copy(&c1, &c2),
+  if (!dl_check(dl_collection_copy(&c1, &c2),
     "%s, %s: Expected copy to work.", type1_name, type2_name))
     goto fail;
 
   if (!_confirm_properties(&c2, type2_name))
     goto fail;
 
-  if (!dl_check((dl_integer)current < collection_count(&c2),
+  if (!dl_check((dl_integer)current < dl_collection_count(&c2),
     "%s, %s: Expected growth in size.", type1_name, type2_name))
     goto fail;
 
@@ -824,7 +824,7 @@ dl_bool test_collection_copy() {
 dl_bool test_collection_all() {
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_b, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_b, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_b, 10))
@@ -833,17 +833,17 @@ dl_bool test_collection_all() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check(collection_all(&c, &_test_match_natural),
+  if (!dl_check(dl_collection_all(&c, &_test_match_natural),
     "%s: Expected all values to be dl_natural.", type_name))
     goto fail;
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check(!collection_all(&c, &_test_match_natural),
+  if (!dl_check(!dl_collection_all(&c, &_test_match_natural),
     "%s: Expected some values not to be dl_natural.", type_name))
     goto fail;
 
@@ -853,7 +853,7 @@ dl_bool test_collection_all() {
 dl_bool test_collection_any() {
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_c, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_c, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_c, 10))
@@ -862,17 +862,17 @@ dl_bool test_collection_any() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check(!collection_any(&c, &_test_match_natural),
+  if (!dl_check(!dl_collection_any(&c, &_test_match_natural),
     "%s: Expected all values not to be dl_natural.", type_name))
     goto fail;
 
-  if (0 == collection_copy_array(_c_data_b, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_b, 10, &c))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check(collection_any(&c, &_test_match_natural),
+  if (!dl_check(dl_collection_any(&c, &_test_match_natural),
     "%s: Expected some values to be dl_natural.", type_name))
     goto fail;
 
@@ -885,7 +885,7 @@ dl_bool test_collection_drop() {
   dl_random_state r;
   dl_init_random_time(&r);
   
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
@@ -896,15 +896,15 @@ dl_bool test_collection_drop() {
 
   dl_natural count = (dl_natural)dl_random_integer_range(&r, 1, 9);
 
-  if (!dl_check(collection_drop(&c, count),
+  if (!dl_check(dl_collection_drop(&c, count),
     "%s: Expected drop to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((10 - (dl_integer)count) == collection_count(&c),
-    "%s: Expected count to be %lu, was %lu.", type_name, (10 - count), collection_count(&c)))
+  if (!dl_check((10 - (dl_integer)count) == dl_collection_count(&c),
+    "%s: Expected count to be %lu, was %lu.", type_name, (10 - count), dl_collection_count(&c)))
     goto fail;
 
   SINGLE_TEST_END();
@@ -914,7 +914,7 @@ dl_bool test_collection_map() {
   dl_converter convert;
   DUAL_TEST_BEGIN();
 
-  if (!dl_check(collection_copy_array(_c_data_b, 10, &c1),
+  if (!dl_check(dl_collection_copy_array(_c_data_b, 10, &c1),
     "%s: Expected copy to work.", type1_name))
     goto fail;
 
@@ -924,24 +924,24 @@ dl_bool test_collection_map() {
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  if (!dl_check(collection_count(&c1) == 10,
-    "%s: Expected 10 values, found %lu.", type1_name, collection_count(&c1)))
+  if (!dl_check(dl_collection_count(&c1) == 10,
+    "%s: Expected 10 values, found %lu.", type1_name, dl_collection_count(&c1)))
     goto fail;
 
   convert.func = _test_converter;
   convert.data = NULL;
-  if (!dl_check(collection_map(&c1, &convert, &c2),
+  if (!dl_check(dl_collection_map(&c1, &convert, &c2),
     "%s, %s: Failed to map values.", type1_name, type2_name))
     goto fail;
 
   if (!_confirm_properties(&c2, type2_name))
     goto fail;
 
-  if (!dl_check(collection_count(&c2) == 10,
-    "%s, %s: Expected 10 values, found %lu.", type1_name, type2_name, collection_count(&c2)))
+  if (!dl_check(dl_collection_count(&c2) == 10,
+    "%s, %s: Expected 10 values, found %lu.", type1_name, type2_name, dl_collection_count(&c2)))
     goto fail;
 
-  if (!dl_check(collection_all(&c2, &_test_match_even),
+  if (!dl_check(dl_collection_all(&c2, &_test_match_even),
     "%s, %s: Expected all values to be even.", type1_name, type2_name))
     goto fail;
 
@@ -952,7 +952,7 @@ dl_bool test_collection_foldl() {
   dl_folder add;
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_b, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_b, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_b, 10))
@@ -964,7 +964,7 @@ dl_bool test_collection_foldl() {
   dl_integer total = 0;
   add.func = _test_add;
   add.data = NULL;
-  if (!dl_check(NULL != collection_foldl(&c, &total, &add),
+  if (!dl_check(NULL != dl_collection_foldl(&c, &total, &add),
     "%s: Expected foldl to work.", type_name))
     goto fail;
 
@@ -976,13 +976,13 @@ dl_bool test_collection_foldl() {
 }
 
 dl_bool test_collection_foldr() {
-  collection reverse_c;
+  dl_collection reverse_c;
   dl_folder push;
   SINGLE_TEST_BEGIN();
 
-  init_collection(&reverse_c, COLLECTION_TYPE_LIST, STORAGE_TYPE_VECTOR, &type_comp, &type_destructor, sizeof(dl_integer));
+  dl_init_collection(&reverse_c, DL_COLLECTION_TYPE_LIST, DL_STORAGE_TYPE_VECTOR, &type_comp, &type_destructor, sizeof(dl_integer));
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -993,38 +993,38 @@ dl_bool test_collection_foldr() {
 
   push.func = _test_push;
   push.data = NULL;
-  if (!dl_check(NULL != collection_foldr(&c, &reverse_c, &push),
+  if (!dl_check(NULL != dl_collection_foldr(&c, &reverse_c, &push),
     "%s: Expected foldr to work.", type_name))
     goto fail;
 
   dl_any a, b;
-  iterator index_a = collection_end(&c), index_b = collection_begin(&reverse_c);
-  while ((a = collection_prev(&c, &index_a)) && (b = collection_ref(&reverse_c, index_b))) {
+  dl_iterator index_a = dl_collection_end(&c), index_b = dl_collection_begin(&reverse_c);
+  while ((a = dl_collection_prev(&c, &index_a)) && (b = dl_collection_ref(&reverse_c, index_b))) {
     if (!dl_check(*(dl_integer *)a == *(dl_integer *)b,
       "%s: Expected %i to be %i", type_name, *(dl_integer *)a, *(dl_integer *)b)) {
-      destroy_collection(&reverse_c);
+      dl_destroy_collection(&reverse_c);
       goto fail;
     }
-    collection_next(&reverse_c, &index_b);
+    dl_collection_next(&reverse_c, &index_b);
   }
 
-  destroy_collection(&reverse_c);
+  dl_destroy_collection(&reverse_c);
 
   SINGLE_TEST_END();
 }
 
 dl_bool test_collection_zip() {
-  collection c3;
+  dl_collection c3;
   dl_zipper zip;
   dl_folder sum;
   dl_integer total;
   DUAL_TEST_BEGIN();
 
-  if (!dl_check(init_collection(&c3, type1, STORAGE_TYPE_VECTOR, &type1_comp, &type1_destructor, sizeof(dl_integer)),
+  if (!dl_check(dl_init_collection(&c3, type1, DL_STORAGE_TYPE_VECTOR, &type1_comp, &type1_destructor, sizeof(dl_integer)),
     "Expected init to work."))
     goto fail;
 
-  if (!dl_check(collection_copy_array(_c_data_a, 10, &c1),
+  if (!dl_check(dl_collection_copy_array(_c_data_a, 10, &c1),
     "%s: Expected copy to work.", type1_name))
     goto infail;
 
@@ -1034,7 +1034,7 @@ dl_bool test_collection_zip() {
   if (!_contains_only(type1_name, &c1, _c_data_a, 10))
     goto infail;
 
-  if (!dl_check(collection_copy_array(_c_data_b, 10, &c2),
+  if (!dl_check(dl_collection_copy_array(_c_data_b, 10, &c2),
     "%s: Expected copy to work.", type1_name))
     goto infail;
 
@@ -1046,15 +1046,15 @@ dl_bool test_collection_zip() {
 
   zip.func = _test_zip;
   zip.data = NULL;
-  if (!dl_check(collection_zip(&c1, &c2, &zip, &c3),
+  if (!dl_check(dl_collection_zip(&c1, &c2, &zip, &c3),
     "%s, %s: Expected zip to work.", type1_name, type2_name))
     goto infail;
 
   if (!_confirm_properties(&c3, type1_name))
     goto fail;
 
-  if (!dl_check(10 == collection_count(&c3),
-    "%s, %s: Expected zip count to be 10, was %lu.", type1_name, type2_name, collection_count(&c3)))
+  if (!dl_check(10 == dl_collection_count(&c3),
+    "%s, %s: Expected zip count to be 10, was %lu.", type1_name, type2_name, dl_collection_count(&c3)))
     goto infail;
 
   if (!_contains_only(type1_name, &c3, _c_data_d, 10))
@@ -1063,15 +1063,15 @@ dl_bool test_collection_zip() {
   total = 0;
   sum.func = _test_sum;
   sum.data = NULL;
-  if (!dl_check(NULL != collection_foldl(&c3, &total, &sum)
+  if (!dl_check(NULL != dl_collection_foldl(&c3, &total, &sum)
     && total == 100,
     "%s, %s: Expected %i to be %i.", type1_name, type2_name, total, 100))
     goto infail;
 
-  destroy_collection(&c3);
+  dl_destroy_collection(&c3);
   goto insuccess;
 infail:
-  destroy_collection(&c3);
+  dl_destroy_collection(&c3);
   goto fail;
 insuccess:
 
@@ -1084,7 +1084,7 @@ dl_bool test_collection_take() {
   dl_random_state r;
   dl_init_random_time(&r);
   
-  if (!dl_check(collection_copy_array(_c_data_a, 10, &c1),
+  if (!dl_check(dl_collection_copy_array(_c_data_a, 10, &c1),
     "%s: Expected copy to work.", type1_name))
     goto fail;
 
@@ -1094,8 +1094,8 @@ dl_bool test_collection_take() {
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  dl_natural count = dl_random_integer(&r, collection_count(&c1));
-  dl_integer taken = collection_take(&c1, count, &c2);
+  dl_natural count = dl_random_integer(&r, dl_collection_count(&c1));
+  dl_integer taken = dl_collection_take(&c1, count, &c2);
   if (!dl_check((dl_integer)count == taken,
     "%s, %s: Expected take to work, wanted %i, got %i.", type1_name, type2_name, count, taken))
     goto fail;
@@ -1103,14 +1103,14 @@ dl_bool test_collection_take() {
   if (!_confirm_properties(&c2, type2_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count == collection_count(&c2),
+  if (!dl_check((dl_integer)count == dl_collection_count(&c2),
     "%s, %s: Expected %lu items, found %lu.",
-    type1_name, type2_name, count, collection_count(&c2)))
+    type1_name, type2_name, count, dl_collection_count(&c2)))
     goto fail;
 
-  if (!dl_check(10 - (dl_integer)count == collection_count(&c1),
+  if (!dl_check(10 - (dl_integer)count == dl_collection_count(&c1),
     "%s, %s: Expected %lu items, found %lu.",
-    type1_name, type2_name, 10 - count, collection_count(&c1)))
+    type1_name, type2_name, 10 - count, dl_collection_count(&c1)))
     goto fail;
 
   DUAL_TEST_END();
@@ -1119,17 +1119,17 @@ dl_bool test_collection_take() {
 dl_bool test_collection_find() {
   SINGLE_TEST_BEGIN();
 
-  if (!dl_check(collection_copy_array(_c_data_a, 10, &c)
-    && collection_copy_array(_c_data_b, 10, &c),
+  if (!dl_check(dl_collection_copy_array(_c_data_a, 10, &c)
+    && dl_collection_copy_array(_c_data_b, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  iterator index = collection_begin(&c);
+  dl_iterator index = dl_collection_begin(&c);
   dl_any ref;
-  if (!dl_check(ref = collection_find(&c, &_test_match_natural, &index),
+  if (!dl_check(ref = dl_collection_find(&c, &_test_match_natural, &index),
     "%s: Expected find to work.", type_name))
     goto fail;
 
@@ -1137,8 +1137,8 @@ dl_bool test_collection_find() {
     "%s: Expected %i to be dl_natural.", type_name, *(dl_integer *)ref))
     goto fail;
 
-  index = collection_end(&c);
-  if (!dl_check(!(ref = collection_find(&c, &_test_match_natural, &index)),
+  index = dl_collection_end(&c);
+  if (!dl_check(!(ref = dl_collection_find(&c, &_test_match_natural, &index)),
     "%s: Expected find to fail.", type_name))
     goto fail;
 
@@ -1148,17 +1148,17 @@ dl_bool test_collection_find() {
 dl_bool test_collection_find_last() {
   SINGLE_TEST_BEGIN();
 
-  if (!dl_check(collection_copy_array(_c_data_b, 10, &c)
-    && collection_copy_array(_c_data_a, 10, &c),
+  if (!dl_check(dl_collection_copy_array(_c_data_b, 10, &c)
+    && dl_collection_copy_array(_c_data_a, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  iterator index = collection_end(&c);
+  dl_iterator index = dl_collection_end(&c);
   dl_any ref;
-  if (!dl_check(ref = collection_find_last(&c, &_test_match_natural, &index),
+  if (!dl_check(ref = dl_collection_find_last(&c, &_test_match_natural, &index),
     "%s: Expected find to work.", type_name))
     goto fail;
 
@@ -1166,8 +1166,8 @@ dl_bool test_collection_find_last() {
     "%s: Expected %i to be dl_natural.", type_name, *(dl_integer *)ref))
     goto fail;
 
-  index = collection_begin(&c);
-  if (!dl_check(!(ref = collection_find_last(&c, &_test_match_natural, &index)),
+  index = dl_collection_begin(&c);
+  if (!dl_check(!(ref = dl_collection_find_last(&c, &_test_match_natural, &index)),
     "%s: Expected find to fail.", type_name))
     goto fail;
 
@@ -1177,44 +1177,44 @@ dl_bool test_collection_find_last() {
 dl_bool test_collection_find_all() {
   DUAL_TEST_BEGIN();
 
-  if (!dl_check(collection_copy_array(_c_data_b, 10, &c1),
+  if (!dl_check(dl_collection_copy_array(_c_data_b, 10, &c1),
     "%s: Expected copy to work.", type1_name))
     goto fail;
 
   if (!_contains_only(type1_name, &c1, _c_data_b, 10))
     goto fail;
 
-  if (!dl_check(collection_copy_array(_c_data_a, 10, &c1),
+  if (!dl_check(dl_collection_copy_array(_c_data_a, 10, &c1),
     "%s: Expected copy to work.", type1_name))
     goto fail;
 
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  if (!dl_check(collection_find_all(&c1, &_test_match_natural, &c2),
+  if (!dl_check(dl_collection_find_all(&c1, &_test_match_natural, &c2),
     "%s, %s: Expected find to work.", type1_name, type2_name))
     goto fail;
 
   if (!_confirm_properties(&c2, type2_name))
     goto fail;
 
-  if (collection_is_set(&c2)) {
-    if (!dl_check(collection_count(&c2) > 0,
+  if (dl_collection_is_set(&c2)) {
+    if (!dl_check(dl_collection_count(&c2) > 0,
       "%s, %s: Expected some items, found none.", type1_name, type2_name))
       goto fail;
   }
-  else if (!collection_is_set(&c1)) {
-    if (!dl_check(collection_count(&c2) == 19,
-      "%s, %s: Expected 19 items, found %lu.", type1_name, type2_name, collection_count(&c2)))
+  else if (!dl_collection_is_set(&c1)) {
+    if (!dl_check(dl_collection_count(&c2) == 19,
+      "%s, %s: Expected 19 items, found %lu.", type1_name, type2_name, dl_collection_count(&c2)))
       goto fail;
   }
   else {
-    if (!dl_check(collection_count(&c2) == 10,
-      "%s, %s: Expected 10 items, found %lu.", type1_name, type2_name, collection_count(&c2)))
+    if (!dl_check(dl_collection_count(&c2) == 10,
+      "%s, %s: Expected 10 items, found %lu.", type1_name, type2_name, dl_collection_count(&c2)))
       goto fail;
   }
 
-  if (!dl_check(collection_all(&c2, &_test_match_natural),
+  if (!dl_check(dl_collection_all(&c2, &_test_match_natural),
     "%s, %s: Expected all items to be dl_natural.", type1_name, type2_name))
     goto fail;
 
@@ -1224,43 +1224,43 @@ dl_bool test_collection_find_all() {
 dl_bool test_collection_remove_first() {
   SINGLE_TEST_BEGIN();
 
-  iterator index = collection_begin(&c);
+  dl_iterator index = dl_collection_begin(&c);
   dl_integer removed = -1;
-  if (!dl_check(!collection_remove_first(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(!dl_collection_remove_first(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to fail.", type_name))
     goto fail;
 
-  if (!dl_check(collection_copy_array(_c_data_a, 10, &c)
-    && collection_copy_array(_c_data_b, 10, &c),
+  if (!dl_check(dl_collection_copy_array(_c_data_a, 10, &c)
+    && dl_collection_copy_array(_c_data_b, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  dl_natural count = collection_count(&c);
+  dl_natural count = dl_collection_count(&c);
 
-  index = collection_end(&c);
-  if (!dl_check(!collection_remove_first(&c, &_test_match_natural, &index, &removed),
+  index = dl_collection_end(&c);
+  if (!dl_check(!dl_collection_remove_first(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to fail.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count == collection_count(&c),
+  if (!dl_check((dl_integer)count == dl_collection_count(&c),
     "%s: Expected count to remain unchanged.", type_name))
     goto fail;
 
-  index = collection_begin(&c);
-  if (!dl_check(collection_remove_first(&c, &_test_match_natural, &index, &removed),
+  index = dl_collection_begin(&c);
+  if (!dl_check(dl_collection_remove_first(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count - 1 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 1 == dl_collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
@@ -1268,14 +1268,14 @@ dl_bool test_collection_remove_first() {
     "%s: Expected removed value to be dl_natural, was %i.", type_name, removed))
     goto fail;
 
-  if (!dl_check(collection_remove_first(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(dl_collection_remove_first(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count - 2 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 2 == dl_collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
@@ -1289,43 +1289,43 @@ dl_bool test_collection_remove_first() {
 dl_bool test_collection_remove_last() {
   SINGLE_TEST_BEGIN();
 
-  iterator index = collection_begin(&c);
+  dl_iterator index = dl_collection_begin(&c);
   dl_integer removed = -1;
-  if (!dl_check(!collection_remove_first(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(!dl_collection_remove_first(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to fail.", type_name))
     goto fail;
 
-  if (!dl_check(collection_copy_array(_c_data_a, 10, &c)
-    && collection_copy_array(_c_data_b, 10, &c),
+  if (!dl_check(dl_collection_copy_array(_c_data_a, 10, &c)
+    && dl_collection_copy_array(_c_data_b, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  dl_natural count = collection_count(&c);
+  dl_natural count = dl_collection_count(&c);
 
-  index = collection_begin(&c);
-  if (!dl_check(!collection_remove_last(&c, &_test_match_natural, &index, &removed),
+  index = dl_collection_begin(&c);
+  if (!dl_check(!dl_collection_remove_last(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to fail.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count == collection_count(&c),
+  if (!dl_check((dl_integer)count == dl_collection_count(&c),
     "%s: Expected count to remain unchanged.", type_name))
     goto fail;
 
-  index = collection_end(&c);
-  if (!dl_check(collection_remove_last(&c, &_test_match_natural, &index, &removed),
+  index = dl_collection_end(&c);
+  if (!dl_check(dl_collection_remove_last(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count - 1 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 1 == dl_collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
@@ -1333,14 +1333,14 @@ dl_bool test_collection_remove_last() {
     "%s: Expected removed value to be dl_natural, was %i.", type_name, removed))
     goto fail;
 
-  if (!dl_check(collection_remove_last(&c, &_test_match_natural, &index, &removed),
+  if (!dl_check(dl_collection_remove_last(&c, &_test_match_natural, &index, &removed),
     "%s: Expected remove to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count - 2 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 2 == dl_collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
@@ -1357,7 +1357,7 @@ dl_bool test_collection_destroy_at() {
   dl_random_state r;
   dl_init_random_time(&r);
   
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -1366,18 +1366,18 @@ dl_bool test_collection_destroy_at() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  dl_natural before_length = collection_count(&c);
+  dl_natural before_length = dl_collection_count(&c);
 
-  iterator pos = collection_index(&c, (dl_natural)dl_random_integer_range(&r, 0, collection_count(&c)));
-  if (!dl_check(collection_destroy_at(&c, &pos),
+  dl_iterator pos = dl_collection_index(&c, (dl_natural)dl_random_integer_range(&r, 0, dl_collection_count(&c)));
+  if (!dl_check(dl_collection_destroy_at(&c, &pos),
     "%s: Expected destroy to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)before_length == collection_count(&c) + 1,
-    "%s: Expected collection to shorten.", type_name))
+  if (!dl_check((dl_integer)before_length == dl_collection_count(&c) + 1,
+    "%s: Expected dl_collection to shorten.", type_name))
     goto fail;
 
   SINGLE_TEST_END();
@@ -1386,7 +1386,7 @@ dl_bool test_collection_destroy_at() {
 dl_bool test_collection_destroy_all() {
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
@@ -1398,21 +1398,21 @@ dl_bool test_collection_destroy_all() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  dl_natural before_length = collection_count(&c);
+  dl_natural before_length = dl_collection_count(&c);
 
-  if (!dl_check(collection_destroy_all(&c, &_test_match_even),
+  if (!dl_check(dl_collection_destroy_all(&c, &_test_match_even),
     "%s: Expected destroy_all to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)before_length > collection_count(&c),
-    "%s: Expected collection to shorten.", type_name))
+  if (!dl_check((dl_integer)before_length > dl_collection_count(&c),
+    "%s: Expected dl_collection to shorten.", type_name))
     goto fail;
 
-  if (!dl_check(!collection_any(&c, &_test_match_even),
-    "%s: Expected collection to have no even values.", type_name))
+  if (!dl_check(!dl_collection_any(&c, &_test_match_even),
+    "%s: Expected dl_collection to have no even values.", type_name))
     goto fail;
 
   SINGLE_TEST_END();
@@ -1422,53 +1422,53 @@ dl_bool test_collection_destroy_all() {
 dl_bool test_collection_destroy_first() {
   SINGLE_TEST_BEGIN();
 
-  iterator index = collection_begin(&c);
-  if (!dl_check(!collection_destroy_first(&c, &_test_match_natural, &index),
+  dl_iterator index = dl_collection_begin(&c);
+  if (!dl_check(!dl_collection_destroy_first(&c, &_test_match_natural, &index),
     "%s: Expected destroy to fail.", type_name))
     goto fail;
 
-  if (!dl_check(0 != collection_copy_array(_c_data_a, 10, &c)
-    && 0 != collection_copy_array(_c_data_b, 10, &c),
+  if (!dl_check(0 != dl_collection_copy_array(_c_data_a, 10, &c)
+    && 0 != dl_collection_copy_array(_c_data_b, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  dl_natural count = collection_count(&c);
+  dl_natural count = dl_collection_count(&c);
 
-  index = collection_end(&c);
-  if (!dl_check(!collection_destroy_first(&c, &_test_match_natural, &index),
+  index = dl_collection_end(&c);
+  if (!dl_check(!dl_collection_destroy_first(&c, &_test_match_natural, &index),
     "%s: Expected destroy to fail.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count == collection_count(&c),
+  if (!dl_check((dl_integer)count == dl_collection_count(&c),
     "%s: Expected count to remain unchanged.", type_name))
     goto fail;
 
-  index = collection_begin(&c);
-  if (!dl_check(collection_destroy_first(&c, &_test_match_natural, &index),
+  index = dl_collection_begin(&c);
+  if (!dl_check(dl_collection_destroy_first(&c, &_test_match_natural, &index),
     "%s: Expected destroy to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count - 1 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 1 == dl_collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
-  if (!dl_check(collection_destroy_first(&c, &_test_match_natural, &index),
+  if (!dl_check(dl_collection_destroy_first(&c, &_test_match_natural, &index),
     "%s: Expected destroy to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count - 2 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 2 == dl_collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
@@ -1478,50 +1478,50 @@ dl_bool test_collection_destroy_first() {
 dl_bool test_collection_destroy_last() {
   SINGLE_TEST_BEGIN();
 
-  iterator index = collection_begin(&c);
-  if (!dl_check(!collection_destroy_first(&c, &_test_match_natural, &index),
+  dl_iterator index = dl_collection_begin(&c);
+  if (!dl_check(!dl_collection_destroy_first(&c, &_test_match_natural, &index),
     "%s: Expected destroy to fail.", type_name))
     goto fail;
 
-  if (!dl_check(0 != collection_copy_array(_c_data_a, 10, &c)
-    && 0 != collection_copy_array(_c_data_b, 10, &c),
+  if (!dl_check(0 != dl_collection_copy_array(_c_data_a, 10, &c)
+    && 0 != dl_collection_copy_array(_c_data_b, 10, &c),
     "%s: Expected copy to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  dl_natural count = collection_count(&c);
+  dl_natural count = dl_collection_count(&c);
 
-  index = collection_begin(&c);
-  if (!dl_check(!collection_destroy_last(&c, &_test_match_natural, &index),
+  index = dl_collection_begin(&c);
+  if (!dl_check(!dl_collection_destroy_last(&c, &_test_match_natural, &index),
     "%s: Expected destroy to fail.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count == collection_count(&c),
+  if (!dl_check((dl_integer)count == dl_collection_count(&c),
     "%s: Expected count to remain unchanged.", type_name))
     goto fail;
 
-  index = collection_end(&c);
-  if (!dl_check(collection_destroy_last(&c, &_test_match_natural, &index),
+  index = dl_collection_end(&c);
+  if (!dl_check(dl_collection_destroy_last(&c, &_test_match_natural, &index),
     "%s: Expected destroy to succeed.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count - 1 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 1 == dl_collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
-  if (!dl_check(collection_destroy_last(&c, &_test_match_natural, &index),
+  if (!dl_check(dl_collection_destroy_last(&c, &_test_match_natural, &index),
     "%s: Expected destroy to succeed.", type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count - 2 == collection_count(&c),
+  if (!dl_check((dl_integer)count - 2 == dl_collection_count(&c),
     "%s: Expected count to change.", type_name))
     goto fail;
 
@@ -1531,7 +1531,7 @@ dl_bool test_collection_destroy_last() {
 dl_bool test_collection_pop_destroy() {
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -1540,17 +1540,17 @@ dl_bool test_collection_pop_destroy() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  dl_natural count = collection_count(&c);
+  dl_natural count = dl_collection_count(&c);
 
-  if (!dl_check(collection_pop_destroy(&c),
+  if (!dl_check(dl_collection_pop_destroy(&c),
     "%s: Expected toss to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count - 1 == collection_count(&c),
-    "%s: Expected count to be %lu, was %lu.", count - 1, collection_count(&c)))
+  if (!dl_check((dl_integer)count - 1 == dl_collection_count(&c),
+    "%s: Expected count to be %lu, was %lu.", count - 1, dl_collection_count(&c)))
     goto fail;
 
   SINGLE_TEST_END();
@@ -1562,7 +1562,7 @@ dl_bool test_collection_index_of() {
   dl_random_state r;
   dl_init_random_time(&r);
   
-  if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_a, 10))
@@ -1575,11 +1575,11 @@ dl_bool test_collection_index_of() {
   dl_integer item2 = _c_data_a[dl_random_integer_range(&r, 0, 4)];
   dl_any ref1, ref2;
 
-  iterator index1 = collection_index_of(&c, &item1);
-  iterator index2 = collection_index_of(&c, &item2);
+  dl_iterator index1 = dl_collection_index_of(&c, &item1);
+  dl_iterator index2 = dl_collection_index_of(&c, &item2);
 
-  ref1 = collection_ref(&c, index1);
-  ref2 = collection_ref(&c, index2);
+  ref1 = dl_collection_ref(&c, index1);
+  ref2 = dl_collection_ref(&c, index2);
 
   if (!dl_check(ref1 != NULL && *(dl_integer *)ref1 == item1,
     "%s: Expected index_of to work.", type_name))
@@ -1597,15 +1597,15 @@ dl_bool test_collection_fifo() {
   dl_natural idx;
   SINGLE_TEST_BEGIN();
 
-  if (collection_is_queue(&c)) {
-    if (0 == collection_copy_array(_c_data_a, 10, &c))
+  if (dl_collection_is_queue(&c)) {
+    if (0 == dl_collection_copy_array(_c_data_a, 10, &c))
       goto fail;
 
     if (!_confirm_properties(&c, type_name))
       goto fail;
 
     for (idx = 0; idx < 10; ++idx) {
-      if (!dl_check(collection_pop(&c, &item),
+      if (!dl_check(dl_collection_pop(&c, &item),
         "%s: Expected pop to work", type_name))
         goto fail;
 
@@ -1625,10 +1625,10 @@ dl_bool test_collection_fifo() {
 dl_bool test_collection_remove_range() {
   dl_natural count;
   dl_integer first, second, third;
-  iterator index;
+  dl_iterator index;
   DUAL_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_c, 10, &c1))
+  if (0 == dl_collection_copy_array(_c_data_c, 10, &c1))
     goto fail;
 
   if (!_contains_only(type1_name, &c1, _c_data_c, 10))
@@ -1637,52 +1637,52 @@ dl_bool test_collection_remove_range() {
   if (!_confirm_properties(&c1, type1_name))
     goto fail;
 
-  count = collection_count(&c1);
+  count = dl_collection_count(&c1);
   first = DL_NATURAL_MAX;
   second = DL_NATURAL_MAX;
   third = DL_NATURAL_MAX;
   
-  collection_get(&c1, collection_index(&c1, 2), &first);
-  collection_get(&c1, collection_index(&c1, 3), &second);
-  collection_get(&c1, collection_index(&c1, 4), &third);
+  dl_collection_get(&c1, dl_collection_index(&c1, 2), &first);
+  dl_collection_get(&c1, dl_collection_index(&c1, 3), &second);
+  dl_collection_get(&c1, dl_collection_index(&c1, 4), &third);
 
-  index = collection_index(&c1, 2);
-  if (!dl_check(3 == collection_remove_range(&c1, &index, 3, &c2),
+  index = dl_collection_index(&c1, 2);
+  if (!dl_check(3 == dl_collection_remove_range(&c1, &index, 3, &c2),
     "%s, %s: Expected remove range to work.", type1_name, type2_name))
     goto fail;
 
   if (!_confirm_properties(&c2, type2_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count - 3 == collection_count(&c1),
-    "%s, %s: Expected count to be %lu, was %lu.", type1_name, type2_name, count - 3, collection_count(&c1)))
+  if (!dl_check((dl_integer)count - 3 == dl_collection_count(&c1),
+    "%s, %s: Expected count to be %lu, was %lu.", type1_name, type2_name, count - 3, dl_collection_count(&c1)))
     goto fail;
 
-  if (!dl_check(3 == collection_count(&c2),
-    "%s, %s: Expected count to be 3, was %lu.", type1_name, type2_name, collection_count(&c2)))
+  if (!dl_check(3 == dl_collection_count(&c2),
+    "%s, %s: Expected count to be 3, was %lu.", type1_name, type2_name, dl_collection_count(&c2)))
     goto fail;
 
-  if (!dl_check(!collection_contains(&c1, &first),
+  if (!dl_check(!dl_collection_contains(&c1, &first),
     "%s, %s: Expected %i to be removed.", type1_name, type2_name, first))
     goto fail;
 
-  if (!dl_check(!collection_contains(&c1, &second),
+  if (!dl_check(!dl_collection_contains(&c1, &second),
     "%s, %s: Expected %i to be removed.", type1_name, type2_name, second))
     goto fail;
 
-  if (!dl_check(!collection_contains(&c1, &third),
+  if (!dl_check(!dl_collection_contains(&c1, &third),
     "%s, %s: Expected %i to be removed.", type1_name, type2_name, third))
     goto fail;
 
-  if (!dl_check(collection_contains(&c2, &first),
+  if (!dl_check(dl_collection_contains(&c2, &first),
     "%s, %s: Expected %i to be in output.", type1_name, type2_name, first))
     goto fail;
 
-  if (!dl_check(collection_contains(&c2, &second),
+  if (!dl_check(dl_collection_contains(&c2, &second),
     "%s, %s: Expected %i to be in output.", type1_name, type2_name, second))
     goto fail;
 
-  if (!dl_check(collection_contains(&c2, &third),
+  if (!dl_check(dl_collection_contains(&c2, &third),
     "%s, %s: Expected %i to be in output.", type1_name, type2_name, third))
     goto fail;
 
@@ -1692,10 +1692,10 @@ dl_bool test_collection_remove_range() {
 dl_bool test_collection_destroy_range() {
   dl_natural count;
   dl_integer first, second, third;
-  iterator index;
+  dl_iterator index;
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_c, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_c, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_c, 10))
@@ -1704,8 +1704,8 @@ dl_bool test_collection_destroy_range() {
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  count = collection_count(&c);
-  if (!dl_check(count == 10 && iterator_is_valid(&c, collection_index(&c, 2)),
+  count = dl_collection_count(&c);
+  if (!dl_check(count == 10 && dl_iterator_is_valid(&c, dl_collection_index(&c, 2)),
     "%s: Expected 2 to be a valid index.", type_name))
     goto fail;
 
@@ -1713,31 +1713,31 @@ dl_bool test_collection_destroy_range() {
   second = DL_NATURAL_MAX;
   third = DL_NATURAL_MAX;
   
-  collection_get(&c, collection_index(&c, 2), &first);
-  collection_get(&c, collection_index(&c, 3), &second);
-  collection_get(&c, collection_index(&c, 4), &third);
-  index = collection_index(&c, 2);
+  dl_collection_get(&c, dl_collection_index(&c, 2), &first);
+  dl_collection_get(&c, dl_collection_index(&c, 3), &second);
+  dl_collection_get(&c, dl_collection_index(&c, 4), &third);
+  index = dl_collection_index(&c, 2);
 
-  if (!dl_check(3 == collection_destroy_range(&c, &index, 3),
+  if (!dl_check(3 == dl_collection_destroy_range(&c, &index, 3),
     "%s: Expected remove range to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check((dl_integer)count - 3 == collection_count(&c),
-    "%s: Expected count to be %lu, was %lu.", type_name, count - 3, collection_count(&c)))
+  if (!dl_check((dl_integer)count - 3 == dl_collection_count(&c),
+    "%s: Expected count to be %lu, was %lu.", type_name, count - 3, dl_collection_count(&c)))
     goto fail;
 
-  if (!dl_check(!collection_contains(&c, &first),
+  if (!dl_check(!dl_collection_contains(&c, &first),
     "%s: Expected %i to be removed.", type_name, first))
     goto fail;
 
-  if (!dl_check(!collection_contains(&c, &second),
+  if (!dl_check(!dl_collection_contains(&c, &second),
     "%s: Expected %i to be removed.", type_name, second))
     goto fail;
 
-  if (!dl_check(!collection_contains(&c, &third),
+  if (!dl_check(!dl_collection_contains(&c, &third),
     "%s: Expected %i to be removed.", type_name, third))
     goto fail;
 
@@ -1746,10 +1746,10 @@ dl_bool test_collection_destroy_range() {
 
 dl_bool test_collection_insert() {
   dl_integer value;
-  iterator index;
+  dl_iterator index;
   SINGLE_TEST_BEGIN();
 
-  if (0 == collection_copy_array(_c_data_c, 10, &c))
+  if (0 == dl_collection_copy_array(_c_data_c, 10, &c))
     goto fail;
 
   if (!_contains_only(type_name, &c, _c_data_c, 10))
@@ -1759,21 +1759,21 @@ dl_bool test_collection_insert() {
     goto fail;
 
   value = 11;
-  index = collection_index(&c, 5);
+  index = dl_collection_index(&c, 5);
 
-  if (!dl_check(collection_insert(&c, &index, &value),
+  if (!dl_check(dl_collection_insert(&c, &index, &value),
     "%s: Expected insert to work.", type_name))
     goto fail;
 
   if (!_confirm_properties(&c, type_name))
     goto fail;
 
-  if (!dl_check(collection_count(&c) == 11,
-    "%s: Expected collection to grow.", type_name))
+  if (!dl_check(dl_collection_count(&c) == 11,
+    "%s: Expected dl_collection to grow.", type_name))
     goto fail;
 
-  if (!dl_check(*(dl_integer *)collection_ref(&c, index) == value,
-    "%s: Expected %i to be %i.", type_name, *(dl_integer *)collection_ref(&c, index), value))
+  if (!dl_check(*(dl_integer *)dl_collection_ref(&c, index) == value,
+    "%s: Expected %i to be %i.", type_name, *(dl_integer *)dl_collection_ref(&c, index), value))
     goto fail;
 
   SINGLE_TEST_END();
