@@ -33,10 +33,45 @@
 # define DL_IS_C89 0
 #endif
 
+#if defined(__cplusplus)
+# if __cplusplus <= 199711L
+#   define DL_IS_CPP98 1
+#   define DL_IS_CPP11 0
+#   define DL_IS_CPP14 0
+#   define DL_IS_CPP17 0
+# elif __cplusplus <= 201103L
+#   define DL_IS_CPP98 0
+#   define DL_IS_CPP11 1
+#   define DL_IS_CPP14 0
+#   define DL_IS_CPP17 0
+# elif __cplusplus <= 201402L
+#   define DL_IS_CPP98 0
+#   define DL_IS_CPP11 0
+#   define DL_IS_CPP14 1
+#   define DL_IS_CPP17 0
+# elif __cplusplus <= 201703L
+#   define DL_IS_CPP98 0
+#   define DL_IS_CPP11 0
+#   define DL_IS_CPP14 0
+#   define DL_IS_CPP17 1
+#endif
+#else
+# define DL_IS_CPP98 0
+# define DL_IS_CPP11 0
+# define DL_IS_CPP14 0
+# define DL_IS_CPP17 0
+#endif
+
 #define DL_IS_ATLEAST_C89 (DL_IS_C11 || DL_IS_C99 || DL_IS_C90 || DL_IS_C89)
 #define DL_IS_ATLEAST_C90 (DL_IS_C11 || DL_IS_C99 || DL_IS_C90)
 #define DL_IS_ATLEAST_C99 (DL_IS_C11 || DL_IS_C99)
 #define DL_IS_ATLEAST_C11 (DL_IS_C11)
+
+#define DL_IS_CPP (DL_IS_CPP98 || DL_IS_CPP11 || DL_IS_CPP14 || DL_IS_CPP17)
+#define DL_IS_ATLEAST_CPP98 DL_IS_CPP
+#define DL_IS_ATLEAST_CPP11 (DL_IS_CPP11 || DL_IS_CPP14 || DL_IS_CPP17)
+#define DL_IS_ATLEAST_CPP14 (DL_IS_CPP14 || DL_IS_CPP17)
+#define DL_IS_ATLEAST_CPP17 (DL_IS_CPP17)
 
 
 
@@ -166,11 +201,7 @@
 #endif
 
 #if DL_USE_MATH
-# if DL_IS_ATLEAST_C99
-#   include <tgmath.h>
-# else
-#   include <math.h>
-# endif
+# include <math.h>
 #endif
 
 #if DL_USE_MALLOC
@@ -185,6 +216,10 @@
 #   undef dl_inline
 #   define dl_inline inline __attribute__((__always_inline__))
 # endif
+# if DL_IS_MSC
+#   undef dl_inline
+#   define dl_inline __forceinline
+# endif
 #endif
 
 #ifndef dl_api
@@ -196,14 +231,14 @@
 #endif
 
 #ifndef dl_restrict
-# define dl_restrict
-# if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
-#   undef dl_restrict
+# if DL_IS_ATLEAST_C99 && !DL_IS_CPP
+#   define dl_restrict restrict
+# elif DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
 #   define dl_restrict __restrict__
-# endif
-# if DL_IS_MSC
-#   undef dl_restrict
+# elif DL_IS_MSC
 #   define dl_restrict __restrict
+# else
+#   define dl_restrict
 # endif
 #endif
 
