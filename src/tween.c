@@ -10,10 +10,10 @@ const dl_integer width = 800;
 const dl_integer height = 600;
 
 typedef struct {
-  ease_direction dir;
-  easing_function ease;
-  selector_function selector;
-  selector_function_point2 selector_point2;
+  dl_ease_direction dir;
+  dl_easing_function ease;
+  dl_selector_function selector;
+  dl_selector_function_point2 selector_point2;
   const char *name;
 } tween_method;
 
@@ -22,45 +22,45 @@ typedef struct {
 
 dl_integer active_method = -1;
 tween_method tween_methods[tween_count] = {
-  { 0, NULL, select_linear, NULL, "select_linear" },
-  { 0, NULL, select_catmullrom, NULL, "select_catmullrom" },
-  { 0, NULL, NULL, select_linear_point2, "select_linear_point2" },
-  { 0, NULL, NULL, select_bezier_point2, "select_bezier_point2" },
-  { 0, NULL, NULL, select_catmullrom_point2, "select_catmullrom_point2" },
+  { 0, NULL, dl_select_linear, NULL, "dl_select_linear" },
+  { 0, NULL, dl_select_catmullrom, NULL, "dl_select_catmullrom" },
+  { 0, NULL, NULL, dl_select_linear_point2, "dl_select_linear_point2" },
+  { 0, NULL, NULL, dl_select_bezier_point2, "dl_select_bezier_point2" },
+  { 0, NULL, NULL, dl_select_catmullrom_point2, "dl_select_catmullrom_point2" },
 
-  { EASE_IN, ease_quadratic, NULL, NULL, "EASE_IN quadratic" },
-  { EASE_OUT, ease_quadratic, NULL, NULL, "EASE_OUT quadratic" },
-  { EASE_INOUT, ease_quadratic, NULL, NULL, "EASE_INOUT quadratic" },
-  { EASE_IN, ease_linear, NULL, NULL, "EASE_IN linear" },
-  { EASE_OUT, ease_linear, NULL, NULL, "EASE_OUT linear" },
-  { EASE_INOUT, ease_linear, NULL, NULL, "EASE_INOUT linear" },
-  { EASE_IN, ease_cubic, NULL, NULL, "EASE_IN cubic" },
-  { EASE_OUT, ease_cubic, NULL, NULL, "EASE_OUT cubic" },
-  { EASE_INOUT, ease_cubic, NULL, NULL, "EASE_INOUT cubic" },
-  { EASE_IN, ease_quartic, NULL, NULL, "EASE_IN quartic" },
-  { EASE_OUT, ease_quartic, NULL, NULL, "EASE_OUT quartic" },
-  { EASE_INOUT, ease_quartic, NULL, NULL, "EASE_INOUT quartic" },
-  { EASE_IN, ease_quintic, NULL, NULL, "EASE_IN quintic" },
-  { EASE_OUT, ease_quintic, NULL, NULL, "EASE_OUT quintic" },
-  { EASE_INOUT, ease_quintic, NULL, NULL, "EASE_INOUT quintic" },
-  { EASE_IN, ease_sinusoidal, NULL, NULL, "EASE_IN sinusoidal" },
-  { EASE_OUT, ease_sinusoidal, NULL, NULL, "EASE_OUT sinusoidal" },
-  { EASE_INOUT, ease_sinusoidal, NULL, NULL, "EASE_INOUT sinusoidal" },
-  { EASE_IN, ease_exponential, NULL, NULL, "EASE_IN exponential" },
-  { EASE_OUT, ease_exponential, NULL, NULL, "EASE_OUT exponential" },
-  { EASE_INOUT, ease_exponential, NULL, NULL, "EASE_INOUT exponential" },
-  { EASE_IN, ease_circular, NULL, NULL, "EASE_IN circular" },
-  { EASE_OUT, ease_circular, NULL, NULL, "EASE_OUT circular" },
-  { EASE_INOUT, ease_circular, NULL, NULL, "EASE_INOUT circular" },
-  { EASE_IN, ease_elastic, NULL, NULL, "EASE_IN elastic" },
-  { EASE_OUT, ease_elastic, NULL, NULL, "EASE_OUT elastic" },
-  { EASE_INOUT, ease_elastic, NULL, NULL, "EASE_INOUT elastic" },
-  { EASE_IN, ease_back, NULL, NULL, "EASE_IN back" },
-  { EASE_OUT, ease_back, NULL, NULL, "EASE_OUT back" },
-  { EASE_INOUT, ease_back, NULL, NULL, "EASE_INOUT back" },
-  { EASE_IN, ease_bounce, NULL, NULL, "EASE_IN bounce" },
-  { EASE_OUT, ease_bounce, NULL, NULL, "EASE_OUT bounce" },
-  { EASE_INOUT, ease_bounce, NULL, NULL, "EASE_INOUT bounce" },
+  { DL_EASE_IN, dl_ease_quadratic, NULL, NULL, "DL_EASE_IN quadratic" },
+  { DL_EASE_OUT, dl_ease_quadratic, NULL, NULL, "DL_EASE_OUT quadratic" },
+  { DL_EASE_INOUT, dl_ease_quadratic, NULL, NULL, "DL_EASE_INOUT quadratic" },
+  { DL_EASE_IN, dl_ease_linear, NULL, NULL, "DL_EASE_IN linear" },
+  { DL_EASE_OUT, dl_ease_linear, NULL, NULL, "DL_EASE_OUT linear" },
+  { DL_EASE_INOUT, dl_ease_linear, NULL, NULL, "DL_EASE_INOUT linear" },
+  { DL_EASE_IN, dl_ease_cubic, NULL, NULL, "DL_EASE_IN cubic" },
+  { DL_EASE_OUT, dl_ease_cubic, NULL, NULL, "DL_EASE_OUT cubic" },
+  { DL_EASE_INOUT, dl_ease_cubic, NULL, NULL, "DL_EASE_INOUT cubic" },
+  { DL_EASE_IN, dl_ease_quartic, NULL, NULL, "DL_EASE_IN quartic" },
+  { DL_EASE_OUT, dl_ease_quartic, NULL, NULL, "DL_EASE_OUT quartic" },
+  { DL_EASE_INOUT, dl_ease_quartic, NULL, NULL, "DL_EASE_INOUT quartic" },
+  { DL_EASE_IN, dl_ease_quintic, NULL, NULL, "DL_EASE_IN quintic" },
+  { DL_EASE_OUT, dl_ease_quintic, NULL, NULL, "DL_EASE_OUT quintic" },
+  { DL_EASE_INOUT, dl_ease_quintic, NULL, NULL, "DL_EASE_INOUT quintic" },
+  { DL_EASE_IN, dl_ease_sinusoidal, NULL, NULL, "DL_EASE_IN sinusoidal" },
+  { DL_EASE_OUT, dl_ease_sinusoidal, NULL, NULL, "DL_EASE_OUT sinusoidal" },
+  { DL_EASE_INOUT, dl_ease_sinusoidal, NULL, NULL, "DL_EASE_INOUT sinusoidal" },
+  { DL_EASE_IN, dl_ease_exponential, NULL, NULL, "DL_EASE_IN exponential" },
+  { DL_EASE_OUT, dl_ease_exponential, NULL, NULL, "DL_EASE_OUT exponential" },
+  { DL_EASE_INOUT, dl_ease_exponential, NULL, NULL, "DL_EASE_INOUT exponential" },
+  { DL_EASE_IN, dl_ease_circular, NULL, NULL, "DL_EASE_IN circular" },
+  { DL_EASE_OUT, dl_ease_circular, NULL, NULL, "DL_EASE_OUT circular" },
+  { DL_EASE_INOUT, dl_ease_circular, NULL, NULL, "DL_EASE_INOUT circular" },
+  { DL_EASE_IN, dl_ease_elastic, NULL, NULL, "DL_EASE_IN elastic" },
+  { DL_EASE_OUT, dl_ease_elastic, NULL, NULL, "DL_EASE_OUT elastic" },
+  { DL_EASE_INOUT, dl_ease_elastic, NULL, NULL, "DL_EASE_INOUT elastic" },
+  { DL_EASE_IN, dl_ease_back, NULL, NULL, "DL_EASE_IN back" },
+  { DL_EASE_OUT, dl_ease_back, NULL, NULL, "DL_EASE_OUT back" },
+  { DL_EASE_INOUT, dl_ease_back, NULL, NULL, "DL_EASE_INOUT back" },
+  { DL_EASE_IN, dl_ease_bounce, NULL, NULL, "DL_EASE_IN bounce" },
+  { DL_EASE_OUT, dl_ease_bounce, NULL, NULL, "DL_EASE_OUT bounce" },
+  { DL_EASE_INOUT, dl_ease_bounce, NULL, NULL, "DL_EASE_INOUT bounce" },
 };
 
 dl_point2 points[point_count];
@@ -102,16 +102,16 @@ void draw(double time, double delta_time) {
     p1.x = next_p;
     
     if (current.ease != NULL) {
-      p0.y = tween(current.ease, current.dir, p);
-      p1.y = tween(current.ease, current.dir, next_p);
+      p0.y = dl_tween(current.ease, current.dir, p);
+      p1.y = dl_tween(current.ease, current.dir, next_p);
     }
     else if (current.selector != NULL) {
-      interpolate(current.selector, ys, point_count, p0.x, &p0.y);
-      interpolate(current.selector, ys, point_count, p1.x, &p1.y); 
+      dl_interpolate(current.selector, ys, point_count, p0.x, &p0.y);
+      dl_interpolate(current.selector, ys, point_count, p1.x, &p1.y); 
     }
     else {
-      interpolate_point2(current.selector_point2, points, point_count, p0.x, &p0);
-      interpolate_point2(current.selector_point2, points, point_count, p1.x, &p1);
+      dl_interpolate_point2(current.selector_point2, points, point_count, p0.x, &p0);
+      dl_interpolate_point2(current.selector_point2, points, point_count, p1.x, &p1);
     }
     
     al_draw_line(p0.x * width, (p0.y * height * 0.5) + (height * 0.25),

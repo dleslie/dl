@@ -704,60 +704,60 @@ extern "C" {
 #if DL_USE_TWEEN
 
   typedef enum {
-    EASE_IN,
-    EASE_OUT,
-    EASE_INOUT
-  } ease_direction;
+    DL_EASE_IN,
+    DL_EASE_OUT,
+    DL_EASE_INOUT
+  } dl_ease_direction;
 
-  typedef dl_real(*easing_function)(ease_direction d, dl_real p);
+  typedef dl_real(*dl_easing_function)(dl_ease_direction d, dl_real p);
 
-  dl_api dl_real tween(easing_function ease, ease_direction direction, dl_real percent);
+  dl_api dl_real dl_tween(dl_easing_function ease, dl_ease_direction direction, dl_real percent);
 
-  dl_api dl_real ease_linear(ease_direction d, dl_real p);
-  dl_api dl_real ease_quadratic(ease_direction d, dl_real p);
-  dl_api dl_real ease_cubic(ease_direction d, dl_real p);
-  dl_api dl_real ease_quartic(ease_direction d, dl_real p);
-  dl_api dl_real ease_quintic(ease_direction d, dl_real p);
-  dl_api dl_real ease_sinusoidal(ease_direction d, dl_real p);
-  dl_api dl_real ease_exponential(ease_direction d, dl_real p);
-  dl_api dl_real ease_circular(ease_direction d, dl_real p);
-  dl_api dl_real ease_elastic(ease_direction d, dl_real p);
-  dl_api dl_real ease_elastic_tunable(ease_direction d, dl_real p, dl_real a, dl_real k);
-  dl_api dl_real ease_back(ease_direction d, dl_real p);
-  dl_api dl_real ease_back_tunable(ease_direction d, dl_real p, dl_real s, dl_real t);
-  dl_api dl_real ease_bounce(ease_direction d, dl_real p);
+  dl_api dl_real dl_ease_linear(dl_ease_direction d, dl_real p);
+  dl_api dl_real dl_ease_quadratic(dl_ease_direction d, dl_real p);
+  dl_api dl_real dl_ease_cubic(dl_ease_direction d, dl_real p);
+  dl_api dl_real dl_ease_quartic(dl_ease_direction d, dl_real p);
+  dl_api dl_real dl_ease_quintic(dl_ease_direction d, dl_real p);
+  dl_api dl_real dl_ease_sinusoidal(dl_ease_direction d, dl_real p);
+  dl_api dl_real dl_ease_exponential(dl_ease_direction d, dl_real p);
+  dl_api dl_real dl_ease_circular(dl_ease_direction d, dl_real p);
+  dl_api dl_real dl_ease_elastic(dl_ease_direction d, dl_real p);
+  dl_api dl_real dl_ease_elastic_tunable(dl_ease_direction d, dl_real p, dl_real a, dl_real k);
+  dl_api dl_real dl_ease_back(dl_ease_direction d, dl_real p);
+  dl_api dl_real dl_ease_back_tunable(dl_ease_direction d, dl_real p, dl_real s, dl_real t);
+  dl_api dl_real dl_ease_bounce(dl_ease_direction d, dl_real p);
 
-  typedef dl_real *(*selector_function)(const dl_real *dl_restrict values, dl_natural length, dl_real percent, dl_real *out);
+  typedef dl_real *(*dl_selector_function)(const dl_real *dl_restrict values, dl_natural length, dl_real percent, dl_real *out);
 
-  dl_api dl_real *interpolate(const selector_function select, const dl_real *dl_restrict values, dl_natural length, dl_real percent, dl_real *dl_restrict out);
+  dl_api dl_real *dl_interpolate(const dl_selector_function select, const dl_real *dl_restrict values, dl_natural length, dl_real percent, dl_real *dl_restrict out);
 
-  dl_api dl_real *select_linear(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out);
-  dl_api dl_real *select_catmullrom(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out);
+  dl_api dl_real *dl_select_linear(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out);
+  dl_api dl_real *dl_select_catmullrom(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out);
 
-  typedef dl_point2 *(*selector_function_point2)(const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out);
+  typedef dl_point2 *(*dl_selector_function_point2)(const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out);
 
-  dl_api dl_point2 *interpolate_point2(const selector_function_point2 select, const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *dl_interpolate_point2(const dl_selector_function_point2 select, const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out);
 
-  dl_api dl_point2 *select_linear_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
-  dl_api dl_point2 *select_bezier_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
-  dl_api dl_point2 *select_catmullrom_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *dl_select_linear_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *dl_select_bezier_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *dl_select_catmullrom_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
 
-  typedef dl_point3 *(*selector_function_point3)(const dl_point3 *dl_restrict values, dl_natural length, dl_real percent, dl_point3 *dl_restrict out);
+  typedef dl_point3 *(*dl_selector_function_point3)(const dl_point3 *dl_restrict values, dl_natural length, dl_real percent, dl_point3 *dl_restrict out);
 
-  dl_api dl_point3 *interpolate_point3(const selector_function_point3 select, const dl_point3 *dl_restrict values, dl_natural length, dl_real percent, dl_point3 *dl_restrict out);
+  dl_api dl_point3 *dl_interpolate_point3(const dl_selector_function_point3 select, const dl_point3 *dl_restrict values, dl_natural length, dl_real percent, dl_point3 *dl_restrict out);
 
-  dl_api dl_point3 *select_linear_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out);
-  dl_api dl_point3 *select_bezier_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out);
-  dl_api dl_point3 *select_catmullrom_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out);
+  dl_api dl_point3 *dl_select_linear_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out);
+  dl_api dl_point3 *dl_select_bezier_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out);
+  dl_api dl_point3 *dl_select_catmullrom_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out);
 
 
 
-  dl_api dl_integer *lerp_integer(dl_integer a, dl_integer b, dl_real p, dl_integer *dl_restrict out);
-  dl_api dl_real *lerp_real(dl_real a, dl_real b, dl_real p, dl_real *dl_restrict out);
-  dl_api dl_point2 *lerp_point2(const dl_point2 *dl_restrict a, const dl_point2 *dl_restrict b, dl_real p, dl_point2 *dl_restrict out);
-  dl_api dl_point3 *lerp_point3(const dl_point3 *dl_restrict a, const dl_point3 *dl_restrict b, dl_real p, dl_point3 *dl_restrict out);
-  dl_api dl_vec2 *lerp_vec2(const dl_vec2 *dl_restrict a, const dl_vec2 *dl_restrict b, dl_real p, dl_vec2 *dl_restrict out);
-  dl_api dl_vec3 *lerp_vec3(const dl_vec3 *dl_restrict a, const dl_vec3 *dl_restrict b, dl_real p, dl_vec3 *dl_restrict out);
+  dl_api dl_integer *dl_lerp_integer(dl_integer a, dl_integer b, dl_real p, dl_integer *dl_restrict out);
+  dl_api dl_real *dl_lerp_real(dl_real a, dl_real b, dl_real p, dl_real *dl_restrict out);
+  dl_api dl_point2 *dl_lerp_point2(const dl_point2 *dl_restrict a, const dl_point2 *dl_restrict b, dl_real p, dl_point2 *dl_restrict out);
+  dl_api dl_point3 *dl_lerp_point3(const dl_point3 *dl_restrict a, const dl_point3 *dl_restrict b, dl_real p, dl_point3 *dl_restrict out);
+  dl_api dl_vec2 *dl_lerp_vec2(const dl_vec2 *dl_restrict a, const dl_vec2 *dl_restrict b, dl_real p, dl_vec2 *dl_restrict out);
+  dl_api dl_vec3 *dl_lerp_vec3(const dl_vec3 *dl_restrict a, const dl_vec3 *dl_restrict b, dl_real p, dl_vec3 *dl_restrict out);
 
 
 
@@ -2318,22 +2318,22 @@ dl_api dl_mat4 *init_mat4_perspective(dl_mat4 * dl_restrict m, dl_real vertical_
 
 #if DL_USE_TWEEN
   
-dl_api dl_real tween(easing_function ease, ease_direction direction, dl_real percent) {
+dl_api dl_real dl_tween(dl_easing_function ease, dl_ease_direction direction, dl_real percent) {
   percent = dl_clamp01(percent);
   return ease(direction, percent);
 }
 
-dl_api dl_real ease_linear(ease_direction d, dl_real p) {
+dl_api dl_real dl_ease_linear(dl_ease_direction d, dl_real p) {
   return p;
 }
 
-dl_api dl_real ease_quadratic(ease_direction d, dl_real p) {
+dl_api dl_real dl_ease_quadratic(dl_ease_direction d, dl_real p) {
   switch (d) {
-  case EASE_IN:
+  case DL_EASE_IN:
     return p * p;
-  case EASE_OUT:
+  case DL_EASE_OUT:
     return p * (2.0 - p);
-  case EASE_INOUT:
+  case DL_EASE_INOUT:
     p = 2.0 * p;
     if (p < 1.0)
       return 0.5f * p * p;
@@ -2344,14 +2344,14 @@ dl_api dl_real ease_quadratic(ease_direction d, dl_real p) {
   return 0;
 }
 
-dl_api dl_real ease_cubic(ease_direction d, dl_real p) {
+dl_api dl_real dl_ease_cubic(dl_ease_direction d, dl_real p) {
   switch (d) {
-  case EASE_IN:
+  case DL_EASE_IN:
     return (p * p * p);
-  case EASE_OUT:
+  case DL_EASE_OUT:
     p = p - 1.0;
     return 1.0 + (p * p * p);
-  case EASE_INOUT:
+  case DL_EASE_INOUT:
     p = 2.0 * p;
     if (p < 1.0)
       return 0.5f * (p * p * p);
@@ -2362,14 +2362,14 @@ dl_api dl_real ease_cubic(ease_direction d, dl_real p) {
   return 0;
 }
 
-dl_api dl_real ease_quartic(ease_direction d, dl_real p) {
+dl_api dl_real dl_ease_quartic(dl_ease_direction d, dl_real p) {
   switch (d) {
-  case EASE_IN:
+  case DL_EASE_IN:
     return (p * p * p * p);
-  case EASE_OUT:
+  case DL_EASE_OUT:
     p = p - 1.0;
     return 1.0 - (p * p * p * p);
-  case EASE_INOUT:
+  case DL_EASE_INOUT:
     p = 2.0 * p;
     if (p < 1.0)
       return 0.5f * (p * p * p * p);
@@ -2380,14 +2380,14 @@ dl_api dl_real ease_quartic(ease_direction d, dl_real p) {
   return 0;
 }
 
-dl_api dl_real ease_quintic(ease_direction d, dl_real p) {
+dl_api dl_real dl_ease_quintic(dl_ease_direction d, dl_real p) {
   switch (d) {
-  case EASE_IN:
+  case DL_EASE_IN:
     return (p * p * p * p * p);
-  case EASE_OUT:
+  case DL_EASE_OUT:
     p = p - 1.0;
     return 1.0 + (p * p * p * p * p);
-  case EASE_INOUT:
+  case DL_EASE_INOUT:
     p = 2.0 * p;
     if (p < 1.0)
       return 0.5f * (p * p * p * p * p);
@@ -2398,25 +2398,25 @@ dl_api dl_real ease_quintic(ease_direction d, dl_real p) {
   return 0;
 }
 
-dl_api dl_real ease_sinusoidal(ease_direction d, dl_real p) {
+dl_api dl_real dl_ease_sinusoidal(dl_ease_direction d, dl_real p) {
   switch (d) {
-  case EASE_IN:
+  case DL_EASE_IN:
     return 1.0 - dl_cos(p * DL_PI * 0.5f);
-  case EASE_OUT:
+  case DL_EASE_OUT:
     return dl_sin(p * DL_PI * 0.5f);
-  case EASE_INOUT:
+  case DL_EASE_INOUT:
     return 0.5f * (1 - dl_cos(DL_PI * p));
   }
   return 0;
 }
 
-dl_api dl_real ease_exponential(ease_direction d, dl_real p) {
+dl_api dl_real dl_ease_exponential(dl_ease_direction d, dl_real p) {
   switch (d) {
-  case EASE_IN:
+  case DL_EASE_IN:
     return dl_pow(1024.0, (p - 1.0));
-  case EASE_OUT:
+  case DL_EASE_OUT:
     return 1.0 - dl_pow(2.0, -10.0 * p);
-  case EASE_INOUT:
+  case DL_EASE_INOUT:
     p = 2.0 * p;
     if (p < 1.0)
       return 0.5f * dl_pow(1024.0, (p - 1.0));
@@ -2425,14 +2425,14 @@ dl_api dl_real ease_exponential(ease_direction d, dl_real p) {
   return 0;
 }
 
-dl_api dl_real ease_circular(ease_direction d, dl_real p) {
+dl_api dl_real dl_ease_circular(dl_ease_direction d, dl_real p) {
   switch (d) {
-  case EASE_IN:
+  case DL_EASE_IN:
     return 1.0 - dl_sqrt(1.0 - (p * p));
-  case EASE_OUT:
+  case DL_EASE_OUT:
     p = p - 1.0;
     return dl_sqrt(1.0 - (p * p));
-  case EASE_INOUT:
+  case DL_EASE_INOUT:
     p = 2.0 * p;
     if (p < 1.0)
       return -0.5f * (dl_sqrt(1.0 - (p * p)) - 1.0);
@@ -2443,24 +2443,24 @@ dl_api dl_real ease_circular(ease_direction d, dl_real p) {
   return 0;
 }
 
-dl_api dl_real ease_elastic(ease_direction d, dl_real p) {
+dl_api dl_real dl_ease_elastic(dl_ease_direction d, dl_real p) {
   static const dl_real a = 1.0;
   static const dl_real k = 0.4f;
 
-  return ease_elastic_tunable(d, p, a, k);
+  return dl_ease_elastic_tunable(d, p, a, k);
 }
 
-dl_api dl_real ease_elastic_tunable(ease_direction d, dl_real p, dl_real a, dl_real k) {
+dl_api dl_real dl_ease_elastic_tunable(dl_ease_direction d, dl_real p, dl_real a, dl_real k) {
   dl_real invk = 1.0 / k;
   dl_real s = a < 1.0 ? (k * 0.25f) : (k * dl_asin(1.0 / a) * 0.5f * DL_INV_PI);
 
   switch (d) {
-  case EASE_IN:
+  case DL_EASE_IN:
     p = p - 1.0;
     return -(a * dl_pow(2.0, 10.0 * p) * dl_sin((p - s) * 2.0 * DL_PI * invk));
-  case EASE_OUT:
+  case DL_EASE_OUT:
     return 1.0 + (a * dl_pow(2.0, -10.0 * p) * dl_sin((p - s) * 2.0 * DL_PI * invk));
-  case EASE_INOUT:
+  case DL_EASE_INOUT:
     p = p * 2.0;
     if (p < 1)
       return -0.5f * a * dl_pow(2.0, 10.0 * (p - 1.0)) * dl_sin((p - 1 - s) * 2.0 * DL_PI * invk);
@@ -2469,21 +2469,21 @@ dl_api dl_real ease_elastic_tunable(ease_direction d, dl_real p, dl_real a, dl_r
   return 0;
 }
 
-dl_api dl_real ease_back(ease_direction d, dl_real p) {
+dl_api dl_real dl_ease_back(dl_ease_direction d, dl_real p) {
   static const dl_real s = 1.70158f;
   static const dl_real t = 1.525f;
 
-  return ease_back_tunable(d, p, s, t);
+  return dl_ease_back_tunable(d, p, s, t);
 }
 
-dl_api dl_real ease_back_tunable(ease_direction d, dl_real p, dl_real s, dl_real t) {
+dl_api dl_real dl_ease_back_tunable(dl_ease_direction d, dl_real p, dl_real s, dl_real t) {
   switch (d) {
-  case EASE_IN:
+  case DL_EASE_IN:
     return (p * p) * ((p * (s + 1)) - s);
-  case EASE_OUT:
+  case DL_EASE_OUT:
     p = p - 1;
     return 1 + ((p * p) * (s + (p * (s + 1))));
-  case EASE_INOUT:
+  case DL_EASE_INOUT:
     s = s * t;
     p = 2.0 * p;
 
@@ -2515,13 +2515,13 @@ dl_api dl_real _ease_bounce_in(dl_real p) {
   return 1 - _ease_bounce_out(1 - p);
 }
 
-dl_real ease_bounce(ease_direction d, dl_real p) {
+dl_real dl_ease_bounce(dl_ease_direction d, dl_real p) {
   switch (d) {
-  case EASE_IN:
+  case DL_EASE_IN:
     return _ease_bounce_in(p);
-  case EASE_OUT:
+  case DL_EASE_OUT:
     return _ease_bounce_out(p);
-  case EASE_INOUT:
+  case DL_EASE_INOUT:
     if (p < 0.5)
       return 0.5f * _ease_bounce_in(p * 2.0);
     return 0.5f + (0.5f * _ease_bounce_out((p * 2.0) - 1.0));
@@ -2531,7 +2531,7 @@ dl_real ease_bounce(ease_direction d, dl_real p) {
 
 
 
-dl_real *interpolate(const selector_function select, const dl_real *dl_restrict values, dl_natural length, dl_real percent, dl_real *out) {
+dl_real *dl_interpolate(const dl_selector_function select, const dl_real *dl_restrict values, dl_natural length, dl_real percent, dl_real *out) {
   if (dl_safety(select == NULL || values == NULL || length == 0))
     return NULL;
   if (dl_unlikely(length == 1)) {
@@ -2543,7 +2543,7 @@ dl_real *interpolate(const selector_function select, const dl_real *dl_restrict 
   return select(values, length, percent, out);
 }
 
-dl_real *select_linear(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out) {
+dl_real *dl_select_linear(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out) {
   dl_natural max_idx, idx, next_idx;
   dl_real scaled_p;
   
@@ -2560,10 +2560,10 @@ dl_real *select_linear(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl
     return out;
   }
 
-  return lerp_real(v[idx], v[next_idx], (scaled_p - (dl_real)idx), out);
+  return dl_lerp_real(v[idx], v[next_idx], (scaled_p - (dl_real)idx), out);
 }
 
-dl_real *select_catmullrom(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out) {
+dl_real *dl_select_catmullrom(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out) {
   dl_natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   dl_real target, t, v0, v1, t2, t3;
   
@@ -2596,7 +2596,7 @@ dl_real *select_catmullrom(const dl_real *dl_restrict v, dl_natural l, dl_real p
 
 
 
-dl_point2 *interpolate_point2(const selector_function_point2 select, const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out) {
+dl_point2 *dl_interpolate_point2(const dl_selector_function_point2 select, const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out) {
   if (dl_safety(select == NULL || values == NULL || length == 0))
     return NULL;
   if (dl_unlikely(length == 1)) {
@@ -2608,7 +2608,7 @@ dl_point2 *interpolate_point2(const selector_function_point2 select, const dl_po
   return select(values, length, percent, out);
 }
 
-dl_point2 *select_linear_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
+dl_point2 *dl_select_linear_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
   dl_natural max_idx, idx, next_idx;
   dl_real scaled_p;
   
@@ -2622,10 +2622,10 @@ dl_point2 *select_linear_point2(const dl_point2 *dl_restrict v, dl_natural l, dl
     return out;
   }
 
-  return lerp_point2(&v[idx], &v[next_idx], (scaled_p - (dl_real)idx), out);
+  return dl_lerp_point2(&v[idx], &v[next_idx], (scaled_p - (dl_real)idx), out);
 }
 
-dl_point2 *select_bezier_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
+dl_point2 *dl_select_bezier_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
   dl_natural max_idx, idx, degree;
   dl_real target;
   dl_point2 t1, t2, compute_v[DL_BEZIER_DEGREE + 1];
@@ -2653,7 +2653,7 @@ dl_point2 *select_bezier_point2(const dl_point2 *dl_restrict v, dl_natural l, dl
   return out;
 }
 
-dl_point2 *select_catmullrom_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
+dl_point2 *dl_select_catmullrom_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
   dl_natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   dl_real target, t, t2, t3;
   dl_point2 v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
@@ -2690,7 +2690,7 @@ dl_point2 *select_catmullrom_point2(const dl_point2 *dl_restrict v, dl_natural l
 
 
 
-dl_point3 *interpolate_point3(const selector_function_point3 select, const dl_point3 *dl_restrict values, dl_natural length, dl_real percent, dl_point3 *dl_restrict out) {
+dl_point3 *dl_interpolate_point3(const dl_selector_function_point3 select, const dl_point3 *dl_restrict values, dl_natural length, dl_real percent, dl_point3 *dl_restrict out) {
   if (dl_safety(select == NULL || values == NULL || length == 0))
     return NULL;
   if (dl_unlikely(length == 1)) {
@@ -2702,7 +2702,7 @@ dl_point3 *interpolate_point3(const selector_function_point3 select, const dl_po
   return select(values, length, percent, out);
 }
 
-dl_point3 *select_linear_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out) {
+dl_point3 *dl_select_linear_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out) {
   dl_natural max_idx, idx, next_idx;
   dl_real scaled_p;
   
@@ -2716,10 +2716,10 @@ dl_point3 *select_linear_point3(const dl_point3 *dl_restrict v, dl_natural l, dl
     return out;
   }
 
-  return lerp_point3(&v[idx], &v[next_idx], (scaled_p - (dl_real)idx), out);
+  return dl_lerp_point3(&v[idx], &v[next_idx], (scaled_p - (dl_real)idx), out);
 }
 
-dl_point3 *select_bezier_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out) {
+dl_point3 *dl_select_bezier_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out) {
   dl_natural max_idx, idx;
   dl_real target;
   dl_point3 temp[2], compute_v[DL_BEZIER_DEGREE + 1];
@@ -2743,7 +2743,7 @@ dl_point3 *select_bezier_point3(const dl_point3 *dl_restrict v, dl_natural l, dl
   return out;
 }
 
-dl_point3 *select_catmullrom_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out) {
+dl_point3 *dl_select_catmullrom_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out) {
   dl_natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   dl_real target, t, t2, t3;
   dl_point3 v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
@@ -2780,7 +2780,7 @@ dl_point3 *select_catmullrom_point3(const dl_point3 *dl_restrict v, dl_natural l
 
 
 
-dl_api dl_integer *lerp_integer(dl_integer a, dl_integer b, dl_real p, dl_integer *out) {
+dl_api dl_integer *dl_lerp_integer(dl_integer a, dl_integer b, dl_real p, dl_integer *out) {
   if (dl_safety(out == NULL))
     return NULL;
   
@@ -2791,7 +2791,7 @@ dl_api dl_integer *lerp_integer(dl_integer a, dl_integer b, dl_real p, dl_intege
   return out;
 }
 
-dl_api dl_real *lerp_real(dl_real a, dl_real b, dl_real p, dl_real *out) {
+dl_api dl_real *dl_lerp_real(dl_real a, dl_real b, dl_real p, dl_real *out) {
   if (dl_safety(out == NULL))
     return NULL;
 
@@ -2802,19 +2802,19 @@ dl_api dl_real *lerp_real(dl_real a, dl_real b, dl_real p, dl_real *out) {
   return out;
 }
 
-dl_api dl_point2 *lerp_point2(const dl_point2 *dl_restrict a, const dl_point2 *dl_restrict b, dl_real p, dl_point2 *dl_restrict out) {
+dl_api dl_point2 *dl_lerp_point2(const dl_point2 *dl_restrict a, const dl_point2 *dl_restrict b, dl_real p, dl_point2 *dl_restrict out) {
   return dl_point2_add(dl_point2_mul_scalar(dl_point2_sub(b, a, out), p, out), a, out);
 }
 
-dl_api dl_point3 *lerp_point3(const dl_point3 *dl_restrict a, const dl_point3 *dl_restrict b, dl_real p, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_lerp_point3(const dl_point3 *dl_restrict a, const dl_point3 *dl_restrict b, dl_real p, dl_point3 *dl_restrict out) {
   return dl_point3_add(dl_point3_mul_scalar(dl_point3_sub(b, a, out), p, out), a, out);
 }
 
-dl_api dl_vec2 *lerp_vec2(const dl_vec2 *dl_restrict a, const dl_vec2 *dl_restrict b, dl_real p, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_lerp_vec2(const dl_vec2 *dl_restrict a, const dl_vec2 *dl_restrict b, dl_real p, dl_vec2 *dl_restrict out) {
   return dl_vec2_add(dl_vec2_mul_scalar(dl_vec2_sub(b, a, out), p, out), a, out);
 }
 
-dl_api dl_vec3 *lerp_vec3(const dl_vec3 *dl_restrict a, const dl_vec3 *dl_restrict b, dl_real p, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_lerp_vec3(const dl_vec3 *dl_restrict a, const dl_vec3 *dl_restrict b, dl_real p, dl_vec3 *dl_restrict out) {
   return dl_vec3_add(dl_vec3_mul_scalar(dl_vec3_sub(b, a, out), p, out), a, out);
 }
 
