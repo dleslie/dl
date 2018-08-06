@@ -81,7 +81,7 @@ void _print_collection(dl_collection *c1) {
 
 dl_bool _confirm_properties(dl_collection *c, const char *type_name) {
   dl_iterator index = dl_collection_begin(c);
-  dl_iterator last = make_invalid_dl_iterator(c);
+  dl_iterator last = dl_make_invalid_dl_iterator(c);
   dl_iterator next_index, next, prev;
   dl_any item, next_item, last_item;
 

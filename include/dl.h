@@ -970,7 +970,7 @@ extern "C" {
   struct dl_collection_dispatch_functions {
     dl_integer (*_dl_iterator_compare)(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right);
     dl_bool (*_dl_iterator_is_valid)(const dl_collection *dl_restrict col, dl_iterator index);
-    dl_iterator (*_make_invalid_dl_iterator)(const dl_collection *dl_restrict col);
+    dl_iterator (*_dl_make_invalid_dl_iterator)(const dl_collection *dl_restrict col);
 
     dl_any (*_collection_push_start)(dl_collection *dl_restrict col, dl_iterator *iter);
     dl_bool (*_collection_is_empty)(const dl_collection *dl_restrict col);
@@ -998,7 +998,7 @@ extern "C" {
   dl_api dl_integer dl_iterator_compare(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right);
   dl_api dl_bool dl_iterator_equal(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right);
   dl_api dl_bool dl_iterator_is_valid(const dl_collection *dl_restrict col, dl_iterator index);
-  dl_api dl_iterator make_invalid_dl_iterator(const dl_collection *dl_restrict col);
+  dl_api dl_iterator dl_make_invalid_dl_iterator(const dl_collection *dl_restrict col);
 
   dl_api dl_collection *dl_init_collection(dl_collection *dl_restrict col, dl_collection_type type, dl_storage_type storage, dl_comparator *dl_restrict compare, dl_handler *dl_restrict destructor, dl_natural element_size);
   dl_api dl_collection *dl_init_collection_custom(dl_collection *dl_restrict col, dl_collection_settings settings, dl_natural element_size);
@@ -3933,8 +3933,8 @@ dl_api dl_bool dl_iterator_is_valid(const dl_collection *dl_restrict col, const 
   return col->settings.functions->_dl_iterator_is_valid(col, index);
 }
 
-dl_api dl_iterator make_invalid_dl_iterator(const dl_collection *dl_restrict col) {
-  return col->settings.functions->_make_invalid_dl_iterator(col);
+dl_api dl_iterator dl_make_invalid_dl_iterator(const dl_collection *dl_restrict col) {
+  return col->settings.functions->_dl_make_invalid_dl_iterator(col);
 }
 
 
@@ -4142,12 +4142,12 @@ dl_api dl_iterator dl_collection_index(dl_collection *dl_restrict col, dl_natura
 
 dl_api const dl_any dl_collection_next(const dl_collection *dl_restrict col, dl_iterator *iter) {
   if (dl_safety(col == NULL || iter == NULL)) {
-    *iter = make_invalid_dl_iterator(col);
+    *iter = dl_make_invalid_dl_iterator(col);
     return NULL;
   }
 
   if (!dl_iterator_is_valid(col, *iter)) {
-    *iter = make_invalid_dl_iterator(col);
+    *iter = dl_make_invalid_dl_iterator(col);
     return NULL;
   }
 
@@ -4174,14 +4174,14 @@ dl_api dl_integer dl_collection_count(const dl_collection *dl_restrict col) {
 
 dl_api dl_iterator dl_collection_begin(const dl_collection *dl_restrict col) {
   if (dl_safety(col == NULL))
-    return make_invalid_dl_iterator(col);
+    return dl_make_invalid_dl_iterator(col);
 
   return col->settings.functions->_collection_begin(col);
 }
 
 dl_api dl_iterator dl_collection_end(const dl_collection *dl_restrict col) {
   if (dl_safety(col == NULL))
-    return make_invalid_dl_iterator(col);
+    return dl_make_invalid_dl_iterator(col);
 
   return col->settings.functions->_collection_end(col);
 }
@@ -4384,7 +4384,7 @@ dl_api dl_iterator dl_collection_index_of(const dl_collection *dl_restrict col, 
   _collection_sorted_list_predicate_data data;
   dl_filter predicate;
   
-  bad = make_invalid_dl_iterator(col);
+  bad = dl_make_invalid_dl_iterator(col);
 
   if (dl_safety(col == NULL))
     return bad;
@@ -4865,13 +4865,13 @@ dl_api dl_bool _linked_list_dl_iterator_is_valid(const dl_collection *dl_restric
   return index.dl_linked_list.node != NULL;
 }
 
-dl_api dl_iterator _vector_make_invalid_dl_iterator(const dl_collection *dl_restrict col) {
+dl_api dl_iterator _vector_dl_make_invalid_dl_iterator(const dl_collection *dl_restrict col) {
   dl_iterator bad;
   bad.dl_vector.index = DL_NATURAL_MAX;
   return bad;
 }
 
-dl_api dl_iterator _linked_list_make_invalid_dl_iterator(const dl_collection *dl_restrict col) {
+dl_api dl_iterator _linked_list_dl_make_invalid_dl_iterator(const dl_collection *dl_restrict col) {
   dl_iterator bad;
   bad.dl_linked_list.node = NULL;
 
@@ -5122,7 +5122,7 @@ dl_api void _vector_collection_prev(const dl_collection *dl_restrict col, dl_ite
   else if (iter->dl_vector.index > col->data.dl_vector.index[0])
     iter->dl_vector.index--;
   else
-    *iter = make_invalid_dl_iterator(col);
+    *iter = dl_make_invalid_dl_iterator(col);
 }
 
 dl_api void _linked_list_collection_prev(const dl_collection *dl_restrict col, dl_iterator *iter) {
@@ -5131,7 +5131,7 @@ dl_api void _linked_list_collection_prev(const dl_collection *dl_restrict col, d
   else if (iter->dl_linked_list.node != col->data.dl_linked_list.container.first)
     iter->dl_linked_list.node = iter->dl_linked_list.node->previous;
   else
-    *iter = make_invalid_dl_iterator(col);
+    *iter = dl_make_invalid_dl_iterator(col);
 }
 
 dl_api dl_integer _vector_collection_count(const dl_collection *dl_restrict col) {
@@ -5321,7 +5321,7 @@ dl_bool _linked_list_collection_insert(dl_collection *dl_restrict col, dl_iterat
 struct dl_collection_dispatch_functions default_vector_dl_collection_dispatch_functions = {
   (dl_integer (*)(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right))_vector_dl_iterator_compare,
   (dl_bool (*)(const dl_collection *dl_restrict col, dl_iterator index))_vector_dl_iterator_is_valid,
-  (dl_iterator (*)(const dl_collection *dl_restrict col))_vector_make_invalid_dl_iterator,
+  (dl_iterator (*)(const dl_collection *dl_restrict col))_vector_dl_make_invalid_dl_iterator,
   (dl_any (*)(dl_collection *dl_restrict col, dl_iterator *iter))_vector_collection_push_start,
   (dl_bool (*)(const dl_collection *dl_restrict col))_vector_collection_is_empty,
   (dl_any (*)(const dl_collection *dl_restrict col, dl_any out))_vector_collection_pop,
@@ -5348,7 +5348,7 @@ struct dl_collection_dispatch_functions default_vector_dl_collection_dispatch_fu
 struct dl_collection_dispatch_functions default_linked_list_dl_collection_dispatch_functions = {
   (dl_integer (*)(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right))_linked_list_dl_iterator_compare,
   (dl_bool (*)(const dl_collection *dl_restrict col, dl_iterator index))_linked_list_dl_iterator_is_valid,
-  (dl_iterator (*)(const dl_collection *dl_restrict col))_linked_list_make_invalid_dl_iterator,
+  (dl_iterator (*)(const dl_collection *dl_restrict col))_linked_list_dl_make_invalid_dl_iterator,
   (dl_any (*)(dl_collection *dl_restrict col, dl_iterator *iter))_linked_list_collection_push_start,
   (dl_bool (*)(const dl_collection *dl_restrict col))_linked_list_collection_is_empty,
   (dl_any (*)(const dl_collection *dl_restrict col, dl_any out))_linked_list_collection_pop,
