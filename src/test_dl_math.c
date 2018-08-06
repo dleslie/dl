@@ -2088,7 +2088,7 @@ dl_bool test_init_mat4() {
       dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
-  init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
+  dl_init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
@@ -2121,10 +2121,10 @@ dl_bool test_mat4_add() {
       dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
-  init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
-  init_mat4_cols(&mat[b], &col[d], &col[c], &col[b], &col[a]);
+  dl_init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
+  dl_init_mat4_cols(&mat[b], &col[d], &col[c], &col[b], &col[a]);
 
-  mat4_add(&mat[a], &mat[b], &mat[b]);
+  dl_mat4_add(&mat[a], &mat[b], &mat[b]);
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
@@ -2157,10 +2157,10 @@ dl_bool test_mat4_sub() {
       dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
-  init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
-  init_mat4_cols(&mat[b], &col[d], &col[c], &col[b], &col[a]);
+  dl_init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
+  dl_init_mat4_cols(&mat[b], &col[d], &col[c], &col[b], &col[a]);
 
-  mat4_sub(&mat[a], &mat[b], &mat[b]);
+  dl_mat4_sub(&mat[a], &mat[b], &mat[b]);
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
@@ -2193,10 +2193,10 @@ dl_bool test_mat4_mul() {
       dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
-  init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
-  init_mat4_cols(&mat[b], &col[d], &col[c], &col[b], &col[a]);
+  dl_init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
+  dl_init_mat4_cols(&mat[b], &col[d], &col[c], &col[b], &col[a]);
 
-  mat4_mul(&mat[a], &mat[b], &mat[b]);
+  dl_mat4_mul(&mat[a], &mat[b], &mat[b]);
 
   expected = col[a].x * col[d].x + col[b].x * col[d].y + col[c].x * col[d].z + col[d].x * col[d].w;
   found = mat[b].ary[0][0];
@@ -2310,9 +2310,9 @@ dl_bool test_mat4_mul() {
     "Expected %f to be %f", expected, found))
     return false;
 
-  mat4_mul(&mat[a], &mat4_identity, &mat[b]);
+  dl_mat4_mul(&mat[a], &dl_mat4_identity, &mat[b]);
 
-  if (!dl_check(mat4_approximately_equal(&mat[a], &mat[b], DL_EPSILON),
+  if (!dl_check(dl_mat4_approximately_equal(&mat[a], &mat[b], DL_EPSILON),
     "Expected identity to change nothing"))
     return false;
 
@@ -2335,14 +2335,14 @@ dl_bool test_mat4_mul_vec4() {
       dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
-  mat4_mul_vec4(&mat4_identity, &vec[0], &vec[1]);
+  dl_mat4_mul_vec4(&dl_mat4_identity, &vec[0], &vec[1]);
 
   if (!dl_check(dl_vec4_approximately_equal(&vec[0], &vec[1], DL_EPSILON),
     "Expected vector/identity multiplication to work"))
     return false;
 
-  init_mat4_cols(&mat, &vec[a], &vec[b], &vec[c], &vec[d]);
-  mat4_mul_vec4(&mat, &vec[0], &vec[1]);
+  dl_init_mat4_cols(&mat, &vec[a], &vec[b], &vec[c], &vec[d]);
+  dl_mat4_mul_vec4(&mat, &vec[0], &vec[1]);
 
   expected = vec[a].x * vec[0].x + vec[b].x * vec[0].y + vec[c].x * vec[0].z + vec[d].x * vec[0].w;
   found = vec[1].x;
@@ -2393,14 +2393,14 @@ dl_bool test_mat4_mul_vec3() {
     dl_random_real_range(&r, MIN_REAL, MAX_REAL),
     dl_random_real_range(&r, MIN_REAL, MAX_REAL));
 
-  mat4_mul_vec3(&mat4_identity, &vec, &vec_out);
+  dl_mat4_mul_vec3(&dl_mat4_identity, &vec, &vec_out);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &vec_out, DL_EPSILON),
     "Expected vector/identity multiplication to work"))
     return false;
 
-  init_mat4_cols(&mat, &mat_vec[0], &mat_vec[1], &mat_vec[2], &mat_vec[3]);
-  mat4_mul_vec3(&mat, &vec, &vec_out);
+  dl_init_mat4_cols(&mat, &mat_vec[0], &mat_vec[1], &mat_vec[2], &mat_vec[3]);
+  dl_mat4_mul_vec3(&mat, &vec, &vec_out);
 
   expected = mat.ary[0][0] * vec.x + mat.ary[1][0] * vec.y + mat.ary[2][0] * vec.z + mat.ary[3][0] * vec.w;
   found = vec_out.x;
@@ -2448,14 +2448,14 @@ dl_bool test_mat4_mul_point3() {
     dl_random_real_range(&r, MIN_REAL, MAX_REAL),
     dl_random_real_range(&r, MIN_REAL, MAX_REAL));
 
-  mat4_mul_point3(&mat4_identity, &point, &point_out);
+  dl_mat4_mul_point3(&dl_mat4_identity, &point, &point_out);
 
   if (!dl_check(dl_point3_approximately_equal(&point, &point_out, DL_EPSILON),
     "Expected point/identity multiplication to work"))
     return false;
 
-  init_mat4_cols(&mat, &mat_vec[0], &mat_vec[1], &mat_vec[2], &mat_vec[3]);
-  mat4_mul_point3(&mat, &point, &point_out);
+  dl_init_mat4_cols(&mat, &mat_vec[0], &mat_vec[1], &mat_vec[2], &mat_vec[3]);
+  dl_mat4_mul_point3(&mat, &point, &point_out);
 
   expected = mat.ary[0][0] * point.x + mat.ary[1][0] * point.y + mat.ary[2][0] * point.z + mat.ary[3][0] * point.w;
   found = point_out.x;
@@ -2497,9 +2497,9 @@ dl_bool test_mat4_transpose() {
       dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
-  init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
+  dl_init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
 
-  mat4_transpose(&mat, &mat);
+  dl_mat4_transpose(&mat, &mat);
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
@@ -2533,9 +2533,9 @@ dl_bool test_mat4_mul_scalar() {
       dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
-  init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
+  dl_init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
 
-  mat4_mul_scalar(&mat, scalar, &mat);
+  dl_mat4_mul_scalar(&mat, scalar, &mat);
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
@@ -2569,9 +2569,9 @@ dl_bool test_mat4_div_scalar() {
       dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
-  init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
+  dl_init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
 
-  mat4_div_scalar(&mat, scalar, &mat);
+  dl_mat4_div_scalar(&mat, scalar, &mat);
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
@@ -2605,9 +2605,9 @@ dl_bool test_mat4_add_scalar() {
       dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
-  init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
+  dl_init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
 
-  mat4_add_scalar(&mat, scalar, &mat);
+  dl_mat4_add_scalar(&mat, scalar, &mat);
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
@@ -2641,9 +2641,9 @@ dl_bool test_mat4_sub_scalar() {
       dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
-  init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
+  dl_init_mat4_cols(&mat, &col[a], &col[b], &col[c], &col[d]);
 
-  mat4_sub_scalar(&mat, scalar, &mat);
+  dl_mat4_sub_scalar(&mat, scalar, &mat);
 
   for (col_idx = 0; col_idx < 4; ++col_idx) {
     for (row_idx = 0; row_idx < 4; ++row_idx) {
@@ -2674,8 +2674,8 @@ dl_bool test_mat4_translate() {
   dl_init_vec3(&vec[0], a, b, c);
   dl_init_point3(&point[0], a, b, c);
 
-  init_mat4_translate(&mat, a, b, c);
-  mat4_mul_point3(&mat, &point[0], &point[1]);
+  dl_init_mat4_translate(&mat, a, b, c);
+  dl_mat4_mul_point3(&mat, &point[0], &point[1]);
 
   if (!dl_check(dl_approximately_equal(point[1].x, a + a, DL_EPSILON) &&
     dl_approximately_equal(point[1].y, b + b, DL_EPSILON) &&
@@ -2684,7 +2684,7 @@ dl_bool test_mat4_translate() {
     point[1].x, point[1].y, point[1].z, a + a, b + b, c + c))
     return false;
 
-  mat4_mul_vec3(&mat, &vec[0], &vec[1]);
+  dl_mat4_mul_vec3(&mat, &vec[0], &vec[1]);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec[0], &vec[1], DL_EPSILON),
     "Expected no change to vector"))
@@ -2708,33 +2708,33 @@ dl_bool test_mat4_rotate() {
 
   dl_init_vec3(&vec[0], a, b, c);
 
-  init_mat4_rotate(&mat[0], &dl_vec3_right, angle);
-  init_mat4_rotate_x(&mat[1], angle);
+  dl_init_mat4_rotate(&mat[0], &dl_vec3_right, angle);
+  dl_init_mat4_rotate_x(&mat[1], angle);
 
-  mat4_mul_vec3(&mat[0], &vec[0], &vec[1]);
-  mat4_mul_vec3(&mat[1], &vec[0], &vec[2]);
-
-  if (!dl_check(dl_vec3_approximately_equal(&vec[1], &vec[2], DL_EPSILON),
-    "Expected (%f, %f, %f) to be (%f, %f, %f)",
-    vec[1].x, vec[1].y, vec[1].z, vec[2].x, vec[2].y, vec[2].z))
-    return false;
-
-  init_mat4_rotate(&mat[0], &dl_vec3_up, angle);
-  init_mat4_rotate_y(&mat[1], angle);
-
-  mat4_mul_vec3(&mat[0], &vec[0], &vec[1]);
-  mat4_mul_vec3(&mat[1], &vec[0], &vec[2]);
+  dl_mat4_mul_vec3(&mat[0], &vec[0], &vec[1]);
+  dl_mat4_mul_vec3(&mat[1], &vec[0], &vec[2]);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec[1], &vec[2], DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
     vec[1].x, vec[1].y, vec[1].z, vec[2].x, vec[2].y, vec[2].z))
     return false;
 
-  init_mat4_rotate(&mat[0], &dl_vec3_forward, angle);
-  init_mat4_rotate_z(&mat[1], angle);
+  dl_init_mat4_rotate(&mat[0], &dl_vec3_up, angle);
+  dl_init_mat4_rotate_y(&mat[1], angle);
 
-  mat4_mul_vec3(&mat[0], &vec[0], &vec[1]);
-  mat4_mul_vec3(&mat[1], &vec[0], &vec[2]);
+  dl_mat4_mul_vec3(&mat[0], &vec[0], &vec[1]);
+  dl_mat4_mul_vec3(&mat[1], &vec[0], &vec[2]);
+
+  if (!dl_check(dl_vec3_approximately_equal(&vec[1], &vec[2], DL_EPSILON),
+    "Expected (%f, %f, %f) to be (%f, %f, %f)",
+    vec[1].x, vec[1].y, vec[1].z, vec[2].x, vec[2].y, vec[2].z))
+    return false;
+
+  dl_init_mat4_rotate(&mat[0], &dl_vec3_forward, angle);
+  dl_init_mat4_rotate_z(&mat[1], angle);
+
+  dl_mat4_mul_vec3(&mat[0], &vec[0], &vec[1]);
+  dl_mat4_mul_vec3(&mat[1], &vec[0], &vec[2]);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec[1], &vec[2], DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2766,8 +2766,8 @@ dl_bool test_mat4_rotate_x() {
   
   angle = DL_PI * 0.5f;
 
-  init_mat4_rotate_x(&mat, angle);
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_init_mat4_rotate_x(&mat, angle);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected[0], DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2775,7 +2775,7 @@ dl_bool test_mat4_rotate_x() {
     return false;
 
   vec = expected[0];
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected[1], DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2783,7 +2783,7 @@ dl_bool test_mat4_rotate_x() {
     return false;
 
   vec = expected[1];
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected[2], DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2791,7 +2791,7 @@ dl_bool test_mat4_rotate_x() {
     return false;
 
   vec = expected[2];
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected[3], DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2823,8 +2823,8 @@ dl_bool test_mat4_rotate_y() {
 
   angle = DL_PI * 0.5f;
 
-  init_mat4_rotate_y(&mat, angle);
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_init_mat4_rotate_y(&mat, angle);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected[0], DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2832,7 +2832,7 @@ dl_bool test_mat4_rotate_y() {
     return false;
 
   vec = expected[0];
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected[1], DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2840,7 +2840,7 @@ dl_bool test_mat4_rotate_y() {
     return false;
 
   vec = expected[1];
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected[2], DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2848,7 +2848,7 @@ dl_bool test_mat4_rotate_y() {
     return false;
 
   vec = expected[2];
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected[3], DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2865,8 +2865,8 @@ dl_bool test_mat4_rotate_z() {
 
   dl_real angle = DL_PI * 0.5f;
 
-  init_mat4_rotate_z(&mat, angle);
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_init_mat4_rotate_z(&mat, angle);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected, DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2875,7 +2875,7 @@ dl_bool test_mat4_rotate_z() {
 
   vec = dl_vec3_left;
   expected = dl_vec3_down;
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected, DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2884,7 +2884,7 @@ dl_bool test_mat4_rotate_z() {
 
   vec = dl_vec3_down;
   expected = dl_vec3_right;
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected, DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2893,7 +2893,7 @@ dl_bool test_mat4_rotate_z() {
 
   vec = dl_vec3_right;
   expected = dl_vec3_up;
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_vec3_approximately_equal(&vec, &expected, DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2912,9 +2912,9 @@ dl_bool test_mat4_scale() {
 
   dl_point3_mul_scalar(&point, 2, &expected_point);
 
-  init_mat4_scale(&mat, 2, 2, 2);
+  dl_init_mat4_scale(&mat, 2, 2, 2);
 
-  mat4_mul_point3(&mat, &point, &point);
+  dl_mat4_mul_point3(&mat, &point, &point);
 
   if (!dl_check(dl_point3_approximately_equal(&point, &expected_point, DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2923,7 +2923,7 @@ dl_bool test_mat4_scale() {
 
   dl_vec3_mul_scalar(&vec, 2, &expected_vec);
 
-  mat4_mul_vec3(&mat, &vec, &vec);
+  dl_mat4_mul_vec3(&mat, &vec, &vec);
 
   if (!dl_check(dl_point3_approximately_equal(&vec, &expected_vec, DL_EPSILON),
     "Expected (%f, %f, %f) to be (%f, %f, %f)",
@@ -2948,10 +2948,10 @@ dl_bool test_mat4_approximately_equal() {
       dl_random_real_range(&r, MIN_REAL, MAX_REAL));
   }
 
-  init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
-  init_mat4_cols(&mat[b], &col[a], &col[b], &col[c], &col[d]);
+  dl_init_mat4_cols(&mat[a], &col[a], &col[b], &col[c], &col[d]);
+  dl_init_mat4_cols(&mat[b], &col[a], &col[b], &col[c], &col[d]);
 
-  return dl_check(mat4_approximately_equal(&mat[a], &mat[b], DL_EPSILON),
+  return dl_check(dl_mat4_approximately_equal(&mat[a], &mat[b], DL_EPSILON),
     "Expected matrices to be equal");
 }
 

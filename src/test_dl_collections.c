@@ -336,7 +336,7 @@ dl_bool test_init_collection() {
   dl_handler type_destructor;
   dl_natural type_idx;
   storage_type storage;
-  vector v;
+  dl_vector v;
   
   for (type_idx = 0; type_idx < _c_type_count; ++type_idx) {
     type_name = _c_types[type_idx].name;
@@ -372,10 +372,10 @@ dl_bool test_init_collection() {
 
       destroy_collection(&c);
 
-      if (!dl_check(init_vector(&v, sizeof(dl_integer), 0), "Failed to initialize vector."))
+      if (!dl_check(dl_init_vector(&v, sizeof(dl_integer), 0), "Failed to initialize dl_vector."))
         return false;
 
-      destroy_vector(&v, NULL);
+      dl_destroy_vector(&v, NULL);
     }
   }
 
@@ -1784,76 +1784,76 @@ dl_bool test_collection_insert() {
  **************************************/
 
 dl_bool test_init_destroy_vector() {
-  vector v;
+  dl_vector v;
 
-  if (!dl_check(init_vector(&v, sizeof(dl_real), 10),
-    "Failed to initialize vector."))
+  if (!dl_check(dl_init_vector(&v, sizeof(dl_real), 10),
+    "Failed to initialize dl_vector."))
     return false;
   if (!dl_check(v.settings.element_size == sizeof(dl_real),
     "Expected element size to be %lui.", sizeof(dl_real)))
     return false;
-  if (!dl_check(vector_capacity(&v) >= 10,
-    "Expected vector to have capacity of at least 10."))
+  if (!dl_check(dl_vector_capacity(&v) >= 10,
+    "Expected dl_vector to have capacity of at least 10."))
     return false;
 
-  destroy_vector(&v, NULL);
+  dl_destroy_vector(&v, NULL);
 
   return true;
 }
 
 dl_bool test_init_vector_array() {
-  vector v;
+  dl_vector v;
   char data[] = { 'v', 'e', 'c', 't', 'o', 'r' };
 
-  if (!dl_check(init_vector_array(&v, (dl_byte *)&data, sizeof(char), 6),
-    "Failed to initialize vector."))
+  if (!dl_check(dl_init_vector_array(&v, (dl_byte *)&data, sizeof(char), 6),
+    "Failed to initialize dl_vector."))
     return false;
   if (!dl_check(v.settings.element_size == sizeof(char),
     "Expected element size to be %lui.", sizeof(char)))
     return false;
-  if (!dl_check(vector_capacity(&v) == 6,
-    "Expected vector to have capacity of 6."))
+  if (!dl_check(dl_vector_capacity(&v) == 6,
+    "Expected dl_vector to have capacity of 6."))
     return false;
 
   return true;
 }
 
 dl_bool test_vector_get() {
-  vector v1, v2;
+  dl_vector v1, v2;
   char data[] = { '1', '2', '3', '4', '5', '6' };
   dl_random_state r;
   char out;
   dl_natural idx;
   
   dl_init_random_time(&r);  
-  init_vector_array(&v1, (dl_any)&data, sizeof(char), 6);
+  dl_init_vector_array(&v1, (dl_any)&data, sizeof(char), 6);
 
   out = 'F';
   idx = (dl_natural)dl_random_integer_range(&r, 0, 5);
-  if (!dl_check(vector_get(&v1, idx, (dl_any)&out) && out == data[idx],
+  if (!dl_check(dl_vector_get(&v1, idx, (dl_any)&out) && out == data[idx],
     "Expected %c to be %c", out, data[idx]))
     return false;
 
-  if (!dl_check(!vector_get(&v1, 6 + idx, (dl_any)&out),
+  if (!dl_check(!dl_vector_get(&v1, 6 + idx, (dl_any)&out),
     "Expected get to fail."))
     return false;
 
-  init_vector(&v2, sizeof(char), 6);
+  dl_init_vector(&v2, sizeof(char), 6);
 
-  vector_set(&v2, idx, &data[idx]);
-  if (!dl_check(vector_get(&v2, idx, (dl_any)&out) && out == data[idx],
+  dl_vector_set(&v2, idx, &data[idx]);
+  if (!dl_check(dl_vector_get(&v2, idx, (dl_any)&out) && out == data[idx],
     "Expected %c to be %c", out, data[idx])) {
-    destroy_vector(&v2, NULL);
+    dl_destroy_vector(&v2, NULL);
     return false;
   }
 
-  destroy_vector(&v2, NULL);
+  dl_destroy_vector(&v2, NULL);
 
   return true;
 }
 
 dl_bool test_vector_set() {
-  vector v1, v2;
+  dl_vector v1, v2;
   char data[] = { 'A', 'B', 'C', 'D', 'E', 'F' };
   char set_data[] = { '1', '2', '3', '4', '5', '6' };
   dl_natural idx;
@@ -1861,77 +1861,77 @@ dl_bool test_vector_set() {
   char out;
   
   dl_init_random_time(&r);
-  init_vector_array(&v1, (dl_any)&data, sizeof(char), 6);
+  dl_init_vector_array(&v1, (dl_any)&data, sizeof(char), 6);
 
   idx = (dl_natural)dl_random_integer_range(&r, 0, 5);
   out = 'F';
-  if (!dl_check(vector_set(&v1, idx, (dl_any)&set_data[idx]) &&
-    vector_get(&v1, idx, (dl_any)&out) &&
+  if (!dl_check(dl_vector_set(&v1, idx, (dl_any)&set_data[idx]) &&
+    dl_vector_get(&v1, idx, (dl_any)&out) &&
     out == set_data[idx],
     "Expected %c to be %c", out, data[idx]))
     return false;
 
-  if (!dl_check(!vector_set(&v1, 6 + idx, (dl_any)&set_data[idx]),
+  if (!dl_check(!dl_vector_set(&v1, 6 + idx, (dl_any)&set_data[idx]),
     "Expected set to fail."))
     return false;
 
-  init_vector(&v2, sizeof(char), 6);
+  dl_init_vector(&v2, sizeof(char), 6);
 
-  if (!dl_check(vector_set(&v2, idx, (dl_any)&set_data[idx]) &&
-    vector_get(&v2, idx, (dl_any)&out) &&
+  if (!dl_check(dl_vector_set(&v2, idx, (dl_any)&set_data[idx]) &&
+    dl_vector_get(&v2, idx, (dl_any)&out) &&
     out == set_data[idx],
     "Expected %c to be %c", out, data[idx])) {
-    destroy_vector(&v2, NULL);
+    dl_destroy_vector(&v2, NULL);
     return false;
   }
 
-  destroy_vector(&v2, NULL);
+  dl_destroy_vector(&v2, NULL);
 
   return true;
 }
 
 dl_bool test_vector_ref() {
-  vector v1, v2;
+  dl_vector v1, v2;
   char data[] = { '1', '2', '3', '4', '5', '6' };
   dl_any out;
   dl_random_state r;
   dl_natural idx;
   
   dl_init_random_time(&r);
-  init_vector_array(&v1, (dl_any)&data, sizeof(char), 6);
+  dl_init_vector_array(&v1, (dl_any)&data, sizeof(char), 6);
 
   out = NULL;
   idx = (dl_natural)dl_random_integer_range(&r, 0, 5);
-  if (!dl_check((out = vector_ref(&v1, idx)) && *(char *)out == data[idx],
+  if (!dl_check((out = dl_vector_ref(&v1, idx)) && *(char *)out == data[idx],
     "Expected %c to be %c", *(char *)out, data[idx]))
     return false;
 
-  init_vector(&v2, sizeof(char), 6);
+  dl_init_vector(&v2, sizeof(char), 6);
 
-  vector_set(&v2, idx, (dl_any)&data[idx]);
-  if (!dl_check((out = vector_ref(&v2, idx)) && *(char *)out == data[idx],
+  dl_vector_set(&v2, idx, (dl_any)&data[idx]);
+  if (!dl_check((out = dl_vector_ref(&v2, idx)) && *(char *)out == data[idx],
     "Expected %c to be %c", *(char *)out, data[idx]))
     return false;
 
-  destroy_vector(&v2, NULL);
+  dl_destroy_vector(&v2, NULL);
 
   return true;
 }
 
 dl_bool test_vector_copy() {
-  vector v1, v2, v3, v4, v5, v6;
+  dl_vector v1, v2, v3, v4, v5, v6;
   char data1[] = { 'v', 'e', 'c', 't', 'o', 'r' };
   char data2[] = { '1', '2', '3', '4', '5', '6' };
   char data3[] = { '1', '2', '3', '4', '5' };
   char data4[] = { '1', '2', '3', '4', '5', '6', '7' };
   char a, b;
-  vector_settings settings_5, settings_6;
+  dl_vector_settings settings_5, settings_6;
   dl_natural idx;
   
-  init_vector_array(&v1, (dl_any)&data1, sizeof(char), 6);
-  init_vector_array(&v2, (dl_any)&data2, sizeof(char), 6);
-  init_vector_array(&v3, (dl_any)&data3, sizeof(char), 5);
-  init_vector_array(&v4, (dl_any)&data4, sizeof(char), 7);
+  dl_init_vector_array(&v1, (dl_any)&data1, sizeof(char), 6);
+  dl_init_vector_array(&v2, (dl_any)&data2, sizeof(char), 6);
+  dl_init_vector_array(&v3, (dl_any)&data3, sizeof(char), 5);
+  dl_init_vector_array(&v4, (dl_any)&data4, sizeof(char), 7);
 
   settings_5 = default_vector_settings;
   settings_5.slice_length = 12;
@@ -1941,152 +1941,152 @@ dl_bool test_vector_copy() {
   settings_6.slice_length = 4;
   settings_6.element_size = sizeof(char);
 
-  init_vector_custom(&v5, settings_5, 24);
-  init_vector_custom(&v6, settings_6, 28);
+  dl_init_vector_custom(&v5, settings_5, 24);
+  dl_init_vector_custom(&v6, settings_6, 28);
 
-  if (!dl_check(vector_capacity(&v5) == 24,
-    "Expected capacity to be 24, was %i.", vector_capacity(&v5)))
-    goto vector_copy_fail;
+  if (!dl_check(dl_vector_capacity(&v5) == 24,
+    "Expected capacity to be 24, was %i.", dl_vector_capacity(&v5)))
+    goto dl_vector_copy_fail;
 
-  if (!dl_check(vector_capacity(&v6) == 28,
-    "Expected capacity to be 28, was %i.", vector_capacity(&v6)))
-    goto vector_copy_fail;
+  if (!dl_check(dl_vector_capacity(&v6) == 28,
+    "Expected capacity to be 28, was %i.", dl_vector_capacity(&v6)))
+    goto dl_vector_copy_fail;
 
-  if (!dl_check(vector_copy(&v2, 0, &v1),
+  if (!dl_check(dl_vector_copy(&v2, 0, &v1),
     "Expected copy to succeed."))
-    goto vector_copy_fail;
+    goto dl_vector_copy_fail;
 
   for (idx = 0; idx < 6; ++idx) {
-    vector_get(&v1, idx, (dl_any)&a);
-    vector_get(&v2, idx, (dl_any)&b);
+    dl_vector_get(&v1, idx, (dl_any)&a);
+    dl_vector_get(&v2, idx, (dl_any)&b);
 
     if (!dl_check(a == b,
       "Expected %c to be %c.", b, a))
-      goto vector_copy_fail;
+      goto dl_vector_copy_fail;
   }
 
-  if (!dl_check(!vector_copy(&v3, 0, &v1),
+  if (!dl_check(!dl_vector_copy(&v3, 0, &v1),
     "Expected copy to fail."))
-    goto vector_copy_fail;
+    goto dl_vector_copy_fail;
 
-  if (!dl_check(vector_copy(&v4, 0, &v1),
+  if (!dl_check(dl_vector_copy(&v4, 0, &v1),
     "Expected copy to succeed."))
-    goto vector_copy_fail;
+    goto dl_vector_copy_fail;
 
   for (idx = 0; idx < 6; ++idx) {
-    vector_get(&v1, idx, (dl_any)&a);
-    vector_get(&v4, idx, (dl_any)&b);
+    dl_vector_get(&v1, idx, (dl_any)&a);
+    dl_vector_get(&v4, idx, (dl_any)&b);
 
     if (!dl_check(a == b,
       "Expected %c to be %c.", b, a))
-      goto vector_copy_fail;
+      goto dl_vector_copy_fail;
   }
 
-  if (!dl_check(vector_copy(&v5, 0, &v1),
+  if (!dl_check(dl_vector_copy(&v5, 0, &v1),
     "Expected copy to succeed."))
-    goto vector_copy_fail;
+    goto dl_vector_copy_fail;
 
   for (idx = 0; idx < 6; ++idx) {
-    vector_get(&v1, idx, (dl_any)&a);
-    vector_get(&v5, idx, (dl_any)&b);
+    dl_vector_get(&v1, idx, (dl_any)&a);
+    dl_vector_get(&v5, idx, (dl_any)&b);
 
     if (!dl_check(a == b,
       "Expected %c to be %c.", b, a))
-      goto vector_copy_fail;
+      goto dl_vector_copy_fail;
   }
 
   for (idx = 0; idx < 24; ++idx) {
-    vector_set(&v5, idx, &data4[idx % 7]);
+    dl_vector_set(&v5, idx, &data4[idx % 7]);
   }
 
-  if (!dl_check(vector_resize(&v6, vector_capacity(&v5) + vector_capacity(&v6), NULL),
+  if (!dl_check(dl_vector_resize(&v6, dl_vector_capacity(&v5) + dl_vector_capacity(&v6), NULL),
     "Expected resize to work."))
-    goto vector_copy_fail;
+    goto dl_vector_copy_fail;
 
-  if (!dl_check(vector_copy(&v6, 24, &v5),
+  if (!dl_check(dl_vector_copy(&v6, 24, &v5),
     "Expected copy to succeed."))
-    goto vector_copy_fail;
+    goto dl_vector_copy_fail;
 
   for (idx = 0; idx < 14; ++idx) {
-    vector_get(&v5, idx, (dl_any)&a);
-    vector_get(&v6, idx + 24, (dl_any)&b);
+    dl_vector_get(&v5, idx, (dl_any)&a);
+    dl_vector_get(&v6, idx + 24, (dl_any)&b);
 
     if (!dl_check(a == b,
       "Expected %c to be %c at %lu.", b, a, idx + 24))
-      goto vector_copy_fail;
+      goto dl_vector_copy_fail;
   }
 
-  if (!dl_check(!vector_copy(&v1, 0, &v6),
+  if (!dl_check(!dl_vector_copy(&v1, 0, &v6),
     "Expected copy to fail."))
-    goto vector_copy_fail;
+    goto dl_vector_copy_fail;
 
-  if (!dl_check(vector_copy_array(&v5, 0, (dl_byte *)data1, 6),
+  if (!dl_check(dl_vector_copy_array(&v5, 0, (dl_byte *)data1, 6),
     "Expected copy to work."))
-    goto vector_copy_fail;
+    goto dl_vector_copy_fail;
 
   for (idx = 0; idx < 6; ++idx) {
-    vector_get(&v5, idx, (dl_any)&a);
+    dl_vector_get(&v5, idx, (dl_any)&a);
     b = data1[idx];
 
     if (!dl_check(a == b,
       "Expected %c to be %c at %lu.", a, b, idx))
-      goto vector_copy_fail;
+      goto dl_vector_copy_fail;
   }
 
-  destroy_vector(&v5, NULL);
-  destroy_vector(&v6, NULL);
+  dl_destroy_vector(&v5, NULL);
+  dl_destroy_vector(&v6, NULL);
   return true;
 
-vector_copy_fail:
-  destroy_vector(&v5, NULL);
-  destroy_vector(&v6, NULL);
+dl_vector_copy_fail:
+  dl_destroy_vector(&v5, NULL);
+  dl_destroy_vector(&v6, NULL);
   return false;
 }
 
 dl_bool test_vector_grow() {
-  vector v1, v2;
+  dl_vector v1, v2;
   dl_byte data[] = { 0x0 };
   dl_byte set_data[] = { 0x1, 0x2, 0x4, 0x8, 0x16, 0x32, 0x64 };
   dl_natural original_capacity, idx;
   dl_any value;
   
-  init_vector(&v1, sizeof(dl_byte), 32);
-  init_vector_array(&v2, (dl_byte *)&data, sizeof(dl_byte), 1);
+  dl_init_vector(&v1, sizeof(dl_byte), 32);
+  dl_init_vector_array(&v2, (dl_byte *)&data, sizeof(dl_byte), 1);
 
-  original_capacity = vector_capacity(&v1);
+  original_capacity = dl_vector_capacity(&v1);
 
   for (idx = 0; idx < original_capacity; ++idx)
-    vector_set(&v1, idx, &set_data[idx % 7]);
+    dl_vector_set(&v1, idx, &set_data[idx % 7]);
 
-  if (!dl_check(vector_grow(&v1) && vector_capacity(&v1) > original_capacity,
-    "Expected vector to grow."))
+  if (!dl_check(dl_vector_grow(&v1) && dl_vector_capacity(&v1) > original_capacity,
+    "Expected dl_vector to grow."))
     goto test_vector_grow_fail;
 
   for (idx = 0; idx < original_capacity; ++idx) {
-    value = vector_ref(&v1, idx);
+    value = dl_vector_ref(&v1, idx);
     if (!dl_check(*(dl_byte *)value == set_data[idx % 7],
       "Expected original values to remain."))
       goto test_vector_grow_fail;
   }
 
-  if (!dl_check(!vector_grow(&v2),
-    "Expected vector not to grow."))
+  if (!dl_check(!dl_vector_grow(&v2),
+    "Expected dl_vector not to grow."))
     goto test_vector_grow_fail;
 
-  destroy_vector(&v1, NULL);
+  dl_destroy_vector(&v1, NULL);
 
   return true;
 
 test_vector_grow_fail:
-  destroy_vector(&v1, NULL);
+  dl_destroy_vector(&v1, NULL);
   return false;
 }
 
 dl_bool test_vector_shrink() {
-  vector v1, v2;
+  dl_vector v1, v2;
   dl_byte data[] = { 0x0 };
   dl_byte set_data[] = { 0x1, 0x2, 0x4, 0x8, 0x16, 0x32, 0x64 };
-  vector_settings settings_1;
+  dl_vector_settings settings_1;
   dl_natural original_capacity, idx;
   dl_any value;
   
@@ -2094,93 +2094,93 @@ dl_bool test_vector_shrink() {
   settings_1.slice_length = 8;
   settings_1.element_size = sizeof(dl_byte);
 
-  init_vector_custom(&v1, settings_1, 32);
-  init_vector_array(&v2, (dl_byte *)&data, sizeof(dl_byte), 1);
+  dl_init_vector_custom(&v1, settings_1, 32);
+  dl_init_vector_array(&v2, (dl_byte *)&data, sizeof(dl_byte), 1);
 
-  original_capacity = vector_capacity(&v1);
+  original_capacity = dl_vector_capacity(&v1);
 
   for (idx = 0; idx < original_capacity; ++idx)
-    vector_set(&v1, idx, &set_data[idx % 7]);
+    dl_vector_set(&v1, idx, &set_data[idx % 7]);
 
-  if (!dl_check(vector_shrink(&v1, NULL) && vector_capacity(&v1) < original_capacity,
-    "Expected vector to shrink."))
+  if (!dl_check(dl_vector_shrink(&v1, NULL) && dl_vector_capacity(&v1) < original_capacity,
+    "Expected dl_vector to shrink."))
     goto test_vector_shrink_fail;
 
-  for (idx = 0; idx < vector_capacity(&v1); ++idx) {
-    value = vector_ref(&v1, idx);
+  for (idx = 0; idx < dl_vector_capacity(&v1); ++idx) {
+    value = dl_vector_ref(&v1, idx);
     if (!dl_check(*(dl_byte *)value == set_data[idx % 7],
       "Expected original values to remain."))
       goto test_vector_shrink_fail;
   }
 
-  if (!dl_check(!vector_shrink(&v2, NULL),
-    "Expected vector not to shrink."))
+  if (!dl_check(!dl_vector_shrink(&v2, NULL),
+    "Expected dl_vector not to shrink."))
     goto test_vector_shrink_fail;
 
-  destroy_vector(&v1, NULL);
+  dl_destroy_vector(&v1, NULL);
 
   return true;
 
 test_vector_shrink_fail:
-  destroy_vector(&v1, NULL);
+  dl_destroy_vector(&v1, NULL);
   return false;
 }
 
 dl_bool test_vector_resize() {
-  vector v1, v2;
+  dl_vector v1, v2;
   dl_byte item;
   dl_byte data[] = { 0x0 };
   dl_byte set_data[] = { 0x1, 0x2, 0x4, 0x8, 0x16, 0x32, 0x64 };
-  vector_settings settings;
+  dl_vector_settings settings;
   dl_natural original_capacity, new_capacity, idx;
   
-  init_vector_array(&v1, (dl_byte *)&data, sizeof(dl_byte), 1);
+  dl_init_vector_array(&v1, (dl_byte *)&data, sizeof(dl_byte), 1);
 
   settings = default_vector_settings;
   settings.slice_length = 12;
   settings.element_size = sizeof(dl_byte);
 
-  init_vector_custom(&v2, settings, 24);
+  dl_init_vector_custom(&v2, settings, 24);
 
-  original_capacity = vector_capacity(&v2);
+  original_capacity = dl_vector_capacity(&v2);
   for (idx = 0; idx < original_capacity; ++idx)
-    vector_set(&v2, idx, &set_data[idx % 7]);
+    dl_vector_set(&v2, idx, &set_data[idx % 7]);
 
-  if (!dl_check(!vector_resize(&v1, 2, NULL),
-    "Expected vector not to resize"))
+  if (!dl_check(!dl_vector_resize(&v1, 2, NULL),
+    "Expected dl_vector not to resize"))
     goto test_vector_resize_fail;
 
-  if (!dl_check(!vector_resize(&v2, 0, NULL),
-    "Expected vector not to resize"))
+  if (!dl_check(!dl_vector_resize(&v2, 0, NULL),
+    "Expected dl_vector not to resize"))
     goto test_vector_resize_fail;
 
-  if (!dl_check(vector_resize(&v2, 32, NULL) && vector_capacity(&v2) > original_capacity,
-    "Expected vector to resize"))
+  if (!dl_check(dl_vector_resize(&v2, 32, NULL) && dl_vector_capacity(&v2) > original_capacity,
+    "Expected dl_vector to resize"))
     goto test_vector_resize_fail;
 
   for (idx = 0; idx < original_capacity; ++idx) {
-    if (!dl_check(vector_get(&v2, idx, (dl_any)&item) && item == set_data[idx % 7],
-      "Expected vector data not to change."))
+    if (!dl_check(dl_vector_get(&v2, idx, (dl_any)&item) && item == set_data[idx % 7],
+      "Expected dl_vector data not to change."))
       goto test_vector_resize_fail;
   }
 
-  if (!dl_check(vector_resize(&v2, 8, NULL) && vector_capacity(&v2) < original_capacity,
-    "Expected vector to resize"))
+  if (!dl_check(dl_vector_resize(&v2, 8, NULL) && dl_vector_capacity(&v2) < original_capacity,
+    "Expected dl_vector to resize"))
     goto test_vector_resize_fail;
 
-  new_capacity = vector_capacity(&v2);
+  new_capacity = dl_vector_capacity(&v2);
   for (idx = 0; idx < new_capacity; ++idx) {
-    if (!dl_check(vector_get(&v2, idx, (dl_any)&item) && item == set_data[idx % 7],
-      "Expected vector data not to change."))
+    if (!dl_check(dl_vector_get(&v2, idx, (dl_any)&item) && item == set_data[idx % 7],
+      "Expected dl_vector data not to change."))
       goto test_vector_resize_fail;
   }
 
-  destroy_vector(&v2, NULL);
+  dl_destroy_vector(&v2, NULL);
 
   return true;
 
 test_vector_resize_fail:
-  destroy_vector(&v2, NULL);
+  dl_destroy_vector(&v2, NULL);
   return false;
 }
 
@@ -2231,10 +2231,10 @@ dl_bool test_init_linked_list() {
     "Expected linked list to initialize."))
     return false;
 
-  if (!dl_check(vector_capacity(&list.node_cache) == list.settings.cache_length,
+  if (!dl_check(dl_vector_capacity(&list.node_cache) == list.settings.cache_length,
     "Expected node cache to be %i in length, was %i.",
     list.settings.cache_length,
-    vector_capacity(&list.node_cache)))
+    dl_vector_capacity(&list.node_cache)))
     goto fail;
 
   if (!dl_check(list.free != NULL,
@@ -2256,9 +2256,9 @@ dl_bool test_init_linked_list() {
     ++count;
   }
 
-  if (!dl_check(count == vector_capacity(&list.node_cache),
+  if (!dl_check(count == dl_vector_capacity(&list.node_cache),
     "Expected list node cache to fill free list, filled %i/%i.",
-    count, vector_capacity(&list.node_cache)))
+    count, dl_vector_capacity(&list.node_cache)))
     goto fail;
 
   destroy_linked_list(&list, NULL);
@@ -2277,10 +2277,10 @@ dl_bool test_init_linked_list_fat() {
     "Expected linked list to initialize."))
     return false;
 
-  if (!dl_check(vector_capacity(&list.node_cache) == list.settings.cache_length,
+  if (!dl_check(dl_vector_capacity(&list.node_cache) == list.settings.cache_length,
     "Expected node cache to be %i in length, was %i.",
     list.settings.cache_length,
-    vector_capacity(&list.node_cache)))
+    dl_vector_capacity(&list.node_cache)))
     goto fail;
 
   if (!dl_check(list.free != NULL,
@@ -2302,9 +2302,9 @@ dl_bool test_init_linked_list_fat() {
     ++count;
   }
 
-  if (!dl_check(count == vector_capacity(&list.node_cache),
+  if (!dl_check(count == dl_vector_capacity(&list.node_cache),
     "Expected list node cache to fill free list, filled %i/%i.",
-    count, vector_capacity(&list.node_cache)))
+    count, dl_vector_capacity(&list.node_cache)))
     goto fail;
 
   destroy_linked_list(&list, NULL);
@@ -2436,7 +2436,7 @@ dl_bool test_linked_list_capacity() {
     "Expected linked list to initialize."))
     return false;
 
-  if (!dl_check(linked_list_capacity(&list) == vector_capacity(&list.node_cache),
+  if (!dl_check(linked_list_capacity(&list) == dl_vector_capacity(&list.node_cache),
     "Expected linked list capacity to be that of its node cache."))
     goto fail;
 

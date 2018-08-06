@@ -662,39 +662,39 @@ extern "C" {
     dl_vec4 cols[4];
   } dl_mat4;
   
-  extern const dl_mat4 mat4_identity;
+  extern const dl_mat4 dl_mat4_identity;
 
-  dl_api dl_mat4 *init_mat4(dl_mat4 * dl_restrict m, dl_real c0r0, dl_real c0r1, dl_real c0r2, dl_real c0r3, dl_real c1r0, dl_real c1r1, dl_real c1r2, dl_real c1r3, dl_real c2r0, dl_real c2r1, dl_real c2r2, dl_real c2r3, dl_real c3r0, dl_real c3r1, dl_real c3r2, dl_real c3r3);
+  dl_api dl_mat4 *dl_init_mat4(dl_mat4 * dl_restrict m, dl_real c0r0, dl_real c0r1, dl_real c0r2, dl_real c0r3, dl_real c1r0, dl_real c1r1, dl_real c1r2, dl_real c1r3, dl_real c2r0, dl_real c2r1, dl_real c2r2, dl_real c2r3, dl_real c3r0, dl_real c3r1, dl_real c3r2, dl_real c3r3);
 
-  dl_api dl_mat4 *init_mat4_cols(dl_mat4 * dl_restrict m, const dl_vec4 *dl_restrict column_a, const dl_vec4 *dl_restrict column_b, const dl_vec4 *dl_restrict column_c, const dl_vec4 *dl_restrict column_d);
+  dl_api dl_mat4 *dl_init_mat4_cols(dl_mat4 * dl_restrict m, const dl_vec4 *dl_restrict column_a, const dl_vec4 *dl_restrict column_b, const dl_vec4 *dl_restrict column_c, const dl_vec4 *dl_restrict column_d);
 
-  dl_api dl_mat4 *init_mat4_translate(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z);
-  dl_api dl_mat4 *init_mat4_rotate_x(dl_mat4 * dl_restrict m, dl_real radians);
-  dl_api dl_mat4 *init_mat4_rotate_y(dl_mat4 * dl_restrict m, dl_real radians);
-  dl_api dl_mat4 *init_mat4_rotate_z(dl_mat4 * dl_restrict m, dl_real radians);
-  dl_api dl_mat4 *init_mat4_rotate(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict axis, dl_real radians);
-  dl_api dl_mat4 *init_mat4_scale(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z);
+  dl_api dl_mat4 *dl_init_mat4_translate(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z);
+  dl_api dl_mat4 *dl_init_mat4_rotate_x(dl_mat4 * dl_restrict m, dl_real radians);
+  dl_api dl_mat4 *dl_init_mat4_rotate_y(dl_mat4 * dl_restrict m, dl_real radians);
+  dl_api dl_mat4 *dl_init_mat4_rotate_z(dl_mat4 * dl_restrict m, dl_real radians);
+  dl_api dl_mat4 *dl_init_mat4_rotate(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict axis, dl_real radians);
+  dl_api dl_mat4 *dl_init_mat4_scale(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z);
 
-  dl_api dl_mat4 *init_mat4_look_at(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict origin, const dl_vec3 *dl_restrict target, const dl_vec3 *dl_restrict up);
-  dl_api dl_mat4 *init_mat4_orthographic(dl_mat4 * dl_restrict m, dl_real yop, dl_real y_bottom, dl_real x_left, dl_real x_right, dl_real z_near, dl_real z_far);
-  dl_api dl_mat4 *init_mat4_perspective(dl_mat4 * dl_restrict m, dl_real vertical_fov, dl_real aspect_ratio, dl_real z_near, dl_real z_far);
+  dl_api dl_mat4 *dl_init_mat4_look_at(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict origin, const dl_vec3 *dl_restrict target, const dl_vec3 *dl_restrict up);
+  dl_api dl_mat4 *dl_init_mat4_orthographic(dl_mat4 * dl_restrict m, dl_real yop, dl_real y_bottom, dl_real x_left, dl_real x_right, dl_real z_near, dl_real z_far);
+  dl_api dl_mat4 *dl_init_mat4_perspective(dl_mat4 * dl_restrict m, dl_real vertical_fov, dl_real aspect_ratio, dl_real z_near, dl_real z_far);
 
-  dl_api dl_mat4 *mat4_add(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out);
-  dl_api dl_mat4 *mat4_sub(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out);
-  dl_api dl_mat4 *mat4_mul(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out);
+  dl_api dl_mat4 *dl_mat4_add(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out);
+  dl_api dl_mat4 *dl_mat4_sub(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out);
+  dl_api dl_mat4 *dl_mat4_mul(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out);
 
-  dl_api dl_vec4 *mat4_mul_vec4(const dl_mat4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_vec4 *dl_restrict out);
-  dl_api dl_vec3 *mat4_mul_vec3(const dl_mat4 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out);
-  dl_api dl_point3 *mat4_mul_point3(const dl_mat4 *dl_restrict left, const dl_point3 *dl_restrict right, dl_point3 *dl_restrict out);
+  dl_api dl_vec4 *dl_mat4_mul_vec4(const dl_mat4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_vec4 *dl_restrict out);
+  dl_api dl_vec3 *dl_mat4_mul_vec3(const dl_mat4 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out);
+  dl_api dl_point3 *dl_mat4_mul_point3(const dl_mat4 *dl_restrict left, const dl_point3 *dl_restrict right, dl_point3 *dl_restrict out);
 
-  dl_api dl_mat4 *mat4_transpose(const dl_mat4 *dl_restrict left, dl_mat4 *dl_restrict out);
+  dl_api dl_mat4 *dl_mat4_transpose(const dl_mat4 *dl_restrict left, dl_mat4 *dl_restrict out);
 
-  dl_api dl_mat4 *mat4_mul_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
-  dl_api dl_mat4 *mat4_div_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
-  dl_api dl_mat4 *mat4_add_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
-  dl_api dl_mat4 *mat4_sub_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
+  dl_api dl_mat4 *dl_mat4_mul_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
+  dl_api dl_mat4 *dl_mat4_div_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
+  dl_api dl_mat4 *dl_mat4_add_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
+  dl_api dl_mat4 *dl_mat4_sub_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
 
-  dl_api dl_bool mat4_approximately_equal(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_real epsilon);
+  dl_api dl_bool dl_mat4_approximately_equal(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_real epsilon);
 
   
   
@@ -809,42 +809,42 @@ extern "C" {
     dl_natural slice_length;
     dl_any (*alloc)(dl_natural count, dl_natural element_size);
     void (*free)(dl_any data);
-  } vector_settings;
+  } dl_vector_settings;
 
   typedef struct {
-    vector_settings settings;
+    dl_vector_settings settings;
     dl_natural slice_count;
 
     union {
       dl_byte **slices;
       dl_byte *array;
     } data;
-  } vector;
+  } dl_vector;
 
-  extern vector_settings default_vector_settings;
+  extern dl_vector_settings default_vector_settings;
 
-  dl_api vector *init_vector(vector * dl_restrict target, dl_natural element_size, dl_natural capacity);
-  dl_api vector *init_vector_custom(vector * dl_restrict target, vector_settings settings, dl_natural capacity);
+  dl_api dl_vector *dl_init_vector(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity);
+  dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_vector_settings settings, dl_natural capacity);
 
-  dl_api vector *init_vector_array(vector * dl_restrict target, dl_byte *data, dl_natural element_size, dl_natural count);
+  dl_api dl_vector *dl_init_vector_array(dl_vector * dl_restrict target, dl_byte *data, dl_natural element_size, dl_natural count);
 
-  dl_api dl_natural vector_copy(vector * dl_restrict target, dl_natural target_offset_index, const vector * dl_restrict original);
-  dl_api dl_natural vector_copy_array(vector * dl_restrict target, dl_natural target_offset_index, const dl_byte *dl_restrict data, dl_natural count);
+  dl_api dl_natural dl_vector_copy(dl_vector * dl_restrict target, dl_natural target_offset_index, const dl_vector * dl_restrict original);
+  dl_api dl_natural dl_vector_copy_array(dl_vector * dl_restrict target, dl_natural target_offset_index, const dl_byte *dl_restrict data, dl_natural count);
 
-  dl_api void destroy_vector(vector * dl_restrict target, const dl_handler *dl_restrict deconstruct_entry);
+  dl_api void dl_destroy_vector(dl_vector * dl_restrict target, const dl_handler *dl_restrict deconstruct_entry);
 
-  dl_api dl_natural vector_capacity(const vector * dl_restrict v);
+  dl_api dl_natural dl_vector_capacity(const dl_vector * dl_restrict v);
 
-  dl_api dl_bool vector_grow(vector * dl_restrict v);
-  dl_api dl_bool vector_shrink(vector * dl_restrict v, dl_handler *deconstruct_entry);
-  dl_api dl_bool vector_resize(vector * dl_restrict v, dl_natural minimum_capacity, dl_handler *deconstruct_entry);
+  dl_api dl_bool dl_vector_grow(dl_vector * dl_restrict v);
+  dl_api dl_bool dl_vector_shrink(dl_vector * dl_restrict v, dl_handler *deconstruct_entry);
+  dl_api dl_bool dl_vector_resize(dl_vector * dl_restrict v, dl_natural minimum_capacity, dl_handler *deconstruct_entry);
 
-  dl_api dl_any vector_get(const vector * dl_restrict v, dl_natural index, dl_any out);
-  dl_api const dl_any vector_ref(const vector * dl_restrict v, dl_natural index);
-  dl_api dl_any vector_set(vector * dl_restrict v, dl_natural index, dl_any value);
+  dl_api dl_any dl_vector_get(const dl_vector * dl_restrict v, dl_natural index, dl_any out);
+  dl_api const dl_any dl_vector_ref(const dl_vector * dl_restrict v, dl_natural index);
+  dl_api dl_any dl_vector_set(dl_vector * dl_restrict v, dl_natural index, dl_any value);
 
-  dl_api dl_bool vector_swap(vector * dl_restrict v, dl_natural index1, dl_natural index2);
-  dl_api dl_natural vector_ref_array(vector * dl_restrict v, dl_natural index, dl_any *dl_restrict out);
+  dl_api dl_bool dl_vector_swap(dl_vector * dl_restrict v, dl_natural index1, dl_natural index2);
+  dl_api dl_natural dl_vector_ref_array(dl_vector * dl_restrict v, dl_natural index, dl_any *dl_restrict out);
 
 
 
@@ -873,7 +873,7 @@ extern "C" {
     struct linked_list_node *free;
 
     linked_list_settings settings;
-    vector node_cache;
+    dl_vector node_cache;
   } linked_list;
 
   extern linked_list_settings default_linked_list_settings;
@@ -915,7 +915,7 @@ extern "C" {
   typedef union {
     struct {
       dl_natural index;
-    } vector;
+    } dl_vector;
     struct {
       struct linked_list_node *node;
     } linked_list;
@@ -958,9 +958,9 @@ extern "C" {
 
     union {
       struct {
-        vector container;
+        dl_vector container;
         dl_natural index[2];
-      } vector;
+      } dl_vector;
       struct {
         linked_list container;
       } linked_list;
@@ -1218,7 +1218,7 @@ const dl_real DL_INV_E = 0.367879441171f;
 const dl_real DL_EPSILON = 0.001f;
 #endif
 
-const dl_mat4 mat4_identity = { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
+const dl_mat4 dl_mat4_identity = { { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 } };
 const dl_point2 dl_point2_zero = { 0, 0 };
 const dl_point2 dl_point2_one = { 1, 1 };
 const dl_vec2 dl_vec2_up = { 0, 1 };
@@ -1783,7 +1783,7 @@ dl_api dl_bool dl_point3_approximately_equal(const dl_point3 *dl_restrict left, 
 dl_api dl_point3 *dl_point3_rotate(const dl_point3 *dl_restrict left, const dl_vec3 *dl_restrict axis, const dl_real angle, dl_point3 *dl_restrict out) {
   dl_mat4 mat;
 
-  return mat4_mul_point3(init_mat4_rotate(&mat, axis, angle), left, out);
+  return dl_mat4_mul_point3(dl_init_mat4_rotate(&mat, axis, angle), left, out);
 }
 
 
@@ -1910,7 +1910,7 @@ dl_api dl_real dl_vec3_magnitude(const dl_vec3 *dl_restrict left) {
 dl_api dl_vec3 *dl_vec3_rotate(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict axis, const dl_real angle, dl_vec3 *dl_restrict out) {
   dl_mat4 mat;
 
-  return mat4_mul_vec3(init_mat4_rotate(&mat, axis, angle), left, out);
+  return dl_mat4_mul_vec3(dl_init_mat4_rotate(&mat, axis, angle), left, out);
 }
 
 dl_api dl_vec3 *dl_vec3_reflect(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict normal, dl_vec3 *dl_restrict out) {
@@ -1939,7 +1939,7 @@ dl_api dl_vec3 *dl_vec3_refract(const dl_vec3 *dl_restrict left, const dl_vec3 *
 
 
 
-dl_api dl_mat4 *init_mat4(dl_mat4 * dl_restrict m, dl_real c0r0, dl_real c0r1, dl_real c0r2, dl_real c0r3, dl_real c1r0, dl_real c1r1, dl_real c1r2, dl_real c1r3, dl_real c2r0, dl_real c2r1, dl_real c2r2, dl_real c2r3, dl_real c3r0, dl_real c3r1, dl_real c3r2, dl_real c3r3) {
+dl_api dl_mat4 *dl_init_mat4(dl_mat4 * dl_restrict m, dl_real c0r0, dl_real c0r1, dl_real c0r2, dl_real c0r3, dl_real c1r0, dl_real c1r1, dl_real c1r2, dl_real c1r3, dl_real c2r0, dl_real c2r1, dl_real c2r2, dl_real c2r3, dl_real c3r0, dl_real c3r1, dl_real c3r2, dl_real c3r3) {
   if (dl_safety(m == NULL))
     return NULL;
   
@@ -1963,7 +1963,7 @@ dl_api dl_mat4 *init_mat4(dl_mat4 * dl_restrict m, dl_real c0r0, dl_real c0r1, d
   return m;
 }
 
-dl_api dl_mat4 *init_mat4_cols(dl_mat4 * dl_restrict m, const dl_vec4 *dl_restrict column_a, const dl_vec4 *dl_restrict column_b, const dl_vec4 *dl_restrict column_c, const dl_vec4 *dl_restrict column_d) {
+dl_api dl_mat4 *dl_init_mat4_cols(dl_mat4 * dl_restrict m, const dl_vec4 *dl_restrict column_a, const dl_vec4 *dl_restrict column_b, const dl_vec4 *dl_restrict column_c, const dl_vec4 *dl_restrict column_d) {
   if (dl_safety(m == NULL || column_a == NULL || column_b == NULL || column_c == NULL || column_d == NULL))
     return NULL;
   
@@ -1975,7 +1975,7 @@ dl_api dl_mat4 *init_mat4_cols(dl_mat4 * dl_restrict m, const dl_vec4 *dl_restri
   return m;
 }
 
-dl_api dl_mat4 *mat4_add(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_add(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out) {
   dl_integer i, j;
   
   if (dl_safety(left == NULL || right == NULL || out == NULL))
@@ -1988,7 +1988,7 @@ dl_api dl_mat4 *mat4_add(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_rest
   return out;
 }
 
-dl_api dl_mat4 *mat4_sub(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_sub(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out) {
   dl_integer i, j;
   
   if (dl_safety(left == NULL || right == NULL || out == NULL))
@@ -2001,7 +2001,7 @@ dl_api dl_mat4 *mat4_sub(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_rest
   return out;
 }
 
-dl_api dl_mat4 *mat4_mul(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_mul(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out) {
   dl_vec4 *A, *B;
   dl_mat4 temp;
 
@@ -2036,7 +2036,7 @@ dl_api dl_mat4 *mat4_mul(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_rest
   return out;
 }
 
-dl_bool mat4_approximately_equal(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_real epsilon) {
+dl_bool dl_mat4_approximately_equal(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_real epsilon) {
   dl_integer i, j;
   
   if (dl_safety(left == NULL || right == NULL))
@@ -2050,7 +2050,7 @@ dl_bool mat4_approximately_equal(const dl_mat4 *dl_restrict left, const dl_mat4 
   return true;
 }
 
-dl_api dl_vec4 *mat4_mul_vec4(const dl_mat4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_vec4 *dl_restrict out) {
+dl_api dl_vec4 *dl_mat4_mul_vec4(const dl_mat4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_vec4 *dl_restrict out) {
   dl_vec4 v;
 
   if (dl_safety(left == NULL || right == NULL || out == NULL))
@@ -2065,7 +2065,7 @@ dl_api dl_vec4 *mat4_mul_vec4(const dl_mat4 *dl_restrict left, const dl_vec4 *dl
   return out;
 }
 
-dl_api dl_vec3 *mat4_mul_vec3(const dl_mat4 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_mat4_mul_vec3(const dl_mat4 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out) {
   dl_vec3 v;
   
   if (dl_safety(left == NULL || right == NULL || out == NULL))
@@ -2080,7 +2080,7 @@ dl_api dl_vec3 *mat4_mul_vec3(const dl_mat4 *dl_restrict left, const dl_vec3 *dl
   return out;
 }
 
-dl_api dl_point3 *mat4_mul_point3(const dl_mat4 *dl_restrict left, const dl_point3 *dl_restrict right, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_mat4_mul_point3(const dl_mat4 *dl_restrict left, const dl_point3 *dl_restrict right, dl_point3 *dl_restrict out) {
   dl_point3 p;
   
   if (dl_safety(left == NULL || right == NULL || out == NULL))
@@ -2095,7 +2095,7 @@ dl_api dl_point3 *mat4_mul_point3(const dl_mat4 *dl_restrict left, const dl_poin
   return out;
 }
 
-dl_api dl_mat4 *mat4_transpose(const dl_mat4 *dl_restrict left, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_transpose(const dl_mat4 *dl_restrict left, dl_mat4 *dl_restrict out) {
   dl_real v[4][4];
   dl_natural a_idx, b_idx;
 
@@ -2112,7 +2112,7 @@ dl_api dl_mat4 *mat4_transpose(const dl_mat4 *dl_restrict left, dl_mat4 *dl_rest
   return out;
 }
 
-dl_api dl_mat4 *mat4_mul_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_mul_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
   dl_integer i,j;
   
   if (dl_safety(left == NULL || out == NULL))
@@ -2125,11 +2125,11 @@ dl_api dl_mat4 *mat4_mul_scalar(const dl_mat4 *dl_restrict left, dl_real scalar,
   return out;
 }
 
-dl_api dl_mat4 *mat4_div_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
-  return mat4_mul_scalar(left, 1.0 / scalar, out);
+dl_api dl_mat4 *dl_mat4_div_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
+  return dl_mat4_mul_scalar(left, 1.0 / scalar, out);
 }
 
-dl_api dl_mat4 *mat4_add_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_add_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
   dl_integer i, j;
   
   if (dl_safety(left == NULL || out == NULL))
@@ -2142,15 +2142,15 @@ dl_api dl_mat4 *mat4_add_scalar(const dl_mat4 *dl_restrict left, dl_real scalar,
   return out;
 }
 
-dl_api dl_mat4 *mat4_sub_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
-  return mat4_add_scalar(left, -scalar, out);
+dl_api dl_mat4 *dl_mat4_sub_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
+  return dl_mat4_add_scalar(left, -scalar, out);
 }
 
-dl_api dl_mat4 *init_mat4_translate(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z) {
+dl_api dl_mat4 *dl_init_mat4_translate(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z) {
   if (dl_safety(m == NULL))
     return NULL;
   
-  *m = mat4_identity;
+  *m = dl_mat4_identity;
   m->ary[3][0] = x;
   m->ary[3][1] = y;
   m->ary[3][2] = z;
@@ -2158,7 +2158,7 @@ dl_api dl_mat4 *init_mat4_translate(dl_mat4 * dl_restrict m, dl_real x, dl_real 
   return m;
 }
 
-dl_api dl_mat4 *init_mat4_rotate_x(dl_mat4 * dl_restrict m, dl_real radians) {
+dl_api dl_mat4 *dl_init_mat4_rotate_x(dl_mat4 * dl_restrict m, dl_real radians) {
   dl_real c, s;
 
   if (dl_safety(m == NULL))
@@ -2168,7 +2168,7 @@ dl_api dl_mat4 *init_mat4_rotate_x(dl_mat4 * dl_restrict m, dl_real radians) {
   c = dl_cos(-radians);
   s = dl_sin(-radians);
 
-  return init_mat4(m,
+  return dl_init_mat4(m,
 		   1,  0,  0, 0,
 		   0,  c, -s, 0,
 		   0,  s,  c, 0,
@@ -2182,7 +2182,7 @@ dl_api dl_mat4 *init_mat4_rotate_x(dl_mat4 * dl_restrict m, dl_real radians) {
   s = dl_sin(radians);
 # endif
 
-  return init_mat4(m,
+  return dl_init_mat4(m,
 		   1, 0,  0, 0,
 		   0, c,  s, 0,
 		   0, -s, c, 0,
@@ -2190,7 +2190,7 @@ dl_api dl_mat4 *init_mat4_rotate_x(dl_mat4 * dl_restrict m, dl_real radians) {
 #endif
 }
 
-dl_api dl_mat4 *init_mat4_rotate_y(dl_mat4 * dl_restrict m, dl_real radians) {
+dl_api dl_mat4 *dl_init_mat4_rotate_y(dl_mat4 * dl_restrict m, dl_real radians) {
   dl_real c, s;
 
   if (dl_safety(m == NULL))
@@ -2200,7 +2200,7 @@ dl_api dl_mat4 *init_mat4_rotate_y(dl_mat4 * dl_restrict m, dl_real radians) {
   c = dl_cos(-radians);
   s = dl_sin(-radians);
   
-  return init_mat4(m,
+  return dl_init_mat4(m,
 		   c,  0, s, 0,
 		   0,  1, 0, 0,
 		   -s, 0, c, 0,
@@ -2209,7 +2209,7 @@ dl_api dl_mat4 *init_mat4_rotate_y(dl_mat4 * dl_restrict m, dl_real radians) {
   c = dl_cos(radians);
   s = dl_sin(radians);
   
-  return init_mat4(m,
+  return dl_init_mat4(m,
 		   c, 0, -s, 0,
 		   0, 1,  0, 0,
 		   s, 0,  c, 0,
@@ -2217,7 +2217,7 @@ dl_api dl_mat4 *init_mat4_rotate_y(dl_mat4 * dl_restrict m, dl_real radians) {
 #endif
 }
 
-dl_api dl_mat4 *init_mat4_rotate_z(dl_mat4 * dl_restrict m, dl_real radians) {
+dl_api dl_mat4 *dl_init_mat4_rotate_z(dl_mat4 * dl_restrict m, dl_real radians) {
   dl_real c, s;
 
   if (dl_safety(m == NULL))
@@ -2226,14 +2226,14 @@ dl_api dl_mat4 *init_mat4_rotate_z(dl_mat4 * dl_restrict m, dl_real radians) {
   c = dl_cos(radians);
   s = dl_sin(radians);
   
-  return init_mat4(m,
+  return dl_init_mat4(m,
 		   c,  s, 0, 0,
 		   -s, c, 0, 0,
 		   0,  0, 1, 0,
 		   0,  0, 0, 1);
 }
 
-dl_api dl_mat4 *init_mat4_rotate(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict a, dl_real radians) {
+dl_api dl_mat4 *dl_init_mat4_rotate(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict a, dl_real radians) {
   dl_vec3 i, t;
   dl_real c, s;
 
@@ -2241,7 +2241,7 @@ dl_api dl_mat4 *init_mat4_rotate(dl_mat4 * dl_restrict m, const dl_vec3 *dl_rest
     return NULL;
   
   if (dl_unlikely(dl_vec3_approximately_equal(a, &dl_vec3_zero, DL_EPSILON))) {
-    *m = mat4_identity;
+    *m = dl_mat4_identity;
     return m;
   }
   
@@ -2255,7 +2255,7 @@ dl_api dl_mat4 *init_mat4_rotate(dl_mat4 * dl_restrict m, const dl_vec3 *dl_rest
   s = dl_sin(-radians);
   dl_vec3_mul_scalar(&t, 1.0 - c, &i);  
 
-  return init_mat4(m,
+  return dl_init_mat4(m,
 		   c + i.x * t.x,          i.x * t.y - s * t.z,    -(-i.x * t.z - s * t.y), 0,
 		   i.y * t.x + s * t.z,    c + i.y * t.y,          -(-i.y * t.z + s * t.x), 0,
 		   -(i.z * t.x + s * t.y), -(i.z * t.y - s * t.x), c + i.z * t.z,          0,
@@ -2265,7 +2265,7 @@ dl_api dl_mat4 *init_mat4_rotate(dl_mat4 * dl_restrict m, const dl_vec3 *dl_rest
   s = dl_sin(radians);
   dl_vec3_mul_scalar(&t, 1.0 - c, &i);  
 
-  return init_mat4(m,
+  return dl_init_mat4(m,
 		   c + i.x * t.x,       i.x * t.y - s * t.z, -i.x * t.z - s * t.y, 0,
 		   i.y * t.x + s * t.z, c + i.y * t.y,       -i.y * t.z + s * t.x, 0,
 		   i.z * t.x + s * t.y, i.z * t.y - s * t.x, c + i.z * t.z,       0,
@@ -2273,11 +2273,11 @@ dl_api dl_mat4 *init_mat4_rotate(dl_mat4 * dl_restrict m, const dl_vec3 *dl_rest
 #endif
 }
 
-dl_api dl_mat4 *init_mat4_scale(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z) {
+dl_api dl_mat4 *dl_init_mat4_scale(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z) {
   if (dl_safety(m == NULL))
     return NULL;
   
-  *m = mat4_identity;
+  *m = dl_mat4_identity;
   m->ary[0][0] = x;
   m->ary[1][1] = y;
   m->ary[2][2] = z;
@@ -2285,7 +2285,7 @@ dl_api dl_mat4 *init_mat4_scale(dl_mat4 * dl_restrict m, dl_real x, dl_real y, d
   return m;
 }
 
-dl_api dl_mat4 *init_mat4_look_at(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict origin, const dl_vec3 *dl_restrict target, const dl_vec3 *dl_restrict up) {
+dl_api dl_mat4 *dl_init_mat4_look_at(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict origin, const dl_vec3 *dl_restrict target, const dl_vec3 *dl_restrict up) {
   dl_vec3 zaxis, yaxis, xaxis, temp;
 
   if (dl_safety(m == NULL || origin == NULL || target == NULL || up == NULL))
@@ -2297,14 +2297,14 @@ dl_api dl_mat4 *init_mat4_look_at(dl_mat4 * dl_restrict m, const dl_vec3 *dl_res
   dl_vec3_normalize(&temp, &xaxis);
   dl_vec3_cross(&zaxis, &xaxis, &yaxis);
 
-  return init_mat4(m,
+  return dl_init_mat4(m,
 		   xaxis.x, yaxis.x, zaxis.x, 0,
 		   xaxis.y, yaxis.y, zaxis.y, 0,
 		   xaxis.z, yaxis.z, zaxis.z, 0,
 		   -dl_vec3_dot(&xaxis, origin), -dl_vec3_dot(&yaxis, origin), -dl_vec3_dot(&zaxis, origin), 1);
 }
 
-dl_api dl_mat4 *init_mat4_orthographic(dl_mat4 * dl_restrict m, dl_real yop, dl_real y_bottom, dl_real x_left, dl_real x_right, dl_real z_near, dl_real z_far) {
+dl_api dl_mat4 *dl_init_mat4_orthographic(dl_mat4 * dl_restrict m, dl_real yop, dl_real y_bottom, dl_real x_left, dl_real x_right, dl_real z_near, dl_real z_far) {
   dl_real inv_width, inv_height, inv_depth;
 
   if (dl_safety(m == NULL))
@@ -2314,14 +2314,14 @@ dl_api dl_mat4 *init_mat4_orthographic(dl_mat4 * dl_restrict m, dl_real yop, dl_
   inv_height = 1.0 / (yop - y_bottom);
   inv_depth = 1.0 / (z_far - z_near);
 
-  return init_mat4(m,
+  return dl_init_mat4(m,
 		   2 * inv_width, 0, 0, 0,
 		   0, 2 * inv_height, 0, 0,
 		   0, 0, 0, -2 * inv_depth,
 		   -((x_right + x_left) * inv_width), -((yop + y_bottom) * inv_height), -((z_far + z_near) * inv_depth), 1);
 }
 
-dl_api dl_mat4 *init_mat4_perspective(dl_mat4 * dl_restrict m, dl_real vertical_fov, dl_real aspect_ratio, dl_real z_near, dl_real z_far) {
+dl_api dl_mat4 *dl_init_mat4_perspective(dl_mat4 * dl_restrict m, dl_real vertical_fov, dl_real aspect_ratio, dl_real z_near, dl_real z_far) {
   dl_real half_fov, invan_fov, neg_depth, inv_neg_depth;
 
   if (dl_safety(m == NULL))
@@ -2332,7 +2332,7 @@ dl_api dl_mat4 *init_mat4_perspective(dl_mat4 * dl_restrict m, dl_real vertical_
   neg_depth = z_near - z_far;
   inv_neg_depth = 1.0 / neg_depth;
 
-  *m = mat4_identity;
+  *m = dl_mat4_identity;
   m->ary[0][0] = (1.0 / aspect_ratio) * invan_fov;
   m->ary[1][1] = invan_fov;
   m->ary[2][2] = (-neg_depth) * inv_neg_depth;
@@ -3015,18 +3015,18 @@ dl_integer _collection_sorted_list_predicate_func(dl_any data, dl_any value) {
  **  Vectors
  ****************************************************************************/
 
-vector_settings default_vector_settings = {
+dl_vector_settings default_vector_settings = {
   0, 32,
   DECLARE_ALLOC_MEMBERS(alloc, free)
 };
 
-dl_api vector *init_vector(vector * dl_restrict target, dl_natural element_size, dl_natural capacity) {
-  vector_settings settings = default_vector_settings;
+dl_api dl_vector *dl_init_vector(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity) {
+  dl_vector_settings settings = default_vector_settings;
   settings.element_size = element_size;
-  return init_vector_custom(target, settings, capacity);
+  return dl_init_vector_custom(target, settings, capacity);
 }
 
-dl_api vector *init_vector_custom(vector * dl_restrict target, vector_settings settings, dl_natural capacity) {
+dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_vector_settings settings, dl_natural capacity) {
   dl_real dl_real_count;
   dl_natural slice_count, idx;
   
@@ -3069,7 +3069,7 @@ dl_api vector *init_vector_custom(vector * dl_restrict target, vector_settings s
   return target;
 }
 
-dl_api vector *init_vector_array(vector * dl_restrict target, dl_byte *data, dl_natural element_size, dl_natural count) {
+dl_api dl_vector *dl_init_vector_array(dl_vector * dl_restrict target, dl_byte *data, dl_natural element_size, dl_natural count) {
   if (dl_safety(target == NULL || data == NULL))
     return NULL;
 
@@ -3084,7 +3084,7 @@ dl_api vector *init_vector_array(vector * dl_restrict target, dl_byte *data, dl_
   return target;
 }
 
-dl_api void destroy_vector(vector * dl_restrict target, const dl_handler *deconstruct_entry) {
+dl_api void dl_destroy_vector(dl_vector * dl_restrict target, const dl_handler *deconstruct_entry) {
   dl_any entry;
   dl_natural slice_idx, idx;
   
@@ -3107,14 +3107,14 @@ dl_api void destroy_vector(vector * dl_restrict target, const dl_handler *decons
   }
 }
 
-dl_api dl_natural vector_capacity(const vector * dl_restrict v) {
+dl_api dl_natural dl_vector_capacity(const dl_vector * dl_restrict v) {
   if (dl_safety(v == NULL))
     return 0;
 
   return v->slice_count > 0 ? v->slice_count * v->settings.slice_length : v->settings.slice_length;
 }
 
-dl_api dl_any vector_get(const vector * dl_restrict v, dl_natural index, dl_any out) {
+dl_api dl_any dl_vector_get(const dl_vector * dl_restrict v, dl_natural index, dl_any out) {
   dl_natural slice, slice_index;
   dl_byte *target_slice;
   
@@ -3141,7 +3141,7 @@ dl_api dl_any vector_get(const vector * dl_restrict v, dl_natural index, dl_any 
   return out;
 }
 
-dl_api const dl_any vector_ref(const vector * dl_restrict v, dl_natural index) {
+dl_api const dl_any dl_vector_ref(const dl_vector * dl_restrict v, dl_natural index) {
   dl_natural slice, slice_index;
   dl_byte *target_slice;
   
@@ -3166,7 +3166,7 @@ dl_api const dl_any vector_ref(const vector * dl_restrict v, dl_natural index) {
   }
 }
 
-dl_api dl_any vector_set(vector * dl_restrict v, dl_natural index, dl_any value) {
+dl_api dl_any dl_vector_set(dl_vector * dl_restrict v, dl_natural index, dl_any value) {
   dl_natural base_index, slice, slice_index;
   dl_byte *source, *target;
   
@@ -3196,7 +3196,7 @@ dl_api dl_any vector_set(vector * dl_restrict v, dl_natural index, dl_any value)
   }
 }
 
-dl_api dl_bool vector_grow(vector * dl_restrict v) {
+dl_api dl_bool dl_vector_grow(dl_vector * dl_restrict v) {
   dl_byte **new_slices, *new_slice, **existing_slices;
   dl_natural idx;
   
@@ -3230,7 +3230,7 @@ dl_api dl_bool vector_grow(vector * dl_restrict v) {
   return true;
 }
 
-dl_api dl_bool vector_swap(vector * dl_restrict v, dl_natural index1, dl_natural index2) {
+dl_api dl_bool dl_vector_swap(dl_vector * dl_restrict v, dl_natural index1, dl_natural index2) {
   dl_any left, right;
   
   if (dl_safety(v == NULL))
@@ -3239,11 +3239,11 @@ dl_api dl_bool vector_swap(vector * dl_restrict v, dl_natural index1, dl_natural
   if (index1 == index2)
     return true;
 
-  left = vector_ref(v, index1);
+  left = dl_vector_ref(v, index1);
   if (dl_unlikely(left == NULL))
     return false;
 
-  right = vector_ref(v, index2);
+  right = dl_vector_ref(v, index2);
   if (dl_unlikely(right == NULL))
     return false;
 
@@ -3252,7 +3252,7 @@ dl_api dl_bool vector_swap(vector * dl_restrict v, dl_natural index1, dl_natural
   return true;
 }
 
-dl_api dl_bool vector_shrink(vector * dl_restrict v, dl_handler *dl_restrict deconstruct_entry) {
+dl_api dl_bool dl_vector_shrink(dl_vector * dl_restrict v, dl_handler *dl_restrict deconstruct_entry) {
   dl_byte **new_slices, **existing_slices;
   dl_natural idx;
   dl_any entry;
@@ -3288,7 +3288,7 @@ dl_api dl_bool vector_shrink(vector * dl_restrict v, dl_handler *dl_restrict dec
   return true;
 }
 
-dl_api dl_bool vector_resize(vector * dl_restrict v, dl_natural minimum_capacity, dl_handler *deconstruct_entry) {
+dl_api dl_bool dl_vector_resize(dl_vector * dl_restrict v, dl_natural minimum_capacity, dl_handler *deconstruct_entry) {
   dl_natural current_capacity, new_slice_count, slice_idx, slice_count, item_idx;
   dl_real needed;
   dl_integer needed_count;
@@ -3301,7 +3301,7 @@ dl_api dl_bool vector_resize(vector * dl_restrict v, dl_natural minimum_capacity
   if (v->settings.free == NULL || v->settings.alloc == NULL || v->slice_count < 1 || minimum_capacity < 1)
     return false;
 
-  current_capacity = vector_capacity(v);
+  current_capacity = dl_vector_capacity(v);
   needed = (dl_real)((dl_integer)minimum_capacity - (dl_integer)current_capacity) / (dl_real)v->settings.slice_length;
 
   needed_count = needed < 0 ? (dl_integer)needed : (dl_integer)needed + 1;
@@ -3353,15 +3353,15 @@ dl_api dl_bool vector_resize(vector * dl_restrict v, dl_natural minimum_capacity
   return true;
 }
 
-dl_api dl_natural vector_copy_array(vector * dl_restrict target, dl_natural target_offset_index, const dl_byte *data, dl_natural count) {
-  vector source;
-  if (dl_unlikely(!init_vector_array(&source, (dl_byte *)data, target->settings.element_size, count)))
+dl_api dl_natural dl_vector_copy_array(dl_vector * dl_restrict target, dl_natural target_offset_index, const dl_byte *data, dl_natural count) {
+  dl_vector source;
+  if (dl_unlikely(!dl_init_vector_array(&source, (dl_byte *)data, target->settings.element_size, count)))
     return 0;
 
-  return vector_copy(target, target_offset_index, &source);
+  return dl_vector_copy(target, target_offset_index, &source);
 }
 
-dl_api dl_natural vector_copy(vector * dl_restrict target, dl_natural target_offset_index, const vector * dl_restrict original) {
+dl_api dl_natural dl_vector_copy(dl_vector * dl_restrict target, dl_natural target_offset_index, const dl_vector * dl_restrict original) {
   dl_natural original_capacity, element_size, target_length, original_length, target_remainder, original_remainder, total_remainder, target_slice_idx, original_slice_idx, min_remainder, count_to_copy;
   dl_byte *target_slice, *original_slice;
   
@@ -3372,8 +3372,8 @@ dl_api dl_natural vector_copy(vector * dl_restrict target, dl_natural target_off
     return 0;
 
   /* target is too small */
-  original_capacity = vector_capacity(original);
-  if (dl_unlikely(vector_capacity(target) - target_offset_index < original_capacity))
+  original_capacity = dl_vector_capacity(original);
+  if (dl_unlikely(dl_vector_capacity(target) - target_offset_index < original_capacity))
     return 0;
 
   element_size = original->settings.element_size;
@@ -3417,7 +3417,7 @@ dl_api dl_natural vector_copy(vector * dl_restrict target, dl_natural target_off
   return original_capacity;
 }
 
-dl_api dl_natural vector_ref_array(vector * dl_restrict v, dl_natural index, dl_any *dl_restrict out) {
+dl_api dl_natural dl_vector_ref_array(dl_vector * dl_restrict v, dl_natural index, dl_any *dl_restrict out) {
   dl_natural last_idx, slice, slice_index;
   
   if (dl_safety(v == NULL))
@@ -3567,7 +3567,7 @@ dl_api linked_list *init_linked_list(linked_list * dl_restrict target, dl_natura
 
 dl_api linked_list *_linked_list_cache_grow(linked_list * dl_restrict target) {
   linked_list_settings settings;
-  vector *v;
+  dl_vector *v;
   dl_natural zero, length, idx;
   struct linked_list_node *node;
   
@@ -3583,19 +3583,19 @@ dl_api linked_list *_linked_list_cache_grow(linked_list * dl_restrict target) {
 
   if (target->free == NULL && target->first == NULL) {
     zero = 0;
-    if (!init_vector(v, LINKED_LIST_HEADER_SIZE + settings.element_size, settings.cache_length))
+    if (!dl_init_vector(v, LINKED_LIST_HEADER_SIZE + settings.element_size, settings.cache_length))
       return NULL;
   }
   else {
-    zero = vector_capacity(v);
-    if (!vector_grow(v))
+    zero = dl_vector_capacity(v);
+    if (!dl_vector_grow(v))
       return NULL;
   }
 
-  length = vector_capacity(v);
+  length = dl_vector_capacity(v);
 
   for (idx = zero; idx < length; ++idx) {
-    node = (struct linked_list_node *)vector_ref(v, idx);
+    node = (struct linked_list_node *)dl_vector_ref(v, idx);
     dl_memory_set(node, 0, LINKED_LIST_HEADER_SIZE);
     _linked_list_node_free(target, node);
   }
@@ -3678,7 +3678,7 @@ dl_api void destroy_linked_list(linked_list * dl_restrict target, dl_handler *dl
     }
   }
 
-  destroy_vector(&target->node_cache, NULL);
+  dl_destroy_vector(&target->node_cache, NULL);
 
   dl_memory_set(target, 0, sizeof(linked_list));
 }
@@ -3687,7 +3687,7 @@ dl_api dl_natural linked_list_capacity(const linked_list * dl_restrict list) {
   if (dl_safety(list == NULL))
     return 0;
 
-  return vector_capacity(&list->node_cache);
+  return dl_vector_capacity(&list->node_cache);
 }
 
 dl_api dl_natural linked_list_length(const linked_list * dl_restrict list) {
@@ -3723,7 +3723,7 @@ dl_api dl_bool linked_list_shrink(linked_list * dl_restrict list, dl_handler *dl
   destructor.func = _linked_list_node_deconstructor;
   destructor.data = &data;
 
-  return vector_shrink(&list->node_cache, &destructor);
+  return dl_vector_shrink(&list->node_cache, &destructor);
 }
 
 dl_api dl_bool linked_list_resize(linked_list * dl_restrict list, dl_natural minimum_capacity, dl_handler *dl_restrict deconstruct_entry) {
@@ -3738,7 +3738,7 @@ dl_api dl_bool linked_list_resize(linked_list * dl_restrict list, dl_natural min
   destructor.func = _linked_list_node_deconstructor;
   destructor.data = &data;
   
-  return vector_resize(&list->node_cache, minimum_capacity, &destructor);
+  return dl_vector_resize(&list->node_cache, minimum_capacity, &destructor);
 }
 
 dl_api dl_any linked_list_get(const linked_list * dl_restrict list, struct linked_list_node *position, dl_any out) {
@@ -4013,29 +4013,29 @@ dl_api void _vector_queue_roll_slices(collection *dl_restrict col) {
   dl_byte *slice_left, *slice_first;
   dl_natural last_idx, slice_idx;
   
-  if (col->data.vector.index[0] == col->data.vector.index[1]) {
-    col->data.vector.index[0] = col->data.vector.index[1] = 0;
+  if (col->data.dl_vector.index[0] == col->data.dl_vector.index[1]) {
+    col->data.dl_vector.index[0] = col->data.dl_vector.index[1] = 0;
     return;
   }
 
-  if (col->data.vector.container.slice_count <= 1)
+  if (col->data.dl_vector.container.slice_count <= 1)
     return;
 
-  if (col->data.vector.index[0] < col->data.vector.container.settings.slice_length)
+  if (col->data.dl_vector.index[0] < col->data.dl_vector.container.settings.slice_length)
     return;
 
-  slice_left = col->data.vector.container.data.slices[0];
+  slice_left = col->data.dl_vector.container.data.slices[0];
   slice_first = slice_left;
 
-  last_idx = col->data.vector.container.slice_count - 1;
+  last_idx = col->data.dl_vector.container.slice_count - 1;
 
   for (slice_idx = 0; slice_idx < last_idx; ++slice_idx)
-    col->data.vector.container.data.slices[slice_idx] = col->data.vector.container.data.slices[slice_idx + 1];
+    col->data.dl_vector.container.data.slices[slice_idx] = col->data.dl_vector.container.data.slices[slice_idx + 1];
 
-  col->data.vector.container.data.slices[last_idx] = slice_first;
+  col->data.dl_vector.container.data.slices[last_idx] = slice_first;
 
-  col->data.vector.index[0] -= col->data.vector.container.settings.slice_length;
-  col->data.vector.index[1] -= col->data.vector.container.settings.slice_length;
+  col->data.dl_vector.index[0] -= col->data.dl_vector.container.settings.slice_length;
+  col->data.dl_vector.index[1] -= col->data.dl_vector.container.settings.slice_length;
 }
 
 dl_api dl_bool collection_is_empty(const collection *dl_restrict col) {
@@ -4191,12 +4191,12 @@ const dl_any _collection_search_region_vector(const collection *dl_restrict col,
   dl_integer outcome;
   iterator iter_next;
   
-  if (left.vector.index >= right.vector.index)
+  if (left.dl_vector.index >= right.dl_vector.index)
     return NULL;
 
-  iter->vector.index = ((right.vector.index - left.vector.index) >> 1) + left.vector.index;
+  iter->dl_vector.index = ((right.dl_vector.index - left.dl_vector.index) >> 1) + left.dl_vector.index;
 
-  if (dl_unlikely(!(ref = vector_ref(&col->data.vector.container, iter->vector.index))))
+  if (dl_unlikely(!(ref = dl_vector_ref(&col->data.dl_vector.container, iter->dl_vector.index))))
     return NULL;
 
   outcome = predicate->func(predicate->data, ref);
@@ -4206,7 +4206,7 @@ const dl_any _collection_search_region_vector(const collection *dl_restrict col,
   else if (outcome > 0)
     return _collection_search_region_vector(col, predicate, left, *iter, iter);
   else {
-    iter_next.vector.index = iter->vector.index + 1;
+    iter_next.dl_vector.index = iter->dl_vector.index + 1;
     return _collection_search_region_vector(col, predicate, iter_next, right, iter);
   }
 }
@@ -4849,7 +4849,7 @@ dl_api dl_integer collection_copy_array(const dl_any data, dl_natural count, col
  ****************************************************************************/
 
 dl_api dl_integer _vector_iterator_compare(const collection *dl_restrict col, iterator left, iterator right) {
-  return left.vector.index - right.vector.index;
+  return left.dl_vector.index - right.dl_vector.index;
 }
 
 dl_api dl_integer _linked_list_iterator_compare(const collection *dl_restrict col, iterator left, iterator right) {
@@ -4857,8 +4857,8 @@ dl_api dl_integer _linked_list_iterator_compare(const collection *dl_restrict co
 }
 
 dl_api dl_bool _vector_iterator_is_valid(const collection *dl_restrict col, iterator index) {
-  return index.vector.index < col->data.vector.index[1]
-    && index.vector.index >= col->data.vector.index[0];
+  return index.dl_vector.index < col->data.dl_vector.index[1]
+    && index.dl_vector.index >= col->data.dl_vector.index[0];
 }
 
 dl_api dl_bool _linked_list_iterator_is_valid(const collection *dl_restrict col, iterator index) {
@@ -4867,7 +4867,7 @@ dl_api dl_bool _linked_list_iterator_is_valid(const collection *dl_restrict col,
 
 dl_api iterator _vector_make_invalid_iterator(const collection *dl_restrict col) {
   iterator bad;
-  bad.vector.index = DL_NATURAL_MAX;
+  bad.dl_vector.index = DL_NATURAL_MAX;
   return bad;
 }
 
@@ -4879,14 +4879,14 @@ dl_api iterator _linked_list_make_invalid_iterator(const collection *dl_restrict
 }
 
 dl_api dl_any _vector_collection_push_start(collection *dl_restrict col, iterator *iter) {
-  if (col->data.vector.index[1] >= vector_capacity(&col->data.vector.container)
-      && !vector_grow(&col->data.vector.container))
+  if (col->data.dl_vector.index[1] >= dl_vector_capacity(&col->data.dl_vector.container)
+      && !dl_vector_grow(&col->data.dl_vector.container))
     return NULL;
 
-  iter->vector.index = col->data.vector.index[1];
-  col->data.vector.index[1]++;
+  iter->dl_vector.index = col->data.dl_vector.index[1];
+  col->data.dl_vector.index[1]++;
 
-  return vector_ref(&col->data.vector.container, iter->vector.index);
+  return dl_vector_ref(&col->data.dl_vector.container, iter->dl_vector.index);
 }
 
 dl_api dl_any _linked_list_collection_push_start(collection *dl_restrict col, iterator *iter) {
@@ -4903,7 +4903,7 @@ dl_api dl_any _linked_list_collection_push_start(collection *dl_restrict col, it
 }
 
 dl_api dl_bool _vector_collection_is_empty(const collection *dl_restrict col) {
-  return col->data.vector.index[0] == col->data.vector.index[1];
+  return col->data.dl_vector.index[0] == col->data.dl_vector.index[1];
 }
 
 dl_api dl_bool _linked_list_collection_is_empty(const collection *dl_restrict col) {
@@ -4911,28 +4911,28 @@ dl_api dl_bool _linked_list_collection_is_empty(const collection *dl_restrict co
 }
 
 dl_api dl_any _vector_collection_pop(collection *dl_restrict col, dl_any out) {
-  vector *v;
+  dl_vector *v;
   dl_natural idx;
 
   if (collection_is_queue(col)) {
-    v = &col->data.vector.container;
-    idx = col->data.vector.index[0];
+    v = &col->data.dl_vector.container;
+    idx = col->data.dl_vector.index[0];
 
-    if (dl_unlikely(!vector_get(v, idx, out)))
+    if (dl_unlikely(!dl_vector_get(v, idx, out)))
       return NULL;
 
-    col->data.vector.index[0]++;
+    col->data.dl_vector.index[0]++;
 
     _vector_queue_roll_slices(col);
 
     return out;
   }
   else {
-    v = &col->data.vector.container;
-    idx = collection_end(col).vector.index - 1;
+    v = &col->data.dl_vector.container;
+    idx = collection_end(col).dl_vector.index - 1;
 
-    col->data.vector.index[1] = idx;
-    return vector_get(v, idx, out);
+    col->data.dl_vector.index[1] = idx;
+    return dl_vector_get(v, idx, out);
   }
 }
 
@@ -4955,32 +4955,32 @@ dl_api dl_bool _vector_collection_pop_destroy(collection *dl_restrict col) {
   dl_any ref;
   
   if (collection_is_queue(col)) {
-    index = col->data.vector.index[0];
+    index = col->data.dl_vector.index[0];
 
     if (col->settings.deconstruct_entry.func != NULL) {
-      if (!(ref = vector_ref(&col->data.vector.container, index)))
+      if (!(ref = dl_vector_ref(&col->data.dl_vector.container, index)))
         return false;
 
       col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, ref);
     }
 
-    col->data.vector.index[0]++;
+    col->data.dl_vector.index[0]++;
 
     _vector_queue_roll_slices(col);
 
     return true;
   }
   else {
-    index = collection_end(col).vector.index - 1;
+    index = collection_end(col).dl_vector.index - 1;
 
     if (col->settings.deconstruct_entry.func != NULL) {
-      if (!(ref = vector_ref(&col->data.vector.container, index)))
+      if (!(ref = dl_vector_ref(&col->data.dl_vector.container, index)))
         return false;
 
       col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, ref);
     }
 
-    col->data.vector.index[1] = index;
+    col->data.dl_vector.index[1] = index;
 
     return true;
   }
@@ -5004,16 +5004,16 @@ dl_api dl_bool _vector_collection_pop_forget(collection *dl_restrict col) {
   dl_natural index;
   
   if (collection_is_queue(col)) {
-    col->data.vector.index[0]++;
+    col->data.dl_vector.index[0]++;
 
     _vector_queue_roll_slices(col);
 
     return true;
   }
   else {
-    index = collection_end(col).vector.index - 1;
+    index = collection_end(col).dl_vector.index - 1;
 
-    col->data.vector.index[1] = index;
+    col->data.dl_vector.index[1] = index;
 
     return true;
   }
@@ -5036,8 +5036,8 @@ dl_api dl_bool _linked_list_collection_pop_forget(collection *dl_restrict col) {
 dl_api dl_integer _vector_collection_ref_array(collection *dl_restrict col, iterator iter, dl_any *out_array) {
   dl_natural count, limit;
     
-  count = vector_ref_array(&col->data.vector.container, iter.vector.index, out_array);
-  limit = col->data.vector.index[1] - iter.vector.index;
+  count = dl_vector_ref_array(&col->data.dl_vector.container, iter.dl_vector.index, out_array);
+  limit = col->data.dl_vector.index[1] - iter.dl_vector.index;
 
   return count < limit ? count : limit;
 }
@@ -5048,7 +5048,7 @@ dl_api dl_integer _linked_list_collection_ref_array(collection *dl_restrict col,
 }
 
 dl_api const dl_any _vector_collection_ref(const collection *dl_restrict col, iterator iter) {
-  return vector_ref(&col->data.vector.container, iter.vector.index);
+  return dl_vector_ref(&col->data.dl_vector.container, iter.dl_vector.index);
 }
 
 dl_api const dl_any _linked_list_collection_ref(const collection *dl_restrict col, iterator iter) {
@@ -5058,7 +5058,7 @@ dl_api const dl_any _linked_list_collection_ref(const collection *dl_restrict co
 dl_api dl_bool _vector_collection_swap(collection *dl_restrict col, iterator *iter_a, iterator *iter_b) {
   iterator t;
 
-  if (!vector_swap(&col->data.vector.container, iter_a->vector.index, iter_b->vector.index))
+  if (!dl_vector_swap(&col->data.dl_vector.container, iter_a->dl_vector.index, iter_b->dl_vector.index))
     return false;
   t = *iter_a;
   *iter_a = *iter_b;
@@ -5073,7 +5073,7 @@ dl_api dl_bool _linked_list_collection_swap(collection *dl_restrict col, iterato
 }
 
 dl_any _vector_collection_get(const collection *dl_restrict col, iterator iter, dl_any out) {
-  return vector_get(&col->data.vector.container, iter.vector.index, out);
+  return dl_vector_get(&col->data.dl_vector.container, iter.dl_vector.index, out);
 }
 
 dl_any _linked_list_collection_get(const collection *dl_restrict col, iterator iter, dl_any out) {
@@ -5083,7 +5083,7 @@ dl_any _linked_list_collection_get(const collection *dl_restrict col, iterator i
 dl_any _vector_collection_set(collection *dl_restrict col, iterator *iter, dl_any value) {
   dl_any ref;
 
-  if ((ref = vector_set(&col->data.vector.container, iter->vector.index, value)))
+  if ((ref = dl_vector_set(&col->data.dl_vector.container, iter->dl_vector.index, value)))
     return collection_ref(col, *iter);
   return NULL;
 }
@@ -5098,7 +5098,7 @@ dl_any _linked_list_collection_set(collection *dl_restrict col, iterator *iter, 
 
 dl_api iterator _vector_collection_index(collection *dl_restrict col, dl_natural index) {
   iterator iter;
-  iter.vector.index = index;
+  iter.dl_vector.index = index;
   return iter;
 }
 
@@ -5109,7 +5109,7 @@ dl_api iterator _linked_list_collection_index(collection *dl_restrict col, dl_na
 }
 
 dl_api void _vector_collection_next(const collection *dl_restrict col, iterator *iter) {
-  iter->vector.index++;
+  iter->dl_vector.index++;
 }
 
 dl_api void _linked_list_collection_next(const collection *dl_restrict col, iterator *iter) {
@@ -5118,9 +5118,9 @@ dl_api void _linked_list_collection_next(const collection *dl_restrict col, iter
 
 dl_api void _vector_collection_prev(const collection *dl_restrict col, iterator *iter) {
   if (!iterator_is_valid(col, *iter))
-    iter->vector.index = col->data.vector.index[1] - 1;
-  else if (iter->vector.index > col->data.vector.index[0])
-    iter->vector.index--;
+    iter->dl_vector.index = col->data.dl_vector.index[1] - 1;
+  else if (iter->dl_vector.index > col->data.dl_vector.index[0])
+    iter->dl_vector.index--;
   else
     *iter = make_invalid_iterator(col);
 }
@@ -5135,7 +5135,7 @@ dl_api void _linked_list_collection_prev(const collection *dl_restrict col, iter
 }
 
 dl_api dl_integer _vector_collection_count(const collection *dl_restrict col) {
-  return col->data.vector.index[1] - col->data.vector.index[0];
+  return col->data.dl_vector.index[1] - col->data.dl_vector.index[0];
 }
 
 dl_api dl_integer _linked_list_collection_count(const collection *dl_restrict col) {
@@ -5144,7 +5144,7 @@ dl_api dl_integer _linked_list_collection_count(const collection *dl_restrict co
 
 dl_api iterator _vector_collection_begin(const collection *dl_restrict col) {
   iterator iter;
-  iter.vector.index = col->data.vector.index[0];
+  iter.dl_vector.index = col->data.dl_vector.index[0];
   return iter;
 }
 
@@ -5156,7 +5156,7 @@ dl_api iterator _linked_list_collection_begin(const collection *dl_restrict col)
 
 dl_api iterator _vector_collection_end(const collection *dl_restrict col) {
   iterator iter;
-  iter.vector.index = col->data.vector.index[1];
+  iter.dl_vector.index = col->data.dl_vector.index[1];
   return iter;
 }
 
@@ -5177,23 +5177,23 @@ dl_api const dl_any _linked_list_collection_search_region(const collection *dl_r
 }
 
 dl_api dl_bool _vector_collection_destroy_at(collection *dl_restrict col, iterator *iter, dl_handler *destructor) {
-  vector *v;
+  dl_vector *v;
   dl_natural index, swap_index;
   dl_any item;
   
-  v = &col->data.vector.container;
-  index = iter->vector.index;
+  v = &col->data.dl_vector.container;
+  index = iter->dl_vector.index;
 
   if (destructor != NULL) {
-    if (dl_unlikely(!(item = vector_ref(v, index))))
+    if (dl_unlikely(!(item = dl_vector_ref(v, index))))
       return false;
     destructor->func(destructor->data, item);
   }
 
   if (collection_count(col) > 1)
-    for (swap_index = col->data.vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
-      vector_swap(v, swap_index, index);
-  col->data.vector.index[1]--;
+    for (swap_index = col->data.dl_vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
+      dl_vector_swap(v, swap_index, index);
+  col->data.dl_vector.index[1]--;
 
   return true;
 }
@@ -5209,19 +5209,19 @@ dl_api dl_bool _linked_list_collection_destroy_at(collection *dl_restrict col, i
 }
   
 dl_api dl_any _vector_collection_remove_at(collection *dl_restrict col, iterator *iter, dl_any out) {
-  vector *v;
+  dl_vector *v;
   dl_natural index, swap_index;
   
-  v = &col->data.vector.container;
-  index = iter->vector.index;
+  v = &col->data.dl_vector.container;
+  index = iter->dl_vector.index;
 
-  if (!(out = vector_get(v, index, out)))
+  if (!(out = dl_vector_get(v, index, out)))
     return NULL;
 
   if (collection_count(col) > 1)
-    for (swap_index = col->data.vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
-      vector_swap(v, swap_index, index);
-  col->data.vector.index[1]--;
+    for (swap_index = col->data.dl_vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
+      dl_vector_swap(v, swap_index, index);
+  col->data.dl_vector.index[1]--;
 
   return out;
 }
@@ -5242,31 +5242,31 @@ dl_api dl_any _linked_list_collection_remove_at(collection *dl_restrict col, ite
 dl_api dl_integer _vector_collection_destroy_range(collection *dl_restrict col, iterator *iter, dl_natural count) {
   dl_natural index, start, total;
   dl_handler destruct;
-  vector *v;
+  dl_vector *v;
   dl_any item;
   
-  index = iter->vector.index;
+  index = iter->dl_vector.index;
   start = index;
-  v = &col->data.vector.container;
+  v = &col->data.dl_vector.container;
 
   total = 0;
   destruct = col->settings.deconstruct_entry;
 
-  for (item = vector_ref(v, index);
+  for (item = dl_vector_ref(v, index);
        item != NULL && total < count;
-       ++index, item = vector_ref(v, index), ++total)
+       ++index, item = dl_vector_ref(v, index), ++total)
     if (destruct.func != NULL)
       destruct.func(destruct.data, item);
 
   if (total != 0) {
     do {
-      vector_swap(v, start, index);
+      dl_vector_swap(v, start, index);
       ++start;
       ++index;
-    } while (NULL != vector_ref(v, index));
+    } while (NULL != dl_vector_ref(v, index));
   }
 
-  col->data.vector.index[1] -= total;
+  col->data.dl_vector.index[1] -= total;
 
   return total;
 }
@@ -5416,8 +5416,8 @@ void _check_init_collection(collection *dl_restrict col, collection_settings set
   }
 
   if (col->settings.storage == STORAGE_TYPE_VECTOR) {
-    col->data.vector.index[0] = 0;
-    col->data.vector.index[1] = count;
+    col->data.dl_vector.index[0] = 0;
+    col->data.dl_vector.index[1] = count;
   }
 }
 
@@ -5456,7 +5456,7 @@ dl_api collection *init_collection(collection *dl_restrict col, collection_type 
   
   switch (settings.storage) {
   case STORAGE_TYPE_VECTOR: {
-    if (!init_vector(&col->data.vector.container, element_size, col->settings.capacity))
+    if (!dl_init_vector(&col->data.dl_vector.container, element_size, col->settings.capacity))
       return NULL;
     break;
   }
@@ -5482,7 +5482,7 @@ dl_api collection *init_collection_custom(collection *dl_restrict col, collectio
 
   switch (col->settings.storage) {
   case STORAGE_TYPE_VECTOR:
-    if (!init_vector(&col->data.vector.container, element_size, col->settings.capacity))
+    if (!dl_init_vector(&col->data.dl_vector.container, element_size, col->settings.capacity))
       return NULL;
     break;
   case STORAGE_TYPE_LINKED_LIST:
@@ -5504,7 +5504,7 @@ dl_api collection *init_collection_array(collection *dl_restrict col, collection
   if (dl_safety(col == NULL || data == NULL))
     return NULL;
 
-  if (!init_vector_array(&col->data.vector.container, data, element_size, count))
+  if (!dl_init_vector_array(&col->data.dl_vector.container, data, element_size, count))
     return NULL;
 
   settings = default_vector_collection_settings;
@@ -5543,7 +5543,7 @@ dl_api void destroy_collection(collection *dl_restrict col) {
 	col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, item);
     }
 
-    destroy_vector(&col->data.vector.container, NULL);
+    dl_destroy_vector(&col->data.dl_vector.container, NULL);
     break;
   case STORAGE_TYPE_LINKED_LIST:
     destroy_linked_list(&col->data.linked_list.container, &col->settings.deconstruct_entry);
