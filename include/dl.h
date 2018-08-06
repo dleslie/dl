@@ -878,13 +878,13 @@ extern "C" {
 
   extern dl_linked_list_settings default_linked_list_settings;
 
-  dl_api dl_linked_list *initdl_linked_list(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length);
-  dl_api dl_linked_list *initdl_linked_list_custom(dl_linked_list * dl_restrict target, dl_linked_list_settings settings);
+  dl_api dl_linked_list *dl_init_linked_list(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length);
+  dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_linked_list_settings settings);
 
   dl_api dl_natural dl_linked_list_copy(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_linked_list *dl_restrict original);
   dl_api dl_natural dl_linked_list_copy_array(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_byte *dl_restrict data, dl_natural count);
 
-  dl_api void destroydl_linked_list(dl_linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry);
+  dl_api void dl_destroy_linked_list(dl_linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry);
 
   dl_api dl_natural dl_linked_list_capacity(const dl_linked_list * dl_restrict list);
   dl_api dl_natural dl_linked_list_length(const dl_linked_list * dl_restrict list);
@@ -3552,7 +3552,7 @@ dl_api dl_any _linked_list_node_deconstructor(dl_any data, dl_any element) {
   return NULL;
 }
 
-dl_api dl_linked_list *initdl_linked_list(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length) {
+dl_api dl_linked_list *dl_init_linked_list(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length) {
   dl_linked_list_settings settings;
   
   if (dl_safety(target == NULL || element_size == 0))
@@ -3562,7 +3562,7 @@ dl_api dl_linked_list *initdl_linked_list(dl_linked_list * dl_restrict target, d
   settings.element_size = element_size;
   settings.cache_length = cache_length;
 
-  return initdl_linked_list_custom(target, settings);
+  return dl_init_linked_list_custom(target, settings);
 }
 
 dl_api dl_linked_list *_linked_list_cache_grow(dl_linked_list * dl_restrict target) {
@@ -3603,7 +3603,7 @@ dl_api dl_linked_list *_linked_list_cache_grow(dl_linked_list * dl_restrict targ
   return target;
 }
 
-dl_api dl_linked_list *initdl_linked_list_custom(dl_linked_list * dl_restrict target, dl_linked_list_settings settings) {
+dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_linked_list_settings settings) {
   if (dl_safety(target == NULL || settings.element_size < 1))
     return NULL;
 
@@ -3664,7 +3664,7 @@ dl_api dl_natural dl_linked_list_copy_array(dl_linked_list * dl_restrict target,
   return count;
 }
 
-dl_api void destroydl_linked_list(dl_linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry) {
+dl_api void dl_destroy_linked_list(dl_linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry) {
   struct dl_linked_list_node *node;
   
   if (dl_safety(target == NULL))
@@ -5461,7 +5461,7 @@ dl_api collection *init_collection(collection *dl_restrict col, collection_type 
     break;
   }
   case STORAGE_TYPE_LINKED_LIST: {
-    if (!initdl_linked_list(&col->data.dl_linked_list.container, element_size, col->settings.capacity))
+    if (!dl_init_linked_list(&col->data.dl_linked_list.container, element_size, col->settings.capacity))
       return NULL;
     break;
   }
@@ -5486,7 +5486,7 @@ dl_api collection *init_collection_custom(collection *dl_restrict col, collectio
       return NULL;
     break;
   case STORAGE_TYPE_LINKED_LIST:
-    if (!initdl_linked_list(&col->data.dl_linked_list.container, element_size, col->settings.capacity))
+    if (!dl_init_linked_list(&col->data.dl_linked_list.container, element_size, col->settings.capacity))
       return NULL;
     break;
   default:
@@ -5546,7 +5546,7 @@ dl_api void destroy_collection(collection *dl_restrict col) {
     dl_destroy_vector(&col->data.dl_vector.container, NULL);
     break;
   case STORAGE_TYPE_LINKED_LIST:
-    destroydl_linked_list(&col->data.dl_linked_list.container, &col->settings.deconstruct_entry);
+    dl_destroy_linked_list(&col->data.dl_linked_list.container, &col->settings.deconstruct_entry);
     break;
   }
 }

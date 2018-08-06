@@ -2227,7 +2227,7 @@ dl_bool test_init_linked_list() {
   dl_natural count;
   struct dl_linked_list_node *node;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(dl_natural), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(dl_natural), 32),
     "Expected linked list to initialize."))
     return false;
 
@@ -2261,10 +2261,10 @@ dl_bool test_init_linked_list() {
     count, dl_vector_capacity(&list.node_cache)))
     goto fail;
 
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return true;
 fail:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return false;
 }
 
@@ -2273,7 +2273,7 @@ dl_bool test_init_linked_list_fat() {
   dl_natural count;
   struct dl_linked_list_node *node;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(fat_data), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(fat_data), 32),
     "Expected linked list to initialize."))
     return false;
 
@@ -2307,10 +2307,10 @@ dl_bool test_init_linked_list_fat() {
     count, dl_vector_capacity(&list.node_cache)))
     goto fail;
 
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return true;
 fail:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return false;
 }
 
@@ -2320,7 +2320,7 @@ dl_bool test_linked_list_add() {
   dl_linked_list list;
   struct dl_linked_list_node *node;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(dl_natural), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(dl_natural), 32),
     "Expected linked list to initialize."))
     return false;
 
@@ -2376,10 +2376,10 @@ dl_bool test_linked_list_add() {
     "Expected to find %i items, found %i.", count, current))
     goto fail;
 
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return true;
 fail:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return false;
 }
 
@@ -2387,7 +2387,7 @@ dl_bool test_linked_list_add_fat() {
   fat_data count, value;
   dl_linked_list list;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(fat_data), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(fat_data), 32),
     "Expected linked list to initialize."))
     return false;
 
@@ -2423,16 +2423,16 @@ dl_bool test_linked_list_add_fat() {
 	     "Expected {%u, %u} to be {2, 39}", value.a, value.b))
     goto fail;
 
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return true;
 fail:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return false;
 }
 
 dl_bool test_linked_list_capacity() {
   dl_linked_list list;
-  if (!dl_check(initdl_linked_list(&list, sizeof(dl_natural), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(dl_natural), 32),
     "Expected linked list to initialize."))
     return false;
 
@@ -2440,16 +2440,16 @@ dl_bool test_linked_list_capacity() {
     "Expected linked list capacity to be that of its node cache."))
     goto fail;
 
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return true;
 fail:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return false;
 }
 
 dl_bool test_linked_list_length() {
   dl_linked_list list;
-  if (!dl_check(initdl_linked_list(&list, sizeof(dl_natural), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(dl_natural), 32),
     "Expected linked list to initialize."))
     return false;
 
@@ -2477,10 +2477,10 @@ dl_bool test_linked_list_length() {
     "Expected length to be %i, was %i.", count, dl_linked_list_length(&list)))
     goto fail;
 
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return true;
 fail:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return false;
 }
 
@@ -2491,13 +2491,13 @@ dl_bool test_linked_list_copy() {
   struct dl_linked_list_node *node_b;
   dl_bool success;
 
-  if (!dl_check(initdl_linked_list(&a, sizeof(dl_natural), 32),
+  if (!dl_check(dl_init_linked_list(&a, sizeof(dl_natural), 32),
     "Expected init to work."))
     return false;
 
-  if (!dl_check(initdl_linked_list(&b, sizeof(dl_natural), 32),
+  if (!dl_check(dl_init_linked_list(&b, sizeof(dl_natural), 32),
     "Expected init to work.")) {
-    destroydl_linked_list(&a, NULL);
+    dl_destroy_linked_list(&a, NULL);
     return false;
   }
 
@@ -2550,8 +2550,8 @@ dl_bool test_linked_list_copy() {
 fail:
   success = false;;
 finish:
-  destroydl_linked_list(&a, NULL);
-  destroydl_linked_list(&b, NULL);
+  dl_destroy_linked_list(&a, NULL);
+  dl_destroy_linked_list(&b, NULL);
   return success;
 }
 
@@ -2562,7 +2562,7 @@ dl_bool test_linked_list_copy_array() {
   struct dl_linked_list_node *node;
   dl_bool success;
 
-  if (!dl_check(initdl_linked_list(&a, sizeof(dl_integer), 32),
+  if (!dl_check(dl_init_linked_list(&a, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
@@ -2609,7 +2609,7 @@ dl_bool test_linked_list_copy_array() {
 fail:
   success = false;;
 finish:
-  destroydl_linked_list(&a, NULL);
+  dl_destroy_linked_list(&a, NULL);
   return success;
 }
 
@@ -2619,7 +2619,7 @@ dl_bool test_linked_list_grow() {
   dl_bool success;
   struct dl_linked_list_node *node;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
@@ -2649,7 +2649,7 @@ dl_bool test_linked_list_grow() {
 fail:
   success = false;;
 finish:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return success;
 }
 
@@ -2659,7 +2659,7 @@ dl_bool test_linked_list_shrink() {
   dl_natural length, capacity;
   dl_bool success;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
@@ -2691,13 +2691,13 @@ dl_bool test_linked_list_shrink() {
 fail:
   success = false;;
 finish:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return success;
 }
 
 dl_bool test_linked_list_resize() {
   dl_linked_list list;
-  if (!dl_check(initdl_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
@@ -2747,7 +2747,7 @@ dl_bool test_linked_list_resize() {
 fail:
   success = false;;
 finish:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return success;
 }
 
@@ -2758,7 +2758,7 @@ dl_bool test_linked_list_get() {
   dl_natural idx;
   dl_bool success;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(data), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(data), 32),
     "Expected init to work."))
     return false;
 
@@ -2780,7 +2780,7 @@ dl_bool test_linked_list_get() {
 fail:
   success = false;;
 finish:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return success;
 }
 
@@ -2792,7 +2792,7 @@ dl_bool test_linked_list_set() {
   dl_natural idx;
   dl_bool success;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(data), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(data), 32),
     "Expected init to work."))
     return false;
 
@@ -2818,7 +2818,7 @@ dl_bool test_linked_list_set() {
 fail:
   success = false;;
 finish:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return success;
 }
 
@@ -2829,7 +2829,7 @@ dl_bool test_linked_list_ref() {
   dl_natural idx;
   dl_bool success;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(data), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(data), 32),
     "Expected init to work."))
     return false;
 
@@ -2851,7 +2851,7 @@ dl_bool test_linked_list_ref() {
 fail:
   success = false;;
 finish:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return success;
 }
 
@@ -2862,7 +2862,7 @@ dl_bool test_linked_list_index() {
   struct dl_linked_list_node *node;
   dl_bool success;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
@@ -2893,7 +2893,7 @@ dl_bool test_linked_list_index() {
 fail:
   success = false;;
 finish:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return success;
 }
 
@@ -2904,7 +2904,7 @@ dl_bool test_linked_list_destroy_range() {
   struct dl_linked_list_node *node;
   dl_bool success;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
@@ -2928,7 +2928,7 @@ dl_bool test_linked_list_destroy_range() {
 fail:
   success = false;;
 finish:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return success;
 }
 
@@ -2939,7 +2939,7 @@ dl_bool test_linked_list_swap() {
   struct dl_linked_list_node *node0, *node1, *next0, *next1, *prev0, *prev1;
   dl_bool success;
   
-  if (!dl_check(initdl_linked_list(&list, sizeof(dl_integer), 32),
+  if (!dl_check(dl_init_linked_list(&list, sizeof(dl_integer), 32),
     "Expected init to work."))
     return false;
 
@@ -2995,7 +2995,7 @@ dl_bool test_linked_list_swap() {
 fail:
   success = false;;
 finish:
-  destroydl_linked_list(&list, NULL);
+  dl_destroy_linked_list(&list, NULL);
   return success;
 }
 
