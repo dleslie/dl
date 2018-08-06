@@ -857,53 +857,53 @@ extern "C" {
     dl_natural cache_length;
     dl_any (*alloc)(dl_natural count, dl_natural element_size);
     void (*free)(dl_any data);
-  } linked_list_settings;
+  } dl_linked_list_settings;
 
-  struct linked_list_node {
-    struct linked_list_node *next;
-    struct linked_list_node *previous;
+  struct dl_linked_list_node {
+    struct dl_linked_list_node *next;
+    struct dl_linked_list_node *previous;
   };
 
-#define LINKED_LIST_HEADER_SIZE (sizeof(struct linked_list_node))
-#define LINKED_LIST_DATA(element) ((dl_any)&((struct linked_list_node *)element)[1])
+#define LINKED_LIST_HEADER_SIZE (sizeof(struct dl_linked_list_node))
+#define LINKED_LIST_DATA(element) ((dl_any)&((struct dl_linked_list_node *)element)[1])
 
   typedef struct {
-    struct linked_list_node *first;
-    struct linked_list_node *last;
-    struct linked_list_node *free;
+    struct dl_linked_list_node *first;
+    struct dl_linked_list_node *last;
+    struct dl_linked_list_node *free;
 
-    linked_list_settings settings;
+    dl_linked_list_settings settings;
     dl_vector node_cache;
-  } linked_list;
+  } dl_linked_list;
 
-  extern linked_list_settings default_linked_list_settings;
+  extern dl_linked_list_settings default_linked_list_settings;
 
-  dl_api linked_list *init_linked_list(linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length);
-  dl_api linked_list *init_linked_list_custom(linked_list * dl_restrict target, linked_list_settings settings);
+  dl_api dl_linked_list *initdl_linked_list(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length);
+  dl_api dl_linked_list *initdl_linked_list_custom(dl_linked_list * dl_restrict target, dl_linked_list_settings settings);
 
-  dl_api dl_natural linked_list_copy(linked_list * dl_restrict target, struct linked_list_node *target_position, const linked_list *dl_restrict original);
-  dl_api dl_natural linked_list_copy_array(linked_list * dl_restrict target, struct linked_list_node *target_position, const dl_byte *dl_restrict data, dl_natural count);
+  dl_api dl_natural dl_linked_list_copy(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_linked_list *dl_restrict original);
+  dl_api dl_natural dl_linked_list_copy_array(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_byte *dl_restrict data, dl_natural count);
 
-  dl_api void destroy_linked_list(linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry);
+  dl_api void destroydl_linked_list(dl_linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry);
 
-  dl_api dl_natural linked_list_capacity(const linked_list * dl_restrict list);
-  dl_api dl_natural linked_list_length(const linked_list * dl_restrict list);
+  dl_api dl_natural dl_linked_list_capacity(const dl_linked_list * dl_restrict list);
+  dl_api dl_natural dl_linked_list_length(const dl_linked_list * dl_restrict list);
 
-  dl_api dl_bool linked_list_grow(linked_list * dl_restrict list);
-  dl_api dl_bool linked_list_shrink(linked_list * dl_restrict list, dl_handler *dl_restrict deconstruct_entry);
-  dl_api dl_bool linked_list_resize(linked_list * dl_restrict list, dl_natural minimum_capacity, dl_handler *dl_restrict deconstruct_entry);
+  dl_api dl_bool dl_linked_list_grow(dl_linked_list * dl_restrict list);
+  dl_api dl_bool dl_linked_list_shrink(dl_linked_list * dl_restrict list, dl_handler *dl_restrict deconstruct_entry);
+  dl_api dl_bool dl_linked_list_resize(dl_linked_list * dl_restrict list, dl_natural minimum_capacity, dl_handler *dl_restrict deconstruct_entry);
 
-  dl_api dl_any linked_list_get(const linked_list * dl_restrict list, struct linked_list_node *dl_restrict position, dl_any out);
-  dl_api const dl_any linked_list_ref(const struct linked_list_node *dl_restrict position);
-  dl_api dl_any linked_list_set(linked_list * dl_restrict list, struct linked_list_node *dl_restrict position, dl_any value);
-  dl_api struct linked_list_node *linked_list_index(linked_list * dl_restrict list, dl_natural position);
+  dl_api dl_any dl_linked_list_get(const dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position, dl_any out);
+  dl_api const dl_any dl_linked_list_ref(const struct dl_linked_list_node *dl_restrict position);
+  dl_api dl_any dl_linked_list_set(dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position, dl_any value);
+  dl_api struct dl_linked_list_node *dl_linked_list_index(dl_linked_list * dl_restrict list, dl_natural position);
 
-  dl_api struct linked_list_node *linked_list_add(linked_list * dl_restrict list, struct linked_list_node *dl_restrict position, dl_any value);
-  dl_api dl_any linked_list_remove(linked_list * dl_restrict list, struct linked_list_node * dl_restrict position, dl_any out);
-  dl_api dl_natural linked_list_destroy_range(linked_list * dl_restrict list, struct linked_list_node *dl_restrict position, dl_natural count, dl_handler *dl_restrict destruct_entry);
-  dl_api dl_bool linked_list_destroy(linked_list * dl_restrict list, struct linked_list_node *dl_restrict position, dl_handler *deconstruct_entry);
+  dl_api struct dl_linked_list_node *dl_linked_list_add(dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position, dl_any value);
+  dl_api dl_any dl_linked_list_remove(dl_linked_list * dl_restrict list, struct dl_linked_list_node * dl_restrict position, dl_any out);
+  dl_api dl_natural dl_linked_list_destroy_range(dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position, dl_natural count, dl_handler *dl_restrict destruct_entry);
+  dl_api dl_bool dl_linked_list_destroy(dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position, dl_handler *deconstruct_entry);
 
-  dl_api dl_bool linked_list_swap(linked_list * dl_restrict list, struct linked_list_node *dl_restrict position1, struct linked_list_node *dl_restrict position2, dl_bool data);
+  dl_api dl_bool dl_linked_list_swap(dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position1, struct dl_linked_list_node *dl_restrict position2, dl_bool data);
 
 
 
@@ -917,8 +917,8 @@ extern "C" {
       dl_natural index;
     } dl_vector;
     struct {
-      struct linked_list_node *node;
-    } linked_list;
+      struct dl_linked_list_node *node;
+    } dl_linked_list;
   } iterator;
 
   enum {
@@ -962,8 +962,8 @@ extern "C" {
         dl_natural index[2];
       } dl_vector;
       struct {
-        linked_list container;
-      } linked_list;
+        dl_linked_list container;
+      } dl_linked_list;
     } data;
   } collection;
 
@@ -3446,13 +3446,13 @@ dl_api dl_natural dl_vector_ref_array(dl_vector * dl_restrict v, dl_natural inde
  **  Linked Lists
  ****************************************************************************/
 
-linked_list_settings default_linked_list_settings = {
+dl_linked_list_settings default_linked_list_settings = {
   32, 32,
   DECLARE_ALLOC_MEMBERS(alloc, free)
 };
 
-dl_api struct linked_list_node *_linked_list_node_alloc(linked_list * dl_restrict list, struct linked_list_node * dl_restrict after) {
-  struct linked_list_node *node;
+dl_api struct dl_linked_list_node *_linked_list_node_alloc(dl_linked_list * dl_restrict list, struct dl_linked_list_node * dl_restrict after) {
+  struct dl_linked_list_node *node;
   
   if (list->free == NULL)
     return NULL;
@@ -3487,7 +3487,7 @@ dl_api struct linked_list_node *_linked_list_node_alloc(linked_list * dl_restric
   return node;
 }
 
-dl_api void _linked_list_node_free(linked_list * dl_restrict list, struct linked_list_node * dl_restrict node) {
+dl_api void _linked_list_node_free(dl_linked_list * dl_restrict list, struct dl_linked_list_node * dl_restrict node) {
   if (list->first == node)
     list->first = node->next;
   if (node->next != NULL)
@@ -3504,7 +3504,7 @@ dl_api void _linked_list_node_free(linked_list * dl_restrict list, struct linked
   list->free = node;
 }
 
-dl_api void _linked_list_node_detach_free(linked_list *dl_restrict list, struct linked_list_node *e) {
+dl_api void _linked_list_node_detach_free(dl_linked_list *dl_restrict list, struct dl_linked_list_node *e) {
   if (list->free == e)
     list->free = e->next;
   if (e->next != NULL)
@@ -3516,16 +3516,16 @@ dl_api void _linked_list_node_detach_free(linked_list *dl_restrict list, struct 
 
 typedef struct {
   dl_handler *original_destructor;
-  linked_list *list;
+  dl_linked_list *list;
 } _linked_list_node_deconstructor_data;
 
 dl_api dl_any _linked_list_node_deconstructor(dl_any data, dl_any element) {
   _linked_list_node_deconstructor_data *d;
-  struct linked_list_node *f, *e, *new_node;
+  struct dl_linked_list_node *f, *e, *new_node;
   dl_handler *destruct;
 
   d = (_linked_list_node_deconstructor_data *)data;
-  e = (struct linked_list_node *)element;
+  e = (struct dl_linked_list_node *)element;
 
   /* Is it in the free list? */
   for (f = d->list->free; f != NULL; f = f->next)
@@ -3544,7 +3544,7 @@ dl_api dl_any _linked_list_node_deconstructor(dl_any data, dl_any element) {
     }
   }
   else
-    linked_list_swap(d->list, e, new_node, true);
+    dl_linked_list_swap(d->list, e, new_node, true);
 
   _linked_list_node_free(d->list, e);
   _linked_list_node_detach_free(d->list, e);
@@ -3552,8 +3552,8 @@ dl_api dl_any _linked_list_node_deconstructor(dl_any data, dl_any element) {
   return NULL;
 }
 
-dl_api linked_list *init_linked_list(linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length) {
-  linked_list_settings settings;
+dl_api dl_linked_list *initdl_linked_list(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length) {
+  dl_linked_list_settings settings;
   
   if (dl_safety(target == NULL || element_size == 0))
     return false;
@@ -3562,14 +3562,14 @@ dl_api linked_list *init_linked_list(linked_list * dl_restrict target, dl_natura
   settings.element_size = element_size;
   settings.cache_length = cache_length;
 
-  return init_linked_list_custom(target, settings);
+  return initdl_linked_list_custom(target, settings);
 }
 
-dl_api linked_list *_linked_list_cache_grow(linked_list * dl_restrict target) {
-  linked_list_settings settings;
+dl_api dl_linked_list *_linked_list_cache_grow(dl_linked_list * dl_restrict target) {
+  dl_linked_list_settings settings;
   dl_vector *v;
   dl_natural zero, length, idx;
-  struct linked_list_node *node;
+  struct dl_linked_list_node *node;
   
   if (dl_safety(target == NULL))
     return NULL;
@@ -3595,7 +3595,7 @@ dl_api linked_list *_linked_list_cache_grow(linked_list * dl_restrict target) {
   length = dl_vector_capacity(v);
 
   for (idx = zero; idx < length; ++idx) {
-    node = (struct linked_list_node *)dl_vector_ref(v, idx);
+    node = (struct dl_linked_list_node *)dl_vector_ref(v, idx);
     dl_memory_set(node, 0, LINKED_LIST_HEADER_SIZE);
     _linked_list_node_free(target, node);
   }
@@ -3603,7 +3603,7 @@ dl_api linked_list *_linked_list_cache_grow(linked_list * dl_restrict target) {
   return target;
 }
 
-dl_api linked_list *init_linked_list_custom(linked_list * dl_restrict target, linked_list_settings settings) {
+dl_api dl_linked_list *initdl_linked_list_custom(dl_linked_list * dl_restrict target, dl_linked_list_settings settings) {
   if (dl_safety(target == NULL || settings.element_size < 1))
     return NULL;
 
@@ -3613,8 +3613,8 @@ dl_api linked_list *init_linked_list_custom(linked_list * dl_restrict target, li
   return _linked_list_cache_grow(target);
 }
 
-dl_api dl_natural linked_list_copy(linked_list * dl_restrict target, struct linked_list_node *dl_restrict target_position, const linked_list * dl_restrict original) {
-  struct linked_list_node *source_node, *next;
+dl_api dl_natural dl_linked_list_copy(dl_linked_list * dl_restrict target, struct dl_linked_list_node *dl_restrict target_position, const dl_linked_list * dl_restrict original) {
+  struct dl_linked_list_node *source_node, *next;
   dl_natural count;
   
   if (dl_safety(original == NULL || target == NULL))
@@ -3627,7 +3627,7 @@ dl_api dl_natural linked_list_copy(linked_list * dl_restrict target, struct link
   count = 0;
 
   while (source_node != NULL) {
-    next = linked_list_add(target, target_position, LINKED_LIST_DATA(source_node));
+    next = dl_linked_list_add(target, target_position, LINKED_LIST_DATA(source_node));
     if (dl_unlikely(next == NULL))
       break;
 
@@ -3639,9 +3639,9 @@ dl_api dl_natural linked_list_copy(linked_list * dl_restrict target, struct link
   return count;
 }
 
-dl_api dl_natural linked_list_copy_array(linked_list * dl_restrict target, struct linked_list_node *target_position, const dl_byte *data, dl_natural length) {
+dl_api dl_natural dl_linked_list_copy_array(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_byte *data, dl_natural length) {
   dl_natural count, byte_size, idx;
-  struct linked_list_node *next;
+  struct dl_linked_list_node *next;
   
   if (dl_safety(target == NULL || data == NULL))
     return 0;
@@ -3653,7 +3653,7 @@ dl_api dl_natural linked_list_copy_array(linked_list * dl_restrict target, struc
   byte_size = target->settings.element_size;
 
   for (idx = 0; idx < length; ++idx) {
-    next = linked_list_add(target, target_position, (dl_byte *)&data[idx * byte_size]);
+    next = dl_linked_list_add(target, target_position, (dl_byte *)&data[idx * byte_size]);
     if (dl_unlikely(next == NULL))
       break;
 
@@ -3664,8 +3664,8 @@ dl_api dl_natural linked_list_copy_array(linked_list * dl_restrict target, struc
   return count;
 }
 
-dl_api void destroy_linked_list(linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry) {
-  struct linked_list_node *node;
+dl_api void destroydl_linked_list(dl_linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry) {
+  struct dl_linked_list_node *node;
   
   if (dl_safety(target == NULL))
     return;
@@ -3680,19 +3680,19 @@ dl_api void destroy_linked_list(linked_list * dl_restrict target, dl_handler *dl
 
   dl_destroy_vector(&target->node_cache, NULL);
 
-  dl_memory_set(target, 0, sizeof(linked_list));
+  dl_memory_set(target, 0, sizeof(dl_linked_list));
 }
 
-dl_api dl_natural linked_list_capacity(const linked_list * dl_restrict list) {
+dl_api dl_natural dl_linked_list_capacity(const dl_linked_list * dl_restrict list) {
   if (dl_safety(list == NULL))
     return 0;
 
   return dl_vector_capacity(&list->node_cache);
 }
 
-dl_api dl_natural linked_list_length(const linked_list * dl_restrict list) {
+dl_api dl_natural dl_linked_list_length(const dl_linked_list * dl_restrict list) {
   dl_natural length;
-  struct linked_list_node *node;
+  struct dl_linked_list_node *node;
   
   if (dl_safety(list == NULL))
     return 0;
@@ -3707,11 +3707,11 @@ dl_api dl_natural linked_list_length(const linked_list * dl_restrict list) {
   return length;
 }
 
-dl_api dl_bool linked_list_grow(linked_list * dl_restrict list) {
+dl_api dl_bool dl_linked_list_grow(dl_linked_list * dl_restrict list) {
   return _linked_list_cache_grow(list) != NULL;
 }
 
-dl_api dl_bool linked_list_shrink(linked_list * dl_restrict list, dl_handler *dl_restrict deconstruct_entry) {
+dl_api dl_bool dl_linked_list_shrink(dl_linked_list * dl_restrict list, dl_handler *dl_restrict deconstruct_entry) {
   _linked_list_node_deconstructor_data data;
   dl_handler destructor;
   
@@ -3726,7 +3726,7 @@ dl_api dl_bool linked_list_shrink(linked_list * dl_restrict list, dl_handler *dl
   return dl_vector_shrink(&list->node_cache, &destructor);
 }
 
-dl_api dl_bool linked_list_resize(linked_list * dl_restrict list, dl_natural minimum_capacity, dl_handler *dl_restrict deconstruct_entry) {
+dl_api dl_bool dl_linked_list_resize(dl_linked_list * dl_restrict list, dl_natural minimum_capacity, dl_handler *dl_restrict deconstruct_entry) {
   _linked_list_node_deconstructor_data data;
   dl_handler destructor;
   
@@ -3741,29 +3741,29 @@ dl_api dl_bool linked_list_resize(linked_list * dl_restrict list, dl_natural min
   return dl_vector_resize(&list->node_cache, minimum_capacity, &destructor);
 }
 
-dl_api dl_any linked_list_get(const linked_list * dl_restrict list, struct linked_list_node *position, dl_any out) {
+dl_api dl_any dl_linked_list_get(const dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_any out) {
   if (dl_safety(list == NULL || position == NULL || out == NULL))
     return NULL;
 
   return dl_memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size);
 }
 
-dl_api const dl_any linked_list_ref(const struct linked_list_node *position) {
+dl_api const dl_any dl_linked_list_ref(const struct dl_linked_list_node *position) {
   if (dl_safety(position == NULL))
     return NULL;
 
   return (const dl_any)LINKED_LIST_DATA(position);
 }
 
-dl_api dl_any linked_list_set(linked_list * dl_restrict list, struct linked_list_node *position, dl_any value) {
+dl_api dl_any dl_linked_list_set(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_any value) {
   if (dl_safety(list == NULL || position == NULL || value == NULL))
     return NULL;
 
   return dl_memory_copy(LINKED_LIST_DATA(position), value, list->settings.element_size);
 }
 
-dl_api struct linked_list_node *linked_list_add(linked_list * dl_restrict list, struct linked_list_node *position, dl_any value) {
-  struct linked_list_node *node;
+dl_api struct dl_linked_list_node *dl_linked_list_add(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_any value) {
+  struct dl_linked_list_node *node;
   
   if (dl_safety(list == NULL))
     return NULL;
@@ -3780,7 +3780,7 @@ dl_api struct linked_list_node *linked_list_add(linked_list * dl_restrict list, 
   return node;
 }
 
-dl_api dl_any linked_list_remove(linked_list * dl_restrict list, struct linked_list_node *position, dl_any out) {
+dl_api dl_any dl_linked_list_remove(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_any out) {
   if (dl_safety(list == NULL || position == NULL))
     return NULL;
 
@@ -3792,7 +3792,7 @@ dl_api dl_any linked_list_remove(linked_list * dl_restrict list, struct linked_l
   return out;
 }
 
-dl_api dl_bool linked_list_destroy(linked_list * dl_restrict list, struct linked_list_node *position, dl_handler *deconstruct_entry) {
+dl_api dl_bool dl_linked_list_destroy(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_handler *deconstruct_entry) {
   if (dl_safety(list == NULL || position == NULL))
     return false;
   
@@ -3804,9 +3804,9 @@ dl_api dl_bool linked_list_destroy(linked_list * dl_restrict list, struct linked
   return true;
 }
 
-dl_api dl_natural linked_list_destroy_range(linked_list * dl_restrict list, struct linked_list_node *position, dl_natural count, dl_handler *deconstruct_entry) {
+dl_api dl_natural dl_linked_list_destroy_range(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_natural count, dl_handler *deconstruct_entry) {
   dl_natural removed;
-  struct linked_list_node *next;
+  struct dl_linked_list_node *next;
   
   if (dl_safety(list == NULL || position == NULL || count == 0))
     return 0;
@@ -3814,7 +3814,7 @@ dl_api dl_natural linked_list_destroy_range(linked_list * dl_restrict list, stru
   removed = 0;
   while (removed < count) {
     next = position->next;
-    if (!linked_list_destroy(list, position, deconstruct_entry))
+    if (!dl_linked_list_destroy(list, position, deconstruct_entry))
       break;
 
     position = next;
@@ -3824,8 +3824,8 @@ dl_api dl_natural linked_list_destroy_range(linked_list * dl_restrict list, stru
   return removed;
 }
 
-dl_api dl_bool linked_list_swap(linked_list * dl_restrict list, struct linked_list_node *position1, struct linked_list_node *position2, dl_bool data) {
-  struct linked_list_node *t;
+dl_api dl_bool dl_linked_list_swap(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position1, struct dl_linked_list_node *position2, dl_bool data) {
+  struct dl_linked_list_node *t;
   
   if (dl_safety(list == NULL || position1 == NULL || position2 == NULL))
     return false;
@@ -3886,8 +3886,8 @@ dl_api dl_bool linked_list_swap(linked_list * dl_restrict list, struct linked_li
   return true;
 }
 
-dl_api struct linked_list_node *linked_list_index(linked_list * dl_restrict list, dl_natural position) {
-  struct linked_list_node *node;
+dl_api struct dl_linked_list_node *dl_linked_list_index(dl_linked_list * dl_restrict list, dl_natural position) {
+  struct dl_linked_list_node *node;
   
   if (dl_safety(list == NULL))
     return NULL;
@@ -4853,7 +4853,7 @@ dl_api dl_integer _vector_iterator_compare(const collection *dl_restrict col, it
 }
 
 dl_api dl_integer _linked_list_iterator_compare(const collection *dl_restrict col, iterator left, iterator right) {
-  return (dl_integer)(left.linked_list.node - right.linked_list.node);
+  return (dl_integer)(left.dl_linked_list.node - right.dl_linked_list.node);
 }
 
 dl_api dl_bool _vector_iterator_is_valid(const collection *dl_restrict col, iterator index) {
@@ -4862,7 +4862,7 @@ dl_api dl_bool _vector_iterator_is_valid(const collection *dl_restrict col, iter
 }
 
 dl_api dl_bool _linked_list_iterator_is_valid(const collection *dl_restrict col, iterator index) {
-  return index.linked_list.node != NULL;
+  return index.dl_linked_list.node != NULL;
 }
 
 dl_api iterator _vector_make_invalid_iterator(const collection *dl_restrict col) {
@@ -4873,7 +4873,7 @@ dl_api iterator _vector_make_invalid_iterator(const collection *dl_restrict col)
 
 dl_api iterator _linked_list_make_invalid_iterator(const collection *dl_restrict col) {
   iterator bad;
-  bad.linked_list.node = NULL;
+  bad.dl_linked_list.node = NULL;
 
   return bad;
 }
@@ -4890,14 +4890,14 @@ dl_api dl_any _vector_collection_push_start(collection *dl_restrict col, iterato
 }
 
 dl_api dl_any _linked_list_collection_push_start(collection *dl_restrict col, iterator *iter) {
-  linked_list *list;
+  dl_linked_list *list;
   
-  list = &col->data.linked_list.container;
-  if ((iter->linked_list.node = linked_list_add(list, col->data.linked_list.container.last, NULL)))
-    return linked_list_ref(iter->linked_list.node);
+  list = &col->data.dl_linked_list.container;
+  if ((iter->dl_linked_list.node = dl_linked_list_add(list, col->data.dl_linked_list.container.last, NULL)))
+    return dl_linked_list_ref(iter->dl_linked_list.node);
   else {
-    if (linked_list_grow(list) && (iter->linked_list.node = linked_list_add(list, col->data.linked_list.container.last, NULL)))
-      return linked_list_ref(iter->linked_list.node);
+    if (dl_linked_list_grow(list) && (iter->dl_linked_list.node = dl_linked_list_add(list, col->data.dl_linked_list.container.last, NULL)))
+      return dl_linked_list_ref(iter->dl_linked_list.node);
     return NULL;
   }
 }
@@ -4907,7 +4907,7 @@ dl_api dl_bool _vector_collection_is_empty(const collection *dl_restrict col) {
 }
 
 dl_api dl_bool _linked_list_collection_is_empty(const collection *dl_restrict col) {
-  return col->data.linked_list.container.first == NULL;
+  return col->data.dl_linked_list.container.first == NULL;
 }
 
 dl_api dl_any _vector_collection_pop(collection *dl_restrict col, dl_any out) {
@@ -4937,17 +4937,17 @@ dl_api dl_any _vector_collection_pop(collection *dl_restrict col, dl_any out) {
 }
 
 dl_api dl_any _linked_list_collection_pop(collection * dl_restrict col, dl_any out) {
-  linked_list *list;
-  struct linked_list_node *position;
+  dl_linked_list *list;
+  struct dl_linked_list_node *position;
 
-  list = &col->data.linked_list.container;
+  list = &col->data.dl_linked_list.container;
   
   if (collection_is_queue(col))
     position = list->first;
   else
     position = list->last;
 
-  return linked_list_remove(list, position, out);
+  return dl_linked_list_remove(list, position, out);
 }
 
 dl_api dl_bool _vector_collection_pop_destroy(collection *dl_restrict col) {
@@ -4987,17 +4987,17 @@ dl_api dl_bool _vector_collection_pop_destroy(collection *dl_restrict col) {
 }
 
 dl_api dl_bool _linked_list_collection_pop_destroy(collection *dl_restrict col) {
-  linked_list *list;
-  struct linked_list_node *position;
+  dl_linked_list *list;
+  struct dl_linked_list_node *position;
 
-  list = &col->data.linked_list.container;
+  list = &col->data.dl_linked_list.container;
   
   if (collection_is_queue(col))
     position = list->first;
   else
     position = list->last;
 
-  return linked_list_destroy(list, position, &col->settings.deconstruct_entry);
+  return dl_linked_list_destroy(list, position, &col->settings.deconstruct_entry);
 }
 
 dl_api dl_bool _vector_collection_pop_forget(collection *dl_restrict col) {
@@ -5020,17 +5020,17 @@ dl_api dl_bool _vector_collection_pop_forget(collection *dl_restrict col) {
 }
 
 dl_api dl_bool _linked_list_collection_pop_forget(collection *dl_restrict col) {
-  linked_list *list;
-  struct linked_list_node *position;
+  dl_linked_list *list;
+  struct dl_linked_list_node *position;
 
-  list = &col->data.linked_list.container;
+  list = &col->data.dl_linked_list.container;
   
   if (collection_is_queue(col))
     position = list->first;
   else
     position = list->last;
 
-  return linked_list_destroy(list, position, NULL);
+  return dl_linked_list_destroy(list, position, NULL);
 }
 
 dl_api dl_integer _vector_collection_ref_array(collection *dl_restrict col, iterator iter, dl_any *out_array) {
@@ -5043,7 +5043,7 @@ dl_api dl_integer _vector_collection_ref_array(collection *dl_restrict col, iter
 }
 
 dl_api dl_integer _linked_list_collection_ref_array(collection *dl_restrict col, iterator iter, dl_any *out_array) {
-  out_array[0] = linked_list_ref(iter.linked_list.node);
+  out_array[0] = dl_linked_list_ref(iter.dl_linked_list.node);
   return 1;
 }
 
@@ -5052,7 +5052,7 @@ dl_api const dl_any _vector_collection_ref(const collection *dl_restrict col, it
 }
 
 dl_api const dl_any _linked_list_collection_ref(const collection *dl_restrict col, iterator iter) {
-  return linked_list_ref(iter.linked_list.node);
+  return dl_linked_list_ref(iter.dl_linked_list.node);
 }
 
 dl_api dl_bool _vector_collection_swap(collection *dl_restrict col, iterator *iter_a, iterator *iter_b) {
@@ -5067,7 +5067,7 @@ dl_api dl_bool _vector_collection_swap(collection *dl_restrict col, iterator *it
 }
 
 dl_api dl_bool _linked_list_collection_swap(collection *dl_restrict col, iterator *iter_a, iterator *iter_b) {
-  if (!linked_list_swap(&col->data.linked_list.container, iter_a->linked_list.node, iter_b->linked_list.node, false))
+  if (!dl_linked_list_swap(&col->data.dl_linked_list.container, iter_a->dl_linked_list.node, iter_b->dl_linked_list.node, false))
     return false;
   return true;
 }
@@ -5077,7 +5077,7 @@ dl_any _vector_collection_get(const collection *dl_restrict col, iterator iter, 
 }
 
 dl_any _linked_list_collection_get(const collection *dl_restrict col, iterator iter, dl_any out) {
-  return linked_list_get(&col->data.linked_list.container, iter.linked_list.node, out);
+  return dl_linked_list_get(&col->data.dl_linked_list.container, iter.dl_linked_list.node, out);
 }
 
 dl_any _vector_collection_set(collection *dl_restrict col, iterator *iter, dl_any value) {
@@ -5091,7 +5091,7 @@ dl_any _vector_collection_set(collection *dl_restrict col, iterator *iter, dl_an
 dl_any _linked_list_collection_set(collection *dl_restrict col, iterator *iter, dl_any value) {
   dl_any ref;
 
-  if ((ref = linked_list_set(&col->data.linked_list.container, iter->linked_list.node, value)))
+  if ((ref = dl_linked_list_set(&col->data.dl_linked_list.container, iter->dl_linked_list.node, value)))
     return collection_ref(col, *iter);
   return NULL;
 }
@@ -5104,7 +5104,7 @@ dl_api iterator _vector_collection_index(collection *dl_restrict col, dl_natural
 
 dl_api iterator _linked_list_collection_index(collection *dl_restrict col, dl_natural index) {
   iterator iter;
-  iter.linked_list.node = linked_list_index(&col->data.linked_list.container, index);
+  iter.dl_linked_list.node = dl_linked_list_index(&col->data.dl_linked_list.container, index);
   return iter;
 }
 
@@ -5113,7 +5113,7 @@ dl_api void _vector_collection_next(const collection *dl_restrict col, iterator 
 }
 
 dl_api void _linked_list_collection_next(const collection *dl_restrict col, iterator *iter) {
-  iter->linked_list.node = iter->linked_list.node->next;
+  iter->dl_linked_list.node = iter->dl_linked_list.node->next;
 }
 
 dl_api void _vector_collection_prev(const collection *dl_restrict col, iterator *iter) {
@@ -5127,9 +5127,9 @@ dl_api void _vector_collection_prev(const collection *dl_restrict col, iterator 
 
 dl_api void _linked_list_collection_prev(const collection *dl_restrict col, iterator *iter) {
   if (!iterator_is_valid(col, *iter))
-    iter->linked_list.node = col->data.linked_list.container.last;
-  else if (iter->linked_list.node != col->data.linked_list.container.first)
-    iter->linked_list.node = iter->linked_list.node->previous;
+    iter->dl_linked_list.node = col->data.dl_linked_list.container.last;
+  else if (iter->dl_linked_list.node != col->data.dl_linked_list.container.first)
+    iter->dl_linked_list.node = iter->dl_linked_list.node->previous;
   else
     *iter = make_invalid_iterator(col);
 }
@@ -5139,7 +5139,7 @@ dl_api dl_integer _vector_collection_count(const collection *dl_restrict col) {
 }
 
 dl_api dl_integer _linked_list_collection_count(const collection *dl_restrict col) {
-  return linked_list_length(&col->data.linked_list.container);
+  return dl_linked_list_length(&col->data.dl_linked_list.container);
 }
 
 dl_api iterator _vector_collection_begin(const collection *dl_restrict col) {
@@ -5150,7 +5150,7 @@ dl_api iterator _vector_collection_begin(const collection *dl_restrict col) {
 
 dl_api iterator _linked_list_collection_begin(const collection *dl_restrict col) {
   iterator iter;
-  iter.linked_list.node = col->data.linked_list.container.first;
+  iter.dl_linked_list.node = col->data.dl_linked_list.container.first;
   return iter;
 }
 
@@ -5162,7 +5162,7 @@ dl_api iterator _vector_collection_end(const collection *dl_restrict col) {
 
 dl_api iterator _linked_list_collection_end(const collection *dl_restrict col) {
   iterator iter;
-  iter.linked_list.node = NULL;
+  iter.dl_linked_list.node = NULL;
   return iter;
 }
 
@@ -5199,10 +5199,10 @@ dl_api dl_bool _vector_collection_destroy_at(collection *dl_restrict col, iterat
 }
 
 dl_api dl_bool _linked_list_collection_destroy_at(collection *dl_restrict col, iterator *iter, dl_handler *destructor) {
-  struct linked_list_node *next;
-  next = iter->linked_list.node->next;
-  if (linked_list_destroy(&col->data.linked_list.container, iter->linked_list.node, destructor)) {
-    iter->linked_list.node = next;
+  struct dl_linked_list_node *next;
+  next = iter->dl_linked_list.node->next;
+  if (dl_linked_list_destroy(&col->data.dl_linked_list.container, iter->dl_linked_list.node, destructor)) {
+    iter->dl_linked_list.node = next;
     return true;
   }
   return false;
@@ -5227,11 +5227,11 @@ dl_api dl_any _vector_collection_remove_at(collection *dl_restrict col, iterator
 }
 
 dl_api dl_any _linked_list_collection_remove_at(collection *dl_restrict col, iterator *iter, dl_any out) {
-  struct linked_list_node *next;
+  struct dl_linked_list_node *next;
   
-  next = iter->linked_list.node->next;
-  if ((out = linked_list_remove(&col->data.linked_list.container, iter->linked_list.node, out))) {
-    iter->linked_list.node = next;
+  next = iter->dl_linked_list.node->next;
+  if ((out = dl_linked_list_remove(&col->data.dl_linked_list.container, iter->dl_linked_list.node, out))) {
+    iter->dl_linked_list.node = next;
     return out;
   }
 
@@ -5272,14 +5272,14 @@ dl_api dl_integer _vector_collection_destroy_range(collection *dl_restrict col, 
 }
   
 dl_api dl_integer _linked_list_collection_destroy_range(collection *dl_restrict col, iterator *index, dl_natural count) {
-  struct linked_list_node *next;
+  struct dl_linked_list_node *next;
   dl_natural idx;
 
-  next = index->linked_list.node;
+  next = index->dl_linked_list.node;
   for (idx = 0; idx < count && next != NULL; ++idx)
     next = next->next;
-  count = linked_list_destroy_range(&col->data.linked_list.container, index->linked_list.node, count, &col->settings.deconstruct_entry);
-  index->linked_list.node = next;
+  count = dl_linked_list_destroy_range(&col->data.dl_linked_list.container, index->dl_linked_list.node, count, &col->settings.deconstruct_entry);
+  index->dl_linked_list.node = next;
   return count;
 }
 
@@ -5301,13 +5301,13 @@ dl_bool _vector_collection_insert(collection *dl_restrict col, iterator *dl_rest
 }
 
 dl_bool _linked_list_collection_insert(collection *dl_restrict col, iterator *dl_restrict position, dl_any item) {
-  struct linked_list_node *node;
-  linked_list *list;
+  struct dl_linked_list_node *node;
+  dl_linked_list *list;
 
-  node = position->linked_list.node;
-  list = &col->data.linked_list.container;
+  node = position->dl_linked_list.node;
+  list = &col->data.dl_linked_list.container;
 
-  position->linked_list.node = linked_list_add(list, node, item);
+  position->dl_linked_list.node = dl_linked_list_add(list, node, item);
 
   return true;
 }
@@ -5461,7 +5461,7 @@ dl_api collection *init_collection(collection *dl_restrict col, collection_type 
     break;
   }
   case STORAGE_TYPE_LINKED_LIST: {
-    if (!init_linked_list(&col->data.linked_list.container, element_size, col->settings.capacity))
+    if (!initdl_linked_list(&col->data.dl_linked_list.container, element_size, col->settings.capacity))
       return NULL;
     break;
   }
@@ -5486,7 +5486,7 @@ dl_api collection *init_collection_custom(collection *dl_restrict col, collectio
       return NULL;
     break;
   case STORAGE_TYPE_LINKED_LIST:
-    if (!init_linked_list(&col->data.linked_list.container, element_size, col->settings.capacity))
+    if (!initdl_linked_list(&col->data.dl_linked_list.container, element_size, col->settings.capacity))
       return NULL;
     break;
   default:
@@ -5546,7 +5546,7 @@ dl_api void destroy_collection(collection *dl_restrict col) {
     dl_destroy_vector(&col->data.dl_vector.container, NULL);
     break;
   case STORAGE_TYPE_LINKED_LIST:
-    destroy_linked_list(&col->data.linked_list.container, &col->settings.deconstruct_entry);
+    destroydl_linked_list(&col->data.dl_linked_list.container, &col->settings.deconstruct_entry);
     break;
   }
 }
