@@ -7,6 +7,8 @@
 ** TODO [#B] Add linear search
 ** TODO [#B] Add insertion sort
 ** TODO [#C] Add type-generic macros
+** TODO [#C] Add configurable-length fixed-precision float
+** TODO [#C] Fuglify code to transparently support fixed-precision float
 ** DONE Add Lerping
 ** DONE Add second dimension to tween
 ** DONE extern "C"
