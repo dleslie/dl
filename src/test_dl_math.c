@@ -170,9 +170,9 @@ dl_bool test_random_real_range() {
   dl_real value;
   dl_init_random_time(&r);
   
-  value = dl_random_real_range(&r, -M_PI, 0);
-  if (!dl_check(value >= -M_PI && value <= DL_PI,
-    "Expected %f to be between %f and 0", value, -M_PI))
+  value = dl_random_real_range(&r, -DL_PI, 0);
+  if (!dl_check(value >= -DL_PI && value <= DL_PI,
+    "Expected %f to be between %f and 0", value, -DL_PI))
     return false;
   return true;
 }
