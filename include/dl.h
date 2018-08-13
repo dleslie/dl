@@ -180,6 +180,7 @@
 
 
 #if DL_USE_LOGGING
+# include <stdio.h>
 # include <stdarg.h>
 #endif
 
@@ -259,11 +260,7 @@
 #endif
 
 #if DL_USE_SAFETY_CHECKS
-# if DL_USE_LOGGING
-#   define dl_safety(x) (dl_unlikely(x) ? DL_ERROR("Safety triggered") || 1 : 0)
-# else
-#   define dl_safety(x) (dl_unlikely(x) ? 1 : 0)
-# endif
+# define dl_safety(x) (dl_unlikely(x) ? DL_ERROR("Safety triggered") || 1 : 0)
 #else
 # define dl_safety(x) (1 == 0)
 #endif
@@ -380,6 +377,14 @@ extern "C" {
 #   define DL_ERROR(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
 #   define DL_TEST(...) dl_log_message(DL_LOG_TEST, __FILE__, __LINE__, "", ## __VA_ARGS__)
 #   define DL_MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, "", ## __VA_ARGS__)
+# endif
+#else
+# if DL_IS_ATLEAST_C99
+#   define DL_INFO(...)
+#   define DL_WARN(...)
+#   define DL_ERROR(...)
+#   define DL_TEST(...)
+#   define DL_MSG(...)
 # endif
 #endif /* DL_USE_LOGGING */
 
@@ -864,8 +869,8 @@ extern "C" {
     struct dl_linked_list_node *previous;
   };
 
-#define LINKED_LIST_HEADER_SIZE (sizeof(struct dl_linked_list_node))
-#define LINKED_LIST_DATA(element) ((dl_any)&((struct dl_linked_list_node *)element)[1])
+#define DL_LINKED_LIST_HEADER_SIZE (sizeof(struct dl_linked_list_node))
+#define DL_LINKED_LIST_DATA(element) ((dl_any)&((struct dl_linked_list_node *)element)[1])
 
   typedef struct {
     struct dl_linked_list_node *first;
@@ -3030,7 +3035,12 @@ dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_vecto
   dl_real dl_real_count;
   dl_natural slice_count, idx;
   
-  if (dl_safety(target == NULL || settings.alloc == NULL || settings.free == NULL))
+  if (target == NULL)
+    return NULL;
+
+  target->settings = settings;
+
+  if (settings.alloc == NULL || settings.free == NULL)
     return NULL;
 
   if (settings.element_size < 1)
@@ -3044,8 +3054,6 @@ dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_vecto
     slice_count++;
 
   target->slice_count = slice_count < 1 ? 1 : slice_count;
-
-  target->settings = settings;
 
   target->data.slices = (dl_byte **)target->settings.alloc(target->slice_count, sizeof(dl_byte *));
   if (dl_unlikely(target->data.slices == NULL))
@@ -3088,7 +3096,7 @@ dl_api void dl_destroy_vector(dl_vector * dl_restrict target, const dl_handler *
   dl_any entry;
   dl_natural slice_idx, idx;
   
-  if (dl_safety(target == NULL) || target->settings.free == NULL)
+  if (target == NULL || target->settings.free == NULL)
     return;
 
   if (target->data.slices != NULL) {
@@ -3096,7 +3104,7 @@ dl_api void dl_destroy_vector(dl_vector * dl_restrict target, const dl_handler *
       if (deconstruct_entry != NULL) {
         for (idx = 0; idx < target->settings.slice_length; ++idx) {
           entry = &target->data.slices[slice_idx][idx * target->settings.element_size];
-	  deconstruct_entry->func(deconstruct_entry->data, entry);
+	        deconstruct_entry->func(deconstruct_entry->data, entry);
         }
       }
 
@@ -3540,7 +3548,7 @@ dl_api dl_any _linked_list_node_deconstructor(dl_any data, dl_any element) {
     /* No free nodes, destroy it. */
     if (d->original_destructor != NULL && d->original_destructor->func != NULL) {
       destruct = d->original_destructor;
-      destruct->func(destruct->data, LINKED_LIST_DATA(e));
+      destruct->func(destruct->data, DL_LINKED_LIST_DATA(e));
     }
   }
   else
@@ -3583,7 +3591,7 @@ dl_api dl_linked_list *_linked_list_cache_grow(dl_linked_list * dl_restrict targ
 
   if (target->free == NULL && target->first == NULL) {
     zero = 0;
-    if (!dl_init_vector(v, LINKED_LIST_HEADER_SIZE + settings.element_size, settings.cache_length))
+    if (!dl_init_vector(v, DL_LINKED_LIST_HEADER_SIZE + settings.element_size, settings.cache_length))
       return NULL;
   }
   else {
@@ -3596,7 +3604,7 @@ dl_api dl_linked_list *_linked_list_cache_grow(dl_linked_list * dl_restrict targ
 
   for (idx = zero; idx < length; ++idx) {
     node = (struct dl_linked_list_node *)dl_vector_ref(v, idx);
-    dl_memory_set(node, 0, LINKED_LIST_HEADER_SIZE);
+    dl_memory_set(node, 0, DL_LINKED_LIST_HEADER_SIZE);
     _linked_list_node_free(target, node);
   }
 
@@ -3627,7 +3635,7 @@ dl_api dl_natural dl_linked_list_copy(dl_linked_list * dl_restrict target, struc
   count = 0;
 
   while (source_node != NULL) {
-    next = dl_linked_list_add(target, target_position, LINKED_LIST_DATA(source_node));
+    next = dl_linked_list_add(target, target_position, DL_LINKED_LIST_DATA(source_node));
     if (dl_unlikely(next == NULL))
       break;
 
@@ -3673,7 +3681,7 @@ dl_api void dl_destroy_linked_list(dl_linked_list * dl_restrict target, dl_handl
   if (deconstruct_entry != NULL && deconstruct_entry->func != NULL) {
     node = target->first;
     while (node != NULL) {
-      deconstruct_entry->func(deconstruct_entry->data, LINKED_LIST_DATA(node));
+      deconstruct_entry->func(deconstruct_entry->data, DL_LINKED_LIST_DATA(node));
       node = node->previous;
     }
   }
@@ -3745,21 +3753,21 @@ dl_api dl_any dl_linked_list_get(const dl_linked_list * dl_restrict list, struct
   if (dl_safety(list == NULL || position == NULL || out == NULL))
     return NULL;
 
-  return dl_memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size);
+  return dl_memory_copy(out, DL_LINKED_LIST_DATA(position), list->settings.element_size);
 }
 
 dl_api const dl_any dl_linked_list_ref(const struct dl_linked_list_node *position) {
   if (dl_safety(position == NULL))
     return NULL;
 
-  return (const dl_any)LINKED_LIST_DATA(position);
+  return (const dl_any)DL_LINKED_LIST_DATA(position);
 }
 
 dl_api dl_any dl_linked_list_set(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_any value) {
   if (dl_safety(list == NULL || position == NULL || value == NULL))
     return NULL;
 
-  return dl_memory_copy(LINKED_LIST_DATA(position), value, list->settings.element_size);
+  return dl_memory_copy(DL_LINKED_LIST_DATA(position), value, list->settings.element_size);
 }
 
 dl_api struct dl_linked_list_node *dl_linked_list_add(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_any value) {
@@ -3772,7 +3780,7 @@ dl_api struct dl_linked_list_node *dl_linked_list_add(dl_linked_list * dl_restri
     return NULL;
 
   node = _linked_list_node_alloc(list, position);
-  if (dl_unlikely(value != NULL && !dl_memory_copy(LINKED_LIST_DATA(node), value, list->settings.element_size))) {
+  if (dl_unlikely(value != NULL && !dl_memory_copy(DL_LINKED_LIST_DATA(node), value, list->settings.element_size))) {
     _linked_list_node_free(list, node);
     return NULL;
   }
@@ -3784,7 +3792,7 @@ dl_api dl_any dl_linked_list_remove(dl_linked_list * dl_restrict list, struct dl
   if (dl_safety(list == NULL || position == NULL))
     return NULL;
 
-  if (dl_unlikely(!dl_memory_copy(out, LINKED_LIST_DATA(position), list->settings.element_size)))
+  if (dl_unlikely(!dl_memory_copy(out, DL_LINKED_LIST_DATA(position), list->settings.element_size)))
     return NULL;
 
   _linked_list_node_free(list, position);
@@ -3797,7 +3805,7 @@ dl_api dl_bool dl_linked_list_destroy(dl_linked_list * dl_restrict list, struct 
     return false;
   
   if (deconstruct_entry != NULL && deconstruct_entry->func != NULL)
-    deconstruct_entry->func(deconstruct_entry->data, LINKED_LIST_DATA(position));
+    deconstruct_entry->func(deconstruct_entry->data, DL_LINKED_LIST_DATA(position));
 
   _linked_list_node_free(list, position);
 
@@ -3880,7 +3888,7 @@ dl_api dl_bool dl_linked_list_swap(dl_linked_list * dl_restrict list, struct dl_
     list->last = position1;
 
   if (data)
-    dl_memory_swap(LINKED_LIST_DATA(position1), LINKED_LIST_DATA(position2), list->settings.element_size);
+    dl_memory_swap(DL_LINKED_LIST_DATA(position1), DL_LINKED_LIST_DATA(position2), list->settings.element_size);
 
 
   return true;
