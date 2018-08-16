@@ -818,7 +818,7 @@ extern "C" {
 
   typedef struct {
     dl_vector_settings settings;
-    dl_natural slice_count;
+    dl_integer slice_count;
 
     union {
       dl_byte **slices;
@@ -3039,6 +3039,8 @@ dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_vecto
     return NULL;
 
   target->settings = settings;
+  target->slice_count = -1;
+  target->data.array = 0;
 
   if (settings.alloc == NULL || settings.free == NULL)
     return NULL;
@@ -3135,7 +3137,7 @@ dl_api dl_any dl_vector_get(const dl_vector * dl_restrict v, dl_natural index, d
 
     dl_memory_copy(out, (void *)&v->data.array[index * v->settings.element_size], v->settings.element_size);
   }
-  else {
+  else if (v->slice_count > 0) {
     slice = index / v->settings.slice_length;
     if (dl_unlikely(slice >= v->slice_count))
       return NULL;
@@ -3145,6 +3147,8 @@ dl_api dl_any dl_vector_get(const dl_vector * dl_restrict v, dl_natural index, d
 
     dl_memory_copy(out, (void *)&target_slice[slice_index * v->settings.element_size], v->settings.element_size);
   }
+  else
+    return NULL;
 
   return out;
 }
@@ -3162,7 +3166,7 @@ dl_api const dl_any dl_vector_ref(const dl_vector * dl_restrict v, dl_natural in
 
     return &v->data.array[index * v->settings.element_size];
   }
-  else {
+  else if (v->slice_count > 0) {
     slice = index / v->settings.slice_length;
     if (dl_unlikely(slice >= v->slice_count))
       return NULL;
@@ -3172,6 +3176,8 @@ dl_api const dl_any dl_vector_ref(const dl_vector * dl_restrict v, dl_natural in
 
     return &target_slice[slice_index * v->settings.element_size];
   }
+  else
+    return NULL;
 }
 
 dl_api dl_any dl_vector_set(dl_vector * dl_restrict v, dl_natural index, dl_any value) {
@@ -3191,7 +3197,7 @@ dl_api dl_any dl_vector_set(dl_vector * dl_restrict v, dl_natural index, dl_any 
 
     return dl_memory_copy((void *)&target[base_index], (void *)source, v->settings.element_size);
   }
-  else {
+  else if (v->slice_count > 0) {
     slice = index / v->settings.slice_length;
     if (slice >= v->slice_count)
       return NULL;
@@ -3202,6 +3208,8 @@ dl_api dl_any dl_vector_set(dl_vector * dl_restrict v, dl_natural index, dl_any 
 
     return dl_memory_copy((void *)&v->data.slices[slice][base_index], (void *)source, v->settings.element_size);
   }
+  else
+    return NULL;
 }
 
 dl_api dl_bool dl_vector_grow(dl_vector * dl_restrict v) {

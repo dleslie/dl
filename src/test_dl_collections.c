@@ -1909,7 +1909,11 @@ dl_bool test_vector_ref() {
   dl_init_vector(&v2, sizeof(char), 6);
 
   dl_vector_set(&v2, idx, (dl_any)&data[idx]);
-  if (!dl_check((out = dl_vector_ref(&v2, idx)) && *(char *)out == data[idx],
+  out = dl_vector_ref(&v2, idx);
+  if (!dl_check(out != NULL, "Expected dl_vector_ref to work"))
+    return false;
+    
+  if (!dl_check(*(char *)out == data[idx],
     "Expected %c to be %c", *(char *)out, data[idx]))
     return false;
 
