@@ -7,10 +7,7 @@
             "label": "test suite",
             "type": "shell",
             "command": "cd ${workspaceFolder}/build && ./suite",
-            "dependsOn": "meson",
-            "problemMatcher": [
-                "$gcc"
-            ]
+            "dependsOn": "meson"
         },
         {
             "label": "tween suite",
@@ -29,22 +26,24 @@
         {
             "label": "ninja",
             "type": "shell",
-            "command": "cd ${workspaceFolder}/build && ninja",
-            "problemMatcher": [
-                "$gcc"
-            ],
+            "command": "ninja",
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
             "group": {
                 "kind": "build",
                 "isDefault": true
+            },
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": ["relative", "${workspaceFolder}/build"],
             }
         },
         {
             "label": "ninja clean",
             "type": "shell",
             "command": "cd ${workspaceFolder}/build && ninja clean",
-            "problemMatcher": [
-                "$gcc"
-            ]
+            "problemMatcher": []
         }
     ]
 }
