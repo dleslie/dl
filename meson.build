@@ -7,10 +7,13 @@ lib_allegro = dependency('allegro-5')
 lib_allegro_primitives = dependency('allegro_primitives-5')
 lib_m = cc.find_library('m', required : true)
 
+c_stds = ['c89', 'c90', 'c99', 'c11']
+
 gcc_configs = [
-	['c99-no-malloc', ['-std=c99', '-DDL_USE_MALLOC=0']],
-	['c89-pedantic', ['-std=c89', '-pedantic']],
-	['small', ['-s', '-Os', '-fomit-frame-pointer', '-ffunction-sections', '-fdata-sections', '-Wl,--gc-sections', '-fno-unwind-tables', '-fno-asynchronous-unwind-tables', '-fno-math-errno', '-fmerge-all-constants', '-fno-unroll-loops', '-fsingle-precision-constant', '-Wl,-z,norelro', '-Wl,--gc-sections', '-Wl,--strip-all']]
+	['no-malloc', ['-DDL_USE_MALLOC=0']],
+	['pedantic', ['-pedantic']],
+	['small', ['-Os']],
+	['fast', ['-O3']]
 ]
 
 build_config = gcc_configs
@@ -21,12 +24,17 @@ executables = [
 ]
 
 foreach exe : executables
-	foreach conf : build_config
-		name = conf[0]
-		flags = conf[1]
-		executable(exe[0] + '-' + name, exe[1],
-			include_directories: inc,
-			c_args: flags,
-			dependencies: exe[2])
+	exe_name = exe[0]
+	exe_files = exe[1]
+	exe_deps = exe[2]
+	foreach std : c_stds
+		foreach conf : build_config
+			conf_name = conf[0]
+			conf_flags = conf[1]
+			executable(exe_name + '-' + std + '-' + conf_name, exe_files,
+				include_directories: inc,
+				c_args: conf_flags + ['-std=' + std],
+				dependencies: exe_deps)
+		endforeach
 	endforeach
 endforeach
