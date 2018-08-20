@@ -359,7 +359,7 @@ dl_bool test_init_collection() {
     settings.comparer = type_comp;
     settings.deconstruct_entry = type_destructor;
 
-    if (!dl_check(dl_init_collection_custom(&c, settings, sizeof(dl_integer)),
+    if (!dl_check(dl_init_collection_custom(&c, &settings, sizeof(dl_integer)),
       "%s: Failed to initialize.", type_name))
       return false;
 
@@ -1945,8 +1945,8 @@ dl_bool test_vector_copy() {
   settings_6.slice_length = 4;
   settings_6.element_size = sizeof(char);
 
-  dl_init_vector_custom(&v5, settings_5, 24);
-  dl_init_vector_custom(&v6, settings_6, 28);
+  dl_init_vector_custom(&v5, &settings_5, 24);
+  dl_init_vector_custom(&v6, &settings_6, 28);
 
   if (!dl_check(dl_vector_capacity(&v5) == 24,
     "Expected capacity to be 24, was %i.", dl_vector_capacity(&v5)))
@@ -2098,7 +2098,7 @@ dl_bool test_vector_shrink() {
   settings_1.slice_length = 8;
   settings_1.element_size = sizeof(dl_byte);
 
-  dl_init_vector_custom(&v1, settings_1, 32);
+  dl_init_vector_custom(&v1, &settings_1, 32);
   dl_init_vector_array(&v2, (dl_byte *)&data, sizeof(dl_byte), 1);
 
   original_capacity = dl_vector_capacity(&v1);
@@ -2144,7 +2144,7 @@ dl_bool test_vector_resize() {
   settings.slice_length = 12;
   settings.element_size = sizeof(dl_byte);
 
-  dl_init_vector_custom(&v2, settings, 24);
+  dl_init_vector_custom(&v2, &settings, 24);
 
   original_capacity = dl_vector_capacity(&v2);
   for (idx = 0; idx < original_capacity; ++idx)

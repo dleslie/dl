@@ -445,7 +445,7 @@ extern "C" {
   extern const dl_real DL_INV_E;
   extern const dl_real DL_EPSILON;
   
-# if DL_IS_GNUC || DL_IS_CLANG
+# if DL_IS_ATLEAST_C90 && (DL_IS_GNUC || DL_IS_CLANG)
 #   define dl_max(a,b) ({\
       __auto_type _a = (a);\
       __auto_type _b = (b);\
@@ -829,7 +829,7 @@ extern "C" {
   extern dl_vector_settings default_vector_settings;
 
   dl_api dl_vector *dl_init_vector(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity);
-  dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_vector_settings settings, dl_natural capacity);
+  dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_vector_settings *dl_restrict settings, dl_natural capacity);
 
   dl_api dl_vector *dl_init_vector_array(dl_vector * dl_restrict target, dl_byte *data, dl_natural element_size, dl_natural count);
 
@@ -884,7 +884,7 @@ extern "C" {
   extern dl_linked_list_settings default_linked_list_settings;
 
   dl_api dl_linked_list *dl_init_linked_list(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length);
-  dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_linked_list_settings settings);
+  dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_linked_list_settings *dl_restrict settings);
 
   dl_api dl_natural dl_linked_list_copy(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_linked_list *dl_restrict original);
   dl_api dl_natural dl_linked_list_copy_array(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_byte *dl_restrict data, dl_natural count);
@@ -1006,7 +1006,7 @@ extern "C" {
   dl_api dl_iterator dl_make_invalid_dl_iterator(const dl_collection *dl_restrict col);
 
   dl_api dl_collection *dl_init_collection(dl_collection *dl_restrict col, dl_collection_type type, dl_storage_type storage, dl_comparator *dl_restrict compare, dl_handler *dl_restrict destructor, dl_natural element_size);
-  dl_api dl_collection *dl_init_collection_custom(dl_collection *dl_restrict col, dl_collection_settings settings, dl_natural element_size);
+  dl_api dl_collection *dl_init_collection_custom(dl_collection *dl_restrict col, dl_collection_settings *dl_restrict settings, dl_natural element_size);
 
   dl_api dl_collection *dl_init_collection_array(dl_collection *dl_restrict col, dl_collection_type type, dl_comparator *dl_restrict comp, dl_handler *dl_restrict destruct_entry, dl_byte * data, dl_natural element_size, dl_natural count);
 
@@ -1209,7 +1209,7 @@ dl_integer dl_test_count(dl_bool (**tests)(), dl_integer max) {
 #ifndef DL_PI
 const dl_real DL_PI = 3.14159265359f;
 #endif
-#ifndef M_E
+#ifndef DL_E
 const dl_real DL_E = 2.71828182846f;
 #endif
 
@@ -1400,12 +1400,9 @@ dl_api dl_random_state *dl_init_random_time(dl_random_state *state) {
 }
 
 #else
-#warning dl_init_random_time will use uninitialized pointer value instead of time
 dl_api dl_random_state *dl_init_random_time(dl_random_state *state) {
-  any value;
-  return dl_init_random(state, (dl_integer)value);
+  return dl_init_random(state, 0);
 }
-
 #endif
 
 
@@ -3028,29 +3025,29 @@ dl_vector_settings default_vector_settings = {
 dl_api dl_vector *dl_init_vector(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity) {
   dl_vector_settings settings = default_vector_settings;
   settings.element_size = element_size;
-  return dl_init_vector_custom(target, settings, capacity);
+  return dl_init_vector_custom(target, &settings, capacity);
 }
 
-dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_vector_settings settings, dl_natural capacity) {
+dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_vector_settings *dl_restrict settings, dl_natural capacity) {
   dl_real dl_real_count;
   dl_natural slice_count, idx;
   
-  if (target == NULL)
+  if (target == NULL || settings == NULL)
     return NULL;
 
-  target->settings = settings;
+  target->settings = *settings;
   target->slice_count = -1;
   target->data.array = 0;
 
-  if (settings.alloc == NULL || settings.free == NULL)
+  if (settings->alloc == NULL || settings->free == NULL)
     return NULL;
 
-  if (settings.element_size < 1)
+  if (settings->element_size < 1)
     return NULL;
 
-  settings.slice_length = settings.slice_length < 1 ? default_vector_settings.slice_length : settings.slice_length;
+  settings->slice_length = settings->slice_length < 1 ? default_vector_settings.slice_length : settings->slice_length;
 
-  dl_real_count = ((dl_real)capacity / (dl_real)settings.slice_length);
+  dl_real_count = ((dl_real)capacity / (dl_real)settings->slice_length);
   slice_count = (dl_natural)dl_real_count;
   if (dl_real_count > (dl_real)(dl_natural)dl_real_count)
     slice_count++;
@@ -3578,7 +3575,7 @@ dl_api dl_linked_list *dl_init_linked_list(dl_linked_list * dl_restrict target, 
   settings.element_size = element_size;
   settings.cache_length = cache_length;
 
-  return dl_init_linked_list_custom(target, settings);
+  return dl_init_linked_list_custom(target, &settings);
 }
 
 dl_api dl_linked_list *_linked_list_cache_grow(dl_linked_list * dl_restrict target) {
@@ -3619,12 +3616,12 @@ dl_api dl_linked_list *_linked_list_cache_grow(dl_linked_list * dl_restrict targ
   return target;
 }
 
-dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_linked_list_settings settings) {
+dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_linked_list_settings *dl_restrict settings) {
   if (dl_safety(target == NULL || settings.element_size < 1))
     return NULL;
 
   target->first = target->last = target->free = NULL;
-  target->settings = settings;
+  target->settings = *settings;
 
   return _linked_list_cache_grow(target);
 }
@@ -5408,11 +5405,11 @@ dl_collection_settings default_linked_list_collection_settings = {
   &default_linked_list_dl_collection_dispatch_functions
 };
 
-void _check_init_collection(dl_collection *dl_restrict col, dl_collection_settings settings, dl_natural count) {
-  col->settings = settings;
+void _check_init_collection(dl_collection *dl_restrict col, dl_collection_settings *dl_restrict settings, dl_natural count) {
+  col->settings = *settings;
   
   if (col->settings.comparer.func == NULL) {
-    switch (settings.element_size) {
+    switch (col->settings.element_size) {
     case 1:
       col->settings.comparer.func = _default_compare_8;
       break;
@@ -5468,7 +5465,7 @@ dl_api dl_collection *dl_init_collection(dl_collection *dl_restrict col, dl_coll
   else
     settings.comparer.func = NULL;
 
-  _check_init_collection(col, settings, 0);
+  _check_init_collection(col, &settings, 0);
   
   switch (settings.storage) {
   case DL_STORAGE_TYPE_VECTOR: {
@@ -5490,7 +5487,7 @@ dl_api dl_collection *dl_init_collection(dl_collection *dl_restrict col, dl_coll
   return col;
 }
 
-dl_api dl_collection *dl_init_collection_custom(dl_collection *dl_restrict col, dl_collection_settings settings, dl_natural element_size) {
+dl_api dl_collection *dl_init_collection_custom(dl_collection *dl_restrict col, dl_collection_settings *dl_restrict settings, dl_natural element_size) {
   if (dl_safety(col == NULL))
     return NULL;
 
@@ -5537,7 +5534,7 @@ dl_api dl_collection *dl_init_collection_array(dl_collection *dl_restrict col, d
   else
     settings.deconstruct_entry.func = NULL;
 
-  _check_init_collection(col, settings, count);
+  _check_init_collection(col, &settings, count);
 
   _force_collection_properties(col);
 

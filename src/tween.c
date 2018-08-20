@@ -163,6 +163,7 @@ int main(int argc, char **argv)
   
   dl_integer screen_width = width;
   dl_integer screen_height = height;
+  dl_bool should_exit = false;
 
   dl_random_state r;
   double time, last_tick, delta_time;
@@ -204,7 +205,6 @@ int main(int argc, char **argv)
   al_set_window_title(display, "Tween Test");
 
   last_tick = al_get_time();
-  dl_bool should_exit = false;
 
   while (!should_exit) {
     ALLEGRO_EVENT event;
