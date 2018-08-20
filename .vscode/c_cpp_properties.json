@@ -9,9 +9,11 @@
                 "limitSymbolsToIncludedHeaders": true
             },
             "includePath": [
-                "${workspaceFolder}/include"
+                "${workspaceFolder}/include",
+                "/usr/include/",
+                "/usr/local/include"
             ],
-            "defines": [],
+            "defines": ["DL_IMPLEMENTATION=1"],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c11",
             "cppStandard": "c++17",
