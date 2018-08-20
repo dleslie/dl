@@ -11,7 +11,7 @@ c_stds = ['c89', 'c90', 'c99', 'c11']
 
 gcc_configs = [
 	['no-malloc', ['-DDL_USE_MALLOC=0']],
-	['pedantic', ['-pedantic']],
+	['pedantic', ['-pedantic', '-Wall', '-Werror']],
 	['small', ['-Os']],
 	['fast', ['-O3']]
 ]
