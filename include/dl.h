@@ -230,7 +230,7 @@
 #ifndef dl_api
 # if !DL_IS_CPP
 #   if DL_IMPLEMENTATION
-#     define dl_api extern dl_inline
+#     define dl_api extern
 #   else
 #     define dl_api extern
 #   endif
@@ -3909,7 +3909,7 @@ dl_api struct dl_linked_list_node *dl_linked_list_index(dl_linked_list * dl_rest
  **  Iterators
  ****************************************************************************/
 
-dl_api dl_integer dl_iterator_compare(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right) {
+dl_api dl_inline dl_integer dl_iterator_compare(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right) {
   if (!dl_iterator_is_valid(col, left) && !dl_iterator_is_valid(col, right))
     return 0;
 
@@ -3930,11 +3930,11 @@ dl_api dl_integer dl_iterator_compare(const dl_collection *dl_restrict col, dl_i
   }
 }
 
-dl_api dl_bool dl_iterator_equal(const dl_collection *dl_restrict col, const dl_iterator left, const dl_iterator right) {
+dl_api dl_inline dl_bool dl_iterator_equal(const dl_collection *dl_restrict col, const dl_iterator left, const dl_iterator right) {
   return 0 == dl_iterator_compare(col, left, right);
 }
 
-dl_api dl_bool dl_iterator_is_valid(const dl_collection *dl_restrict col, const dl_iterator index) {
+dl_api dl_inline dl_bool dl_iterator_is_valid(const dl_collection *dl_restrict col, const dl_iterator index) {
   if (dl_safety(col == NULL))
     return false;
 
@@ -3949,7 +3949,7 @@ dl_api dl_bool dl_iterator_is_valid(const dl_collection *dl_restrict col, const 
   }
 }
 
-dl_api dl_iterator dl_make_invalid_iterator(const dl_collection *dl_restrict col) {
+dl_api dl_inline dl_iterator dl_make_invalid_iterator(const dl_collection *dl_restrict col) {
   dl_iterator bad;
 
   switch (col->settings.storage)
