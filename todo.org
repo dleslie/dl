@@ -1,14 +1,12 @@
 * TODO
+** TODO [#A] Replace vector index iterator with pointer iterator
 ** TODO [#A] Remove all bare structs from parameters (SDCC et al don't support this)
-** TODO [#A] Fix Bezier Curves
 ** TODO [#A] Add Quaternions
 ** TODO [#B] Add fast sin, cos, tan, asin, acos, atan, sqrt
 ** TODO [#B] Use Merge Sort instead of Quick Sort
-** TODO [#B] Add linear search
 ** TODO [#B] Add insertion sort
-** TODO [#C] Add type-generic macros
-** TODO [#C] Add configurable-length fixed-precision float
-** TODO [#C] Fuglify code to transparently support fixed-precision float
+** DONE [#B] Add linear search
+** DONE [#A] Fix Bezier Curves
 ** DONE Add Lerping
 ** DONE Add second dimension to tween
 ** DONE extern "C"
