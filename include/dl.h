@@ -3106,7 +3106,7 @@ dl_api void dl_destroy_vector(dl_vector * dl_restrict target, const dl_handler *
 
   if (target->data.slices != NULL) {
     for (slice_idx = 0; slice_idx < target->slice_count; ++slice_idx) {
-      if (deconstruct_entry != NULL) {
+      if (deconstruct_entry != NULL && deconstruct_entry->func != NULL) {
         for (idx = 0; idx < target->settings.slice_length; ++idx) {
           entry = &target->data.slices[slice_idx][idx * target->settings.element_size];
 	        deconstruct_entry->func(deconstruct_entry->data, entry);
@@ -3286,7 +3286,7 @@ dl_api dl_bool dl_vector_shrink(dl_vector * dl_restrict v, dl_handler *dl_restri
   if (dl_unlikely(new_slices == NULL))
     return false;
 
-  if (deconstruct_entry != NULL) {
+  if (deconstruct_entry != NULL && deconstruct_entry->func != NULL) {
     for (idx = 0; idx < v->settings.slice_length; ++idx) {
       entry = &v->data.slices[v->slice_count - 1][idx * v->settings.element_size];
       deconstruct_entry->func(deconstruct_entry->data, entry);
@@ -3340,10 +3340,10 @@ dl_api dl_bool dl_vector_resize(dl_vector * dl_restrict v, dl_natural minimum_ca
     if (needed_count < 0) {
       for (; slice_idx < v->slice_count; ++slice_idx) {
         slice = v->data.slices[slice_idx];
-        if (deconstruct_entry != NULL)
+        if (deconstruct_entry != NULL && deconstruct_entry->func != NULL)
           for (item_idx = 0; item_idx < v->settings.slice_length; ++item_idx) {
             item = &slice[item_idx * v->settings.element_size];
-	    deconstruct_entry->func(deconstruct_entry->data, item);
+            deconstruct_entry->func(deconstruct_entry->data, item);
           }
 
         v->settings.free((dl_any)slice);
@@ -5535,7 +5535,7 @@ dl_api dl_collection *dl_init_collection_array(dl_collection *dl_restrict col, d
     settings.comparer = *comp;
   else
     settings.comparer.func = NULL;
-  if (deconstruct_entry != NULL)
+  if (deconstruct_entry != NULL && deconstruct_entry->func != NULL)
     settings.deconstruct_entry = *deconstruct_entry;
   else
     settings.deconstruct_entry.func = NULL;
