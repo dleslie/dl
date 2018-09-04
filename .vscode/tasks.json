@@ -6,23 +6,46 @@
         {
             "label": "test suite",
             "type": "shell",
-            "command": "cd ${workspaceFolder}/build && ./suite",
+            "command": "./suite",
             "dependsOn": "meson",
-            "problemMatcher": [
-                "$gcc"
-            ]
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/build"
+                ]
+            }
         },
         {
             "label": "tween suite",
             "type": "shell",
             "dependsOn": "meson",
-            "command": "cd ${workspaceFolder}/build && ./tween",
-            "problemMatcher": []
+            "command": "./tween",
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "base": "$gcc",
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/build"
+                ]
+            }
         },
         {
             "label": "meson",
             "type": "shell",
-            "dependsOn": "ninja",
             "command": "meson build",
             "problemMatcher": []
         },
@@ -30,6 +53,7 @@
             "label": "ninja",
             "type": "shell",
             "command": "ninja",
+            "dependsOn": "meson",
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
@@ -48,6 +72,7 @@
         {
             "label": "ninja clean",
             "type": "shell",
+            "dependsOn": "meson",
             "command": "cd ${workspaceFolder}/build && ninja clean",
             "problemMatcher": []
         }

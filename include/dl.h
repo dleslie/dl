@@ -216,8 +216,8 @@
 
 
 #ifndef dl_inline
-# define dl_inline  
-# if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
+# define dl_inline
+# if DL_IS_ATLEAST_C99 && (DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW)
 #   undef dl_inline
 #   define dl_inline inline __attribute__((__always_inline__))
 # endif
@@ -228,10 +228,22 @@
 #endif
 
 #ifndef dl_api
-# define dl_api  
-# if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
-#   undef dl_api
-#   define dl_api
+# if !DL_IS_CPP
+#   if DL_IMPLEMENTATION
+#     define dl_api extern dl_inline
+#   else
+#     define dl_api extern
+#   endif
+# else
+#   if DL_IS_MSC
+#     define dl_api __declspec(dllexport)
+#   else
+#     if DL_IMPLEMENTATION
+#       define dl_api 
+#     else
+#       define dl_api extern
+#     endif
+#   endif
 # endif
 #endif
 
@@ -3931,10 +3943,9 @@ dl_api dl_bool dl_iterator_is_valid(const dl_collection *dl_restrict col, const 
     case DL_STORAGE_TYPE_LINKED_LIST:
       return index.dl_linked_list.node != NULL;
     case DL_STORAGE_TYPE_VECTOR:
-      return index.dl_vector.index < col->data.dl_vector.index[1]
-        && index.dl_vector.index >= col->data.dl_vector.index[0];
+      return index.dl_vector.index < col->data.dl_vector.index[1] && index.dl_vector.index >= col->data.dl_vector.index[0];
     default:
-      return 0;
+      return false;
   }
 }
 
@@ -4976,6 +4987,9 @@ dl_api dl_integer dl_collection_map(const dl_collection *dl_restrict col, dl_con
   if (dl_safety(col == NULL || func == NULL || out == NULL))
     return 0;
 
+  iter = dl_make_invalid_iterator(col);
+  new_iter = dl_make_invalid_iterator(out);
+
   count = 0;
   for (ref = dl_collection_begin_ref(col, &iter); ref != NULL; ref = dl_collection_next(col, &iter)) {
     new_ref = dl_collection_push_start(out, &new_iter);
@@ -5027,6 +5041,10 @@ dl_api dl_integer dl_collection_zip(const dl_collection *dl_restrict col1, const
   
   if (dl_safety(col1 == NULL || col2 == NULL || zip == NULL || out == NULL))
     return 0;
+
+  iter1 = dl_make_invalid_iterator(col1);
+  iter2 = dl_make_invalid_iterator(col2);
+  new_iter = dl_make_invalid_iterator(out);
 
   added = 0;
   for (ref1 = dl_collection_begin_ref(col1, &iter1), ref2 = dl_collection_begin_ref(col2, &iter2);
@@ -5147,17 +5165,9 @@ dl_api dl_bool dl_collection_destroy_last(dl_collection *dl_restrict col, dl_fil
   return dl_collection_destroy_at(col, index);
 }
 
-dl_bool dl_collection_quick_sort_region(dl_collection *dl_restrict col, dl_comparator *compare, dl_iterator left, dl_iterator right) {
+dl_bool _dl_collection_quick_sort_region(dl_collection *dl_restrict col, dl_comparator *compare, dl_iterator left, dl_iterator right) {
   dl_iterator pivot, leftwall, iter;
   dl_any pivot_ref, iter_ref;
-  
-  if (dl_safety(col == NULL || col->settings.comparer.func == NULL))
-    return false;
-
-  if (dl_iterator_equal(col, left, right)
-      || (!dl_iterator_is_valid(col, left)
-	  && !dl_iterator_is_valid(col, right)))
-    return true;
 
   /* Partition */
 
@@ -5187,16 +5197,28 @@ dl_bool dl_collection_quick_sort_region(dl_collection *dl_restrict col, dl_compa
 
   /* Recurse */
 
-  if (!dl_collection_quick_sort_region(col, compare, left, leftwall))
+  if (!dl_iterator_equal(col, left, leftwall) && !_dl_collection_quick_sort_region(col, compare, left, leftwall))
     return false;
 
   if (!dl_collection_next(col, &leftwall))
     return true;
 
-  return dl_collection_quick_sort_region(col, compare, leftwall, right);
+  return dl_iterator_equal(col, leftwall, right) || _dl_collection_quick_sort_region(col, compare, leftwall, right);
+}
+
+dl_api dl_bool dl_collection_quick_sort_region(dl_collection *dl_restrict col, dl_comparator *compare, dl_iterator left, dl_iterator right) {
+  if (dl_safety(col == NULL || col->settings.comparer.func == NULL))
+    return false;
+  if (!dl_iterator_is_valid(col, left) || !dl_iterator_is_valid(col, right))
+    return false;
+  if (dl_iterator_equal(col, left, right))
+    return true;
+  return _dl_collection_quick_sort_region(col, compare, dl_collection_begin(col), dl_collection_end(col));
 }
 
 dl_api dl_bool dl_collection_quick_sort(dl_collection *dl_restrict col, dl_comparator *compare) {
+  if (dl_safety(col == NULL || col->settings.comparer.func == NULL))
+    return false;
   return dl_collection_quick_sort_region(col, compare, dl_collection_begin(col), dl_collection_end(col));
 }
 
@@ -5227,13 +5249,12 @@ dl_api dl_integer dl_collection_destroy_all(dl_collection *dl_restrict col, dl_f
 }
 
 dl_api dl_bool dl_collection_contains(const dl_collection *dl_restrict col, dl_any item) {
-  dl_iterator iter;
-  iter= dl_collection_index_of(col, item);
+  dl_iterator iter = dl_collection_index_of(col, item);
   return dl_iterator_is_valid(col, iter);
 }
 
 dl_api dl_any dl_collection_push(dl_collection *dl_restrict col, dl_any value) {
-  dl_iterator iter;
+  dl_iterator iter = dl_make_invalid_iterator(col);
   return dl_collection_push_index(col, value, &iter);
 }
 
@@ -5282,6 +5303,9 @@ dl_api dl_integer dl_collection_remove_all(dl_collection *dl_restrict col, dl_fi
   
   if (dl_safety(col == NULL || out == NULL || f == NULL))
     return 0;
+
+  index = dl_make_invalid_iterator(col);
+  new_iter = dl_make_invalid_iterator(out);
 
   total = 0;
   for (ref = dl_collection_begin_ref(col, &index); dl_iterator_is_valid(col, index);) {
@@ -5523,7 +5547,7 @@ dl_api void dl_destroy_collection(dl_collection *dl_restrict col) {
     if (col->settings.deconstruct_entry.func != NULL) {
       index = dl_collection_begin(col);
       for (item = dl_collection_ref(col, index); item != NULL; item = dl_collection_next(col, &index))
-	col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, item);
+	      col->settings.deconstruct_entry.func(col->settings.deconstruct_entry.data, item);
     }
 
     dl_destroy_vector(&col->data.dl_vector.container, NULL);

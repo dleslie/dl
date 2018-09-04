@@ -19,6 +19,8 @@
     "system_error": "cpp",
     "tuple": "cpp",
     "type_traits": "cpp",
-    "string": "cpp"
+    "string": "cpp",
+    "*.tcc": "cpp",
+    "string_view": "cpp"
   }
 }
