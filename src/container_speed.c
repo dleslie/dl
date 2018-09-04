@@ -48,6 +48,7 @@ int main(int argc, char const *argv[])
             iter = dl_collection_index(&test_collection, dl_random_integer(&r, dl_collection_count(&test_collection)));
             dl_collection_destroy_at(&test_collection, &iter);
             dl_collection_pop_destroy(&test_collection);
+
             dl_collection_compact(&test_collection);
         }
 
@@ -67,6 +68,7 @@ int main(int argc, char const *argv[])
             iter = dl_collection_index(&test_collection, dl_random_integer(&r, dl_collection_count(&test_collection)));
             dl_collection_destroy_at(&test_collection, &iter);
             dl_collection_pop_destroy(&test_collection);
+
             dl_collection_compact(&test_collection);
         }
 
@@ -89,6 +91,7 @@ int main(int argc, char const *argv[])
             iter = dl_collection_index(&test_collection, dl_random_integer(&r, dl_collection_count(&test_collection)));
             dl_collection_destroy_at(&test_collection, &iter);
             dl_collection_pop_destroy(&test_collection);
+
             dl_collection_compact(&test_collection);
         }
 

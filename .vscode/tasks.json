@@ -7,7 +7,10 @@
             "label": "test suite",
             "type": "shell",
             "command": "cd ${workspaceFolder}/build && ./suite",
-            "dependsOn": "meson"
+            "dependsOn": "meson",
+            "problemMatcher": [
+                "$gcc"
+            ]
         },
         {
             "label": "tween suite",
@@ -36,7 +39,10 @@
             },
             "problemMatcher": {
                 "base": "$gcc",
-                "fileLocation": ["relative", "${workspaceFolder}/build"],
+                "fileLocation": [
+                    "relative",
+                    "${workspaceFolder}/build"
+                ]
             }
         },
         {
