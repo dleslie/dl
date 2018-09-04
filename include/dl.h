@@ -1095,6 +1095,8 @@ extern "C" {
   dl_api dl_integer dl_collection_remove_all(dl_collection *dl_restrict col, dl_filter *predicate, dl_collection *out);
   dl_api dl_integer dl_collection_remove_range(dl_collection *dl_restrict col, dl_iterator *index, dl_natural count, dl_collection *out);
 
+  dl_api dl_bool dl_collection_compact(dl_collection *dl_restrict col);
+
 #endif /* DL_USE_CONTAINERS */
 
 #if defined(__cplusplus)
@@ -5568,6 +5570,19 @@ dl_api void dl_destroy_collection(dl_collection *dl_restrict col) {
   }
 }
 
+dl_api dl_bool dl_collection_compact(dl_collection *dl_restrict col) {
+  if (dl_safety(col == NULL))
+    return false;
+
+  switch (col->settings.storage) {
+  case DL_STORAGE_TYPE_VECTOR:
+    return dl_vector_resize(&col->data.dl_vector.container, dl_collection_count(col), &col->settings.deconstruct_entry);
+  case DL_STORAGE_TYPE_LINKED_LIST:
+    return dl_linked_list_resize(&col->data.dl_linked_list.container, dl_collection_count(col), &col->settings.deconstruct_entry);
+  }
+
+  return false;
+}
 
 #endif /* DL_USE_CONTAINERS */
   

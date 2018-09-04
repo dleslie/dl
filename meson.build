@@ -20,7 +20,7 @@ build_config = gcc_configs
 
 executables = [
 	['tween', ['src/tween.c'], [lib_m, lib_allegro, lib_allegro_primitives]],
-	['suite', ['src/test_dl_collections.c', 'src/test_dl_math.c', 'src/test_dl_test.c', 'src/suite.c'], [lib_m]]
+	['suite', ['src/test_dl_collections.c', 'src/test_dl_math.c', 'src/test_dl_test.c', 'src/suite.c'], [lib_m]],
 ]
 
 foreach exe : executables
@@ -38,3 +38,15 @@ foreach exe : executables
 		endforeach
 	endforeach
 endforeach
+
+executable('container_speed_linked_list',
+	'src/container_speed.c',
+	c_args: ['-DDL_TEST_LINKED_LIST=1'],
+	include_directories : inc,
+	dependencies : [lib_m])
+
+executable('container_speed_vector',
+	'src/container_speed.c',
+	c_args: ['-DDL_TEST_VECTOR=1'],
+	include_directories : inc,
+	dependencies : [lib_m])
