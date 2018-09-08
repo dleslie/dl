@@ -195,6 +195,7 @@ DL_DECLARE_TEST(test_collection_fifo)
 DL_DECLARE_TEST(test_collection_remove_range)
 DL_DECLARE_TEST(test_collection_destroy_range)
 DL_DECLARE_TEST(test_collection_insert)
+DL_DECLARE_TEST(test_collection_fuzz)
 /*
 DL_DECLARE_TEST(test_collection_pop_forget)
 DL_DECLARE_TEST(test_collection_pop_destroy)

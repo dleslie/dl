@@ -72,7 +72,7 @@ void _print_collection(dl_collection *c1) {
     sprintf(buf2, "%s %i", buf, *(dl_integer *)ref);
     sprintf(buf, "%s", buf2);
 #else
-    snprintf(buf2, 256, "%s %li", buf, *(dl_integer *)ref);
+    snprintf(buf2, 256, "%s %i", buf, *(dl_integer *)ref);
     snprintf(buf, 256, "%s", buf2);
 #endif
   }
@@ -1638,9 +1638,9 @@ dl_bool test_collection_remove_range() {
     goto fail;
 
   count = dl_collection_count(&c1);
-  first = DL_NATURAL_MAX;
-  second = DL_NATURAL_MAX;
-  third = DL_NATURAL_MAX;
+  first = DL_INTEGER_MAX;
+  second = DL_INTEGER_MAX;
+  third = DL_INTEGER_MAX;
   
   dl_collection_get(&c1, dl_collection_index(&c1, 2), &first);
   dl_collection_get(&c1, dl_collection_index(&c1, 3), &second);
@@ -1709,9 +1709,9 @@ dl_bool test_collection_destroy_range() {
     "%s: Expected 2 to be a valid index.", type_name))
     goto fail;
 
-  first = DL_NATURAL_MAX;
-  second = DL_NATURAL_MAX;
-  third = DL_NATURAL_MAX;
+  first = DL_INTEGER_MAX;
+  second = DL_INTEGER_MAX;
+  third = DL_INTEGER_MAX;
   
   dl_collection_get(&c, dl_collection_index(&c, 2), &first);
   dl_collection_get(&c, dl_collection_index(&c, 3), &second);
@@ -1789,7 +1789,7 @@ dl_bool test_init_destroy_vector() {
   if (!dl_check(dl_init_vector(&v, sizeof(dl_real), 10),
     "Failed to initialize dl_vector."))
     return false;
-  if (!dl_check(v.settings.element_size == sizeof(dl_real),
+  if (!dl_check(v.element_size == sizeof(dl_real),
     "Expected element size to be %lui.", sizeof(dl_real)))
     return false;
   if (!dl_check(dl_vector_capacity(&v) >= 10,
@@ -1808,7 +1808,7 @@ dl_bool test_init_vector_array() {
   if (!dl_check(dl_init_vector_array(&v, (dl_byte *)&data, sizeof(char), 6),
     "Failed to initialize dl_vector."))
     return false;
-  if (!dl_check(v.settings.element_size == sizeof(char),
+  if (!dl_check(v.element_size == sizeof(char),
     "Expected element size to be %lui.", sizeof(char)))
     return false;
   if (!dl_check(dl_vector_capacity(&v) == 6,
@@ -1929,7 +1929,6 @@ dl_bool test_vector_copy() {
   char data3[] = { '1', '2', '3', '4', '5' };
   char data4[] = { '1', '2', '3', '4', '5', '6', '7' };
   char a, b;
-  dl_vector_settings settings_5, settings_6;
   dl_natural idx;
   
   dl_init_vector_array(&v1, (dl_any)&data1, sizeof(char), 6);
@@ -1937,23 +1936,15 @@ dl_bool test_vector_copy() {
   dl_init_vector_array(&v3, (dl_any)&data3, sizeof(char), 5);
   dl_init_vector_array(&v4, (dl_any)&data4, sizeof(char), 7);
 
-  settings_5 = default_vector_settings;
-  settings_5.slice_length = 12;
-  settings_5.element_size = sizeof(char);
+  dl_init_vector(&v5, sizeof(char), 24);
+  dl_init_vector(&v6, sizeof(char), 12);
 
-  settings_6 = default_vector_settings;
-  settings_6.slice_length = 4;
-  settings_6.element_size = sizeof(char);
-
-  dl_init_vector_custom(&v5, &settings_5, 24);
-  dl_init_vector_custom(&v6, &settings_6, 28);
-
-  if (!dl_check(dl_vector_capacity(&v5) == 24,
-    "Expected capacity to be 24, was %i.", dl_vector_capacity(&v5)))
+  if (!dl_check(dl_vector_capacity(&v5) >= 24,
+    "Expected capacity to be at least 24, was %i.", dl_vector_capacity(&v5)))
     goto dl_vector_copy_fail;
 
-  if (!dl_check(dl_vector_capacity(&v6) == 28,
-    "Expected capacity to be 28, was %i.", dl_vector_capacity(&v6)))
+  if (!dl_check(dl_vector_capacity(&v6) >= 12,
+    "Expected capacity to be at least 12, was %i.", dl_vector_capacity(&v6)))
     goto dl_vector_copy_fail;
 
   if (!dl_check(dl_vector_copy(&v2, 0, &v1),
@@ -2090,15 +2081,10 @@ dl_bool test_vector_shrink() {
   dl_vector v1, v2;
   dl_byte data[] = { 0x0 };
   dl_byte set_data[] = { 0x1, 0x2, 0x4, 0x8, 0x16, 0x32, 0x64 };
-  dl_vector_settings settings_1;
   dl_natural original_capacity, idx;
   dl_any value;
   
-  settings_1 = default_vector_settings;
-  settings_1.slice_length = 8;
-  settings_1.element_size = sizeof(dl_byte);
-
-  dl_init_vector_custom(&v1, &settings_1, 32);
+  dl_init_vector(&v1, sizeof(dl_byte), 2048);
   dl_init_vector_array(&v2, (dl_byte *)&data, sizeof(dl_byte), 1);
 
   original_capacity = dl_vector_capacity(&v1);
@@ -2135,16 +2121,11 @@ dl_bool test_vector_resize() {
   dl_byte item;
   dl_byte data[] = { 0x0 };
   dl_byte set_data[] = { 0x1, 0x2, 0x4, 0x8, 0x16, 0x32, 0x64 };
-  dl_vector_settings settings;
   dl_natural original_capacity, new_capacity, idx;
   
   dl_init_vector_array(&v1, (dl_byte *)&data, sizeof(dl_byte), 1);
 
-  settings = default_vector_settings;
-  settings.slice_length = 12;
-  settings.element_size = sizeof(dl_byte);
-
-  dl_init_vector_custom(&v2, &settings, 24);
+  dl_init_vector(&v2, sizeof(dl_byte), 12);
 
   original_capacity = dl_vector_capacity(&v2);
   for (idx = 0; idx < original_capacity; ++idx)
@@ -2158,7 +2139,7 @@ dl_bool test_vector_resize() {
     "Expected dl_vector not to resize"))
     goto test_vector_resize_fail;
 
-  if (!dl_check(dl_vector_resize(&v2, 32, NULL) && dl_vector_capacity(&v2) > original_capacity,
+  if (!dl_check(dl_vector_resize(&v2, original_capacity * 2, NULL) && dl_vector_capacity(&v2) > original_capacity,
     "Expected dl_vector to resize"))
     goto test_vector_resize_fail;
 
@@ -2168,7 +2149,7 @@ dl_bool test_vector_resize() {
       goto test_vector_resize_fail;
   }
 
-  if (!dl_check(dl_vector_resize(&v2, 8, NULL) && dl_vector_capacity(&v2) < original_capacity,
+  if (!dl_check(dl_vector_resize(&v2, 8, NULL) && dl_vector_capacity(&v2) < original_capacity * 2,
     "Expected dl_vector to resize"))
     goto test_vector_resize_fail;
 
@@ -2235,13 +2216,13 @@ dl_bool test_init_linked_list() {
     "Expected linked list to initialize."))
     return false;
 
-  if (!dl_check(dl_vector_capacity(&list.node_cache) == list.settings.cache_length,
-    "Expected node cache to be %i in length, was %i.",
-    list.settings.cache_length,
+  if (!dl_check(dl_vector_capacity(&list.node_cache) >= list.cache_length,
+    "Expected node cache to be at least %i in length, was %i.",
+    list.cache_length,
     dl_vector_capacity(&list.node_cache)))
     goto fail;
 
-  if (!dl_check(list.free != NULL,
+  if (!dl_check(list.free_list != NULL,
     "Expected free list to exist."))
     goto fail;
 
@@ -2254,7 +2235,7 @@ dl_bool test_init_linked_list() {
     goto fail;
 
   count = 0;
-  node = list.free;
+  node = list.free_list;
   while (node != NULL) {
     node = node->next;
     ++count;
@@ -2281,13 +2262,13 @@ dl_bool test_init_linked_list_fat() {
     "Expected linked list to initialize."))
     return false;
 
-  if (!dl_check(dl_vector_capacity(&list.node_cache) == list.settings.cache_length,
+  if (!dl_check(dl_vector_capacity(&list.node_cache) == list.cache_length,
     "Expected node cache to be %i in length, was %i.",
-    list.settings.cache_length,
+    list.cache_length,
     dl_vector_capacity(&list.node_cache)))
     goto fail;
 
-  if (!dl_check(list.free != NULL,
+  if (!dl_check(list.free_list != NULL,
     "Expected free list to exist."))
     goto fail;
 
@@ -2300,7 +2281,7 @@ dl_bool test_init_linked_list_fat() {
     goto fail;
 
   count = 0;
-  node = list.free;
+  node = list.free_list;
   while (node != NULL) {
     node = node->next;
     ++count;
@@ -2353,7 +2334,7 @@ dl_bool test_linked_list_add() {
     ++count;
   }
 
-  if (!dl_check(list.free == NULL,
+  if (!dl_check(list.free_list == NULL,
     "Expected free list to be exhausted."))
     goto fail;
 
@@ -2638,7 +2619,7 @@ dl_bool test_linked_list_grow() {
     goto fail;
 
   count = 0;
-  node = list.free;
+  node = list.free_list;
   while (node != NULL) {
     node = node->next;
     ++count;
@@ -2923,7 +2904,7 @@ dl_bool test_linked_list_destroy_range() {
     "Expected destroy range to work."))
     goto fail;
 
-  if (!dl_check(dl_linked_list_length(&list) == length / 4 * 3,
+  if (!dl_check(dl_linked_list_length(&list) < length,
     "Expected destroy range to remove items."))
     goto fail;
 
@@ -3003,4 +2984,91 @@ finish:
   return success;
 }
 
+dl_bool test_collection_fuzz() {
+  dl_iterator iter;
+  dl_integer next_value;
+  dl_natural container_idx;
+  dl_random_state r;
+
+  SINGLE_TEST_BEGIN();
+
+  dl_init_random_time(&r);
+
+  // Add 20 values in random order
+  for (container_idx = 0; container_idx < 20; container_idx += 2)
+  {
+      iter = dl_collection_index(&c, container_idx / 2);
+      next_value = dl_random_integer(&r, 20);
+      dl_collection_push(&c, &next_value);
+      next_value = dl_random_integer(&r, 20);
+      dl_collection_insert(&c, &iter, &next_value);
+  }
+
+  if (!_confirm_properties(&c, type_name))
+    goto fail;
+
+  // Remove values at random, calling resize whenever possible
+  while (!dl_collection_is_empty(&c))
+  {
+    iter = dl_collection_index(&c, dl_random_integer(&r, dl_collection_count(&c)));
+    dl_collection_destroy_at(&c, &iter);
+    dl_collection_pop_destroy(&c);
+
+    dl_collection_compact(&c);
+
+    if (!_confirm_properties(&c, type_name))
+      goto fail;
+  }
+
+  // Add 20 values in reverse order
+  for (container_idx = 0; container_idx < 20; ++container_idx)
+  {
+      next_value = container_idx % 20;
+      dl_collection_push(&c, &next_value);
+  }
+
+  if (!_confirm_properties(&c, type_name))
+    goto fail;
+
+  // Remove values at random, calling resize whenever possible
+  while (!dl_collection_is_empty(&c))
+  {
+    iter = dl_collection_index(&c, dl_random_integer(&r, dl_collection_count(&c)));
+    dl_collection_destroy_at(&c, &iter);
+    dl_collection_pop_destroy(&c);
+
+    dl_collection_compact(&c);
+
+    if (!_confirm_properties(&c, type_name))
+      goto fail;
+  }
+
+  // Add 20 values in pseudo-sorted order
+  for (container_idx = 0; container_idx < 20; container_idx += 2)
+  {
+    iter = dl_collection_index(&c, container_idx / 2);
+    next_value = container_idx % 20;
+    dl_collection_push(&c, &next_value);
+    next_value = (container_idx + 1) % 20;
+    dl_collection_insert(&c, &iter, &next_value);
+  }
+
+  if (!_confirm_properties(&c, type_name))
+    goto fail;
+
+  // Remove values at random, calling resize whenever possible
+  while (!dl_collection_is_empty(&c))
+  {
+    iter = dl_collection_index(&c, dl_random_integer(&r, dl_collection_count(&c)));
+    dl_collection_destroy_at(&c, &iter);
+    dl_collection_pop_destroy(&c);
+
+    dl_collection_compact(&c);
+
+    if (!_confirm_properties(&c, type_name))
+      goto fail;
+  }
+
+  SINGLE_TEST_END();
+}
 #endif

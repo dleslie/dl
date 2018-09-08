@@ -52,7 +52,7 @@
         {
             "label": "ninja",
             "type": "shell",
-            "command": "ninja -t compdb > compile_commands.json && ninja",
+            "command": "ninja",
             "dependsOn": "meson",
             "options": {
                 "cwd": "${workspaceFolder}/build"

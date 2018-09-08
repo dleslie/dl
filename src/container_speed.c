@@ -1,6 +1,8 @@
 #define DL_IMPLEMENTATION 1
 #include "dl.h"
 
+const dl_natural test_size = 1000;
+
 dl_byte collection_types[4] = {
     DL_COLLECTION_TYPE_LIST,
     DL_COLLECTION_TYPE_QUEUE,
@@ -30,7 +32,7 @@ int main(int argc, char const *argv[])
         dl_init_collection(&test_collection, type, storage, NULL, NULL, sizeof(dl_integer));
 
         // Add 10,000 values in random order
-        for (container_idx = 0; container_idx < 10000; container_idx += 2)
+        for (container_idx = 0; container_idx < test_size; container_idx += 2)
         {
             iter = dl_collection_index(&test_collection, container_idx / 2);
             next_value = dl_random_integer(&r, 32767);
@@ -53,9 +55,9 @@ int main(int argc, char const *argv[])
         }
 
         // Add 10,000 values in reverse order
-        for (container_idx = 0; container_idx < 10000; ++container_idx)
+        for (container_idx = 0; container_idx < test_size; ++container_idx)
         {
-            next_value = 10000 - container_idx;
+            next_value = test_size - container_idx;
             dl_collection_push(&test_collection, &next_value);
         }
 
@@ -73,7 +75,7 @@ int main(int argc, char const *argv[])
         }
 
         // Add 10,000 values in pseudo-sorted order
-        for (container_idx = 0; container_idx < 10000; container_idx += 2)
+        for (container_idx = 0; container_idx < test_size; container_idx += 2)
         {
             iter = dl_collection_index(&test_collection, container_idx / 2);
             next_value = container_idx;
