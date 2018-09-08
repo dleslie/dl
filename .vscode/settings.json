@@ -21,6 +21,7 @@
     "type_traits": "cpp",
     "string": "cpp",
     "*.tcc": "cpp",
-    "string_view": "cpp"
+    "string_view": "cpp",
+    "__functional_03": "cpp"
   }
 }
