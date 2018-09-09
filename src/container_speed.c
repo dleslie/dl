@@ -42,7 +42,8 @@ int main(int argc, char const *argv[])
         }
 
         // Sort values
-        dl_collection_sort(&test_collection);
+	if (!dl_collection_is_sorted(&test_collection))
+	  dl_collection_sort(&test_collection);
 
         // Remove values at random, calling resize whenever possible
         while (!dl_collection_is_empty(&test_collection))
@@ -62,7 +63,8 @@ int main(int argc, char const *argv[])
         }
 
         // Sort values
-        dl_collection_sort(&test_collection);
+	if (!dl_collection_is_sorted(&test_collection))
+	  dl_collection_sort(&test_collection);
 
         // Remove values at random, calling resize whenever possible
         while (!dl_collection_is_empty(&test_collection))
@@ -85,7 +87,8 @@ int main(int argc, char const *argv[])
         }
 
         // Sort values
-        dl_collection_sort(&test_collection);
+	if (!dl_collection_is_sorted(&test_collection))
+	  dl_collection_sort(&test_collection);
 
         // Remove values at random, calling resize whenever possible
         while (!dl_collection_is_empty(&test_collection))
