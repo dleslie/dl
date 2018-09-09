@@ -977,7 +977,6 @@ extern "C" {
   
   dl_api dl_integer dl_iterator_compare(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right);
   dl_api dl_bool dl_iterator_equal(const dl_collection *dl_restrict col, dl_iterator left, dl_iterator right);
-  dl_api void dl_iterator_swap(dl_iterator *dl_restrict left, dl_iterator *dl_restrict right);
   dl_api dl_bool dl_iterator_is_valid(const dl_collection *dl_restrict col, dl_iterator index);
   dl_api dl_iterator dl_make_invalid_iterator(const dl_collection *dl_restrict col);
 
@@ -1861,7 +1860,7 @@ dl_api dl_bool dl_vec3_normalized(const dl_vec3 *dl_restrict left) {
 dl_api dl_vec3 *dl_vec3_negate(const dl_vec3 *dl_restrict left, dl_vec3 *dl_restrict out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
-  
+
   out->x = -left->x;
   out->y = -left->y;
   out->z = -left->z;
@@ -2943,10 +2942,10 @@ dl_any dl_memory_set(dl_any left, dl_byte val, dl_natural dl_bytes) {
 
     byte_left = (dl_byte *)sz_left;
 
-  for (; byte_count > 0; --byte_count) {
-    *(dl_byte *)byte_left = val;
-    ++byte_left;
-  }
+    for (; byte_count > 0; --byte_count) {
+      *(dl_byte *)byte_left = val;
+      ++byte_left;
+    }
   }
 
   return left;
@@ -3762,22 +3761,22 @@ dl_api dl_bool dl_linked_list_swap(dl_linked_list * dl_restrict list, struct dl_
   if (position1 == position2->previous) {
     if (position1->previous != NULL)
       position1->previous->next = position2;
+    if (position2->next != NULL)
+      position2->next->previous = position1;
     position2->previous = position1->previous;
     position1->previous = position2;
     position1->next = position2->next;
     position2->next = position1;
-    if (position1->next != NULL)
-      position1->next->previous = position1;
   }
   else if (position2 == position1->previous) {
     if (position2->previous != NULL)
       position2->previous->next = position1;
+    if (position1->next != NULL)
+      position1->next->previous = position2;
     position1->previous = position2->previous;
     position2->previous = position1;
     position2->next = position1->next;
     position1->next = position2;
-    if (position2->next != NULL)
-      position2->next->previous = position2;
   }
   else {
     if (position1->previous != NULL)
@@ -3866,17 +3865,6 @@ dl_api dl_inline dl_bool dl_iterator_equal(const dl_collection *dl_restrict col,
   return 0 == dl_iterator_compare(col, left, right);
 }
 
-dl_api dl_inline void dl_iterator_swap(dl_iterator *dl_restrict left, dl_iterator *dl_restrict right) {
-  dl_iterator t;
-
-  if (dl_safety(left == NULL || right == NULL))
-    return;
-
-  t = *left;
-  *left = *right;
-  *right = t;
-}
-
 dl_api dl_inline dl_bool dl_iterator_is_valid(const dl_collection *dl_restrict col, const dl_iterator index) {
   switch (col->settings.storage)
   {
@@ -3917,8 +3905,11 @@ dl_api dl_inline dl_bool _dl_collection_swap(dl_collection *dl_restrict col, dl_
   {
     case DL_STORAGE_TYPE_LINKED_LIST:
     {
+      struct dl_linked_list_node *t;
       if (dl_linked_list_swap(&col->data.dl_linked_list.container, iter_a->dl_linked_list.node, iter_b->dl_linked_list.node, false)) {
-        dl_iterator_swap(iter_a, iter_b);
+	t = iter_a->dl_linked_list.node;
+	iter_a->dl_linked_list.node = iter_b->dl_linked_list.node;
+	iter_b->dl_linked_list.node = t;
         return true;  
       }
       return false;
@@ -4001,7 +3992,7 @@ dl_api dl_any dl_collection_push_finish(dl_collection *dl_restrict col, dl_itera
   dl_comparator *comp;
   dl_bool is_set;
   dl_any ref, prev_ref;
-  dl_iterator prev;
+  dl_iterator prev, t;
   dl_integer c;
 
   if (dl_safety(col == NULL || iter == NULL || !dl_iterator_is_valid(col, *iter)))
@@ -4033,7 +4024,9 @@ dl_api dl_any dl_collection_push_finish(dl_collection *dl_restrict col, dl_itera
       }
 
       _dl_collection_swap(col, &prev, iter);
-      dl_iterator_swap(&prev, iter);
+      t = prev;
+      prev = *iter;
+      *iter = t;
     }
   }
 
@@ -4587,11 +4580,8 @@ dl_api dl_bool dl_collection_destroy_at(dl_collection *dl_restrict col, dl_itera
         }
 
         if (dl_collection_count(col) > 1) {
-          if (dl_collection_is_sorted(col))
-            for (swap_index = col->data.dl_vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
-              dl_vector_swap(v, swap_index, index);
-          else
-            dl_vector_swap(v, index, col->data.dl_vector.index[1] - 1);
+	  for (swap_index = col->data.dl_vector.index[1] - 1; swap_index > 0 && swap_index > index; --swap_index)
+	    dl_vector_swap(v, swap_index, index);
         }
 
         col->data.dl_vector.index[1]--;
@@ -4743,7 +4733,7 @@ dl_any dl_collection_insert(dl_collection *dl_restrict col, dl_iterator *dl_rest
       }
     case DL_STORAGE_TYPE_VECTOR:
       {
-        dl_iterator index, next;
+        dl_iterator index, next, t;
         
         index = dl_collection_end(col);
 
@@ -4754,7 +4744,9 @@ dl_any dl_collection_insert(dl_collection *dl_restrict col, dl_iterator *dl_rest
           next = index;
           dl_collection_prev(col, &next);
           _dl_collection_swap(col, &next, &index);
-          dl_iterator_swap(&next, &index);
+	  t = next;
+	  next = index;
+	  index = t;
         }
 
         return dl_collection_ref(col, *position);        
@@ -5120,7 +5112,7 @@ dl_iterator _dl_collection_quick_sort_partition(dl_collection *dl_restrict col, 
   
   high = right;
   pivot_ref = dl_collection_prev(col, &high);
-  
+
   ref_j = dl_collection_ref(col, left);
   for (i = j = left; !dl_iterator_equal(col, high, j); ref_j = dl_collection_next(col, &j)) {
     if (compare->func(compare->data, ref_j, pivot_ref)) {
