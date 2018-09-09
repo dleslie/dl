@@ -3809,7 +3809,6 @@ dl_api dl_bool dl_linked_list_swap(dl_linked_list * dl_restrict list, struct dl_
   if (data)
     dl_memory_swap(DL_LINKED_LIST_DATA(position1), DL_LINKED_LIST_DATA(position2), list->element_size);
 
-
   return true;
 }
 
@@ -3905,14 +3904,13 @@ dl_api dl_inline dl_bool _dl_collection_swap(dl_collection *dl_restrict col, dl_
   {
     case DL_STORAGE_TYPE_LINKED_LIST:
     {
-      struct dl_linked_list_node *t;
-      if (dl_linked_list_swap(&col->data.dl_linked_list.container, iter_a->dl_linked_list.node, iter_b->dl_linked_list.node, false)) {
-	t = iter_a->dl_linked_list.node;
-	iter_a->dl_linked_list.node = iter_b->dl_linked_list.node;
-	iter_b->dl_linked_list.node = t;
-        return true;  
-      }
-      return false;
+      dl_any left, right;
+      dl_linked_list *l = &col->data.dl_linked_list.container;
+
+      if (dl_unlikely(!(left = dl_linked_list_ref(iter_a->dl_linked_list.node)) || !(right = dl_linked_list_ref(iter_b->dl_linked_list.node))))
+        return false;
+
+      return NULL != dl_memory_swap(left, right, l->element_size);
     }
     case DL_STORAGE_TYPE_VECTOR:
     {
