@@ -13,6 +13,15 @@
 # define DL_USE_SAFETY_CHECKS 0
 #endif
 
+#if !defined(DL_ALLOC)
+# include <malloc.h>
+# define DL_ALLOC malloc
+#endif
+
+#if !defined(DL_FREE)
+# include <malloc.h>
+# define DL_FREE free
+#endif
 
 
 /***************************************
@@ -252,28 +261,6 @@ extern "C" {
   /*****************************************************************************
    **  Memory Tools
    ****************************************************************************/
-
-# if !defined(DL_ALLOC)
-#   include <malloc.h>
-#   if DL_IS_LINUX
-#     if DL_IS_GNUC
-#       if DL_IMPLEMENTATION
-          dl_any _default_alloc(dl_natural count, dl_natural element_size) {
-            return (dl_any)memalign(sizeof(dl_any), count * element_size);
-          }
-#       endif
-        #define DL_ALLOC _default_alloc
-#     else
-#       define DL_ALLOC calloc
-#     endif
-#   else
-#     define DL_ALLOC malloc
-#   endif
-# endif
-# if !defined(DL_FREE)
-#   include <malloc.h>
-#   define DL_FREE free
-# endif
 
   dl_api dl_any dl_memory_swap(dl_any target, dl_any source, dl_natural dl_bytes);
   dl_api dl_any dl_memory_copy(dl_any target, dl_any source, dl_natural dl_bytes);

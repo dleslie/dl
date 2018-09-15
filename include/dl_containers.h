@@ -18,7 +18,7 @@ extern "C" {
     dl_natural slice_length;
     dl_integer slice_count;
 
-    dl_any (*alloc)(dl_natural count, dl_natural element_size);
+    dl_any (*alloc)(dl_natural byte_count);
     void (*free)(dl_any data);
 
     union {
@@ -28,7 +28,7 @@ extern "C" {
   } dl_vector;
 
   dl_api dl_vector *dl_init_vector(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity);
-  dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity, dl_any (*alloc)(dl_natural count, dl_natural element_size), void (*free)(dl_any data));
+  dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data));
 
   dl_api dl_vector *dl_init_vector_array(dl_vector * dl_restrict target, dl_byte *data, dl_natural element_size, dl_natural count);
 
@@ -74,14 +74,14 @@ extern "C" {
 
     dl_natural element_size;
     dl_natural cache_length;
-    dl_any (*alloc)(dl_natural count, dl_natural element_size);
+    dl_any (*alloc)(dl_natural byte_count);
     void (*free)(dl_any data);
 
     dl_vector node_cache;
   } dl_linked_list;
 
   dl_api dl_linked_list *dl_init_linked_list(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length);
-  dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length, dl_any (*alloc)(dl_natural count, dl_natural element_size), void (*free)(dl_any data));
+  dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data));
 
   dl_api dl_natural dl_linked_list_copy(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_linked_list *dl_restrict original);
   dl_api dl_natural dl_linked_list_copy_array(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_byte *dl_restrict data, dl_natural count);
@@ -116,7 +116,7 @@ extern "C" {
 
 #if DL_IMPLEMENTATION
 
-#define _DL_DECLARE_ALLOC_MEMBERS()	(dl_any (*)(dl_natural, dl_natural))DL_ALLOC, (void (*)(dl_any))DL_FREE
+#define _DL_DECLARE_ALLOC_MEMBERS()	(dl_any (*)(dl_natural))DL_ALLOC, (void (*)(dl_any))DL_FREE
 
 dl_integer _default_compare_8(dl_any data, dl_any left, dl_any right) {
   return (dl_integer)(*(unsigned char *)left - *(unsigned char *)right);
@@ -160,7 +160,7 @@ dl_api dl_vector *dl_init_vector(dl_vector * dl_restrict target, dl_natural elem
   return dl_init_vector_custom(target, element_size, capacity, _DL_DECLARE_ALLOC_MEMBERS());
 }
 
-dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity, dl_any (*alloc)(dl_natural count, dl_natural element_size), void (*free)(dl_any data)) {
+dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data)) {
   dl_real dl_real_count;
   dl_natural slice_count, idx;
   
@@ -189,12 +189,12 @@ dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_natur
 
   target->slice_count = slice_count < 1 ? 1 : slice_count;
 
-  target->data.slices = (dl_byte **)target->alloc(target->slice_count, sizeof(dl_byte *));
+  target->data.slices = (dl_byte **)target->alloc(target->slice_count * sizeof(dl_byte *));
   if (dl_unlikely(target->data.slices == NULL))
     return NULL;
 
   for (idx = 0; idx < target->slice_count; ++idx) {
-    target->data.slices[idx] = (dl_byte *)target->alloc(target->slice_length, target->element_size);
+    target->data.slices[idx] = (dl_byte *)target->alloc(target->slice_length * target->element_size);
 
     if (dl_unlikely(target->data.slices[idx] == NULL))
       break;
@@ -313,11 +313,11 @@ dl_api dl_bool dl_vector_grow(dl_vector * dl_restrict v) {
   if (v->free == NULL || v->alloc == NULL)
     return false;
 
-  new_slices = (dl_byte **)v->alloc(v->slice_count + 1, sizeof(dl_byte *));
+  new_slices = (dl_byte **)v->alloc((v->slice_count + 1) * sizeof(dl_byte *));
   if (dl_unlikely(new_slices == NULL))
     return false;
 
-  new_slice = (dl_byte *)v->alloc(v->slice_length, v->element_size);
+  new_slice = (dl_byte *)v->alloc(v->slice_length * v->element_size);
   if (dl_unlikely(new_slice == NULL)) {
     v->free((dl_any)new_slices);
     return false;
@@ -365,7 +365,7 @@ dl_api dl_bool dl_vector_shrink(dl_vector * dl_restrict v, dl_handler *dl_restri
   if (v->slice_count <= 1 || v->free == NULL || v->alloc == NULL)
     return false;
 
-  new_slices = (dl_byte **)v->alloc(v->slice_count - 1, sizeof(dl_byte *));
+  new_slices = (dl_byte **)v->alloc((v->slice_count - 1) * sizeof(dl_byte *));
   if (dl_unlikely(new_slices == NULL))
     return false;
 
@@ -410,7 +410,7 @@ dl_api dl_bool dl_vector_resize(dl_vector * dl_restrict v, dl_natural minimum_ca
 
   if (dl_likely(needed_count != 0)) {
     new_slice_count = v->slice_count + needed_count;
-    new_slices = (dl_byte **)v->alloc(new_slice_count, sizeof(dl_byte **));
+    new_slices = (dl_byte **)v->alloc(new_slice_count * sizeof(dl_byte **));
     if (dl_unlikely(new_slices == NULL))
       return false;
 
@@ -435,7 +435,7 @@ dl_api dl_bool dl_vector_resize(dl_vector * dl_restrict v, dl_natural minimum_ca
     /* Growing */
     else {
       for (; slice_idx < new_slice_count; ++slice_idx) {
-        new_slices[slice_idx] = (dl_byte *)v->alloc(v->slice_length, v->element_size);
+        new_slices[slice_idx] = (dl_byte *)v->alloc(v->slice_length * v->element_size);
         if (dl_unlikely(new_slices[slice_idx] == NULL))
           break;
       }
@@ -692,7 +692,7 @@ dl_api dl_linked_list *_linked_list_cache_grow(dl_linked_list * dl_restrict targ
   return target;
 }
 
-dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length, dl_any (*alloc)(dl_natural count, dl_natural element_size), void (*free)(dl_any data)) {
+dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data)) {
   if (dl_safety(target == NULL || element_size < 1))
     return NULL;
 
