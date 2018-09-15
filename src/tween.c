@@ -1,7 +1,5 @@
 #define DL_IMPLEMENTATION 1
-#include "dl.h"
-
-#if DL_USE_TWEEN
+#include "dl_all.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_primitives.h>
@@ -151,11 +149,8 @@ void change(dl_random_state *r) {
   }
 }
 
-#endif
-
 int main(int argc, char **argv)
 {
-# if DL_USE_TWEEN
   ALLEGRO_DISPLAY *display;
   ALLEGRO_EVENT_QUEUE *events;
   ALLEGRO_BITMAP *bkg;
@@ -239,7 +234,5 @@ int main(int argc, char **argv)
     al_flip_display();
   }
 
-# endif
-  
   return 0;
 }

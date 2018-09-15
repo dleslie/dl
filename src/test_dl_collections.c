@@ -1,6 +1,4 @@
-#include "dl.h"
-
-#if DL_USE_CONTAINERS && DL_USE_TEST
+#include "dl_all.h"
 
 /***************************************
  * Tools
@@ -3071,4 +3069,3 @@ dl_bool test_collection_fuzz() {
 
   SINGLE_TEST_END();
 }
-#endif

@@ -10,10 +10,10 @@ lib_m = cc.find_library('m', required : true)
 c_stds = ['c11']#['c89', 'c90', 'c99', 'c11']
 
 gcc_configs = [
-	#['no-malloc', ['-DDL_USE_MALLOC=0']],
+	['no-malloc', ['-DDL_USE_MALLOC=0']],
 	['pedantic', ['-pedantic', '-Wall', '-Werror']],
-	#['small', ['-Os']],
-	#['fast', ['-O3']]
+	['small', ['-Os']],
+	['fast', ['-O3']]
 ]
 
 build_config = gcc_configs

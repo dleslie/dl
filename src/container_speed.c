@@ -1,5 +1,5 @@
 #define DL_IMPLEMENTATION 1
-#include "dl.h"
+#include "dl_all.h"
 
 const dl_natural test_size = 1000;
 

@@ -1,15 +1,12 @@
 #include <stdio.h>
 
 #define DL_IMPLEMENTATION 1
-#include "dl.h"
-
-#if DL_USE_TEST
+#include "dl_all.h"
 
 /*******************************************************************************
  math
 *******************************************************************************/
 
-#if DL_USE_MATH
 DL_BEGIN_TEST_SUITE(math)
 DL_DECLARE_TEST(test_approximately_equal)
 DL_DECLARE_TEST(test_ceil_to_integer)
@@ -113,7 +110,6 @@ DL_DECLARE_TEST(test_mat4_sub_scalar)
 DL_DECLARE_TEST(test_mat4_translate)
 DL_DECLARE_TEST(test_mat4_transpose)
 DL_END_TEST_SUITE
-#endif
 
 /*******************************************************************************
  test
@@ -127,8 +123,6 @@ DL_END_TEST_SUITE
 /*******************************************************************************
  dl_collections
 *******************************************************************************/
-
-#if DL_USE_CONTAINERS
 
 DL_BEGIN_TEST_SUITE(dl_collections)
 DL_DECLARE_TEST(test_memory_swap)
@@ -205,16 +199,11 @@ DL_DECLARE_TEST(test_collection_push_index)
 */
 DL_END_TEST_SUITE
 
-#endif
-
-#endif
 
 int main(int argc, char **argv) {
-#if DL_USE_TEST
   DL_RUN_TEST_SUITE(tester);
   DL_RUN_TEST_SUITE(math);
   DL_RUN_TEST_SUITE(dl_collections);
-#endif
   
   return 0;
 }
