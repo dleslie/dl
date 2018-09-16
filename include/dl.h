@@ -10,7 +10,7 @@
 #endif
 
 #ifndef DL_USE_SAFETY_CHECKS
-# define DL_USE_SAFETY_CHECKS 0
+# define DL_USE_SAFETY_CHECKS 1
 #endif
 
 #if !defined(DL_ALLOC)

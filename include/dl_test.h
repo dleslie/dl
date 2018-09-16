@@ -2,13 +2,10 @@
 #define DL_TEST_H
 
 #include "dl.h"
+#include "dl_logging.h"
 
 #if !DL_IS_ATLEAST_C99
 #  error "DL_TEST is not available for C90 or lower."
-#endif
-
-#if !defined(DL_LOGGING_H)
-#  error "DL_TEST is not available without DL_LOGGING."
 #endif
 
 #ifdef __cplusplus

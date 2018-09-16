@@ -2,10 +2,7 @@
 #define DL_COLLECTIONS_H 1
 
 #include "dl.h"
-
-#ifndef DL_CONTAINERS_H
-# error "DL_COLLECTIONS requires DL_CONTAINERS."
-#endif
+#include "dl_containers.h"
 
 
 
@@ -675,7 +672,7 @@ dl_any dl_collection_set(dl_collection *dl_restrict col, dl_iterator *iter, dl_a
 }
 
 dl_api dl_iterator dl_collection_index(dl_collection *dl_restrict col, dl_natural index) {
-  if (dl_safety(col == NULL || (dl_integer)index >= dl_collection_count(col)))
+  if (dl_safety(col == NULL) || (dl_integer)index >= dl_collection_count(col))
     return dl_collection_end(col);
 
   switch (col->settings.storage)
@@ -876,7 +873,7 @@ dl_any dl_collection_search(const dl_collection *dl_restrict col, dl_filter *pre
 dl_api dl_bool dl_collection_destroy_at(dl_collection *dl_restrict col, dl_iterator *iter) {
   dl_handler *destructor;
   
-  if (dl_safety(col == NULL || !dl_iterator_is_valid(col, *iter)))
+  if (dl_safety(col == NULL || iter == NULL) || !dl_iterator_is_valid(col, *iter))
     return false;
 
   if (dl_collection_is_empty(col))
@@ -1040,8 +1037,11 @@ dl_api dl_integer dl_collection_destroy_range(dl_collection *dl_restrict col, dl
 }
 
 dl_any dl_collection_insert(dl_collection *dl_restrict col, dl_iterator *dl_restrict position, dl_any item) {
-  if (dl_safety(col == NULL || !dl_iterator_is_valid(col, *position)))
+  if (dl_safety(col == NULL || position == NULL))
     return NULL;
+
+  if (!dl_iterator_is_valid(col, *position))
+    *position = dl_collection_end(col);
 
   if (dl_collection_is_set(col) && dl_collection_contains(col, item))
     return NULL;
