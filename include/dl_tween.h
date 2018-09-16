@@ -418,7 +418,7 @@ dl_point2 *dl_select_catmullrom_point2(const dl_point2 *dl_restrict v, dl_natura
   dl_point2 v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
 
   #if DL_USE_SAFETY_CHECKS
-  /* Due to the use of dl_safety these may throw uninitialized warnings. */
+  /* These may throw uninitialized warnings. */
   v0 = v1 = threev1 = threev2 = ntwov2 = twov1 = dl_point2_zero;
   #endif
   
@@ -511,6 +511,11 @@ dl_point3 *dl_select_catmullrom_point3(const dl_point3 *dl_restrict v, dl_natura
   dl_natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   dl_real target, t, t2, t3;
   dl_point3 v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
+
+  #if DL_USE_SAFETY_CHECKS
+  /* These may throw uninitialized warnings. */
+  v0 = v1 = threev1 = threev2 = ntwov2 = twov1 = dl_point3_zero;
+  #endif
   
   max_idx = l - 1;
   target = (dl_real)max_idx * p;

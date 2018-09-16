@@ -1,5 +1,7 @@
 #include "dl_all.h"
 
+#if DL_IS_ATLEAST_C99
+
 dl_bool my_passing_test_function() {
   return true;
 }
@@ -34,3 +36,5 @@ dl_bool test_test_run_tests() {
   return dl_check(dl_test_run(passing_predicates, passing_names, 2) == 2, "Expected the number of passing tests to be 2")
     && dl_check(dl_test_run(failing_predicates, failing_names, 2) == 1, "Expected the number of passing tests to be 1");
 }
+
+#endif

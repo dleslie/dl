@@ -7,7 +7,7 @@ lib_allegro = dependency('allegro-5')
 lib_allegro_primitives = dependency('allegro_primitives-5')
 lib_m = cc.find_library('m', required : true)
 
-c_stds = ['c11']#['c89', 'c90', 'c99', 'c11']
+c_stds = ['c89', 'c90', 'c99', 'c11']
 
 gcc_configs = [
 	['no-malloc', ['-DDL_USE_MALLOC=0']],

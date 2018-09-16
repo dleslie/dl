@@ -1,5 +1,7 @@
 #include "dl_all.h"
 
+#if DL_IS_ATLEAST_C99
+
 /***************************************
  * Tools
  **************************************/
@@ -66,13 +68,8 @@ void _print_collection(dl_collection *c1) {
   dl_iterator i;
   dl_any ref;
   for (ref = dl_collection_begin_ref(c1, &i); ref != NULL; ref = dl_collection_next(c1, &i)) {
-#if DL_IS_C89 || DL_IS_C90
-    sprintf(buf2, "%s %i", buf, *(dl_integer *)ref);
-    sprintf(buf, "%s", buf2);
-#else
     snprintf(buf2, 256, "%s %i", buf, *(dl_integer *)ref);
     snprintf(buf, 256, "%s", buf2);
-#endif
   }
   DL_INFO("%s", buf2);
 }
@@ -2992,7 +2989,7 @@ dl_bool test_collection_fuzz() {
 
   dl_init_random_time(&r);
 
-  // Add 20 values in random order
+  /* Add 20 values in random order */
   for (container_idx = 0; container_idx < 20; container_idx += 2)
   {
       iter = dl_collection_index(&c, container_idx / 2);
@@ -3069,3 +3066,5 @@ dl_bool test_collection_fuzz() {
 
   SINGLE_TEST_END();
 }
+
+#endif

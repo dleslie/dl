@@ -1,7 +1,7 @@
 #define DL_IMPLEMENTATION 1
 #include "dl_all.h"
 
-const dl_natural test_size = 1000;
+const dl_natural test_size = 10000;
 
 dl_byte collection_types[4] = {
     DL_COLLECTION_TYPE_LIST,

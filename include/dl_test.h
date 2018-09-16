@@ -19,7 +19,7 @@ extern "C" {
 
 #define dl_check(predicate, ...) ((predicate) ? true : DL_ERROR(__VA_ARGS__) && false)
 #define dl_not_implemented() dl_check(false, "Test is not implemented.")
-#define DL_BEGIN_TEST_SUITE(name)						\
+#define dl_begin_test_suite(name)						\
   void _test_suite_##name(dl_integer *out_count, dl_integer *out_passed) {	\
   dl_bool (*tests[256])();							\
   const char *test_names[256];							\
@@ -27,16 +27,16 @@ extern "C" {
   if (out_count == NULL || out_passed == NULL)					\
     return;									\
   dl_memory_set(tests, 0, sizeof(dl_bool (*)()) * 256);
-#define DL_END_TEST_SUITE							\
+#define dl_end_test_suite							\
   *out_count = dl_test_count(tests, 256);					\
   *out_passed = dl_test_run(tests, test_names, *out_count);			\
 }
-#define DL_DECLARE_TEST(test_name)						\
+#define dl_declare_test(test_name)						\
   dl_bool test_name();								\
   tests[current] = test_name;							\
   test_names[current] = #test_name;						\
   current++;
-#define DL_RUN_TEST_SUITE(name)							\
+#define dl_run_test_suite(name)							\
   do {										\
     dl_integer count, passed;							\
     DL_TEST("<<"#name ">>");							\

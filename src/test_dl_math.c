@@ -1,5 +1,7 @@
 #include "dl_all.h"
 
+#if DL_IS_ATLEAST_C99
+
 /* For testing purposes; MAX * MAX should be a sane value */
 dl_real MIN_REAL = -1024;
 dl_real MAX_REAL = 1024;
@@ -2952,3 +2954,5 @@ dl_bool test_mat4_approximately_equal() {
   return dl_check(dl_mat4_approximately_equal(&mat[a], &mat[b], DL_EPSILON),
     "Expected matrices to be equal");
 }
+
+#endif

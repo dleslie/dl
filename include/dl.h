@@ -215,10 +215,12 @@
 #endif
 
 #if DL_USE_SAFETY_CHECKS
-# define dl_safety(x) (dl_unlikely(x) ? DL_ERROR("Safety triggered") || 1 : 0)
+# define dl_safety(x) dl_unlikely(x)
 #else
 # define dl_safety(x) (1 == 0)
 #endif
+
+#define dl_unused(x) (void)(x)
 
 
 
