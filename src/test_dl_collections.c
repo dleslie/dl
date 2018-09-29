@@ -68,7 +68,7 @@ void _print_collection(dl_collection *c1) {
   dl_iterator i;
   dl_any ref;
   for (ref = dl_collection_begin_ref(c1, &i); ref != NULL; ref = dl_collection_next(c1, &i)) {
-    snprintf(buf2, 256, "%s %i", buf, *(dl_integer *)ref);
+    snprintf(buf2, 256, "%s %li", buf, *(dl_integer *)ref);
     snprintf(buf, 256, "%s", buf2);
   }
   DL_INFO("%s", buf2);
