@@ -10,10 +10,12 @@ lib_m = cc.find_library('m', required : true)
 c_stds = ['c89', 'c90', 'c99', 'c11']
 
 gcc_configs = [
-	['no-malloc', ['-DDL_USE_MALLOC=0']],
-	['pedantic', ['-pedantic', '-Wall', '-Werror']],
-	['small', ['-Os']],
-	['fast', ['-O3']]
+  ['no-malloc', ['-DDL_USE_MALLOC=0']],
+  ['test', ['-DDL_USE_SAFETY_CHECKS=1']],
+  ['pedantic', ['-pedantic', '-Wall', '-Werror', '-DDL_USE_EXTENSIONS=0']],
+  ['small', ['-Os']],
+  ['fast', ['-O3']],
+  ['prof', ['-pg']]
 ]
 
 build_config = gcc_configs
@@ -34,6 +36,7 @@ foreach exe : executables
 			executable(exe_name + '-' + std + '-' + conf_name, exe_files,
 				include_directories: inc,
 				c_args: conf_flags + ['-std=' + std],
+				link_args: conf_flags,
 				dependencies: exe_deps)
 		endforeach
 	endforeach
@@ -41,12 +44,14 @@ endforeach
 
 executable('container_speed_linked_list',
 	'src/container_speed.c',
-	c_args: ['-DDL_TEST_LINKED_LIST=1 -O3'],
+	c_args: ['-DDL_TEST_LINKED_LIST=1', '-O3'],
+	link_args: ['-O3'],
 	include_directories : inc,
 	dependencies : [lib_m])
 
 executable('container_speed_vector',
 	'src/container_speed.c',
-	c_args: ['-DDL_TEST_VECTOR=1 -O3'],
+	c_args: ['-DDL_TEST_VECTOR=1', '-O3'],
+	link_args: ['-O3'],
 	include_directories : inc,
 	dependencies : [lib_m])
