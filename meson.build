@@ -44,14 +44,14 @@ endforeach
 
 executable('container_speed_linked_list',
 	'src/container_speed.c',
-	c_args: ['-DDL_TEST_LINKED_LIST=1', '-O3'],
-	link_args: ['-O3'],
+	c_args: ['-DDL_TEST_LINKED_LIST=1', '-O3', '-pg'],
+	link_args: ['-O3', '-pg'],
 	include_directories : inc,
 	dependencies : [lib_m])
 
 executable('container_speed_vector',
 	'src/container_speed.c',
-	c_args: ['-DDL_TEST_VECTOR=1', '-O3'],
-	link_args: ['-O3'],
+	c_args: ['-DDL_TEST_VECTOR=1', '-O3', '-pg'],
+	link_args: ['-O3', '-pg'],
 	include_directories : inc,
 	dependencies : [lib_m])

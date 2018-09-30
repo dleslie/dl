@@ -231,19 +231,18 @@ dl_api dl_inline dl_iterator dl_make_invalid_iterator(const dl_collection *dl_re
  ****************************************************************************/
 
 dl_api dl_inline dl_bool _dl_collection_swap(dl_collection *dl_restrict col, dl_iterator *iter_a, dl_iterator *iter_b) {
-  switch (col->settings.storage)
-  {
-    case DL_STORAGE_TYPE_LINKED_LIST:
+  switch (col->settings.storage) {
+  case DL_STORAGE_TYPE_LINKED_LIST:
     {
-      dl_any left, right;
       dl_linked_list *l = &col->data.dl_linked_list.container;
+      dl_any left, right;
 
       if (dl_unlikely(!(left = dl_linked_list_ref(iter_a->dl_linked_list.node)) || !(right = dl_linked_list_ref(iter_b->dl_linked_list.node))))
         return false;
 
       return NULL != dl_memory_swap(left, right, l->element_size);
     }
-    case DL_STORAGE_TYPE_VECTOR:
+  case DL_STORAGE_TYPE_VECTOR:
     {
       dl_any left, right;
       dl_vector *v = &col->data.dl_vector.container;
@@ -253,7 +252,7 @@ dl_api dl_inline dl_bool _dl_collection_swap(dl_collection *dl_restrict col, dl_
 
       return NULL != dl_memory_swap(left, right, v->element_size);
     }
-    default:
+  default:
       return false;
   }
 }
