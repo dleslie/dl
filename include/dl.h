@@ -212,14 +212,11 @@
 
 
 
-#include <inttypes.h>
-
 typedef void* dl_any;
-typedef int64_t dl_integer;
-typedef uint64_t dl_natural;
+typedef signed int dl_integer;
 typedef float dl_real;
-typedef uint8_t dl_byte;
-typedef uint16_t dl_short;
+typedef unsigned char dl_byte;
+typedef unsigned int dl_natural;
 typedef dl_byte dl_bool;
 
 #define DL_INTEGER_MAX 2147483647
@@ -305,197 +302,101 @@ extern "C" {
  **  Memory Tools
  ****************************************************************************/
 
-dl_api dl_any dl_memory_swap(dl_any left, dl_any right, dl_natural byte_count) {
-  switch (byte_count) {
-  case sizeof(uint8_t):
-    {
-      uint8_t t;
-      t = *(uint8_t *)left;
-      *(uint8_t *)left = *(uint8_t *)right;
-      *(uint8_t *)right = t;
-    }
-    break;
-  case sizeof(uint16_t):
-    {
-      uint16_t t;
-      t = *(uint16_t *)left;
-      *(uint16_t *)left = *(uint16_t *)right;
-      *(uint16_t *)right = t;
-    }
-    break;    
-  case sizeof(uint32_t):
-    {
-      uint32_t t;
-      t = *(uint32_t *)left;
-      *(uint32_t *)left = *(uint32_t *)right;
-      *(uint32_t *)right = t;
-    }
-    break;    
-  case sizeof(uint64_t):
-    {
-      uint64_t t;
-      t = *(uint64_t *)left;
-      *(uint64_t *)left = *(uint64_t *)right;
-      *(uint64_t *)right = t;
-    }
-    break;    
-  default:
-    {
-      size_t sz_count, excess_byte_count, *sz_left, *sz_right, sz_temp;
+dl_api dl_any dl_memory_swap(dl_any left, dl_any right, dl_natural dl_bytes) {
+  size_t sz_count, byte_count, *sz_left, *sz_right, sz_temp;
 
-      sz_count = byte_count / sizeof(size_t);
-      excess_byte_count = byte_count % sizeof(size_t);
+  sz_count = dl_bytes / sizeof(size_t);
+  byte_count = dl_bytes - (sz_count * sizeof(size_t));
   
-      sz_left = (size_t *)left;
-      sz_right = (size_t *)right;
+  sz_left = (size_t *)left;
+  sz_right = (size_t *)right;
 
-      for (; sz_count > 0; --sz_count) {
-	sz_temp = *sz_left;
-	*sz_left = *sz_right;
-	*sz_right = sz_temp;
-	++sz_left;
-	++sz_right;
-      }
+  for (; sz_count > 0; --sz_count) {
+    sz_temp = *sz_left;
+    *sz_left = *sz_right;
+    *sz_right = sz_temp;
+    ++sz_left;
+    ++sz_right;
+  }
 
-      if (excess_byte_count > 0) {
-	dl_byte *byte_left, *byte_right, byte_temp;
-	byte_left = (dl_byte *)sz_left;
-	byte_right = (dl_byte *)sz_right;
+  if (byte_count > 0)
+  {
+    dl_byte *byte_left, *byte_right, byte_temp;
+    byte_left = (dl_byte *)sz_left;
+    byte_right = (dl_byte *)sz_right;
 
-	for (; excess_byte_count > 0; --excess_byte_count) {
-	  byte_temp = *byte_left;
-	  *byte_left = *byte_right;
-	  *byte_right = byte_temp;
-	  ++byte_left;
-	  ++byte_right;
-	}
-      }
-    }
+  for (; byte_count > 0; --byte_count) {
+    byte_temp = *byte_left;
+    *byte_left = *byte_right;
+    *byte_right = byte_temp;
+    ++byte_left;
+    ++byte_right;
+  }
   }
 
   return left;
 }
 
-dl_api dl_any dl_memory_copy(dl_any left, dl_any right, dl_natural byte_count) {
-  switch (byte_count) {
-  case sizeof(uint8_t):
-    {
-      *(uint8_t *)left = *(uint8_t *)right;
-    }
-    break;
-  case sizeof(uint16_t):
-    {
-      *(uint16_t *)left = *(uint16_t *)right;
-    }
-    break;    
-  case sizeof(uint32_t):
-    {
-      *(uint32_t *)left = *(uint32_t *)right;
-    }
-    break;    
-  case sizeof(uint64_t):
-    {
-      *(uint64_t *)left = *(uint64_t *)right;
-    }
-    break;
-  default:
-    {
-      size_t sz_count, excess_byte_count, *sz_left, *sz_right;
+dl_api dl_any dl_memory_copy(dl_any left, dl_any right, dl_natural dl_bytes) {
+  size_t sz_count, byte_count, *sz_left, *sz_right;
   
-      sz_count = byte_count / sizeof(size_t);
-      excess_byte_count = byte_count % sizeof(size_t);
+  sz_count = dl_bytes / sizeof(size_t);
+  byte_count = dl_bytes - (sz_count * sizeof(size_t));
 
-      sz_left = (size_t *)left;
-      sz_right = (size_t *)right;
+  sz_left = (size_t *)left;
+  sz_right = (size_t *)right;
 
-      for (; sz_count > 0; --sz_count) {
-	*sz_left = *sz_right;
-	++sz_left;
-	++sz_right;
-      }
-
-      if (dl_unlikely(excess_byte_count > 0)) {
-	dl_byte *byte_left, *byte_right;
-	byte_left = (dl_byte *)sz_left;
-	byte_right = (dl_byte *)sz_right;
-
-	for (; excess_byte_count > 0; --excess_byte_count) {
-	  *byte_left = *byte_right;
-	  ++byte_left;
-	  ++byte_right;
-	}
-      }
-    }
+  for (; sz_count > 0; --sz_count) {
+    *sz_left = *sz_right;
+    ++sz_left;
+    ++sz_right;
   }
+
+  if (dl_unlikely(byte_count > 0))
+  {
+      dl_byte *byte_left, *byte_right;
+    byte_left = (dl_byte *)sz_left;
+    byte_right = (dl_byte *)sz_right;
+
+  for (; byte_count > 0; --byte_count) {
+    *byte_left = *byte_right;
+    ++byte_left;
+    ++byte_right;
+  }
+  }
+
   return left;
 }
 
-dl_any dl_memory_set(dl_any left, dl_byte val, dl_natural byte_count) {
-  switch (byte_count) {
-  case sizeof(uint8_t):
-    {
-      *(uint8_t *)left = val;
-    }
-    break;
-  case sizeof(uint16_t):
-    {
-      uint8_t *l = (uint8_t *)left;
-      l[0] = val;
-      l[1] = val;
-    }
-    break;    
-  case sizeof(uint32_t):
-    {
-      uint8_t *l = (uint8_t *)left;
-      l[0] = val;
-      l[1] = val;
-      l[2] = val;
-      l[3] = val;
-    }
-    break;    
-  case sizeof(uint64_t):
-    {
-      uint8_t *l = (uint8_t *)left;
-      l[0] = val;
-      l[1] = val;
-      l[2] = val;
-      l[3] = val;
-      l[4] = val;
-      l[5] = val;
-      l[6] = val;
-      l[7] = val;
-    }
-    break;
-  default:
-    {
-      size_t *sz_left, sz_count, excess_byte_count, sz_val, shift;
+dl_any dl_memory_set(dl_any left, dl_byte val, dl_natural dl_bytes) {
+  size_t *sz_left, sz_count, byte_count, sz_val, shift;
   
-      sz_left = (size_t *)left;
-      sz_count = byte_count / sizeof(size_t);
-      excess_byte_count = byte_count % sizeof(size_t);
+  sz_left = (size_t *)left;
+  sz_count = dl_bytes / sizeof(size_t);
+  byte_count = dl_bytes - (sz_count * sizeof(size_t));
 
-      sz_val = val;
+  sz_val = val;
   
-      for (shift = 1; shift < sizeof(size_t); ++shift)
-	sz_val |= (val << shift);
+  for (shift = 1; shift < sizeof(size_t); ++shift)
+    sz_val |= (val << shift);
 
-      for (; sz_count > 0; --sz_count) {
-	*(size_t *)sz_left = sz_val;
-	++sz_left;
-      }
+  for (; sz_count > 0; --sz_count) {
+    *(size_t *)sz_left = sz_val;
+    ++sz_left;
+  }
 
-      if (dl_unlikely(excess_byte_count > 0)) {
-	dl_byte *byte_left;
+  if (dl_unlikely(byte_count > 0))
+  {
+    dl_byte *byte_left;
 
-	byte_left = (dl_byte *)sz_left;
-	
-	for (; excess_byte_count > 0; --excess_byte_count) {
-	  *(dl_byte *)byte_left = val;
-	  ++byte_left;
-	}
-      }
+    byte_left = (dl_byte *)sz_left;
+
+    for (; byte_count > 0; --byte_count) {
+      *(dl_byte *)byte_left = val;
+      ++byte_left;
     }
   }
+
   return left;
 }
   
