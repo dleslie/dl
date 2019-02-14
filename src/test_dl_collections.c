@@ -63,15 +63,10 @@ dl_any _test_do_nothing(dl_any data, dl_any value) {
 }
 
 void _print_collection(dl_collection *c1) {
-  char buf[256]; buf[0] = 0;
-  char buf2[256]; buf2[0] = 0;
   dl_iterator i;
   dl_any ref;
-  for (ref = dl_collection_begin_ref(c1, &i); ref != NULL; ref = dl_collection_next(c1, &i)) {
-    snprintf(buf2, 256, "%s %li", buf, *(dl_integer *)ref);
-    snprintf(buf, 256, "%s", buf2);
-  }
-  DL_INFO("%s", buf2);
+  for (ref = dl_collection_begin_ref(c1, &i); ref != NULL; ref = dl_collection_next(c1, &i))
+    DL_INFO("%li", *(dl_integer *)ref);
 }
 
 dl_bool _confirm_properties(dl_collection *c, const char *type_name) {

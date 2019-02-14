@@ -27,28 +27,28 @@ extern "C" {
     } data;
   } dl_vector;
 
-  dl_api dl_vector *dl_init_vector(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity);
-  dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data));
+  dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_natural capacity);
+  dl_api dl_vector *dl_init_vector_custom(dl_vector *target, dl_natural element_size, dl_natural capacity, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data));
 
-  dl_api dl_vector *dl_init_vector_array(dl_vector * dl_restrict target, dl_byte *data, dl_natural element_size, dl_natural count);
+  dl_api dl_vector *dl_init_vector_array(dl_vector *target, dl_byte *data, dl_natural element_size, dl_natural count);
 
-  dl_api dl_natural dl_vector_copy(dl_vector * dl_restrict target, dl_natural target_offset_index, const dl_vector * dl_restrict original);
-  dl_api dl_natural dl_vector_copy_array(dl_vector * dl_restrict target, dl_natural target_offset_index, const dl_byte *dl_restrict data, dl_natural count);
+  dl_api dl_natural dl_vector_copy(dl_vector *target, dl_natural target_offset_index, const dl_vector *original);
+  dl_api dl_natural dl_vector_copy_array(dl_vector *target, dl_natural target_offset_index, const dl_byte *data, dl_natural count);
 
-  dl_api void dl_destroy_vector(dl_vector * dl_restrict target, const dl_handler *dl_restrict deconstruct_entry);
+  dl_api void dl_destroy_vector(dl_vector *target, const dl_handler *deconstruct_entry);
 
-  dl_api dl_natural dl_vector_capacity(const dl_vector * dl_restrict v);
+  dl_api dl_natural dl_vector_capacity(const dl_vector *v);
 
-  dl_api dl_bool dl_vector_grow(dl_vector * dl_restrict v);
-  dl_api dl_bool dl_vector_shrink(dl_vector * dl_restrict v, dl_handler *deconstruct_entry);
-  dl_api dl_bool dl_vector_resize(dl_vector * dl_restrict v, dl_natural minimum_capacity, dl_handler *deconstruct_entry);
+  dl_api dl_bool dl_vector_grow(dl_vector *v);
+  dl_api dl_bool dl_vector_shrink(dl_vector *v, dl_handler *deconstruct_entry);
+  dl_api dl_bool dl_vector_resize(dl_vector *v, dl_natural minimum_capacity, dl_handler *deconstruct_entry);
 
-  dl_api dl_any dl_vector_get(const dl_vector * dl_restrict v, dl_natural index, dl_any out);
-  dl_api dl_any dl_vector_ref(const dl_vector * dl_restrict v, dl_natural index);
-  dl_api dl_any dl_vector_set(dl_vector * dl_restrict v, dl_natural index, dl_any value);
+  dl_api dl_any dl_vector_get(const dl_vector *v, dl_natural index, dl_any out);
+  dl_api dl_any dl_vector_ref(const dl_vector *v, dl_natural index);
+  dl_api dl_any dl_vector_set(dl_vector *v, dl_natural index, dl_any value);
 
-  dl_api dl_bool dl_vector_swap(dl_vector * dl_restrict v, dl_natural index1, dl_natural index2);
-  dl_api dl_natural dl_vector_ref_array(dl_vector * dl_restrict v, dl_natural index, dl_any *dl_restrict out);
+  dl_api dl_bool dl_vector_swap(dl_vector *v, dl_natural index1, dl_natural index2);
+  dl_api dl_natural dl_vector_ref_array(dl_vector *v, dl_natural index, dl_any *out);
 
 
 
@@ -80,32 +80,32 @@ extern "C" {
     dl_vector node_cache;
   } dl_linked_list;
 
-  dl_api dl_linked_list *dl_init_linked_list(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length);
-  dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data));
+  dl_api dl_linked_list *dl_init_linked_list(dl_linked_list *target, dl_natural element_size, dl_natural cache_length);
+  dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list *target, dl_natural element_size, dl_natural cache_length, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data));
 
-  dl_api dl_natural dl_linked_list_copy(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_linked_list *dl_restrict original);
-  dl_api dl_natural dl_linked_list_copy_array(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_byte *dl_restrict data, dl_natural count);
+  dl_api dl_natural dl_linked_list_copy(dl_linked_list *target, struct dl_linked_list_node *target_position, const dl_linked_list *original);
+  dl_api dl_natural dl_linked_list_copy_array(dl_linked_list *target, struct dl_linked_list_node *target_position, const dl_byte *data, dl_natural count);
 
-  dl_api void dl_destroy_linked_list(dl_linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry);
+  dl_api void dl_destroy_linked_list(dl_linked_list *target, dl_handler *deconstruct_entry);
 
-  dl_api dl_natural dl_linked_list_capacity(const dl_linked_list * dl_restrict list);
-  dl_api dl_natural dl_linked_list_length(const dl_linked_list * dl_restrict list);
+  dl_api dl_natural dl_linked_list_capacity(const dl_linked_list *list);
+  dl_api dl_natural dl_linked_list_length(const dl_linked_list *list);
 
-  dl_api dl_bool dl_linked_list_grow(dl_linked_list * dl_restrict list);
-  dl_api dl_bool dl_linked_list_shrink(dl_linked_list * dl_restrict list, dl_handler *dl_restrict deconstruct_entry);
-  dl_api dl_bool dl_linked_list_resize(dl_linked_list * dl_restrict list, dl_natural minimum_capacity, dl_handler *dl_restrict deconstruct_entry);
+  dl_api dl_bool dl_linked_list_grow(dl_linked_list *list);
+  dl_api dl_bool dl_linked_list_shrink(dl_linked_list *list, dl_handler *deconstruct_entry);
+  dl_api dl_bool dl_linked_list_resize(dl_linked_list *list, dl_natural minimum_capacity, dl_handler *deconstruct_entry);
 
-  dl_api dl_any dl_linked_list_get(const dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position, dl_any out);
-  dl_api dl_any dl_linked_list_ref(const struct dl_linked_list_node *dl_restrict position);
-  dl_api dl_any dl_linked_list_set(dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position, dl_any value);
-  dl_api struct dl_linked_list_node *dl_linked_list_index(dl_linked_list * dl_restrict list, dl_natural position);
+  dl_api dl_any dl_linked_list_get(const dl_linked_list *list, struct dl_linked_list_node *position, dl_any out);
+  dl_api dl_any dl_linked_list_ref(const struct dl_linked_list_node *position);
+  dl_api dl_any dl_linked_list_set(dl_linked_list *list, struct dl_linked_list_node *position, dl_any value);
+  dl_api struct dl_linked_list_node *dl_linked_list_index(dl_linked_list *list, dl_natural position);
 
-  dl_api struct dl_linked_list_node *dl_linked_list_add(dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position, dl_any value);
-  dl_api dl_any dl_linked_list_remove(dl_linked_list * dl_restrict list, struct dl_linked_list_node * dl_restrict position, dl_any out);
-  dl_api dl_natural dl_linked_list_destroy_range(dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position, dl_natural count, dl_handler *dl_restrict destruct_entry);
-  dl_api dl_bool dl_linked_list_destroy(dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position, dl_handler *deconstruct_entry);
+  dl_api struct dl_linked_list_node *dl_linked_list_add(dl_linked_list *list, struct dl_linked_list_node *position, dl_any value);
+  dl_api dl_any dl_linked_list_remove(dl_linked_list *list, struct dl_linked_list_node *position, dl_any out);
+  dl_api dl_natural dl_linked_list_destroy_range(dl_linked_list *list, struct dl_linked_list_node *position, dl_natural count, dl_handler *destruct_entry);
+  dl_api dl_bool dl_linked_list_destroy(dl_linked_list *list, struct dl_linked_list_node *position, dl_handler *deconstruct_entry);
 
-  dl_api dl_bool dl_linked_list_swap(dl_linked_list * dl_restrict list, struct dl_linked_list_node *dl_restrict position1, struct dl_linked_list_node *dl_restrict position2, dl_bool data);
+  dl_api dl_bool dl_linked_list_swap(dl_linked_list *list, struct dl_linked_list_node *position1, struct dl_linked_list_node *position2, dl_bool data);
 
   
 #ifdef __cplusplus
@@ -156,11 +156,11 @@ dl_integer _collection_sorted_list_predicate_func(dl_any data, dl_any value) {
  **  Vectors
  ****************************************************************************/
 
-dl_api dl_vector *dl_init_vector(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity) {
+dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_natural capacity) {
   return dl_init_vector_custom(target, element_size, capacity, _DL_DECLARE_ALLOC_MEMBERS());
 }
 
-dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_natural element_size, dl_natural capacity, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data)) {
+dl_api dl_vector *dl_init_vector_custom(dl_vector *target, dl_natural element_size, dl_natural capacity, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data)) {
   dl_real dl_real_count;
   dl_natural slice_count, idx;
   
@@ -217,7 +217,7 @@ dl_api dl_vector *dl_init_vector_custom(dl_vector * dl_restrict target, dl_natur
   return target;
 }
 
-dl_api dl_vector *dl_init_vector_array(dl_vector * dl_restrict target, dl_byte *data, dl_natural element_size, dl_natural count) {
+dl_api dl_vector *dl_init_vector_array(dl_vector *target, dl_byte *data, dl_natural element_size, dl_natural count) {
   if (dl_safety(target == NULL || data == NULL))
     return NULL;
 
@@ -232,7 +232,7 @@ dl_api dl_vector *dl_init_vector_array(dl_vector * dl_restrict target, dl_byte *
   return target;
 }
 
-dl_api void dl_destroy_vector(dl_vector * dl_restrict target, const dl_handler *deconstruct_entry) {
+dl_api void dl_destroy_vector(dl_vector *target, const dl_handler *deconstruct_entry) {
   dl_any entry;
   dl_natural slice_idx, idx;
   
@@ -256,26 +256,26 @@ dl_api void dl_destroy_vector(dl_vector * dl_restrict target, const dl_handler *
   }
 }
 
-dl_api dl_inline dl_natural dl_vector_capacity(const dl_vector * dl_restrict v) {
+dl_api dl_inline dl_natural dl_vector_capacity(const dl_vector *v) {
   if (dl_safety(v == NULL))
     return 0;
 
   return v->slice_count > 0 ? v->slice_count * v->slice_length : v->slice_length;
 }
 
-dl_api dl_any dl_vector_get(const dl_vector * dl_restrict v, dl_natural index, dl_any out) {
+dl_api dl_any dl_vector_get(const dl_vector *v, dl_natural index, dl_any out) {
   dl_any ref = dl_vector_ref(v, index);
 
   return ref == NULL ? NULL : dl_memory_copy(out, ref, v->element_size);
 }
 
-dl_api dl_any dl_vector_set(dl_vector * dl_restrict v, dl_natural index, dl_any value) {
+dl_api dl_any dl_vector_set(dl_vector *v, dl_natural index, dl_any value) {
   dl_any ref = dl_vector_ref(v, index);
 
   return ref == NULL ? NULL : dl_memory_copy(ref, value, v->element_size);
 }
 
-dl_api dl_any dl_vector_ref(const dl_vector * dl_restrict v, dl_natural index) {
+dl_api dl_any dl_vector_ref(const dl_vector *v, dl_natural index) {
   if (dl_safety(v == NULL))
     return NULL;
 
@@ -311,7 +311,7 @@ dl_api dl_any dl_vector_ref(const dl_vector * dl_restrict v, dl_natural index) {
   }
 }
 
-dl_api dl_bool dl_vector_grow(dl_vector * dl_restrict v) {
+dl_api dl_bool dl_vector_grow(dl_vector *v) {
   dl_byte **new_slices, *new_slice, **existing_slices;
   dl_natural idx;
   
@@ -345,7 +345,7 @@ dl_api dl_bool dl_vector_grow(dl_vector * dl_restrict v) {
   return true;
 }
 
-dl_api dl_bool dl_vector_swap(dl_vector * dl_restrict v, dl_natural index1, dl_natural index2) {
+dl_api dl_bool dl_vector_swap(dl_vector *v, dl_natural index1, dl_natural index2) {
   dl_any left, right;
   
   if (dl_safety(v == NULL))
@@ -362,7 +362,7 @@ dl_api dl_bool dl_vector_swap(dl_vector * dl_restrict v, dl_natural index1, dl_n
   return true;
 } 
 
-dl_api dl_bool dl_vector_shrink(dl_vector * dl_restrict v, dl_handler *dl_restrict deconstruct_entry) {
+dl_api dl_bool dl_vector_shrink(dl_vector *v, dl_handler *deconstruct_entry) {
   dl_byte **new_slices, **existing_slices;
   dl_natural idx;
   dl_any entry;
@@ -398,7 +398,7 @@ dl_api dl_bool dl_vector_shrink(dl_vector * dl_restrict v, dl_handler *dl_restri
   return true;
 }
 
-dl_api dl_bool dl_vector_resize(dl_vector * dl_restrict v, dl_natural minimum_capacity, dl_handler *deconstruct_entry) {
+dl_api dl_bool dl_vector_resize(dl_vector *v, dl_natural minimum_capacity, dl_handler *deconstruct_entry) {
   dl_natural current_capacity, new_slice_count, slice_idx, slice_count, item_idx;
   dl_real needed;
   dl_integer needed_count;
@@ -463,7 +463,7 @@ dl_api dl_bool dl_vector_resize(dl_vector * dl_restrict v, dl_natural minimum_ca
   return true;
 }
 
-dl_api dl_natural dl_vector_copy_array(dl_vector * dl_restrict target, dl_natural target_offset_index, const dl_byte *data, dl_natural count) {
+dl_api dl_natural dl_vector_copy_array(dl_vector *target, dl_natural target_offset_index, const dl_byte *data, dl_natural count) {
   dl_vector source;
   if (dl_unlikely(!dl_init_vector_array(&source, (dl_byte *)data, target->element_size, count)))
     return 0;
@@ -471,7 +471,7 @@ dl_api dl_natural dl_vector_copy_array(dl_vector * dl_restrict target, dl_natura
   return dl_vector_copy(target, target_offset_index, &source);
 }
 
-dl_api dl_natural dl_vector_copy(dl_vector * dl_restrict target, dl_natural target_offset_index, const dl_vector * dl_restrict original) {
+dl_api dl_natural dl_vector_copy(dl_vector *target, dl_natural target_offset_index, const dl_vector *original) {
   dl_natural original_capacity, element_size, target_length, original_length, target_remainder, original_remainder, total_remainder, target_slice_idx, original_slice_idx, min_remainder, count_to_copy;
   dl_byte *target_slice, *original_slice;
   
@@ -527,7 +527,7 @@ dl_api dl_natural dl_vector_copy(dl_vector * dl_restrict target, dl_natural targ
   return original_capacity;
 }
 
-dl_api dl_natural dl_vector_ref_array(dl_vector * dl_restrict v, dl_natural index, dl_any *dl_restrict out) {
+dl_api dl_natural dl_vector_ref_array(dl_vector *v, dl_natural index, dl_any *out) {
   dl_natural last_idx, slice, slice_index;
   
   if (dl_safety(v == NULL))
@@ -557,7 +557,7 @@ dl_api dl_natural dl_vector_ref_array(dl_vector * dl_restrict v, dl_natural inde
  **  Linked Lists
  ****************************************************************************/
 
-dl_api struct dl_linked_list_node *_linked_list_node_alloc(dl_linked_list * dl_restrict list, struct dl_linked_list_node * dl_restrict after) {
+dl_api struct dl_linked_list_node *_linked_list_node_alloc(dl_linked_list *list, struct dl_linked_list_node *after) {
   struct dl_linked_list_node *node;
   
   if (list->free_list == NULL)
@@ -593,7 +593,7 @@ dl_api struct dl_linked_list_node *_linked_list_node_alloc(dl_linked_list * dl_r
   return node;
 }
 
-dl_api void _linked_list_node_free(dl_linked_list * dl_restrict list, struct dl_linked_list_node * dl_restrict node) {
+dl_api void _linked_list_node_free(dl_linked_list *list, struct dl_linked_list_node *node) {
   if (list->first == node)
     list->first = node->next;
   if (node->next != NULL)
@@ -610,7 +610,7 @@ dl_api void _linked_list_node_free(dl_linked_list * dl_restrict list, struct dl_
   list->free_list = node;
 }
 
-dl_api void _linked_list_node_detach_free(dl_linked_list *dl_restrict list, struct dl_linked_list_node *e) {
+dl_api void _linked_list_node_detach_free(dl_linked_list *list, struct dl_linked_list_node *e) {
   if (list->free_list == e)
     list->free_list = e->next;
   if (e->next != NULL)
@@ -658,14 +658,14 @@ dl_api dl_any _linked_list_node_deconstructor(dl_any data, dl_any element) {
   return NULL;
 }
 
-dl_api dl_linked_list *dl_init_linked_list(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length) {
+dl_api dl_linked_list *dl_init_linked_list(dl_linked_list *target, dl_natural element_size, dl_natural cache_length) {
   if (dl_safety(target == NULL || element_size == 0))
     return false;
   
   return dl_init_linked_list_custom(target, element_size, cache_length, _DL_DECLARE_ALLOC_MEMBERS());
 }
 
-dl_api dl_linked_list *_linked_list_cache_grow(dl_linked_list * dl_restrict target) {
+dl_api dl_linked_list *_linked_list_cache_grow(dl_linked_list *target) {
   dl_vector *v;
   dl_natural zero, length, idx;
   struct dl_linked_list_node *node;
@@ -700,7 +700,7 @@ dl_api dl_linked_list *_linked_list_cache_grow(dl_linked_list * dl_restrict targ
   return target;
 }
 
-dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict target, dl_natural element_size, dl_natural cache_length, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data)) {
+dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list *target, dl_natural element_size, dl_natural cache_length, dl_any (*alloc)(dl_natural byte_count), void (*free)(dl_any data)) {
   if (dl_safety(target == NULL || element_size < 1))
     return NULL;
 
@@ -713,7 +713,7 @@ dl_api dl_linked_list *dl_init_linked_list_custom(dl_linked_list * dl_restrict t
   return _linked_list_cache_grow(target);
 }
 
-dl_api dl_natural dl_linked_list_copy(dl_linked_list * dl_restrict target, struct dl_linked_list_node *dl_restrict target_position, const dl_linked_list * dl_restrict original) {
+dl_api dl_natural dl_linked_list_copy(dl_linked_list *target, struct dl_linked_list_node *target_position, const dl_linked_list *original) {
   struct dl_linked_list_node *source_node, *next;
   dl_natural count;
   
@@ -739,7 +739,7 @@ dl_api dl_natural dl_linked_list_copy(dl_linked_list * dl_restrict target, struc
   return count;
 }
 
-dl_api dl_natural dl_linked_list_copy_array(dl_linked_list * dl_restrict target, struct dl_linked_list_node *target_position, const dl_byte *data, dl_natural length) {
+dl_api dl_natural dl_linked_list_copy_array(dl_linked_list *target, struct dl_linked_list_node *target_position, const dl_byte *data, dl_natural length) {
   dl_natural count, byte_size, idx;
   struct dl_linked_list_node *next;
   
@@ -764,7 +764,7 @@ dl_api dl_natural dl_linked_list_copy_array(dl_linked_list * dl_restrict target,
   return count;
 }
 
-dl_api void dl_destroy_linked_list(dl_linked_list * dl_restrict target, dl_handler *dl_restrict deconstruct_entry) {
+dl_api void dl_destroy_linked_list(dl_linked_list *target, dl_handler *deconstruct_entry) {
   struct dl_linked_list_node *node;
   
   if (dl_safety(target == NULL))
@@ -783,14 +783,14 @@ dl_api void dl_destroy_linked_list(dl_linked_list * dl_restrict target, dl_handl
   dl_memory_set(target, 0, sizeof(dl_linked_list));
 }
 
-dl_api dl_natural dl_linked_list_capacity(const dl_linked_list * dl_restrict list) {
+dl_api dl_natural dl_linked_list_capacity(const dl_linked_list *list) {
   if (dl_safety(list == NULL))
     return 0;
 
   return dl_vector_capacity(&list->node_cache);
 }
 
-dl_api dl_natural dl_linked_list_length(const dl_linked_list * dl_restrict list) {
+dl_api dl_natural dl_linked_list_length(const dl_linked_list *list) {
   dl_natural length;
   struct dl_linked_list_node *node;
   
@@ -807,11 +807,11 @@ dl_api dl_natural dl_linked_list_length(const dl_linked_list * dl_restrict list)
   return length;
 }
 
-dl_api dl_bool dl_linked_list_grow(dl_linked_list * dl_restrict list) {
+dl_api dl_bool dl_linked_list_grow(dl_linked_list *list) {
   return _linked_list_cache_grow(list) != NULL;
 }
 
-dl_api dl_bool dl_linked_list_shrink(dl_linked_list * dl_restrict list, dl_handler *dl_restrict deconstruct_entry) {
+dl_api dl_bool dl_linked_list_shrink(dl_linked_list *list, dl_handler *deconstruct_entry) {
   _linked_list_node_deconstructor_data data;
   dl_handler destructor;
   
@@ -826,7 +826,7 @@ dl_api dl_bool dl_linked_list_shrink(dl_linked_list * dl_restrict list, dl_handl
   return dl_vector_shrink(&list->node_cache, &destructor);
 }
 
-dl_api dl_bool dl_linked_list_resize(dl_linked_list * dl_restrict list, dl_natural minimum_capacity, dl_handler *dl_restrict deconstruct_entry) {
+dl_api dl_bool dl_linked_list_resize(dl_linked_list *list, dl_natural minimum_capacity, dl_handler *deconstruct_entry) {
   _linked_list_node_deconstructor_data data;
   dl_handler destructor;
   
@@ -841,7 +841,7 @@ dl_api dl_bool dl_linked_list_resize(dl_linked_list * dl_restrict list, dl_natur
   return dl_vector_resize(&list->node_cache, minimum_capacity, &destructor);
 }
 
-dl_api dl_any dl_linked_list_get(const dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_any out) {
+dl_api dl_any dl_linked_list_get(const dl_linked_list *list, struct dl_linked_list_node *position, dl_any out) {
   if (dl_safety(list == NULL || position == NULL || out == NULL))
     return NULL;
 
@@ -855,14 +855,14 @@ dl_api dl_any dl_linked_list_ref(const struct dl_linked_list_node *position) {
   return (const dl_any)DL_LINKED_LIST_DATA(position);
 }
 
-dl_api dl_any dl_linked_list_set(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_any value) {
+dl_api dl_any dl_linked_list_set(dl_linked_list *list, struct dl_linked_list_node *position, dl_any value) {
   if (dl_safety(list == NULL || position == NULL || value == NULL))
     return NULL;
 
   return dl_memory_copy(DL_LINKED_LIST_DATA(position), value, list->element_size);
 }
 
-dl_api struct dl_linked_list_node *dl_linked_list_add(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_any value) {
+dl_api struct dl_linked_list_node *dl_linked_list_add(dl_linked_list *list, struct dl_linked_list_node *position, dl_any value) {
   struct dl_linked_list_node *node;
   
   if (dl_safety(list == NULL))
@@ -880,7 +880,7 @@ dl_api struct dl_linked_list_node *dl_linked_list_add(dl_linked_list * dl_restri
   return node;
 }
 
-dl_api dl_any dl_linked_list_remove(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_any out) {
+dl_api dl_any dl_linked_list_remove(dl_linked_list *list, struct dl_linked_list_node *position, dl_any out) {
   if (dl_safety(list == NULL || position == NULL))
     return NULL;
 
@@ -892,7 +892,7 @@ dl_api dl_any dl_linked_list_remove(dl_linked_list * dl_restrict list, struct dl
   return out;
 }
 
-dl_api dl_bool dl_linked_list_destroy(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_handler *deconstruct_entry) {
+dl_api dl_bool dl_linked_list_destroy(dl_linked_list *list, struct dl_linked_list_node *position, dl_handler *deconstruct_entry) {
   if (dl_safety(list == NULL || position == NULL))
     return false;
   
@@ -904,7 +904,7 @@ dl_api dl_bool dl_linked_list_destroy(dl_linked_list * dl_restrict list, struct 
   return true;
 }
 
-dl_api dl_natural dl_linked_list_destroy_range(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position, dl_natural count, dl_handler *deconstruct_entry) {
+dl_api dl_natural dl_linked_list_destroy_range(dl_linked_list *list, struct dl_linked_list_node *position, dl_natural count, dl_handler *deconstruct_entry) {
   dl_natural removed;
   struct dl_linked_list_node *next;
   
@@ -924,7 +924,7 @@ dl_api dl_natural dl_linked_list_destroy_range(dl_linked_list * dl_restrict list
   return removed;
 }
 
-dl_api dl_bool dl_linked_list_swap(dl_linked_list * dl_restrict list, struct dl_linked_list_node *position1, struct dl_linked_list_node *position2, dl_bool data) {
+dl_api dl_bool dl_linked_list_swap(dl_linked_list *list, struct dl_linked_list_node *position1, struct dl_linked_list_node *position2, dl_bool data) {
   struct dl_linked_list_node *t;
   
   if (dl_safety(list == NULL || position1 == NULL || position2 == NULL))
@@ -985,7 +985,7 @@ dl_api dl_bool dl_linked_list_swap(dl_linked_list * dl_restrict list, struct dl_
   return true;
 }
 
-dl_api struct dl_linked_list_node *dl_linked_list_index(dl_linked_list * dl_restrict list, dl_natural position) {
+dl_api struct dl_linked_list_node *dl_linked_list_index(dl_linked_list *list, dl_natural position) {
   struct dl_linked_list_node *node;
   
   if (dl_safety(list == NULL))

@@ -33,37 +33,37 @@ extern "C" {
   dl_api dl_real dl_ease_back_tunable(dl_ease_direction d, dl_real p, dl_real s, dl_real t);
   dl_api dl_real dl_ease_bounce(dl_ease_direction d, dl_real p);
 
-  typedef dl_real *(*dl_selector_function)(const dl_real *dl_restrict values, dl_natural length, dl_real percent, dl_real *out);
+  typedef dl_real *(*dl_selector_function)(const dl_real *values, dl_natural length, dl_real percent, dl_real *out);
 
-  dl_api dl_real *dl_interpolate(const dl_selector_function select, const dl_real *dl_restrict values, dl_natural length, dl_real percent, dl_real *dl_restrict out);
+  dl_api dl_real *dl_interpolate(const dl_selector_function select, const dl_real *values, dl_natural length, dl_real percent, dl_real *out);
 
-  dl_api dl_real *dl_select_linear(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out);
-  dl_api dl_real *dl_select_catmullrom(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out);
+  dl_api dl_real *dl_select_linear(const dl_real *v, dl_natural l, dl_real p, dl_real *out);
+  dl_api dl_real *dl_select_catmullrom(const dl_real *v, dl_natural l, dl_real p, dl_real *out);
 
-  typedef dl_point2 *(*dl_selector_function_point2)(const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out);
+  typedef dl_point2 *(*dl_selector_function_point2)(const dl_point2 *values, dl_natural length, dl_real percent, dl_point2 *out);
 
-  dl_api dl_point2 *dl_interpolate_point2(const dl_selector_function_point2 select, const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *dl_interpolate_point2(const dl_selector_function_point2 select, const dl_point2 *values, dl_natural length, dl_real percent, dl_point2 *out);
 
-  dl_api dl_point2 *dl_select_linear_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
-  dl_api dl_point2 *dl_select_bezier_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
-  dl_api dl_point2 *dl_select_catmullrom_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out);
+  dl_api dl_point2 *dl_select_linear_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out);
+  dl_api dl_point2 *dl_select_bezier_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out);
+  dl_api dl_point2 *dl_select_catmullrom_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out);
 
-  typedef dl_point3 *(*dl_selector_function_point3)(const dl_point3 *dl_restrict values, dl_natural length, dl_real percent, dl_point3 *dl_restrict out);
+  typedef dl_point3 *(*dl_selector_function_point3)(const dl_point3 *values, dl_natural length, dl_real percent, dl_point3 *out);
 
-  dl_api dl_point3 *dl_interpolate_point3(const dl_selector_function_point3 select, const dl_point3 *dl_restrict values, dl_natural length, dl_real percent, dl_point3 *dl_restrict out);
+  dl_api dl_point3 *dl_interpolate_point3(const dl_selector_function_point3 select, const dl_point3 *values, dl_natural length, dl_real percent, dl_point3 *out);
 
-  dl_api dl_point3 *dl_select_linear_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out);
-  dl_api dl_point3 *dl_select_bezier_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out);
-  dl_api dl_point3 *dl_select_catmullrom_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out);
+  dl_api dl_point3 *dl_select_linear_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out);
+  dl_api dl_point3 *dl_select_bezier_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out);
+  dl_api dl_point3 *dl_select_catmullrom_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out);
 
 
 
-  dl_api dl_integer *dl_lerp_integer(dl_integer a, dl_integer b, dl_real p, dl_integer *dl_restrict out);
-  dl_api dl_real *dl_lerp_real(dl_real a, dl_real b, dl_real p, dl_real *dl_restrict out);
-  dl_api dl_point2 *dl_lerp_point2(const dl_point2 *dl_restrict a, const dl_point2 *dl_restrict b, dl_real p, dl_point2 *dl_restrict out);
-  dl_api dl_point3 *dl_lerp_point3(const dl_point3 *dl_restrict a, const dl_point3 *dl_restrict b, dl_real p, dl_point3 *dl_restrict out);
-  dl_api dl_vec2 *dl_lerp_vec2(const dl_vec2 *dl_restrict a, const dl_vec2 *dl_restrict b, dl_real p, dl_vec2 *dl_restrict out);
-  dl_api dl_vec3 *dl_lerp_vec3(const dl_vec3 *dl_restrict a, const dl_vec3 *dl_restrict b, dl_real p, dl_vec3 *dl_restrict out);
+  dl_api dl_integer *dl_lerp_integer(dl_integer a, dl_integer b, dl_real p, dl_integer *out);
+  dl_api dl_real *dl_lerp_real(dl_real a, dl_real b, dl_real p, dl_real *out);
+  dl_api dl_point2 *dl_lerp_point2(const dl_point2 *a, const dl_point2 *b, dl_real p, dl_point2 *out);
+  dl_api dl_point3 *dl_lerp_point3(const dl_point3 *a, const dl_point3 *b, dl_real p, dl_point3 *out);
+  dl_api dl_vec2 *dl_lerp_vec2(const dl_vec2 *a, const dl_vec2 *b, dl_real p, dl_vec2 *out);
+  dl_api dl_vec3 *dl_lerp_vec3(const dl_vec3 *a, const dl_vec3 *b, dl_real p, dl_vec3 *out);
 
 #ifdef __cplusplus
 }
@@ -290,7 +290,7 @@ dl_real dl_ease_bounce(dl_ease_direction d, dl_real p) {
 
 
 
-dl_real *dl_interpolate(const dl_selector_function select, const dl_real *dl_restrict values, dl_natural length, dl_real percent, dl_real *out) {
+dl_real *dl_interpolate(const dl_selector_function select, const dl_real *values, dl_natural length, dl_real percent, dl_real *out) {
   if (dl_safety(select == NULL || values == NULL || length == 0))
     return NULL;
   if (dl_unlikely(length == 1)) {
@@ -302,7 +302,7 @@ dl_real *dl_interpolate(const dl_selector_function select, const dl_real *dl_res
   return select(values, length, percent, out);
 }
 
-dl_real *dl_select_linear(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out) {
+dl_real *dl_select_linear(const dl_real *v, dl_natural l, dl_real p, dl_real *out) {
   dl_natural max_idx, idx, next_idx;
   dl_real scaled_p;
   
@@ -322,7 +322,7 @@ dl_real *dl_select_linear(const dl_real *dl_restrict v, dl_natural l, dl_real p,
   return dl_lerp_real(v[idx], v[next_idx], (scaled_p - (dl_real)idx), out);
 }
 
-dl_real *dl_select_catmullrom(const dl_real *dl_restrict v, dl_natural l, dl_real p, dl_real *dl_restrict out) {
+dl_real *dl_select_catmullrom(const dl_real *v, dl_natural l, dl_real p, dl_real *out) {
   dl_natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   dl_real target, t, v0, v1, t2, t3;
   
@@ -355,7 +355,7 @@ dl_real *dl_select_catmullrom(const dl_real *dl_restrict v, dl_natural l, dl_rea
 
 
 
-dl_point2 *dl_interpolate_point2(const dl_selector_function_point2 select, const dl_point2 *dl_restrict values, dl_natural length, dl_real percent, dl_point2 *dl_restrict out) {
+dl_point2 *dl_interpolate_point2(const dl_selector_function_point2 select, const dl_point2 *values, dl_natural length, dl_real percent, dl_point2 *out) {
   if (dl_safety(select == NULL || values == NULL || length == 0))
     return NULL;
   if (dl_unlikely(length == 1)) {
@@ -367,7 +367,7 @@ dl_point2 *dl_interpolate_point2(const dl_selector_function_point2 select, const
   return select(values, length, percent, out);
 }
 
-dl_point2 *dl_select_linear_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
+dl_point2 *dl_select_linear_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out) {
   dl_natural max_idx, idx, next_idx;
   dl_real scaled_p;
   
@@ -384,7 +384,7 @@ dl_point2 *dl_select_linear_point2(const dl_point2 *dl_restrict v, dl_natural l,
   return dl_lerp_point2(&v[idx], &v[next_idx], (scaled_p - (dl_real)idx), out);
 }
 
-dl_point2 *dl_select_bezier_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
+dl_point2 *dl_select_bezier_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out) {
   dl_natural max_idx, idx, degree;
   dl_real target;
   dl_point2 t1, t2, compute_v[DL_BEZIER_DEGREE + 1];
@@ -412,7 +412,7 @@ dl_point2 *dl_select_bezier_point2(const dl_point2 *dl_restrict v, dl_natural l,
   return out;
 }
 
-dl_point2 *dl_select_catmullrom_point2(const dl_point2 *dl_restrict v, dl_natural l, dl_real p, dl_point2 *dl_restrict out) {
+dl_point2 *dl_select_catmullrom_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out) {
   dl_natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   dl_real target, t, t2, t3;
   dl_point2 v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
@@ -454,7 +454,7 @@ dl_point2 *dl_select_catmullrom_point2(const dl_point2 *dl_restrict v, dl_natura
 
 
 
-dl_point3 *dl_interpolate_point3(const dl_selector_function_point3 select, const dl_point3 *dl_restrict values, dl_natural length, dl_real percent, dl_point3 *dl_restrict out) {
+dl_point3 *dl_interpolate_point3(const dl_selector_function_point3 select, const dl_point3 *values, dl_natural length, dl_real percent, dl_point3 *out) {
   if (dl_safety(select == NULL || values == NULL || length == 0))
     return NULL;
   if (dl_unlikely(length == 1)) {
@@ -466,7 +466,7 @@ dl_point3 *dl_interpolate_point3(const dl_selector_function_point3 select, const
   return select(values, length, percent, out);
 }
 
-dl_point3 *dl_select_linear_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out) {
+dl_point3 *dl_select_linear_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out) {
   dl_natural max_idx, idx, next_idx;
   dl_real scaled_p;
   
@@ -483,7 +483,7 @@ dl_point3 *dl_select_linear_point3(const dl_point3 *dl_restrict v, dl_natural l,
   return dl_lerp_point3(&v[idx], &v[next_idx], (scaled_p - (dl_real)idx), out);
 }
 
-dl_point3 *dl_select_bezier_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out) {
+dl_point3 *dl_select_bezier_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out) {
   dl_natural max_idx, idx;
   dl_real target;
   dl_point3 temp[2], compute_v[DL_BEZIER_DEGREE + 1];
@@ -507,7 +507,7 @@ dl_point3 *dl_select_bezier_point3(const dl_point3 *dl_restrict v, dl_natural l,
   return out;
 }
 
-dl_point3 *dl_select_catmullrom_point3(const dl_point3 *dl_restrict v, dl_natural l, dl_real p, dl_point3 *dl_restrict out) {
+dl_point3 *dl_select_catmullrom_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out) {
   dl_natural max_idx, idx, a_idx, b_idx, c_idx, d_idx;
   dl_real target, t, t2, t3;
   dl_point3 v0, v1, threev1, threev2, twov0, ntwov2, twov1, b, c, d;
@@ -571,19 +571,19 @@ dl_api dl_real *dl_lerp_real(dl_real a, dl_real b, dl_real p, dl_real *out) {
   return out;
 }
 
-dl_api dl_point2 *dl_lerp_point2(const dl_point2 *dl_restrict a, const dl_point2 *dl_restrict b, dl_real p, dl_point2 *dl_restrict out) {
+dl_api dl_point2 *dl_lerp_point2(const dl_point2 *a, const dl_point2 *b, dl_real p, dl_point2 *out) {
   return dl_point2_add(dl_point2_mul_scalar(dl_point2_sub(b, a, out), p, out), a, out);
 }
 
-dl_api dl_point3 *dl_lerp_point3(const dl_point3 *dl_restrict a, const dl_point3 *dl_restrict b, dl_real p, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_lerp_point3(const dl_point3 *a, const dl_point3 *b, dl_real p, dl_point3 *out) {
   return dl_point3_add(dl_point3_mul_scalar(dl_point3_sub(b, a, out), p, out), a, out);
 }
 
-dl_api dl_vec2 *dl_lerp_vec2(const dl_vec2 *dl_restrict a, const dl_vec2 *dl_restrict b, dl_real p, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_lerp_vec2(const dl_vec2 *a, const dl_vec2 *b, dl_real p, dl_vec2 *out) {
   return dl_vec2_add(dl_vec2_mul_scalar(dl_vec2_sub(b, a, out), p, out), a, out);
 }
 
-dl_api dl_vec3 *dl_lerp_vec3(const dl_vec3 *dl_restrict a, const dl_vec3 *dl_restrict b, dl_real p, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_lerp_vec3(const dl_vec3 *a, const dl_vec3 *b, dl_real p, dl_vec3 *out) {
   return dl_vec3_add(dl_vec3_mul_scalar(dl_vec3_sub(b, a, out), p, out), a, out);
 }
 

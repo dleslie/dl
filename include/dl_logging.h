@@ -24,9 +24,9 @@ extern "C" {
     DL_LOG_MESSAGE = 5
   } dl_log_channel;
 
-  extern dl_natural (*dl_active_log_handler)(dl_log_channel, const char *dl_restrict, dl_natural, const char *dl_restrict, const char *dl_restrict);
+  extern dl_natural (*dl_active_log_handler)(dl_log_channel, const char *, dl_natural, const char *, const char *);
 
-  dl_natural dl_log_message(dl_log_channel ch, const char *dl_restrict file, dl_natural line, const char *dl_restrict function, const char *dl_restrict fmt, ...);
+  dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *fmt, ...);
 
 # if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MSC || DL_IS_MINGW
 #   define DL_INFO(...) dl_log_message(DL_LOG_INFO, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
@@ -55,7 +55,7 @@ extern "C" {
 
 #if DL_IMPLEMENTATION
 
-dl_natural _default_log_handler(dl_log_channel ch, const char *dl_restrict file, dl_natural line, const char *dl_restrict function, const char *dl_restrict msg) {
+dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *msg) {
   char time_buf[20];
 
 #if defined(DL_TIME_H)
@@ -85,9 +85,9 @@ dl_natural _default_log_handler(dl_log_channel ch, const char *dl_restrict file,
   }
 }
 
-dl_natural (*dl_active_log_handler)(dl_log_channel ch, const char *dl_restrict, dl_natural, const char *dl_restrict, const char *dl_restrict) = _default_log_handler;
+dl_natural (*dl_active_log_handler)(dl_log_channel ch, const char *, dl_natural, const char *, const char *) = _default_log_handler;
 
-dl_natural dl_log_message(dl_log_channel ch, const char *dl_restrict file, dl_natural line, const char *dl_restrict function, const char *dl_restrict fmt, ...) {
+dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *fmt, ...) {
   char buf[256];
   va_list args1, args2;
   va_start(args1, fmt);

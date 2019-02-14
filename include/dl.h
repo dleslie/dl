@@ -186,18 +186,6 @@
 # endif
 #endif
 
-#ifndef dl_restrict
-# if DL_IS_ATLEAST_C99 && !DL_IS_CPP
-#   define dl_restrict restrict
-# elif DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
-#   define dl_restrict __restrict__
-# elif DL_IS_MSC
-#   define dl_restrict __restrict
-# else
-#   define dl_restrict
-# endif
-#endif
-
 #ifndef dl_likely
 # define dl_likely(x) !!(x)
 # if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW

@@ -115,26 +115,26 @@ extern const dl_vec2 dl_vec2_left;
 extern const dl_vec2 dl_vec2_zero;
 extern const dl_vec2 dl_vec2_one;
 
-dl_api dl_vec2 *dl_init_vec2(dl_vec2 * dl_restrict v, dl_real x, dl_real y);
+dl_api dl_vec2 *dl_init_vec2(dl_vec2 *v, dl_real x, dl_real y);
 
-dl_api dl_vec2 *dl_vec2_add(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_vec2 *dl_restrict out);
-dl_api dl_vec2 *dl_vec2_sub(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_vec2 *dl_restrict out);
+dl_api dl_vec2 *dl_vec2_add(const dl_vec2 *left, const dl_vec2 *right, dl_vec2 *out);
+dl_api dl_vec2 *dl_vec2_sub(const dl_vec2 *left, const dl_vec2 *right, dl_vec2 *out);
 
-dl_api dl_vec2 *dl_vec2_mul_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out);
-dl_api dl_vec2 *dl_vec2_div_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out);
-dl_api dl_vec2 *dl_vec2_add_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out);
-dl_api dl_vec2 *dl_vec2_sub_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out);
+dl_api dl_vec2 *dl_vec2_mul_scalar(const dl_vec2 *left, dl_real scalar, dl_vec2 *out);
+dl_api dl_vec2 *dl_vec2_div_scalar(const dl_vec2 *left, dl_real scalar, dl_vec2 *out);
+dl_api dl_vec2 *dl_vec2_add_scalar(const dl_vec2 *left, dl_real scalar, dl_vec2 *out);
+dl_api dl_vec2 *dl_vec2_sub_scalar(const dl_vec2 *left, dl_real scalar, dl_vec2 *out);
 
-dl_api dl_vec2 *dl_vec2_normalize(const dl_vec2 *dl_restrict left, dl_vec2 *dl_restrict out);
-dl_api dl_vec2 *dl_vec2_negate(const dl_vec2 *dl_restrict left, dl_vec2 *dl_restrict out);
+dl_api dl_vec2 *dl_vec2_normalize(const dl_vec2 *left, dl_vec2 *out);
+dl_api dl_vec2 *dl_vec2_negate(const dl_vec2 *left, dl_vec2 *out);
 
-dl_api dl_real dl_vec2_dot(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right);
-dl_api dl_bool dl_vec2_approximately_equal(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_real epsilon);
-dl_api dl_real dl_vec2_square_magnitude(const dl_vec2 *dl_restrict left);
-dl_api dl_real dl_vec2_magnitude(const dl_vec2 *dl_restrict left);
+dl_api dl_real dl_vec2_dot(const dl_vec2 *left, const dl_vec2 *right);
+dl_api dl_bool dl_vec2_approximately_equal(const dl_vec2 *left, const dl_vec2 *right, dl_real epsilon);
+dl_api dl_real dl_vec2_square_magnitude(const dl_vec2 *left);
+dl_api dl_real dl_vec2_magnitude(const dl_vec2 *left);
 
-dl_api dl_vec2 *dl_vec2_reflect(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict normal, dl_vec2 *dl_restrict out);
-dl_api dl_vec2 *dl_vec2_refract(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict normal, float eta, dl_vec2 *dl_restrict out);
+dl_api dl_vec2 *dl_vec2_reflect(const dl_vec2 *left, const dl_vec2 *normal, dl_vec2 *out);
+dl_api dl_vec2 *dl_vec2_refract(const dl_vec2 *left, const dl_vec2 *normal, float eta, dl_vec2 *out);
 
 
   
@@ -142,21 +142,21 @@ typedef dl_vec2 dl_point2;
 extern const dl_point2 dl_point2_zero;
 extern const dl_point2 dl_point2_one;
 
-dl_api dl_point2 *dl_init_point2(dl_point2 * dl_restrict p, dl_real x, dl_real y);
+dl_api dl_point2 *dl_init_point2(dl_point2 *p, dl_real x, dl_real y);
 
-dl_api dl_point2 *dl_point2_add(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_point2 *dl_restrict out);
-dl_api dl_point2 *dl_point2_sub(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_point2 *dl_restrict out);
+dl_api dl_point2 *dl_point2_add(const dl_point2 *left, const dl_point2 *right, dl_point2 *out);
+dl_api dl_point2 *dl_point2_sub(const dl_point2 *left, const dl_point2 *right, dl_point2 *out);
 
-dl_api dl_point2 *dl_point2_negate(const dl_point2 *dl_restrict left, dl_point2 *dl_restrict out);
+dl_api dl_point2 *dl_point2_negate(const dl_point2 *left, dl_point2 *out);
 
-dl_api dl_point2 *dl_point2_mul_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out);
-dl_api dl_point2 *dl_point2_div_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out);
-dl_api dl_point2 *dl_point2_add_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out);
-dl_api dl_point2 *dl_point2_sub_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out);
+dl_api dl_point2 *dl_point2_mul_scalar(const dl_point2 *left, dl_real scalar, dl_point2 *out);
+dl_api dl_point2 *dl_point2_div_scalar(const dl_point2 *left, dl_real scalar, dl_point2 *out);
+dl_api dl_point2 *dl_point2_add_scalar(const dl_point2 *left, dl_real scalar, dl_point2 *out);
+dl_api dl_point2 *dl_point2_sub_scalar(const dl_point2 *left, dl_real scalar, dl_point2 *out);
 
-dl_api dl_bool dl_point2_approximately_equal(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_real epsilon);
+dl_api dl_bool dl_point2_approximately_equal(const dl_point2 *left, const dl_point2 *right, dl_real epsilon);
 
-dl_api dl_real dl_point2_line_orientation(const dl_point2 *dl_restrict point, const dl_point2 *dl_restrict line_a, const dl_point2 *dl_restrict line_b);
+dl_api dl_real dl_point2_line_orientation(const dl_point2 *point, const dl_point2 *line_a, const dl_point2 *line_b);
   
 
   
@@ -167,45 +167,45 @@ typedef struct {
 typedef dl_vec4 dl_point3;
 typedef dl_vec4 dl_vec3;
 
-dl_api dl_vec4 *dl_init_vec4(dl_vec4 * dl_restrict v, dl_real x, dl_real y, dl_real z, dl_real w);
+dl_api dl_vec4 *dl_init_vec4(dl_vec4 *v, dl_real x, dl_real y, dl_real z, dl_real w);
 
-dl_api dl_vec4 *dl_vec4_add(const dl_vec4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_vec4 *dl_restrict out);
-dl_api dl_vec4 *dl_vec4_sub(const dl_vec4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_vec4 *dl_restrict out);
+dl_api dl_vec4 *dl_vec4_add(const dl_vec4 *left, const dl_vec4 *right, dl_vec4 *out);
+dl_api dl_vec4 *dl_vec4_sub(const dl_vec4 *left, const dl_vec4 *right, dl_vec4 *out);
 
-dl_api dl_real dl_vec4_dot(const dl_vec4 *dl_restrict left, const dl_vec4 *dl_restrict right);
-dl_api dl_vec4 *dl_vec4_normalize(const dl_vec4 *dl_restrict left, dl_vec4 *dl_restrict out);
-dl_api dl_vec4 *dl_vec4_negate(const dl_vec4 *dl_restrict left, dl_vec4 *dl_restrict out);
-dl_api dl_real dl_vec4_square_magnitude(const dl_vec4 *dl_restrict left);
-dl_api dl_real dl_vec4_magnitude(const dl_vec4 *dl_restrict left);
-dl_api dl_bool dl_vec4_approximately_equal(const dl_vec4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_real epsilon);
+dl_api dl_real dl_vec4_dot(const dl_vec4 *left, const dl_vec4 *right);
+dl_api dl_vec4 *dl_vec4_normalize(const dl_vec4 *left, dl_vec4 *out);
+dl_api dl_vec4 *dl_vec4_negate(const dl_vec4 *left, dl_vec4 *out);
+dl_api dl_real dl_vec4_square_magnitude(const dl_vec4 *left);
+dl_api dl_real dl_vec4_magnitude(const dl_vec4 *left);
+dl_api dl_bool dl_vec4_approximately_equal(const dl_vec4 *left, const dl_vec4 *right, dl_real epsilon);
 
-dl_api dl_vec4 *dl_vec4_mul_scalar(const dl_vec4 *dl_restrict left, dl_real scalar, dl_vec4 *dl_restrict out);
-dl_api dl_vec4 *dl_vec4_div_scalar(const dl_vec4 *dl_restrict left, dl_real scalar, dl_vec4 *dl_restrict out);
-dl_api dl_vec4 *dl_vec4_add_scalar(const dl_vec4 *dl_restrict left, dl_real scalar, dl_vec4 *dl_restrict out);
-dl_api dl_vec4 *dl_vec4_sub_scalar(const dl_vec4 *dl_restrict left, dl_real scalar, dl_vec4 *dl_restrict out);
+dl_api dl_vec4 *dl_vec4_mul_scalar(const dl_vec4 *left, dl_real scalar, dl_vec4 *out);
+dl_api dl_vec4 *dl_vec4_div_scalar(const dl_vec4 *left, dl_real scalar, dl_vec4 *out);
+dl_api dl_vec4 *dl_vec4_add_scalar(const dl_vec4 *left, dl_real scalar, dl_vec4 *out);
+dl_api dl_vec4 *dl_vec4_sub_scalar(const dl_vec4 *left, dl_real scalar, dl_vec4 *out);
 
 
   
 extern const dl_point3 dl_point3_zero;
 extern const dl_point3 dl_point3_one;
 
-dl_api dl_point3 *dl_init_point3(dl_point3 * dl_restrict p, dl_real x, dl_real y, dl_real z);
+dl_api dl_point3 *dl_init_point3(dl_point3 *p, dl_real x, dl_real y, dl_real z);
 
-dl_api dl_point3 *dl_point3_add(const dl_point3 *dl_restrict left, const dl_point3 *dl_restrict right, dl_point3 *dl_restrict out);
-dl_api dl_point3 *dl_point3_sub(const dl_point3 *dl_restrict left, const dl_point3 *dl_restrict right, dl_point3 *dl_restrict out);
+dl_api dl_point3 *dl_point3_add(const dl_point3 *left, const dl_point3 *right, dl_point3 *out);
+dl_api dl_point3 *dl_point3_sub(const dl_point3 *left, const dl_point3 *right, dl_point3 *out);
 
-dl_api dl_point3 *dl_point3_mul_scalar(const dl_point3 *dl_restrict left, dl_real scalar, dl_point3 *dl_restrict out);
-dl_api dl_point3 *dl_point3_div_scalar(const dl_point3 *dl_restrict left, dl_real scalar, dl_point3 *dl_restrict out);
-dl_api dl_point3 *dl_point3_add_scalar(const dl_point3 *dl_restrict left, dl_real scalar, dl_point3 *dl_restrict out);
-dl_api dl_point3 *dl_point3_sub_scalar(const dl_point3 *dl_restrict left, dl_real scalar, dl_point3 *dl_restrict out);
+dl_api dl_point3 *dl_point3_mul_scalar(const dl_point3 *left, dl_real scalar, dl_point3 *out);
+dl_api dl_point3 *dl_point3_div_scalar(const dl_point3 *left, dl_real scalar, dl_point3 *out);
+dl_api dl_point3 *dl_point3_add_scalar(const dl_point3 *left, dl_real scalar, dl_point3 *out);
+dl_api dl_point3 *dl_point3_sub_scalar(const dl_point3 *left, dl_real scalar, dl_point3 *out);
 
-dl_api dl_point3 *dl_point3_rotate(const dl_point3 *dl_restrict left, const dl_vec3 *axis, const dl_real angle, dl_point3 *dl_restrict out);
+dl_api dl_point3 *dl_point3_rotate(const dl_point3 *left, const dl_vec3 *axis, const dl_real angle, dl_point3 *out);
 
-dl_api dl_point3 *dl_point3_negate(const dl_point3 *dl_restrict left, dl_point3 *dl_restrict out);
+dl_api dl_point3 *dl_point3_negate(const dl_point3 *left, dl_point3 *out);
 
-dl_api dl_bool dl_point3_approximately_equal(const dl_point3 *dl_restrict left, const dl_point3 *dl_restrict out, dl_real epsilon);
+dl_api dl_bool dl_point3_approximately_equal(const dl_point3 *left, const dl_point3 *out, dl_real epsilon);
 
-/* dl_real point3_triangle_orientation(const dl_point3 *dl_restrict point, const dl_point3 *dl_restrict triangle_a, const dl_point3 *dl_restrict triangle_b, const dl_point3 *dl_restrict triangle_c); */
+/* dl_real point3_triangle_orientation(const dl_point3 *point, const dl_point3 *triangle_a, const dl_point3 *triangle_b, const dl_point3 *triangle_c); */
 
 
 
@@ -218,31 +218,31 @@ extern const dl_vec3 dl_vec3_backward;
 extern const dl_vec3 dl_vec3_zero;
 extern const dl_vec3 dl_vec3_one;
 
-dl_api dl_vec3 *dl_init_vec3(dl_vec3 * dl_restrict v, dl_real x, dl_real y, dl_real z);
+dl_api dl_vec3 *dl_init_vec3(dl_vec3 *v, dl_real x, dl_real y, dl_real z);
 
-dl_api dl_vec3 *dl_vec3_reflect(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out);
-dl_api dl_vec3 *dl_vec3_refract(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict right, float eta, dl_vec3 *dl_restrict out);
+dl_api dl_vec3 *dl_vec3_reflect(const dl_vec3 *left, const dl_vec3 *right, dl_vec3 *out);
+dl_api dl_vec3 *dl_vec3_refract(const dl_vec3 *left, const dl_vec3 *right, float eta, dl_vec3 *out);
 
-dl_api dl_vec3 *dl_vec3_add(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out);
-dl_api dl_vec3 *dl_vec3_sub(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out);
+dl_api dl_vec3 *dl_vec3_add(const dl_vec3 *left, const dl_vec3 *right, dl_vec3 *out);
+dl_api dl_vec3 *dl_vec3_sub(const dl_vec3 *left, const dl_vec3 *right, dl_vec3 *out);
 
-dl_api dl_vec3 *dl_vec3_cross(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out);
-dl_api dl_real dl_vec3_dot(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict out);
+dl_api dl_vec3 *dl_vec3_cross(const dl_vec3 *left, const dl_vec3 *right, dl_vec3 *out);
+dl_api dl_real dl_vec3_dot(const dl_vec3 *left, const dl_vec3 *out);
 
-dl_api dl_vec3 *dl_vec3_mul_scalar(const dl_vec3 *dl_restrict left, dl_real scalar, dl_vec3 *dl_restrict out);
-dl_api dl_vec3 *dl_vec3_div_scalar(const dl_vec3 *dl_restrict left, dl_real scalar, dl_vec3 *dl_restrict out);
-dl_api dl_vec3 *dl_vec3_add_scalar(const dl_vec3 *dl_restrict left, dl_real scalar, dl_vec3 *dl_restrict out);
-dl_api dl_vec3 *dl_vec3_sub_scalar(const dl_vec3 *dl_restrict left, dl_real scalar, dl_vec3 *dl_restrict out);
+dl_api dl_vec3 *dl_vec3_mul_scalar(const dl_vec3 *left, dl_real scalar, dl_vec3 *out);
+dl_api dl_vec3 *dl_vec3_div_scalar(const dl_vec3 *left, dl_real scalar, dl_vec3 *out);
+dl_api dl_vec3 *dl_vec3_add_scalar(const dl_vec3 *left, dl_real scalar, dl_vec3 *out);
+dl_api dl_vec3 *dl_vec3_sub_scalar(const dl_vec3 *left, dl_real scalar, dl_vec3 *out);
 
-dl_api dl_vec3 *dl_vec3_rotate(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict axis, const dl_real angle, dl_vec3 *dl_restrict out);
+dl_api dl_vec3 *dl_vec3_rotate(const dl_vec3 *left, const dl_vec3 *axis, const dl_real angle, dl_vec3 *out);
 
-dl_api dl_vec3 *dl_vec3_normalize(const dl_vec3 *dl_restrict left, dl_vec3 *dl_restrict out);
-dl_api dl_bool dl_vec3_normalized(const dl_vec3 *dl_restrict left);
-dl_api dl_vec3 *dl_vec3_negate(const dl_vec3 *dl_restrict left, dl_vec3 *dl_restrict out);
+dl_api dl_vec3 *dl_vec3_normalize(const dl_vec3 *left, dl_vec3 *out);
+dl_api dl_bool dl_vec3_normalized(const dl_vec3 *left);
+dl_api dl_vec3 *dl_vec3_negate(const dl_vec3 *left, dl_vec3 *out);
 
-dl_api dl_bool dl_vec3_approximately_equal(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict out, dl_real epsilon);
-dl_api dl_real dl_vec3_square_magnitude(const dl_vec3 *dl_restrict left);
-dl_api dl_real dl_vec3_magnitude(const dl_vec3 *dl_restrict left);
+dl_api dl_bool dl_vec3_approximately_equal(const dl_vec3 *left, const dl_vec3 *out, dl_real epsilon);
+dl_api dl_real dl_vec3_square_magnitude(const dl_vec3 *left);
+dl_api dl_real dl_vec3_magnitude(const dl_vec3 *left);
 
 
   
@@ -254,69 +254,69 @@ typedef union {
   
 extern const dl_mat4 dl_mat4_identity;
 
-dl_api dl_mat4 *dl_init_mat4(dl_mat4 * dl_restrict m, dl_real c0r0, dl_real c0r1, dl_real c0r2, dl_real c0r3, dl_real c1r0, dl_real c1r1, dl_real c1r2, dl_real c1r3, dl_real c2r0, dl_real c2r1, dl_real c2r2, dl_real c2r3, dl_real c3r0, dl_real c3r1, dl_real c3r2, dl_real c3r3);
+dl_api dl_mat4 *dl_init_mat4(dl_mat4 *m, dl_real c0r0, dl_real c0r1, dl_real c0r2, dl_real c0r3, dl_real c1r0, dl_real c1r1, dl_real c1r2, dl_real c1r3, dl_real c2r0, dl_real c2r1, dl_real c2r2, dl_real c2r3, dl_real c3r0, dl_real c3r1, dl_real c3r2, dl_real c3r3);
 
-dl_api dl_mat4 *dl_init_mat4_cols(dl_mat4 * dl_restrict m, const dl_vec4 *dl_restrict column_a, const dl_vec4 *dl_restrict column_b, const dl_vec4 *dl_restrict column_c, const dl_vec4 *dl_restrict column_d);
+dl_api dl_mat4 *dl_init_mat4_cols(dl_mat4 *m, const dl_vec4 *column_a, const dl_vec4 *column_b, const dl_vec4 *column_c, const dl_vec4 *column_d);
 
-dl_api dl_mat4 *dl_init_mat4_translate(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z);
-dl_api dl_mat4 *dl_init_mat4_rotate_x(dl_mat4 * dl_restrict m, dl_real radians);
-dl_api dl_mat4 *dl_init_mat4_rotate_y(dl_mat4 * dl_restrict m, dl_real radians);
-dl_api dl_mat4 *dl_init_mat4_rotate_z(dl_mat4 * dl_restrict m, dl_real radians);
-dl_api dl_mat4 *dl_init_mat4_rotate(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict axis, dl_real radians);
-dl_api dl_mat4 *dl_init_mat4_scale(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z);
+dl_api dl_mat4 *dl_init_mat4_translate(dl_mat4 *m, dl_real x, dl_real y, dl_real z);
+dl_api dl_mat4 *dl_init_mat4_rotate_x(dl_mat4 *m, dl_real radians);
+dl_api dl_mat4 *dl_init_mat4_rotate_y(dl_mat4 *m, dl_real radians);
+dl_api dl_mat4 *dl_init_mat4_rotate_z(dl_mat4 *m, dl_real radians);
+dl_api dl_mat4 *dl_init_mat4_rotate(dl_mat4 *m, const dl_vec3 *axis, dl_real radians);
+dl_api dl_mat4 *dl_init_mat4_scale(dl_mat4 *m, dl_real x, dl_real y, dl_real z);
 
-dl_api dl_mat4 *dl_init_mat4_look_at(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict origin, const dl_vec3 *dl_restrict target, const dl_vec3 *dl_restrict up);
-dl_api dl_mat4 *dl_init_mat4_orthographic(dl_mat4 * dl_restrict m, dl_real yop, dl_real y_bottom, dl_real x_left, dl_real x_right, dl_real z_near, dl_real z_far);
-dl_api dl_mat4 *dl_init_mat4_perspective(dl_mat4 * dl_restrict m, dl_real vertical_fov, dl_real aspect_ratio, dl_real z_near, dl_real z_far);
+dl_api dl_mat4 *dl_init_mat4_look_at(dl_mat4 *m, const dl_vec3 *origin, const dl_vec3 *target, const dl_vec3 *up);
+dl_api dl_mat4 *dl_init_mat4_orthographic(dl_mat4 *m, dl_real yop, dl_real y_bottom, dl_real x_left, dl_real x_right, dl_real z_near, dl_real z_far);
+dl_api dl_mat4 *dl_init_mat4_perspective(dl_mat4 *m, dl_real vertical_fov, dl_real aspect_ratio, dl_real z_near, dl_real z_far);
 
-dl_api dl_mat4 *dl_mat4_add(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out);
-dl_api dl_mat4 *dl_mat4_sub(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out);
-dl_api dl_mat4 *dl_mat4_mul(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out);
+dl_api dl_mat4 *dl_mat4_add(const dl_mat4 *left, const dl_mat4 *right, dl_mat4 *out);
+dl_api dl_mat4 *dl_mat4_sub(const dl_mat4 *left, const dl_mat4 *right, dl_mat4 *out);
+dl_api dl_mat4 *dl_mat4_mul(const dl_mat4 *left, const dl_mat4 *right, dl_mat4 *out);
 
-dl_api dl_vec4 *dl_mat4_mul_vec4(const dl_mat4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_vec4 *dl_restrict out);
-dl_api dl_vec3 *dl_mat4_mul_vec3(const dl_mat4 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out);
-dl_api dl_point3 *dl_mat4_mul_point3(const dl_mat4 *dl_restrict left, const dl_point3 *dl_restrict right, dl_point3 *dl_restrict out);
+dl_api dl_vec4 *dl_mat4_mul_vec4(const dl_mat4 *left, const dl_vec4 *right, dl_vec4 *out);
+dl_api dl_vec3 *dl_mat4_mul_vec3(const dl_mat4 *left, const dl_vec3 *right, dl_vec3 *out);
+dl_api dl_point3 *dl_mat4_mul_point3(const dl_mat4 *left, const dl_point3 *right, dl_point3 *out);
 
-dl_api dl_mat4 *dl_mat4_transpose(const dl_mat4 *dl_restrict left, dl_mat4 *dl_restrict out);
+dl_api dl_mat4 *dl_mat4_transpose(const dl_mat4 *left, dl_mat4 *out);
 
-dl_api dl_mat4 *dl_mat4_mul_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
-dl_api dl_mat4 *dl_mat4_div_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
-dl_api dl_mat4 *dl_mat4_add_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
-dl_api dl_mat4 *dl_mat4_sub_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out);
+dl_api dl_mat4 *dl_mat4_mul_scalar(const dl_mat4 *left, dl_real scalar, dl_mat4 *out);
+dl_api dl_mat4 *dl_mat4_div_scalar(const dl_mat4 *left, dl_real scalar, dl_mat4 *out);
+dl_api dl_mat4 *dl_mat4_add_scalar(const dl_mat4 *left, dl_real scalar, dl_mat4 *out);
+dl_api dl_mat4 *dl_mat4_sub_scalar(const dl_mat4 *left, dl_real scalar, dl_mat4 *out);
 
-dl_api dl_bool dl_mat4_approximately_equal(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_real epsilon);
+dl_api dl_bool dl_mat4_approximately_equal(const dl_mat4 *left, const dl_mat4 *right, dl_real epsilon);
 
   
   
 /* typedef dl_vec4 dl_quat; */
 
-/* dl_quat *dl_init_quat(dl_quat *dl_restrict q, dl_real x, dl_real y, dl_real z, dl_real w); */
-/* dl_quat *dl_init_quat_axis_angle(dl_quat *dl_restrict q, const dl_vec3 *dl_restrict axis, dl_real angle); */
-/* dl_quat *dl_init_quat_euler_angles(dl_quat *dl_restrict q, const dl_vec3 *dl_restrict angles); */
-/* dl_quat *dl_init_quat_identity(dl_quat *dl_restrict q); */
+/* dl_quat *dl_init_quat(dl_quat *q, dl_real x, dl_real y, dl_real z, dl_real w); */
+/* dl_quat *dl_init_quat_axis_angle(dl_quat *q, const dl_vec3 *axis, dl_real angle); */
+/* dl_quat *dl_init_quat_euler_angles(dl_quat *q, const dl_vec3 *angles); */
+/* dl_quat *dl_init_quat_identity(dl_quat *q); */
 
-/* dl_quat *dl_quat_add(const dl_quat *dl_restrict left, const quat *dl_restrict right, quat *dl_restrict out); */
-/* dl_quat *dl_quat_sub(const dl_quat *dl_restrict left, const quat *dl_restrict right, quat *dl_restrict out); */
-/* dl_quat *dl_uat_mul(const dl_quat *dl_restrict left, const quat *dl_restrict right, quat *dl_restrict out); */
-/* dl_quat *dl_quat_div(const dl_quat *dl_restrict left, const quat *dl_restrict right, quat *dl_restrict out); */
+/* dl_quat *dl_quat_add(const dl_quat *left, const quat *right, quat *out); */
+/* dl_quat *dl_quat_sub(const dl_quat *left, const quat *right, quat *out); */
+/* dl_quat *dl_uat_mul(const dl_quat *left, const quat *right, quat *out); */
+/* dl_quat *dl_quat_div(const dl_quat *left, const quat *right, quat *out); */
 
-/* dl_quat *dl_quat_mul_scalar(const dl_quat *dl_restrict left, dl_real scalar, quat *dl_restrict out); */
-/* dl_quat *dl_quat_div_scalar(const dl_quat *dl_restrict left, dl_real scalar, quat *dl_restrict out); */
+/* dl_quat *dl_quat_mul_scalar(const dl_quat *left, dl_real scalar, quat *out); */
+/* dl_quat *dl_quat_div_scalar(const dl_quat *left, dl_real scalar, quat *out); */
 
-/* dl_real qdl_uat_dot(const dl_quat *dl_restrict left, const quat *dl_restrict right); */
-/* dl_real dl_quat_magnitude(const dl_quat *dl_restrict q); */
+/* dl_real qdl_uat_dot(const dl_quat *left, const quat *right); */
+/* dl_real dl_quat_magnitude(const dl_quat *q); */
 
-/* dl_quat *dl_quat_normalize(const quat *dl_restrict q, dl_quat *dl_restrict out); */
-/* dl_quat *dl_quat_conjugate(const quat *dl_restrict q, dl_quat *dl_restrict out); */
-/* dl_quat *dl_quat_inverse(const quat *dl_restrict q, dl_quat *dl_restrict out); */
+/* dl_quat *dl_quat_normalize(const quat *q, dl_quat *out); */
+/* dl_quat *dl_quat_conjugate(const quat *q, dl_quat *out); */
+/* dl_quat *dl_quat_inverse(const quat *q, dl_quat *out); */
 
-/* dl_bool dl_quat_axis_angle(const dl_quat *dl_restrict q, dl_vec3 *dl_restrict out_axis, dl_real *out_angle); */
-/* dl_quat *dl_quat_euler_angles(const dl_quat *dl_restrict q, dl_vec3 *dl_restrict out); */
+/* dl_bool dl_quat_axis_angle(const dl_quat *q, dl_vec3 *out_axis, dl_real *out_angle); */
+/* dl_quat *dl_quat_euler_angles(const dl_quat *q, dl_vec3 *out); */
 
-/* dl_vec3 *dl_vec3_rotate_quat(const dl_vec3 *dl_restrict left, const quat *dl_restrict q, dl_vec3 *dl_restrict out); */
+/* dl_vec3 *dl_vec3_rotate_quat(const dl_vec3 *left, const quat *q, dl_vec3 *out); */
 
-/* dl_mat4 *dl_quat_to_mat4(const dl_quat *dl_restrict q, dl_mat4 *dl_restrict out); */
-/* dl_quat *dl_mat4_to_quat(const dl_mat4 *dl_restrict m, dl_quat *dl_restrict out); */
+/* dl_mat4 *dl_quat_to_mat4(const dl_quat *q, dl_mat4 *out); */
+/* dl_quat *dl_mat4_to_quat(const dl_mat4 *m, dl_quat *out); */
 
 
 #if defined(__cplusplus)
@@ -505,7 +505,7 @@ dl_api dl_random_state *dl_init_random_time(dl_random_state *state) {
 
 
 
-dl_api dl_vec2 *dl_init_vec2(dl_vec2 * dl_restrict v, dl_real x, dl_real y) {
+dl_api dl_vec2 *dl_init_vec2(dl_vec2 *v, dl_real x, dl_real y) {
   if (dl_safety(v == NULL))
     return NULL;
 
@@ -515,7 +515,7 @@ dl_api dl_vec2 *dl_init_vec2(dl_vec2 * dl_restrict v, dl_real x, dl_real y) {
   return v;
 }
 
-dl_api dl_vec2 *dl_vec2_add(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_add(const dl_vec2 *left, const dl_vec2 *right, dl_vec2 *out) {
   if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
@@ -525,7 +525,7 @@ dl_api dl_vec2 *dl_vec2_add(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_r
   return out;
 }
 
-dl_api dl_vec2 *dl_vec2_sub(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_sub(const dl_vec2 *left, const dl_vec2 *right, dl_vec2 *out) {
   if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
@@ -535,7 +535,7 @@ dl_api dl_vec2 *dl_vec2_sub(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_r
   return out;
 }
 
-dl_api dl_vec2 *dl_vec2_mul_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_mul_scalar(const dl_vec2 *left, dl_real scalar, dl_vec2 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -545,11 +545,11 @@ dl_api dl_vec2 *dl_vec2_mul_scalar(const dl_vec2 *dl_restrict left, dl_real scal
   return out;
 }
 
-dl_api dl_vec2 *dl_vec2_div_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_div_scalar(const dl_vec2 *left, dl_real scalar, dl_vec2 *out) {
   return dl_vec2_mul_scalar(left, 1.0f / scalar, out);
 }
 
-dl_api dl_vec2 *dl_vec2_add_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_add_scalar(const dl_vec2 *left, dl_real scalar, dl_vec2 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -559,11 +559,11 @@ dl_api dl_vec2 *dl_vec2_add_scalar(const dl_vec2 *dl_restrict left, dl_real scal
   return out;
 }
 
-dl_api dl_vec2 *dl_vec2_sub_scalar(const dl_vec2 *dl_restrict left, dl_real scalar, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_sub_scalar(const dl_vec2 *left, dl_real scalar, dl_vec2 *out) {
   return dl_vec2_add_scalar(left, -scalar, out);
 }
 
-dl_api dl_vec2 *dl_vec2_normalize(const dl_vec2 *dl_restrict left, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_normalize(const dl_vec2 *left, dl_vec2 *out) {
   dl_real inv_magnitude;
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
@@ -574,7 +574,7 @@ dl_api dl_vec2 *dl_vec2_normalize(const dl_vec2 *dl_restrict left, dl_vec2 *dl_r
   return out;
 }
 
-dl_api dl_vec2 *dl_vec2_negate(const dl_vec2 *dl_restrict left, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_negate(const dl_vec2 *left, dl_vec2 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -584,39 +584,39 @@ dl_api dl_vec2 *dl_vec2_negate(const dl_vec2 *dl_restrict left, dl_vec2 *dl_rest
   return out;
 }
 
-dl_api dl_real dl_vec2_dot(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right) {
+dl_api dl_real dl_vec2_dot(const dl_vec2 *left, const dl_vec2 *right) {
   if (dl_safety(left == NULL || right == NULL))
     return 0;
   return left->x * right->x + left->y * right->y;
 }
 
-dl_api dl_bool dl_vec2_approximately_equal(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict right, dl_real epsilon) {
+dl_api dl_bool dl_vec2_approximately_equal(const dl_vec2 *left, const dl_vec2 *right, dl_real epsilon) {
   if (dl_safety(left == NULL || right == NULL))
     return 0;
   return fabs(left->x - right->x) < epsilon && fabs(left->y - right->y) < epsilon;
 }
 
-dl_api dl_real dl_vec2_square_magnitude(const dl_vec2 *dl_restrict left) {
+dl_api dl_real dl_vec2_square_magnitude(const dl_vec2 *left) {
   if (dl_safety(left == NULL))
     return 0;
   return left->x * left->x + left->y * left->y;
 }
 
-dl_api dl_real dl_vec2_magnitude(const dl_vec2 *dl_restrict left) {
+dl_api dl_real dl_vec2_magnitude(const dl_vec2 *left) {
   if (dl_safety(left == NULL))
     return 0;
   
   return dl_hypot(left->x, left->y);
 }
 
-dl_api dl_vec2 *dl_vec2_reflect(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict normal, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_reflect(const dl_vec2 *left, const dl_vec2 *normal, dl_vec2 *out) {
   if (dl_safety(left == NULL || normal == NULL || out == NULL))
     return NULL;
   
   return dl_vec2_sub(left, dl_vec2_mul_scalar(normal, dl_vec2_dot(normal, left) * 2.0f, out), out);
 }
 
-dl_api dl_vec2 *dl_vec2_refract(const dl_vec2 *dl_restrict left, const dl_vec2 *dl_restrict normal, float eta, dl_vec2 *dl_restrict out) {
+dl_api dl_vec2 *dl_vec2_refract(const dl_vec2 *left, const dl_vec2 *normal, float eta, dl_vec2 *out) {
   float dot, k;
   dl_vec2 t;
 
@@ -635,43 +635,43 @@ dl_api dl_vec2 *dl_vec2_refract(const dl_vec2 *dl_restrict left, const dl_vec2 *
 
 
 
-dl_api dl_point2 *dl_init_point2(dl_point2 * dl_restrict p, dl_real x, dl_real y) {
+dl_api dl_point2 *dl_init_point2(dl_point2 *p, dl_real x, dl_real y) {
   return dl_init_vec2((dl_vec2 *)p, x, y);
 }
 
-dl_api dl_point2 *dl_point2_add(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_point2 *dl_restrict out) {
+dl_api dl_point2 *dl_point2_add(const dl_point2 *left, const dl_point2 *right, dl_point2 *out) {
   return dl_vec2_add(left, right, out);
 }
 
-dl_api dl_point2 *dl_point2_sub(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_point2 *dl_restrict out) {
+dl_api dl_point2 *dl_point2_sub(const dl_point2 *left, const dl_point2 *right, dl_point2 *out) {
   return dl_vec2_sub(left, right, out);
 }
 
-dl_api dl_point2 *dl_point2_mul_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out) {
+dl_api dl_point2 *dl_point2_mul_scalar(const dl_point2 *left, dl_real scalar, dl_point2 *out) {
   return dl_vec2_mul_scalar(left, scalar, out);
 }
 
-dl_api dl_point2 *dl_point2_div_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out) {
+dl_api dl_point2 *dl_point2_div_scalar(const dl_point2 *left, dl_real scalar, dl_point2 *out) {
   return dl_vec2_div_scalar(left, scalar, out);
 }
 
-dl_api dl_point2 *dl_point2_add_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out) {
+dl_api dl_point2 *dl_point2_add_scalar(const dl_point2 *left, dl_real scalar, dl_point2 *out) {
   return dl_vec2_add_scalar(left, scalar, out);
 }
 
-dl_api dl_point2 *dl_point2_sub_scalar(const dl_point2 *dl_restrict left, dl_real scalar, dl_point2 *dl_restrict out) {
+dl_api dl_point2 *dl_point2_sub_scalar(const dl_point2 *left, dl_real scalar, dl_point2 *out) {
   return dl_vec2_sub_scalar(left, scalar, out);
 }
 
-dl_api dl_point2 *dl_point2_negate(const dl_point2 *dl_restrict left, dl_point2 *dl_restrict out) {
+dl_api dl_point2 *dl_point2_negate(const dl_point2 *left, dl_point2 *out) {
   return dl_vec2_negate(left, out);
 }
 
-dl_api dl_bool dl_point2_approximately_equal(const dl_point2 *dl_restrict left, const dl_point2 *dl_restrict right, dl_real epsilon) {
+dl_api dl_bool dl_point2_approximately_equal(const dl_point2 *left, const dl_point2 *right, dl_real epsilon) {
   return dl_vec2_approximately_equal(left, right, epsilon);
 }
 
-dl_api dl_real dl_point2_line_orientation(const dl_point2 *dl_restrict point, const dl_point2 *dl_restrict line_a, const dl_point2 *dl_restrict line_b) {
+dl_api dl_real dl_point2_line_orientation(const dl_point2 *point, const dl_point2 *line_a, const dl_point2 *line_b) {
   dl_real rise, run, m, b;
 
   if (dl_safety(point == NULL || line_a == NULL || line_b == NULL))
@@ -687,7 +687,7 @@ dl_api dl_real dl_point2_line_orientation(const dl_point2 *dl_restrict point, co
 
 
 
-dl_api dl_vec4 *dl_init_vec4(dl_vec4 * dl_restrict v, dl_real x, dl_real y, dl_real z, dl_real w) {
+dl_api dl_vec4 *dl_init_vec4(dl_vec4 *v, dl_real x, dl_real y, dl_real z, dl_real w) {
   if (dl_safety(v == NULL))
     return NULL;
   
@@ -699,7 +699,7 @@ dl_api dl_vec4 *dl_init_vec4(dl_vec4 * dl_restrict v, dl_real x, dl_real y, dl_r
   return v;
 }
 
-dl_api dl_vec4 *dl_vec4_add(const dl_vec4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_vec4 *dl_restrict out) {
+dl_api dl_vec4 *dl_vec4_add(const dl_vec4 *left, const dl_vec4 *right, dl_vec4 *out) {
   if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
@@ -711,7 +711,7 @@ dl_api dl_vec4 *dl_vec4_add(const dl_vec4 *dl_restrict left, const dl_vec4 *dl_r
   return out;
 }
 
-dl_api dl_vec4 *dl_vec4_sub(const dl_vec4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_vec4 *dl_restrict out) {
+dl_api dl_vec4 *dl_vec4_sub(const dl_vec4 *left, const dl_vec4 *right, dl_vec4 *out) {
   if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
@@ -723,18 +723,18 @@ dl_api dl_vec4 *dl_vec4_sub(const dl_vec4 *dl_restrict left, const dl_vec4 *dl_r
   return out;
 }
 
-dl_api dl_real dl_vec4_dot(const dl_vec4 *dl_restrict left, const dl_vec4 *dl_restrict right) {
+dl_api dl_real dl_vec4_dot(const dl_vec4 *left, const dl_vec4 *right) {
   if (dl_safety(left == NULL || right == NULL))
     return 0;
   
   return left->x * right->x + left->y * right->y + left->z * right->z + left->w * right->w;
 }
 
-dl_api dl_vec4 *dl_vec4_normalize(const dl_vec4 *dl_restrict left, dl_vec4 *dl_restrict out) {
+dl_api dl_vec4 *dl_vec4_normalize(const dl_vec4 *left, dl_vec4 *out) {
   return dl_vec4_div_scalar(left, dl_vec4_magnitude(left), out);
 }
 
-dl_api dl_vec4 *dl_vec4_negate(const dl_vec4 *dl_restrict left, dl_vec4 *dl_restrict out) {
+dl_api dl_vec4 *dl_vec4_negate(const dl_vec4 *left, dl_vec4 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -746,7 +746,7 @@ dl_api dl_vec4 *dl_vec4_negate(const dl_vec4 *dl_restrict left, dl_vec4 *dl_rest
   return out;
 }
 
-dl_api dl_real dl_vec4_square_magnitude(const dl_vec4 *dl_restrict left) {
+dl_api dl_real dl_vec4_square_magnitude(const dl_vec4 *left) {
   if (dl_safety(left == NULL))
     return 0;
   
@@ -756,11 +756,11 @@ dl_api dl_real dl_vec4_square_magnitude(const dl_vec4 *dl_restrict left) {
     + (left->w * left->w);
 }
 
-dl_api dl_real dl_vec4_magnitude(const dl_vec4 *dl_restrict left) {
+dl_api dl_real dl_vec4_magnitude(const dl_vec4 *left) {
   return dl_sqrt(dl_vec4_square_magnitude(left));
 }
 
-dl_api dl_bool dl_vec4_approximately_equal(const dl_vec4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_real epsilon) {
+dl_api dl_bool dl_vec4_approximately_equal(const dl_vec4 *left, const dl_vec4 *right, dl_real epsilon) {
   if (dl_safety(left == NULL || right == NULL))
     return 0;
   
@@ -770,7 +770,7 @@ dl_api dl_bool dl_vec4_approximately_equal(const dl_vec4 *dl_restrict left, cons
     && fabs(left->w - right->w) < epsilon;
 }
 
-dl_api dl_vec4 *dl_vec4_mul_scalar(const dl_vec4 *dl_restrict left, dl_real scalar, dl_vec4 *dl_restrict out) {
+dl_api dl_vec4 *dl_vec4_mul_scalar(const dl_vec4 *left, dl_real scalar, dl_vec4 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -782,11 +782,11 @@ dl_api dl_vec4 *dl_vec4_mul_scalar(const dl_vec4 *dl_restrict left, dl_real scal
   return out;
 }
 
-dl_api dl_vec4 *dl_vec4_div_scalar(const dl_vec4 *left, dl_real scalar, dl_vec4 *dl_restrict out) {
+dl_api dl_vec4 *dl_vec4_div_scalar(const dl_vec4 *left, dl_real scalar, dl_vec4 *out) {
   return dl_vec4_mul_scalar(left, 1.0 / scalar, out);
 }
 
-dl_api dl_vec4 *dl_vec4_add_scalar(const dl_vec4 *dl_restrict left, dl_real scalar, dl_vec4 *dl_restrict out) {
+dl_api dl_vec4 *dl_vec4_add_scalar(const dl_vec4 *left, dl_real scalar, dl_vec4 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -798,17 +798,17 @@ dl_api dl_vec4 *dl_vec4_add_scalar(const dl_vec4 *dl_restrict left, dl_real scal
   return out;
 }
 
-dl_api dl_vec4 *dl_vec4_sub_scalar(const dl_vec4 *dl_restrict left, dl_real scalar, dl_vec4 *dl_restrict out) {
+dl_api dl_vec4 *dl_vec4_sub_scalar(const dl_vec4 *left, dl_real scalar, dl_vec4 *out) {
   return dl_vec4_add_scalar(left, -scalar, out);
 }
 
 
 
-dl_api dl_point3 *dl_init_point3(dl_point3 * dl_restrict p, dl_real x, dl_real y, dl_real z) {
+dl_api dl_point3 *dl_init_point3(dl_point3 *p, dl_real x, dl_real y, dl_real z) {
   return dl_init_vec4(p, x, y, z, 1);
 }
 
-dl_api dl_point3 *dl_point3_add(const dl_point3 *dl_restrict left, const dl_point3 *dl_restrict right, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_point3_add(const dl_point3 *left, const dl_point3 *right, dl_point3 *out) {
   if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
@@ -820,7 +820,7 @@ dl_api dl_point3 *dl_point3_add(const dl_point3 *dl_restrict left, const dl_poin
   return out;
 }
 
-dl_api dl_point3 *dl_point3_sub(const dl_point3 *dl_restrict left, const dl_point3 *dl_restrict right, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_point3_sub(const dl_point3 *left, const dl_point3 *right, dl_point3 *out) {
   if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
@@ -832,7 +832,7 @@ dl_api dl_point3 *dl_point3_sub(const dl_point3 *dl_restrict left, const dl_poin
   return out;
 }
 
-dl_api dl_point3 *dl_point3_mul_scalar(const dl_point3 *dl_restrict left, dl_real scalar, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_point3_mul_scalar(const dl_point3 *left, dl_real scalar, dl_point3 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -844,11 +844,11 @@ dl_api dl_point3 *dl_point3_mul_scalar(const dl_point3 *dl_restrict left, dl_rea
   return out;
 }
 
-dl_api dl_point3 *dl_point3_div_scalar(const dl_point3 *dl_restrict left, dl_real scalar, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_point3_div_scalar(const dl_point3 *left, dl_real scalar, dl_point3 *out) {
   return dl_point3_mul_scalar(left, 1.0 / scalar, out);
 }
 
-dl_api dl_point3 *dl_point3_add_scalar(const dl_point3 *dl_restrict left, dl_real scalar, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_point3_add_scalar(const dl_point3 *left, dl_real scalar, dl_point3 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -860,11 +860,11 @@ dl_api dl_point3 *dl_point3_add_scalar(const dl_point3 *dl_restrict left, dl_rea
   return out;
 }
 
-dl_api dl_point3 *dl_point3_sub_scalar(const dl_point3 *dl_restrict left, dl_real scalar, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_point3_sub_scalar(const dl_point3 *left, dl_real scalar, dl_point3 *out) {
   return dl_point3_add_scalar(left, -scalar, out);
 }
 
-dl_api dl_point3 *dl_point3_negate(const dl_point3 *dl_restrict left, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_point3_negate(const dl_point3 *left, dl_point3 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -876,11 +876,11 @@ dl_api dl_point3 *dl_point3_negate(const dl_point3 *dl_restrict left, dl_point3 
   return out;
 }
 
-dl_api dl_bool dl_point3_approximately_equal(const dl_point3 *dl_restrict left, const dl_point3 *dl_restrict right, dl_real epsilon) {
+dl_api dl_bool dl_point3_approximately_equal(const dl_point3 *left, const dl_point3 *right, dl_real epsilon) {
   return dl_vec4_approximately_equal(left, right, epsilon);
 }
 
-dl_api dl_point3 *dl_point3_rotate(const dl_point3 *dl_restrict left, const dl_vec3 *dl_restrict axis, const dl_real angle, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_point3_rotate(const dl_point3 *left, const dl_vec3 *axis, const dl_real angle, dl_point3 *out) {
   dl_mat4 mat;
 
   return dl_mat4_mul_point3(dl_init_mat4_rotate(&mat, axis, angle), left, out);
@@ -888,11 +888,11 @@ dl_api dl_point3 *dl_point3_rotate(const dl_point3 *dl_restrict left, const dl_v
 
 
 
-dl_api dl_vec3 *dl_init_vec3(dl_vec3 * dl_restrict v, dl_real x, dl_real y, dl_real z) {
+dl_api dl_vec3 *dl_init_vec3(dl_vec3 *v, dl_real x, dl_real y, dl_real z) {
   return dl_init_vec4(v, x, y, z, 0);
 }
 
-dl_api dl_vec3 *dl_vec3_add(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_add(const dl_vec3 *left, const dl_vec3 *right, dl_vec3 *out) {
   if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
@@ -904,7 +904,7 @@ dl_api dl_vec3 *dl_vec3_add(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_r
   return out;
 }
 
-dl_api dl_vec3 *dl_vec3_sub(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_sub(const dl_vec3 *left, const dl_vec3 *right, dl_vec3 *out) {
   if (dl_safety(left == NULL || right == NULL || out == NULL))
     return NULL;
   
@@ -916,7 +916,7 @@ dl_api dl_vec3 *dl_vec3_sub(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_r
   return out;
 }
 
-dl_api dl_vec3 *dl_vec3_cross(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_cross(const dl_vec3 *left, const dl_vec3 *right, dl_vec3 *out) {
   dl_real orig_x, orig_y;
   
   if (dl_safety(left == NULL || right == NULL || out == NULL))
@@ -934,11 +934,11 @@ dl_api dl_vec3 *dl_vec3_cross(const dl_vec3 *dl_restrict left, const dl_vec3 *dl
   return out;
 }
 
-dl_api dl_real dl_vec3_dot(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict right) {
+dl_api dl_real dl_vec3_dot(const dl_vec3 *left, const dl_vec3 *right) {
   return left->x * right->x + left->y * right->y + left->z * right->z;
 }
 
-dl_api dl_vec3 *dl_vec3_mul_scalar(const dl_vec3 *dl_restrict left, dl_real scalar, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_mul_scalar(const dl_vec3 *left, dl_real scalar, dl_vec3 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -950,11 +950,11 @@ dl_api dl_vec3 *dl_vec3_mul_scalar(const dl_vec3 *dl_restrict left, dl_real scal
   return out;
 }
 
-dl_api dl_vec3 *dl_vec3_div_scalar(const dl_vec3 *dl_restrict left, dl_real scalar, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_div_scalar(const dl_vec3 *left, dl_real scalar, dl_vec3 *out) {
   return dl_vec3_mul_scalar(left, 1.0 / scalar, out);
 }
 
-dl_api dl_vec3 *dl_vec3_add_scalar(const dl_vec3 *dl_restrict left, dl_real scalar, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_add_scalar(const dl_vec3 *left, dl_real scalar, dl_vec3 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
   
@@ -966,19 +966,19 @@ dl_api dl_vec3 *dl_vec3_add_scalar(const dl_vec3 *dl_restrict left, dl_real scal
   return out;
 }
 
-dl_api dl_vec3 *dl_vec3_sub_scalar(const dl_vec3 *dl_restrict left, dl_real scalar, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_sub_scalar(const dl_vec3 *left, dl_real scalar, dl_vec3 *out) {
   return dl_vec3_add_scalar(left, -scalar, out);
 }
 
-dl_api dl_vec3 *dl_vec3_normalize(const dl_vec3 *dl_restrict left, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_normalize(const dl_vec3 *left, dl_vec3 *out) {
   return dl_vec3_div_scalar(left, dl_vec3_magnitude(left), out);
 }
 
-dl_api dl_bool dl_vec3_normalized(const dl_vec3 *dl_restrict left) {
+dl_api dl_bool dl_vec3_normalized(const dl_vec3 *left) {
   return dl_approximately_equal(fabs(left->x) + fabs(left->y) + fabs(left->z), 1.0, DL_EPSILON);
 }
 
-dl_api dl_vec3 *dl_vec3_negate(const dl_vec3 *dl_restrict left, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_negate(const dl_vec3 *left, dl_vec3 *out) {
   if (dl_safety(left == NULL || out == NULL))
     return NULL;
 
@@ -990,11 +990,11 @@ dl_api dl_vec3 *dl_vec3_negate(const dl_vec3 *dl_restrict left, dl_vec3 *dl_rest
   return out;
 }
 
-dl_api dl_bool dl_vec3_approximately_equal(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_real epsilon) {
+dl_api dl_bool dl_vec3_approximately_equal(const dl_vec3 *left, const dl_vec3 *right, dl_real epsilon) {
   return dl_vec4_approximately_equal(left, right, epsilon);
 }
 
-dl_api dl_real dl_vec3_square_magnitude(const dl_vec3 *dl_restrict left) {
+dl_api dl_real dl_vec3_square_magnitude(const dl_vec3 *left) {
   if (dl_safety(left == NULL))
     return 0;
 
@@ -1003,24 +1003,24 @@ dl_api dl_real dl_vec3_square_magnitude(const dl_vec3 *dl_restrict left) {
     + left->z * left->z;
 }
 
-dl_api dl_real dl_vec3_magnitude(const dl_vec3 *dl_restrict left) {
+dl_api dl_real dl_vec3_magnitude(const dl_vec3 *left) {
   return dl_sqrt(dl_vec3_square_magnitude(left));
 }
 
-dl_api dl_vec3 *dl_vec3_rotate(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict axis, const dl_real angle, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_rotate(const dl_vec3 *left, const dl_vec3 *axis, const dl_real angle, dl_vec3 *out) {
   dl_mat4 mat;
 
   return dl_mat4_mul_vec3(dl_init_mat4_rotate(&mat, axis, angle), left, out);
 }
 
-dl_api dl_vec3 *dl_vec3_reflect(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict normal, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_reflect(const dl_vec3 *left, const dl_vec3 *normal, dl_vec3 *out) {
   if (dl_safety(left == NULL || normal == NULL || out == NULL))
     return NULL;
 
   return dl_vec3_sub(left, dl_vec3_mul_scalar(normal, dl_vec3_dot(normal, left) * 2.0, out), out);
 }
 
-dl_api dl_vec3 *dl_vec3_refract(const dl_vec3 *dl_restrict left, const dl_vec3 *dl_restrict normal, float eta, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_vec3_refract(const dl_vec3 *left, const dl_vec3 *normal, float eta, dl_vec3 *out) {
   float dot, k;
   dl_vec3 t;
 
@@ -1039,7 +1039,7 @@ dl_api dl_vec3 *dl_vec3_refract(const dl_vec3 *dl_restrict left, const dl_vec3 *
 
 
 
-dl_api dl_mat4 *dl_init_mat4(dl_mat4 * dl_restrict m, dl_real c0r0, dl_real c0r1, dl_real c0r2, dl_real c0r3, dl_real c1r0, dl_real c1r1, dl_real c1r2, dl_real c1r3, dl_real c2r0, dl_real c2r1, dl_real c2r2, dl_real c2r3, dl_real c3r0, dl_real c3r1, dl_real c3r2, dl_real c3r3) {
+dl_api dl_mat4 *dl_init_mat4(dl_mat4 *m, dl_real c0r0, dl_real c0r1, dl_real c0r2, dl_real c0r3, dl_real c1r0, dl_real c1r1, dl_real c1r2, dl_real c1r3, dl_real c2r0, dl_real c2r1, dl_real c2r2, dl_real c2r3, dl_real c3r0, dl_real c3r1, dl_real c3r2, dl_real c3r3) {
   if (dl_safety(m == NULL))
     return NULL;
   
@@ -1063,7 +1063,7 @@ dl_api dl_mat4 *dl_init_mat4(dl_mat4 * dl_restrict m, dl_real c0r0, dl_real c0r1
   return m;
 }
 
-dl_api dl_mat4 *dl_init_mat4_cols(dl_mat4 * dl_restrict m, const dl_vec4 *dl_restrict column_a, const dl_vec4 *dl_restrict column_b, const dl_vec4 *dl_restrict column_c, const dl_vec4 *dl_restrict column_d) {
+dl_api dl_mat4 *dl_init_mat4_cols(dl_mat4 *m, const dl_vec4 *column_a, const dl_vec4 *column_b, const dl_vec4 *column_c, const dl_vec4 *column_d) {
   if (dl_safety(m == NULL || column_a == NULL || column_b == NULL || column_c == NULL || column_d == NULL))
     return NULL;
   
@@ -1075,7 +1075,7 @@ dl_api dl_mat4 *dl_init_mat4_cols(dl_mat4 * dl_restrict m, const dl_vec4 *dl_res
   return m;
 }
 
-dl_api dl_mat4 *dl_mat4_add(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_add(const dl_mat4 *left, const dl_mat4 *right, dl_mat4 *out) {
   dl_integer i, j;
   
   if (dl_safety(left == NULL || right == NULL || out == NULL))
@@ -1088,7 +1088,7 @@ dl_api dl_mat4 *dl_mat4_add(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_r
   return out;
 }
 
-dl_api dl_mat4 *dl_mat4_sub(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_sub(const dl_mat4 *left, const dl_mat4 *right, dl_mat4 *out) {
   dl_integer i, j;
   
   if (dl_safety(left == NULL || right == NULL || out == NULL))
@@ -1101,7 +1101,7 @@ dl_api dl_mat4 *dl_mat4_sub(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_r
   return out;
 }
 
-dl_api dl_mat4 *dl_mat4_mul(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_mul(const dl_mat4 *left, const dl_mat4 *right, dl_mat4 *out) {
   dl_vec4 *A, *B;
   dl_mat4 temp;
 
@@ -1136,7 +1136,7 @@ dl_api dl_mat4 *dl_mat4_mul(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_r
   return out;
 }
 
-dl_bool dl_mat4_approximately_equal(const dl_mat4 *dl_restrict left, const dl_mat4 *dl_restrict right, dl_real epsilon) {
+dl_bool dl_mat4_approximately_equal(const dl_mat4 *left, const dl_mat4 *right, dl_real epsilon) {
   dl_integer i, j;
   
   if (dl_safety(left == NULL || right == NULL))
@@ -1150,7 +1150,7 @@ dl_bool dl_mat4_approximately_equal(const dl_mat4 *dl_restrict left, const dl_ma
   return true;
 }
 
-dl_api dl_vec4 *dl_mat4_mul_vec4(const dl_mat4 *dl_restrict left, const dl_vec4 *dl_restrict right, dl_vec4 *dl_restrict out) {
+dl_api dl_vec4 *dl_mat4_mul_vec4(const dl_mat4 *left, const dl_vec4 *right, dl_vec4 *out) {
   dl_vec4 v;
 
   if (dl_safety(left == NULL || right == NULL || out == NULL))
@@ -1165,7 +1165,7 @@ dl_api dl_vec4 *dl_mat4_mul_vec4(const dl_mat4 *dl_restrict left, const dl_vec4 
   return out;
 }
 
-dl_api dl_vec3 *dl_mat4_mul_vec3(const dl_mat4 *dl_restrict left, const dl_vec3 *dl_restrict right, dl_vec3 *dl_restrict out) {
+dl_api dl_vec3 *dl_mat4_mul_vec3(const dl_mat4 *left, const dl_vec3 *right, dl_vec3 *out) {
   dl_vec3 v;
   
   if (dl_safety(left == NULL || right == NULL || out == NULL))
@@ -1180,7 +1180,7 @@ dl_api dl_vec3 *dl_mat4_mul_vec3(const dl_mat4 *dl_restrict left, const dl_vec3 
   return out;
 }
 
-dl_api dl_point3 *dl_mat4_mul_point3(const dl_mat4 *dl_restrict left, const dl_point3 *dl_restrict right, dl_point3 *dl_restrict out) {
+dl_api dl_point3 *dl_mat4_mul_point3(const dl_mat4 *left, const dl_point3 *right, dl_point3 *out) {
   dl_point3 p;
   
   if (dl_safety(left == NULL || right == NULL || out == NULL))
@@ -1195,7 +1195,7 @@ dl_api dl_point3 *dl_mat4_mul_point3(const dl_mat4 *dl_restrict left, const dl_p
   return out;
 }
 
-dl_api dl_mat4 *dl_mat4_transpose(const dl_mat4 *dl_restrict left, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_transpose(const dl_mat4 *left, dl_mat4 *out) {
   dl_real v[4][4];
   dl_natural a_idx, b_idx;
 
@@ -1212,7 +1212,7 @@ dl_api dl_mat4 *dl_mat4_transpose(const dl_mat4 *dl_restrict left, dl_mat4 *dl_r
   return out;
 }
 
-dl_api dl_mat4 *dl_mat4_mul_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_mul_scalar(const dl_mat4 *left, dl_real scalar, dl_mat4 *out) {
   dl_integer i,j;
   
   if (dl_safety(left == NULL || out == NULL))
@@ -1225,11 +1225,11 @@ dl_api dl_mat4 *dl_mat4_mul_scalar(const dl_mat4 *dl_restrict left, dl_real scal
   return out;
 }
 
-dl_api dl_mat4 *dl_mat4_div_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_div_scalar(const dl_mat4 *left, dl_real scalar, dl_mat4 *out) {
   return dl_mat4_mul_scalar(left, 1.0 / scalar, out);
 }
 
-dl_api dl_mat4 *dl_mat4_add_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_add_scalar(const dl_mat4 *left, dl_real scalar, dl_mat4 *out) {
   dl_integer i, j;
   
   if (dl_safety(left == NULL || out == NULL))
@@ -1242,11 +1242,11 @@ dl_api dl_mat4 *dl_mat4_add_scalar(const dl_mat4 *dl_restrict left, dl_real scal
   return out;
 }
 
-dl_api dl_mat4 *dl_mat4_sub_scalar(const dl_mat4 *dl_restrict left, dl_real scalar, dl_mat4 *dl_restrict out) {
+dl_api dl_mat4 *dl_mat4_sub_scalar(const dl_mat4 *left, dl_real scalar, dl_mat4 *out) {
   return dl_mat4_add_scalar(left, -scalar, out);
 }
 
-dl_api dl_mat4 *dl_init_mat4_translate(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z) {
+dl_api dl_mat4 *dl_init_mat4_translate(dl_mat4 *m, dl_real x, dl_real y, dl_real z) {
   if (dl_safety(m == NULL))
     return NULL;
   
@@ -1258,7 +1258,7 @@ dl_api dl_mat4 *dl_init_mat4_translate(dl_mat4 * dl_restrict m, dl_real x, dl_re
   return m;
 }
 
-dl_api dl_mat4 *dl_init_mat4_rotate_x(dl_mat4 * dl_restrict m, dl_real radians) {
+dl_api dl_mat4 *dl_init_mat4_rotate_x(dl_mat4 *m, dl_real radians) {
   dl_real c, s;
 
   if (dl_safety(m == NULL))
@@ -1290,7 +1290,7 @@ dl_api dl_mat4 *dl_init_mat4_rotate_x(dl_mat4 * dl_restrict m, dl_real radians) 
 #endif
 }
 
-dl_api dl_mat4 *dl_init_mat4_rotate_y(dl_mat4 * dl_restrict m, dl_real radians) {
+dl_api dl_mat4 *dl_init_mat4_rotate_y(dl_mat4 *m, dl_real radians) {
   dl_real c, s;
 
   if (dl_safety(m == NULL))
@@ -1317,7 +1317,7 @@ dl_api dl_mat4 *dl_init_mat4_rotate_y(dl_mat4 * dl_restrict m, dl_real radians) 
 #endif
 }
 
-dl_api dl_mat4 *dl_init_mat4_rotate_z(dl_mat4 * dl_restrict m, dl_real radians) {
+dl_api dl_mat4 *dl_init_mat4_rotate_z(dl_mat4 *m, dl_real radians) {
   dl_real c, s;
 
   if (dl_safety(m == NULL))
@@ -1333,7 +1333,7 @@ dl_api dl_mat4 *dl_init_mat4_rotate_z(dl_mat4 * dl_restrict m, dl_real radians) 
 		   0,  0, 0, 1);
 }
 
-dl_api dl_mat4 *dl_init_mat4_rotate(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict a, dl_real radians) {
+dl_api dl_mat4 *dl_init_mat4_rotate(dl_mat4 *m, const dl_vec3 *a, dl_real radians) {
   dl_vec3 i, t;
   dl_real c, s;
 
@@ -1373,7 +1373,7 @@ dl_api dl_mat4 *dl_init_mat4_rotate(dl_mat4 * dl_restrict m, const dl_vec3 *dl_r
 #endif
 }
 
-dl_api dl_mat4 *dl_init_mat4_scale(dl_mat4 * dl_restrict m, dl_real x, dl_real y, dl_real z) {
+dl_api dl_mat4 *dl_init_mat4_scale(dl_mat4 *m, dl_real x, dl_real y, dl_real z) {
   if (dl_safety(m == NULL))
     return NULL;
   
@@ -1385,7 +1385,7 @@ dl_api dl_mat4 *dl_init_mat4_scale(dl_mat4 * dl_restrict m, dl_real x, dl_real y
   return m;
 }
 
-dl_api dl_mat4 *dl_init_mat4_look_at(dl_mat4 * dl_restrict m, const dl_vec3 *dl_restrict origin, const dl_vec3 *dl_restrict target, const dl_vec3 *dl_restrict up) {
+dl_api dl_mat4 *dl_init_mat4_look_at(dl_mat4 *m, const dl_vec3 *origin, const dl_vec3 *target, const dl_vec3 *up) {
   dl_vec3 zaxis, yaxis, xaxis, temp;
 
   if (dl_safety(m == NULL || origin == NULL || target == NULL || up == NULL))
@@ -1404,7 +1404,7 @@ dl_api dl_mat4 *dl_init_mat4_look_at(dl_mat4 * dl_restrict m, const dl_vec3 *dl_
 		   -dl_vec3_dot(&xaxis, origin), -dl_vec3_dot(&yaxis, origin), -dl_vec3_dot(&zaxis, origin), 1);
 }
 
-dl_api dl_mat4 *dl_init_mat4_orthographic(dl_mat4 * dl_restrict m, dl_real yop, dl_real y_bottom, dl_real x_left, dl_real x_right, dl_real z_near, dl_real z_far) {
+dl_api dl_mat4 *dl_init_mat4_orthographic(dl_mat4 *m, dl_real yop, dl_real y_bottom, dl_real x_left, dl_real x_right, dl_real z_near, dl_real z_far) {
   dl_real inv_width, inv_height, inv_depth;
 
   if (dl_safety(m == NULL))
@@ -1421,7 +1421,7 @@ dl_api dl_mat4 *dl_init_mat4_orthographic(dl_mat4 * dl_restrict m, dl_real yop, 
 		   -((x_right + x_left) * inv_width), -((yop + y_bottom) * inv_height), -((z_far + z_near) * inv_depth), 1);
 }
 
-dl_api dl_mat4 *dl_init_mat4_perspective(dl_mat4 * dl_restrict m, dl_real vertical_fov, dl_real aspect_ratio, dl_real z_near, dl_real z_far) {
+dl_api dl_mat4 *dl_init_mat4_perspective(dl_mat4 *m, dl_real vertical_fov, dl_real aspect_ratio, dl_real z_near, dl_real z_far) {
   dl_real half_fov, invan_fov, neg_depth, inv_neg_depth;
 
   if (dl_safety(m == NULL))
