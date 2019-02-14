@@ -279,23 +279,26 @@ dl_api dl_any dl_vector_ref(const dl_vector *v, dl_natural index) {
   if (dl_safety(v == NULL))
     return NULL;
 
-  switch(v->slice_count)
-  {
-    case -1:
+  switch(v->slice_count) {
+  case -1:
+    return NULL;
+  case 0:
+    if (index >= v->slice_length)
       return NULL;
-    case 0:
-      if (index >= v->slice_length)
-        return NULL;
-      return &v->data.array[index * v->element_size];
-    default:
+    return &v->data.array[index * v->element_size];
+  case 1:
+    if (index >= v->slice_length)
+      return NULL;
+    return &v->data.slices[0][index * v->element_size];
+  default:
     {
       dl_natural slice_index, slice, slice_length;
-
       slice_length = v->slice_length;
-      slice = index / slice_length;
-      if (dl_unlikely(slice >= v->slice_count))
+      
+      if (dl_safety(index >= slice_length * v->slice_count))
         return NULL;
-
+      
+      slice = index / slice_length;
       slice_index = index - (slice * slice_length);
 
       return &(v->data.slices[slice][slice_index * v->element_size]);
