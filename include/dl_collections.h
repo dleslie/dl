@@ -217,7 +217,7 @@ dl_api dl_inline dl_iterator dl_make_invalid_iterator(const dl_collection *col) 
       break;
     default:
     case DL_STORAGE_TYPE_VECTOR:
-      bad.dl_vector.index = DL_NATURAL_MAX;
+      bad.dl_vector.index = (dl_natural)DL_NATURAL_MAX;
       break;
   }
 
@@ -1019,11 +1019,11 @@ dl_api dl_integer dl_collection_destroy_range(dl_collection *col, dl_iterator *i
             destruct.func(destruct.data, item);
 
         if (total != 0) {
-          do {
+          while (NULL != dl_vector_ref(v, idx)) {
             dl_vector_swap(v, start, idx);
             ++start;
             ++idx;
-          } while (NULL != dl_vector_ref(v, idx));
+          };
         }
 
         col->data.dl_vector.index[1] -= total;

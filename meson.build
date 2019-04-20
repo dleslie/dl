@@ -35,7 +35,7 @@ foreach exe : executables
 			conf_flags = conf[1]
 			executable(exe_name + '-' + std + '-' + conf_name, exe_files,
 				include_directories: inc,
-				c_args: conf_flags + ['-std=' + std],
+				c_args: conf_flags + ['-std=' + std, '-fdiagnostics-color=never'],
 				link_args: conf_flags,
 				dependencies: exe_deps)
 		endforeach
@@ -44,14 +44,14 @@ endforeach
 
 executable('container_speed_linked_list',
 	'src/container_speed.c',
-	c_args: ['-DDL_TEST_LINKED_LIST=1', '-O3', '-pg'],
+	c_args: ['-DDL_TEST_LINKED_LIST=1', '-O3', '-pg', '-fdiagnostics-color=never'],
 	link_args: ['-O3', '-pg'],
 	include_directories : inc,
 	dependencies : [lib_m])
 
 executable('container_speed_vector',
 	'src/container_speed.c',
-	c_args: ['-DDL_TEST_VECTOR=1', '-O3', '-pg'],
+	c_args: ['-DDL_TEST_VECTOR=1', '-O3', '-pg', '-fdiagnostics-color=never'],
 	link_args: ['-O3', '-pg'],
 	include_directories : inc,
 	dependencies : [lib_m])
