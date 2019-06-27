@@ -217,7 +217,12 @@ typedef signed int dl_integer;
 typedef float dl_real;
 typedef unsigned char dl_byte;
 typedef unsigned int dl_natural;
-typedef dl_byte dl_bool;
+
+#ifndef __cplusplus
+typedef enum { false, true } dl_bool;
+#else
+typedef bool dl_bool;
+#endif
 
 #define DL_INTEGER_MAX 2147483647
 #define DL_INTEGER_MIN -2147483648
@@ -227,16 +232,6 @@ typedef dl_byte dl_bool;
 
 #define DL_REAL_MAX 3.402823e+38f
 #define DL_REAL_MIN 1.175494e-38f
-
-#define DL_DEFAULT_SLICE_LENGTH 512
-
-#ifndef true
-# define true 1
-#endif
-
-#ifndef false
-# define false 0
-#endif
 
 #ifndef NULL
 # define NULL 0
@@ -280,12 +275,7 @@ extern "C" {
     dl_any (*func)(dl_any data, const dl_any left, const dl_any right, dl_any out);
     dl_any data;
   } dl_zipper;
-
-  typedef struct {
-    dl_any (*func)(dl_any data, const dl_any left, dl_any out);
-    dl_any data;
-  } dl_converter;
-
+  
 #if defined(__cplusplus)
 }
 #endif
