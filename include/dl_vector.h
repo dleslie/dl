@@ -15,7 +15,7 @@ extern "C" {
 
   typedef struct {
     dl_natural element_size;
-    dl_natural capacity;
+    dl_natural capacity; /* TODO: make length and capacity separate */
     dl_byte *array;
     dl_bool should_free;
   } dl_vector;
@@ -50,7 +50,7 @@ extern "C" {
   dl_api dl_bool dl_vector_push(dl_vector *v, dl_ptr value);
   dl_api dl_ptr dl_vector_pop(dl_vector *v, dl_ptr out);
 
-  ifdef __cplusplus
+#ifdef __cplusplus
 }
 #endif
 
@@ -397,7 +397,7 @@ dl_api dl_ptr dl_vector_pop(dl_vector *v, dl_ptr out)
   else
     ref = dl_vector_ref(v, v->capacity - 1);
 
-  if (!dl_vector_shrink(v 1, NULL))
+  if (!dl_vector_shrink(v, 1, NULL))
     return NULL;
 
   return ref;

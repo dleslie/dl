@@ -103,7 +103,7 @@ dl_api dl_ptr dl_iterator_ref(dl_iterator target)
     default:
       return NULL;
     case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_ref(target.data.node);
+      return dl_linked_list_ref((dl_linked_list *)target.container, target.data.node);
     case DL_CONTAINER_TYPE_VECTOR:
       return dl_vector_ref((dl_vector *)target.container, target.data.index);
   }

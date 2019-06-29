@@ -46,7 +46,7 @@ extern "C"
   dl_api dl_bool dl_linked_list_clear_free_list(dl_linked_list *list);
 
   dl_api dl_ptr dl_linked_list_get(const dl_linked_list *list, dl_linked_list_node *position, dl_ptr out);
-  dl_api dl_ptr dl_linked_list_ref(const dl_linked_list_node *position);
+  dl_api dl_ptr dl_linked_list_ref(const dl_linked_list *list, const dl_linked_list_node *position);
   dl_api dl_ptr dl_linked_list_set(dl_linked_list *list, dl_linked_list_node *position, dl_ptr value);
   dl_api dl_linked_list_node *dl_linked_list_index(const dl_linked_list *list, dl_natural position);
 
@@ -80,7 +80,7 @@ dl_api dl_linked_list_node *_linked_list_node_alloc(dl_linked_list *list, dl_lin
     list->free_list = list->free_list->next;
   }
   else
-    node = DL_ALLOC(list->element_size + DL_LINKED_LIST_HEADER_SIZE);
+    node = (dl_linked_list_node *)DL_ALLOC(list->element_size + DL_LINKED_LIST_HEADER_SIZE);
 
   if (node == NULL)
     return NULL;
@@ -218,7 +218,7 @@ dl_api dl_natural dl_linked_list_copy(dl_linked_list *target, dl_linked_list_nod
     return 0;
 
   for (actual_count = 0;
-       actual_count < count && original_position != NULL && NULL != (data = dl_linked_list_ref(original_position));
+       actual_count < count && original_position != NULL && NULL != (data = dl_linked_list_ref(original, original_position));
        ++actual_count, original_position = original_position->next)
   {
     target_position = dl_linked_list_insert(target, target_position, data);
@@ -333,7 +333,7 @@ dl_api dl_ptr dl_linked_list_get(const dl_linked_list *list, dl_linked_list_node
   return dl_memory_copy(out, DL_LINKED_LIST_DATA(position), list->element_size);
 }
 
-dl_api dl_ptr dl_linked_list_ref(const dl_linked_list_node *position)
+dl_api dl_ptr dl_linked_list_ref(const dl_linked_list *list, const dl_linked_list_node *position)
 {
   if (dl_safety(position == NULL))
     return NULL;
