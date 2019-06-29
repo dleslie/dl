@@ -1,7 +1,7 @@
 #ifndef DL_ITERATOR_H
 #define DL_ITERATOR_H 1
 
-#include "dl.h"
+#include "dl_core.h"
 #include "dl_container.h"
 
 #ifdef __cplusplus

@@ -1,7 +1,7 @@
 #ifndef DL_LINKED_LIST_H
 #define DL_LINKED_LIST_H 1
 
-#include "dl.h"
+#include "dl_core.h"
 
 #ifdef __cplusplus
 extern "C"

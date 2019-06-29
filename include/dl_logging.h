@@ -1,11 +1,8 @@
+#include "dl_core.h"
+#if DL_IS_ATLEAST_C99
+
 #ifndef DL_LOGGING_H
 #define DL_LOGGING_H 1
-
-#include "dl.h"
-
-#if !DL_IS_ATLEAST_C99
-#  error "DL_LOGGING is not available for C90 or lower."
-#endif
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -108,4 +105,5 @@ dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, 
 
 #endif /* DL_IMPLEMENTATION */
 
+#endif
 #endif

@@ -1,12 +1,9 @@
+#include "dl_core.h"
+#if DL_IS_ATLEAST_C99
 #ifndef DL_TEST_H
 #define DL_TEST_H
 
-#include "dl.h"
 #include "dl_logging.h"
-
-#if !DL_IS_ATLEAST_C99
-#  error "DL_TEST is not available for C90 or lower."
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,4 +74,5 @@ dl_integer dl_test_count(dl_bool (**tests)(), dl_integer max)
 
 #endif /* DL_IMPLEMENTATION */
 
+#endif
 #endif

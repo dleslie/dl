@@ -1,7 +1,7 @@
 #ifndef DL_VECTOR_H
 #define DL_VECTOR_H 1
 
-#include "dl.h"
+#include "dl_core.h"
 
 
 

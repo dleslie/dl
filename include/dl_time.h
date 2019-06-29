@@ -1,7 +1,7 @@
 #ifndef DL_TIME_H
 #define DL_TIME_H 1
 
-#include "dl.h"
+#include "dl_core.h"
 
 #ifdef __cplusplus
 extern "C" {

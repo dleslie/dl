@@ -10,7 +10,7 @@
 #ifndef DL_CONTAINER_H
 #define DL_CONTAINER_H 1
 
-#include "dl.h"
+#include "dl_core.h"
 #include "dl_vector.h"
 #include "dl_linked_list.h"
 #include "dl_iterator.h"

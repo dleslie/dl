@@ -1,7 +1,7 @@
 #ifndef DL_TWEEN_H
 #define DL_TWEEN_H 1
 
-#include "dl.h"
+#include "dl_core.h"
 
 #ifdef __cplusplus
 extern "C" {

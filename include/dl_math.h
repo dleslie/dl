@@ -15,7 +15,7 @@
 
 
 
-#include "dl.h"
+#include "dl_core.h"
 #include <math.h>
 
 #if defined(__cplusplus)
