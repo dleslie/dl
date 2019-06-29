@@ -16,13 +16,14 @@
 extern "C" {
 #endif
   
-  typedef enum {
+  enum dl_log_channel
+  {
     DL_LOG_INFO = 1,
     DL_LOG_WARNING = 2,
     DL_LOG_ERROR = 3,
     DL_LOG_TEST = 4,
     DL_LOG_MESSAGE = 5
-  } dl_log_channel;
+  };
 
   extern dl_natural (*dl_active_log_handler)(dl_log_channel, const char *, dl_natural, const char *, const char *);
 
@@ -55,7 +56,8 @@ extern "C" {
 
 #if DL_IMPLEMENTATION
 
-dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *msg) {
+dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *msg)
+{
   char time_buf[20];
 
 #if defined(DL_TIME_H)
@@ -64,30 +66,32 @@ dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural 
   time_buf[0] = (char)0;
 #endif
 
-  switch (ch) {
-  case DL_LOG_INFO:
-    fprintf(stdout, "%s:%lu:%s\n[LOG %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
-    return ch;
-  case DL_LOG_WARNING:
-    fprintf(stdout, "%s:%lu:%s\n[WRN %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
-    return ch;
-  case DL_LOG_ERROR:
-    fprintf(stderr, "%s:%lu:%s\n[ERR %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
-    return ch;
-  case DL_LOG_TEST:
-    fprintf(stdout, "[TST %s] %s\n", time_buf, msg);
-    return ch;
-  case DL_LOG_MESSAGE:
-    fprintf(stdout, "[MSG %s] %s\n", time_buf, msg);
-    return ch;
-  default:
-    return 0;
+  switch (ch)
+  {
+    case DL_LOG_INFO:
+      fprintf(stdout, "%s:%lu:%s\n[LOG %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
+      return ch;
+    case DL_LOG_WARNING:
+      fprintf(stdout, "%s:%lu:%s\n[WRN %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
+      return ch;
+    case DL_LOG_ERROR:
+      fprintf(stderr, "%s:%lu:%s\n[ERR %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
+      return ch;
+    case DL_LOG_TEST:
+      fprintf(stdout, "[TST %s] %s\n", time_buf, msg);
+      return ch;
+    case DL_LOG_MESSAGE:
+      fprintf(stdout, "[MSG %s] %s\n", time_buf, msg);
+      return ch;
+    default:
+      return 0;
   }
 }
 
 dl_natural (*dl_active_log_handler)(dl_log_channel ch, const char *, dl_natural, const char *, const char *) = _default_log_handler;
 
-dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *fmt, ...) {
+dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *fmt, ...)
+{
   char buf[256];
   va_list args1, args2;
   va_start(args1, fmt);

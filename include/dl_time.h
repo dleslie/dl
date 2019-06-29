@@ -27,7 +27,8 @@ extern "C" {
 
 #if DL_IMPLEMENTATION
 
-dl_api dl_natural dl_write_time(const char *fmt, char *buf, dl_natural buf_length) {
+dl_api dl_natural dl_write_time(const char *fmt, char *buf, dl_natural buf_length)
+{
 # if DL_IS_MSC
   struct tm ltime;
   time_t t = time(NULL);
@@ -41,7 +42,8 @@ dl_api dl_natural dl_write_time(const char *fmt, char *buf, dl_natural buf_lengt
 # endif
 }
 
-dl_api void dl_time(dl_natural *out_usec, dl_natural *out_sec) {
+dl_api void dl_time(dl_natural *out_usec, dl_natural *out_sec)
+{
 # if DL_IS_WINDOWS
   static const uint64_t epoch = ((uint64_t)116444736000000000ULL);
   
