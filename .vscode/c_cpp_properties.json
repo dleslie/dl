@@ -13,11 +13,13 @@
                 "/usr/include/",
                 "/usr/local/include"
             ],
-            "defines": ["DL_IMPLEMENTATION=1"],
-            "compilerPath": "/usr/bin/clang",
-            "cStandard": "c11",
+            "defines": [
+                "DL_IMPLEMENTATION=1"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c89",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64",
+            "intelliSenseMode": "gcc-x64",
             "compileCommands": "${workspaceFolder}/build/compile_commands.json"
         }
     ],

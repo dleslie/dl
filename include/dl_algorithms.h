@@ -1,413 +1,317 @@
+/*
+ * Where left and right iterators are requested, it will span from left to right, excluding right;
+ * to span a whole container start from the first and provide an invalid iterator as the right.
+ * 
+ * When the function is stated to be "reverse" then the left/right rules are also reversed, and
+ * so it will span from right to left, excluding left or until the iterator is invalid.
+ */
+
 #ifndef DL_ALGORITHMS_H
 #define DL_ALGORITHMS_H 1
 
 #include "dl.h"
-#include "dl_containers.h"
-
-
+#include "dl_iterator.h"
+#include "dl_container.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-  dl_api dl_integer dl_count(dl_iterator left, dl_iterator right);
-  
-  dl_api dl_iterator dl_find(dl_iterator start, dl_filter predicate);
-  dl_api dl_iterator dl_find_last(dl_iterator start, dl_filter predicate);
-  dl_api dl_iterator dl_find_region(dl_iterator left, dl_iterator right, dl_filter predicate);
-  dl_api dl_integer dl_find_all(dl_iterator start, dl_filter predicate, dl_container *out);
+	dl_api dl_integer dl_count(dl_iterator left, dl_iterator right);
 
-  dl_api dl_any dl_foldl(dl_any initial, dl_folder func);
-  dl_api dl_any dl_foldr(dl_any initial, dl_folder func);
+	dl_api dl_iterator dl_find(dl_iterator left, dl_iterator right, dl_filter predicate);
+	dl_api dl_iterator dl_find_reverse(dl_iterator left, dl_iterator right, dl_filter predicate);
+	dl_api dl_integer dl_find_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_iterator out);
 
-  dl_api dl_bool dl_all(dl_filter func);
-  dl_api dl_bool dl_any(dl_filter func);
-  
-  dl_api dl_bool dl_contains(const dl_container *con, const dl_any item);
-  dl_api dl_bool dl_is_empty(const dl_container *con);
+	dl_api dl_ptr dl_foldl(dl_iterator left, dl_iterator right, dl_ptr initial, dl_folder func);
+	dl_api dl_ptr dl_foldr(dl_iterator left, dl_iterator right, dl_ptr initial, dl_folder func);
 
-  dl_api dl_integer dl_map(dl_iterator start, dl_handler func, dl_container *out);
-  dl_api dl_integer dl_zip(dl_iterator start1, dl_iterator start2, dl_zipper *zip, dl_container *out);
+	dl_api dl_bool dl_all(dl_iterator left, dl_iterator right, dl_filter func);
+	dl_api dl_bool dl_any(dl_iterator left, dl_iterator right, dl_filter func);
 
-  dl_api dl_bool dl_quick_sort(dl_container *col, dl_comparator *compare);
-  dl_api dl_bool dl_quick_sort_region(dl_iterator left, dl_iterator right, dl_comparator *compare);
-  dl_api dl_bool dl_sort(dl_container *col);
-  
-  dl_api dl_integer dl_take(dl_iterator start, dl_natural count, dl_container *out);
-  dl_api dl_integer dl_drop(dl_iterator start, dl_natural count);
+	dl_api dl_integer dl_map(dl_iterator left, dl_iterator right, dl_handler func, dl_iterator out);
+	dl_api dl_integer dl_zip(dl_iterator left1, dl_iterator right1, dl_iterator left2, dl_iterator right2, dl_zipper zip, dl_iterator out);
 
-  dl_api dl_any dl_remove_first(dl_iterator start, dl_filter predicate, dl_any out);
-  dl_api dl_any dl_remove_last(dl_iterator start, dl_filter predicate, dl_any out);
-  
-  dl_api dl_integer dl_remove_all(dl_iterator start, dl_filter predicate, dl_container *out);
-  dl_api dl_integer dl_remove_count(dl_iterator start, dl_natural count, dl_container *out);
- 
+	dl_api dl_integer dl_take(dl_iterator left, dl_iterator right, dl_natural count, dl_iterator out);
+	dl_api dl_integer dl_drop(dl_iterator left, dl_iterator right, dl_natural count);
+
+	dl_api dl_ptr dl_remove(dl_iterator left, dl_iterator right, dl_filter predicate, dl_ptr out);
+	dl_api dl_ptr dl_remove_reverse(dl_iterator left, dl_iterator right, dl_filter predicate, dl_ptr out);
+
+	dl_api dl_integer dl_remove_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_iterator out);
+	dl_api dl_integer dl_remove_count(dl_iterator left, dl_iterator right, dl_natural count, dl_iterator out);
+
+	dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator compare);
+
 #ifdef __cplusplus
 }
 #endif
-
-
 
 #if DL_IMPLEMENTATION
 
-const dl_any _binary_search(const dl_collection *col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter);
+#define ITER_UNSAFE(left, right) (!dl_iterator_is_valid(left) || (dl_iterator_is_valid(right) && dl_iterator_container(left) != dl_iterator_container(right)))
 
-const dl_any _linear_search(const dl_collection *col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter);
+dl_api dl_integer dl_count(dl_iterator left, dl_iterator right)
+{
+	dl_integer count;
 
-dl_any dl_search_region(const dl_collection *col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter) {
-  if (dl_safety(col == NULL || predicate == NULL || iter == NULL))
-    return NULL;
+	if (dl_safety(ITER_UNSAFE(left, right)))
+		return 0;
 
-  switch (col->container.type)
-  {
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return _linear_search(col, predicate, left, right, iter);
-    case DL_CONTAINER_TYPE_VECTOR:
-      if (dl_is_sorted(col))
-        return _binary_search(col, predicate, left, right, iter);
-      return _linear_search(col, predicate, left, right, iter);
-    default:
-      return NULL;
-  }
+	while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right))
+	{
+		++count;
+		left = dl_iterator_next(left);
+	}
+
+	return count;
 }
 
-const dl_any _linear_search(const dl_collection *col, dl_filter *predicate, dl_iterator left, dl_iterator right, dl_iterator *iter) {
-  dl_any ref;
-  dl_integer outcome;
-  
-  ref = dl_iterator_ref(left);
-  *iter = left;
-  while (!dl_iterator_equal(*iter, right) && ref != NULL) {
-    outcome = predicate->func(predicate->data, ref);
-    if (outcome == 0)
-      return ref;
-    ref = dl_next_ref(col, iter);
-  }
-
-  return NULL;
+dl_api dl_iterator _dl_find_region_linear(dl_iterator left, dl_iterator right, dl_filter predicate)
+{
+	while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right) && !predicate.func(predicate.data, dl_iterator_ref(left)))
+		left = dl_iterator_next(left);
+	return left;
 }
 
-dl_any dl_search(const dl_collection *col, dl_filter *predicate, dl_iterator *iter) {
-  return dl_search_region(col, predicate, dl_begin(col), dl_end(col), iter);
+dl_api dl_iterator _dl_find_reverse_region_linear(dl_iterator left, dl_iterator right, dl_filter predicate)
+{
+	while (dl_iterator_is_valid(right) && !dl_iterator_equal(left, right) && !predicate.func(predicate.data, dl_iterator_ref(right)))
+		right = dl_iterator_prev(right);
+	return right;
 }
 
+dl_api dl_iterator _dl_find_region_binary(dl_iterator left, dl_iterator right, dl_filter predicate)
+{
+	dl_natural mid_index;
+	dl_iterator mid_iter;
+	dl_integer match;
 
-dl_api dl_bool dl_all(const dl_collection *col, dl_filter *f) {
-  dl_iterator index;
-  dl_any item;
-  
-  if (dl_safety(col == NULL || f == NULL))
-    return false;
+	mid_index = (dl_iterator_index(right) - dl_iterator_index(left)) >> 1;
+	mid_iter = dl_container_index(dl_iterator_container(left), mid_index);
 
-  index = dl_begin(col);
-  for (item = dl_iterator_ref(index); item != NULL; item = dl_next_ref(col, &index))
-    if (!f->func(f->data, item))
-      return false;
-
-  return true;
+	match = predicate.func(predicate.data, dl_iterator_ref(mid_iter));
+	if (match == 0)
+		return mid_iter;
+	else if (dl_iterator_equal(left, right))
+		return dl_make_invalid_iterator();
+	else if (match < 0)
+		return _dl_find_region_binary(left, dl_iterator_prev(mid_iter), predicate);
+	else
+		return _dl_find_region_binary(dl_iterator_next(mid_iter), right, predicate);
 }
 
-dl_api dl_bool dl_any(const dl_collection *col, dl_filter *f) {
-  dl_iterator index;
-  dl_any item;
-  
-  if (dl_safety(col == NULL || f == NULL))
-    return false;
+dl_api dl_iterator dl_find(dl_iterator left, dl_iterator right, dl_filter predicate)
+{
+	dl_natural traits;
 
-  index = dl_begin(col);
-  for (item = dl_iterator_ref(index);
-       item != NULL;
-       item = dl_next_ref(col, &index))
-    if (f->func(f->data, item))
-      return true;
+	if (dl_safety(ITER_UNSAFE(left, right) || predicate.func == NULL))
+		return dl_make_invalid_iterator();
 
-  return false;
+	if (!dl_iterator_is_valid(right))
+		right = dl_container_last(dl_iterator_container(left));
+
+	traits = dl_container_traits(left.container);
+	if (traits & DL_CONTAINER_TRAIT_RANDOM_ACCESS)
+	{
+		dl_iterator found, prev;
+		found = _dl_find_region_binary(left, right, predicate);
+
+		if (!(traits & DL_CONTAINER_TRAIT_SET))
+			for (prev = dl_iterator_prev(found); dl_iterator_is_valid(prev) && predicate.func(predicate.data, dl_iterator_ref(prev)) == 0; prev = dl_iterator_prev(prev))
+			{
+				found = prev;
+				if (dl_iterator_equal(found, left))
+					break;
+			}
+
+		return found;
+	}
+	else
+		return _dl_find_region_linear(left, right, predicate);
 }
 
-dl_api dl_integer dl_drop(dl_collection *col, dl_natural count) {
-  dl_natural removed = 0;
+dl_api dl_iterator dl_find_reverse(dl_iterator left, dl_iterator right, dl_filter predicate)
+{
+	dl_natural traits;
 
-  if (dl_safety(col == NULL))
-    return 0;
+	if (dl_safety(ITER_UNSAFE(right, left) || predicate.func == NULL))
+		return dl_make_invalid_iterator();
 
-  for (; count > 0; --count, ++removed)
-    if (!dl_pop_destroy(col))
-      return removed;
+	if (!dl_iterator_is_valid(left))
+		left = dl_container_first(dl_iterator_container(right));
 
-  return removed;
+	traits = dl_container_traits(left.container);
+	if (traits & (DL_CONTAINER_TRAIT_RANDOM_ACCESS | DL_CONTAINER_TRAIT_SORTED))
+	{
+		dl_iterator found, next;
+		found = _dl_find_region_binary(left, right, predicate);
+
+		if (!(traits & DL_CONTAINER_TRAIT_SET))
+			for (next = dl_iterator_next(found); dl_iterator_is_valid(next) && predicate.func(predicate.data, dl_iterator_ref(next)) == 0; next = dl_iterator_next(next))
+			{
+				found = next;
+				if (dl_iterator_equal(found, right))
+					break;
+			}
+
+		return found;
+	}
+	else
+		return _dl_find_reverse_region_linear(left, right, predicate);
 }
 
-dl_api dl_integer dl_map(const dl_collection *col, dl_handler *func, dl_collection *out) {
-  dl_iterator iter;
-  dl_integer count;
-  dl_any new_ref;
-  dl_any ref;
-  
-  if (dl_safety(col == NULL || func == NULL || out == NULL))
-    return 0;
+dl_api dl_integer dl_find_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_iterator out)
+{
+	dl_ptr ref;
+	dl_iterator found;
+	dl_integer count;
+	dl_bool is_set;
+	dl_natural traits;
 
-  if (dl_is_set(out) || dl_is_sorted(out))
-    return 0;
-   
-  count = 0;
-  for (ref = dl_begin_ref(col, &iter); ref != NULL; ref = dl_next_ref(col, &iter)) {
-    new_ref = dl_push(out, NULL);
-    if (new_ref == NULL)
-      return count;
+	if (dl_safety(ITER_UNSAFE(left, right) || predicate.func == NULL || (dl_iterator_is_valid(out) && dl_container_element_size(dl_iterator_container(out)) != dl_container_element_size(dl_iterator_container(leter)))))
+		return -1;
 
-    func->func(func->data, new_ref);
-
-    ++count;
-  }
-
-  return count;
+	traits = dl_container_traits(left.container);
+	is_set = 0 != (traits & DL_CONTAINER_TRAIT_SET);
+	count = 0;
+	if (dl_iterator_is_valid(out))
+	{
+		found = dl_find(left, right, predicate);
+		if (!dl_iterator_is_valid(found))
+			return 0;
+		while (dl_iterator_is_valid(found) && !dl_iterator_equal(found, right))
+		{
+			ref = dl_iterator_ref(found);
+			if (!predicate.func(predicate.data, ref))
+				break;
+			++count;
+			out = dl_iterator_insert(out, ref);
+			found = dl_iterator_next(found);
+		}
+		return count;
+	}
+	else
+	{
+		found = dl_find(left, right, predicate);
+		if (!dl_iterator_is_valid(found))
+			return 0;
+		while (dl_iterator_is_valid(found) && !dl_iterator_equal(found, right))
+		{
+			ref = dl_iterator_ref(found);
+			if (!predicate.func(predicate.data, ref))
+				break;
+			++count;
+			found = dl_iterator_next(found);
+		}
+		return count;
+	}
 }
 
-dl_api dl_any dl_foldl(const dl_collection *col, dl_any initial, dl_folder *func) {
-  dl_iterator index;
-  dl_any item;
-  
-  if (dl_safety(col == NULL || func == NULL))
-    return NULL;
+dl_api dl_ptr dl_foldl(dl_iterator left, dl_iterator right, dl_ptr initial, dl_folder folder)
+{
+	if (dl_safety(ITER_UNSAFE(left, right) || initial == NULL || folder.func == NULL))
+		return NULL;
 
-  index = dl_begin(col);
-  for (item = dl_iterator_ref(index); item != NULL; item = dl_next_ref(col, &index))
-    func->func(func->data, initial, item);
+	while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right))
+	{
+		folder.func(folder.data, initial, dl_iterator_ref(left));
+		left = dl_iterator_next(left);
+	}
 
-  return initial;
+	return initial;
 }
 
-dl_api dl_any dl_foldr(const dl_collection *col, dl_any initial, dl_folder *func) {
-  dl_iterator index;
-  dl_any item;
-  
-  if (dl_safety(col == NULL || func == NULL))
-    return NULL;
+dl_api dl_ptr dl_foldr(dl_iterator left, dl_iterator right, dl_ptr initial, dl_folder folder)
+{
+	if (dl_safety(ITER_UNSAFE(left, right) || initial == NULL || folder.func == NULL))
+		return NULL;
 
-  for (item = dl_end_ref(col, &index);
-       item != NULL && dl_iterator_is_valid(index);
-       item = dl_prev_ref(col, &index))
-    func->func(func->data, initial, item);
+	while (dl_iterator_is_valid(right) && !dl_iterator_equal(left, right))
+	{
+		folder.func(folder.data, initial, dl_iterator_ref(right));
+		right = dl_iterator_prev(right);
+	}
 
-  return initial;
+	return initial;
 }
 
-dl_api dl_integer dl_zip(const dl_collection *col1, const dl_collection *col2, dl_zipper *zip, dl_collection *out) {
-  dl_iterator iter1, iter2;
-  dl_integer added;
-  dl_any ref1, ref2, new_ref;
-  
-  if (dl_safety(col1 == NULL || col2 == NULL || zip == NULL || out == NULL))
-    return 0;
+dl_api dl_bool dl_all(dl_iterator left, dl_iterator right, dl_filter filter)
+{
+	if (dl_safety(ITER_UNSAFE(left, right) || filter.func == NULL))
+		return false;
 
-  if (dl_is_set(out) || dl_is_sorted(out))
-    return 0;
+	while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right))
+	{
+		if (!filter.func(filter.data, dl_iterator_ref(left)))
+			return false;
+		left = dl_iterator_next(left);
+	}
 
-  iter1 = dl_make_invalid_iterator(col1);
-  iter2 = dl_make_invalid_iterator(col2);
-
-  added = 0;
-  for (ref1 = dl_begin_ref(col1, &iter1), ref2 = dl_begin_ref(col2, &iter2);
-       ref1 != NULL && ref2 != NULL;
-       ref1 = dl_next_ref(col1, &iter1), ref2 = dl_next_ref(col2, &iter2)) {
-
-    new_ref = dl_push(out, NULL);
-    if (new_ref == NULL)
-      return added;
-    
-    zip->func(zip->data, ref1, ref2, new_ref);
-    
-    ++added;
-  }
-
-  return added;
+	return true;
 }
 
-dl_api dl_integer dl_take(dl_collection *col, dl_natural count, dl_collection *out) {
-  dl_any ref;
-  dl_natural added;
-  if (dl_safety(col == NULL || out == NULL))
-    return 0;
+dl_api dl_bool dl_any(dl_iterator left, dl_iterator right, dl_filter filter)
+{
+	if (dl_safety(ITER_UNSAFE(left, right) || filter.func == NULL))
+		return false;
 
-  added = 0;
-  while ((ref = dl_peek(col)) && count > added) {
-    if (!(ref = dl_push(out, ref)))
-      break;
-    dl_pop_forget(col);
-    ++added;
-  }
+	while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right))
+	{
+		if (filter.func(filter.data, dl_iterator_ref(left)))
+			return true;
+		left = dl_iterator_next(left);
+	}
 
-  return added;
+	return false;
 }
 
-dl_api dl_any dl_find(const dl_collection *col, dl_filter *f, dl_iterator *index) {
-  dl_any item;
-  
-  if (dl_safety(col == NULL || f == NULL || index == NULL))
-    return NULL;
+dl_api dl_integer dl_map(dl_iterator left, dl_iterator right, dl_handler handler, dl_iterator out)
+{
+	dl_integer count;
 
-  for (item = dl_iterator_ref(*index); item != NULL; item = dl_next_ref(col, index))
-    if (f->func(f->data, item))
-      return item;
+	if (dl_safety(ITER_UNSAFE(left, right) || handler.func == NULL))
+		return -1;
 
-  return NULL;
+	count = 0;
+	if (dl_iterator_is_valid(out))
+	{
+		while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right))
+		{
+			if (!dl_iterator_is_valid(dl_iterator_insert(out, handler.func(handler.data, dl_iterator_ref(right)))))
+				break;
+			++count;
+			left = dl_iterator_next(left);
+		}
+		return count;
+	}
+	else
+	{
+		while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right))
+		{
+			if (NULL == handler.func(handler.data, dl_iterator_ref(right)))
+				break;
+			++count;
+			left = dl_iterator_next(left);
+		}
+		return count;
+	}
+
+	return count;
 }
 
-dl_api dl_any dl_find_last(const dl_collection *col, dl_filter *f, dl_iterator *index) {
-  dl_any item;
-  
-  if (dl_safety(col == NULL || f == NULL || index == NULL))
-    return NULL;
+dl_api dl_integer dl_zip(dl_iterator left1, dl_iterator right1, dl_iterator left2, dl_iterator right2, dl_zipper zip, dl_iterator out);
 
-  while ((item = dl_prev_ref(col, index)))
-    if (f->func(f->data, item))
-      return item;
+dl_api dl_integer dl_take(dl_iterator left, dl_iterator right, dl_natural count, dl_iterator out);
+dl_api dl_integer dl_drop(dl_iterator left, dl_iterator right, dl_natural count);
 
-  return NULL;
-}
+dl_api dl_ptr dl_remove(dl_iterator left, dl_iterator right, dl_filter predicate, dl_ptr out);
+dl_api dl_ptr dl_remove_reverse(dl_iterator left, dl_iterator right, dl_filter predicate, dl_ptr out);
 
-dl_api dl_integer dl_find_all(const dl_collection *col, dl_filter *f, dl_collection *out) {
-  dl_natural start_count;
-  dl_iterator index;
-  dl_any item;
-  
-  if (dl_safety(col == NULL || f == NULL || out == NULL))
-    return 0;
+dl_api dl_integer dl_remove_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_iterator out);
+dl_api dl_integer dl_remove_count(dl_iterator left, dl_iterator right, dl_natural count, dl_iterator out);
 
-  start_count = dl_count(out);
-
-  index = dl_begin(col);
-  for (item = dl_iterator_ref(index); item != NULL; item = dl_next_ref(col, &index)) {
-    if (f->func(f->data, item) && !dl_push(out, item))
-      break;
-  }
-
-  return dl_count(out) - start_count;
-}
-
-dl_api dl_any dl_remove_first(dl_collection *col, dl_filter *f, dl_iterator *iter, dl_any out) {
-  if (dl_safety(col == NULL || iter == NULL))
-    return NULL;
-
-  if (!dl_find(col, f, iter))
-    return NULL;
-
-  return dl_remove_at(col, iter, out);
-}
-
-dl_api dl_any dl_remove_last(dl_collection *col, dl_filter *f, dl_iterator *iter, dl_any out) {
-  if (dl_safety(col == NULL || iter == NULL))
-    return NULL;
-
-  if (!dl_find_last(col, f, iter))
-    return NULL;
-
-  return dl_remove_at(col, iter, out);
-}
-
-dl_api dl_bool dl_destroy_first(dl_collection *col, dl_filter *f, dl_iterator *index) {
-  if (dl_safety(col == NULL || index == NULL))
-    return false;
-
-  if (!dl_find(col, f, index))
-    return false;
-
-  return dl_destroy(col, index);
-}
-
-dl_api dl_bool dl_destroy_last(dl_collection *col, dl_filter *f, dl_iterator *index) {
-  if (dl_safety(col == NULL || index == NULL))
-    return false;
-
-  if (!dl_find_last(col, f, index))
-    return false;
-
-  return dl_destroy(col, index);
-}
-
-dl_iterator _dl_quick_sort_partition(dl_collection *col, dl_comparator *compare, dl_iterator left, dl_iterator right) {
-  dl_iterator i, j, high;
-  dl_any pivot_ref, ref_j;
-  
-  high = right;
-  pivot_ref = dl_prev_ref(col, &high);
-
-  ref_j = dl_iterator_ref(left);
-  for (i = j = left; !dl_iterator_equal(high, j); ref_j = dl_next_ref(col, &j)) {
-    if (compare->func(compare->data, ref_j, pivot_ref)) {
-      dl_swap(col, i, j);
-      dl_next_ref(col, &i);
-    }
-  }
-
-  dl_swap(col, i, high);
-  return i;
-}
-
-void _dl_quick_sort_region(dl_collection *col, dl_comparator *compare, dl_iterator left, dl_iterator right) {
-  dl_iterator pivot;
-
-  if (dl_iterator_equal(left, right))
-    return;
-
-  pivot = _dl_quick_sort_partition(col, compare, left, right);
-  
-  if (!dl_iterator_equal(left, pivot))
-    _dl_quick_sort_region(col, compare, left, pivot);
-  
-  if (dl_next_ref(col, &pivot) && !dl_iterator_equal(pivot, right))
-    _dl_quick_sort_region(col, compare, pivot, right);
-} 
-
-dl_api dl_bool dl_quick_sort_region(dl_collection *col, dl_comparator *compare, dl_iterator left, dl_iterator right) {
-  if (dl_safety(col == NULL || compare == NULL || compare->func == NULL))
-    return false;
-  if (!dl_iterator_is_valid(left))
-    return false;
-  if (dl_iterator_equal(left, right))
-    return true;
-
-  _dl_quick_sort_region(col, compare, left, right);
-  
-  return true;
-}
-
-dl_api dl_bool dl_quick_sort(dl_collection *col, dl_comparator *compare) {
-  if (dl_safety(col == NULL || compare == NULL || compare->func == NULL))
-    return false;
-  _dl_quick_sort_region(col, compare, dl_begin(col), dl_end(col));
-  return true;
-}
-
-dl_api dl_integer dl_destroy_all(dl_collection *col, dl_filter *f) {
-  dl_natural count;
-  dl_any item;
-  dl_iterator iter;
-  
-  if (dl_safety(col == NULL || f == NULL))
-    return 0;
-
-  if (dl_is_empty(col))
-    return 0;
-
-  count = 0;
-  iter = dl_begin(col);
-
-  while ((item = dl_iterator_ref(iter))) {
-    if (f->func(f->data, item)) {
-      dl_destroy(col, &iter);
-      count++;
-    }
-    else
-      dl_next_ref(col, &iter);
-  }
-
-  return count;
-}
-
-dl_api dl_bool dl_contains(const dl_collection *col, dl_any item) {
-  dl_iterator iter = dl_index_of(col, item);
-  return dl_iterator_is_valid(iter);
-}
+dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator compare);
 
 #endif /* DL_IMPLEMENTATION */
 

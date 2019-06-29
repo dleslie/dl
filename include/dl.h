@@ -212,7 +212,7 @@
 
 
 
-typedef void* dl_any;
+typedef void* dl_ptr;
 typedef signed int dl_integer;
 typedef float dl_real;
 typedef unsigned char dl_byte;
@@ -247,33 +247,33 @@ extern "C" {
    **  Memory Tools
    ****************************************************************************/
 
-  dl_api dl_any dl_memory_swap(dl_any target, dl_any source, dl_natural dl_bytes);
-  dl_api dl_any dl_memory_copy(dl_any target, dl_any source, dl_natural dl_bytes);
-  dl_api dl_any dl_memory_set(dl_any target, dl_byte val, dl_natural dl_bytes);
+  dl_api dl_ptr dl_memory_swap(dl_ptr target, dl_ptr source, dl_natural dl_bytes);
+  dl_api dl_ptr dl_memory_copy(dl_ptr target, dl_ptr source, dl_natural dl_bytes);
+  dl_api dl_ptr dl_memory_set(dl_ptr target, dl_byte val, dl_natural dl_bytes);
 
   typedef struct {
-    dl_integer (*func)(dl_any data, const dl_any value);
-    dl_any data;
+    dl_integer (*func)(dl_ptr data, const dl_ptr value);
+    dl_ptr data;
   } dl_filter;
 
   typedef struct {
-    dl_any (*func)(dl_any data, dl_any value);
-    dl_any data;
+    dl_ptr (*func)(dl_ptr data, dl_ptr value);
+    dl_ptr data;
   } dl_handler;
 
   typedef struct {
-    dl_any (*func)(dl_any data, dl_any item, const dl_any left);
-    dl_any data;
+    dl_ptr (*func)(dl_ptr data, dl_ptr item, const dl_ptr left);
+    dl_ptr data;
   } dl_folder;
 
   typedef struct {
-    dl_integer (*func)(dl_any data, const dl_any left, const dl_any right);
-    dl_any data;
+    dl_integer (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
+    dl_ptr data;
   } dl_comparator;
 
   typedef struct {
-    dl_any (*func)(dl_any data, const dl_any left, const dl_any right, dl_any out);
-    dl_any data;
+    dl_ptr (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right, dl_ptr out);
+    dl_ptr data;
   } dl_zipper;
   
 #if defined(__cplusplus)
@@ -292,7 +292,7 @@ extern "C" {
  **  Memory Tools
  ****************************************************************************/
 
-dl_api dl_any dl_memory_swap(dl_any left, dl_any right, dl_natural dl_bytes) {
+dl_api dl_ptr dl_memory_swap(dl_ptr left, dl_ptr right, dl_natural dl_bytes) {
   size_t sz_count, byte_count, *sz_left, *sz_right, sz_temp;
 
   sz_count = dl_bytes / sizeof(size_t);
@@ -327,7 +327,7 @@ dl_api dl_any dl_memory_swap(dl_any left, dl_any right, dl_natural dl_bytes) {
   return left;
 }
 
-dl_api dl_any dl_memory_copy(dl_any left, dl_any right, dl_natural dl_bytes) {
+dl_api dl_ptr dl_memory_copy(dl_ptr left, dl_ptr right, dl_natural dl_bytes) {
   size_t sz_count, byte_count, *sz_left, *sz_right;
   
   sz_count = dl_bytes / sizeof(size_t);
@@ -358,7 +358,7 @@ dl_api dl_any dl_memory_copy(dl_any left, dl_any right, dl_natural dl_bytes) {
   return left;
 }
 
-dl_any dl_memory_set(dl_any left, dl_byte val, dl_natural dl_bytes) {
+dl_ptr dl_memory_set(dl_ptr left, dl_byte val, dl_natural dl_bytes) {
   size_t *sz_left, sz_count, byte_count, sz_val, shift;
   
   sz_left = (size_t *)left;

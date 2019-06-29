@@ -9,5 +9,4 @@
 #include "dl_vector.h"
 #include "dl_linked_list.h"
 #include "dl_container.h"
-#include "dl_collections.h"
 #include "dl_algorithms.h"

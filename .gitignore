@@ -57,9 +57,9 @@ dkms.conf
 build/
 dist/
 
-
-
 ls
 GPATH
 GRTAGS
 GTAGS
+
+.vscode/ipch/
