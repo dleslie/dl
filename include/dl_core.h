@@ -9,6 +9,10 @@
 # define DL_USE_EXTENSIONS 1
 #endif
 
+#ifndef DL_USE_LOGGING
+# define DL_USE_LOGGING 1
+#endif
+
 #ifndef DL_USE_SAFETY_CHECKS
 # define DL_USE_SAFETY_CHECKS 0
 #endif
@@ -251,31 +255,7 @@ extern "C" {
   dl_api dl_ptr dl_memory_copy(dl_ptr target, dl_ptr source, dl_natural dl_bytes);
   dl_api dl_ptr dl_memory_set(dl_ptr target, dl_byte val, dl_natural dl_bytes);
 
-  typedef struct {
-    dl_integer (*func)(dl_ptr data, const dl_ptr value);
-    dl_ptr data;
-  } dl_filter;
 
-  typedef struct {
-    dl_ptr (*func)(dl_ptr data, dl_ptr value);
-    dl_ptr data;
-  } dl_handler;
-
-  typedef struct {
-    dl_ptr (*func)(dl_ptr data, dl_ptr item, const dl_ptr left);
-    dl_ptr data;
-  } dl_folder;
-
-  typedef struct {
-    dl_integer (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
-    dl_ptr data;
-  } dl_comparator;
-
-  typedef struct {
-    dl_ptr (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right, dl_ptr out);
-    dl_ptr data;
-  } dl_zipper;
-  
 #if defined(__cplusplus)
 }
 #endif

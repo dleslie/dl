@@ -79,8 +79,10 @@ dl_api dl_linked_list_node *_linked_list_node_alloc(dl_linked_list *list, dl_lin
     node = list->free_list;
     list->free_list = list->free_list->next;
   }
-  else
+  else if (DL_ALLOC != NULL)
     node = (dl_linked_list_node *)DL_ALLOC(list->element_size + DL_LINKED_LIST_HEADER_SIZE);
+  else
+    return NULL;
 
   if (node == NULL)
     return NULL;

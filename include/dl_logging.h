@@ -1,5 +1,5 @@
 #include "dl_core.h"
-#if DL_IS_ATLEAST_C99
+#if DL_IS_ATLEAST_C99 && defined(DL_USE_LOGGING) && DL_USE_LOGGING
 
 #ifndef DL_LOGGING_H
 #define DL_LOGGING_H 1
