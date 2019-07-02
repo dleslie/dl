@@ -24,11 +24,6 @@ extern "C"
   } dl_filter;
 
   typedef struct {
-    dl_ptr (*func)(dl_ptr data, dl_ptr value);
-    dl_ptr data;
-  } dl_handler;
-
-  typedef struct {
     dl_ptr (*func)(dl_ptr data, dl_ptr item, const dl_ptr left);
     dl_ptr data;
   } dl_folder;
@@ -37,6 +32,11 @@ extern "C"
     dl_integer (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
     dl_ptr data;
   } dl_comparator;
+
+  typedef struct {
+    dl_ptr (*func)(dl_ptr data, dl_ptr value);
+    dl_ptr data;
+  } dl_handler;
 
   typedef struct {
     dl_ptr (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
@@ -69,16 +69,16 @@ extern "C"
 
   dl_api dl_bool dl_remove(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
   dl_api dl_bool dl_remove_reverse(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
-  dl_api dl_integer dl_remove_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
-  dl_api dl_integer dl_remove_count(dl_iterator left, dl_iterator right, dl_natural count, dl_handler out);
+  dl_api dl_natural dl_remove_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
+  dl_api dl_natural dl_remove_count(dl_iterator left, dl_iterator right, dl_filter predicate, dl_natural count, dl_handler out);
 
   dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator compare);
 
-  dl_api dl_handler dl_make_handler(dl_container target);
-  dl_api dl_zipper dl_make_zipper(dl_container target);
-
-  extern dl_handler dl_null_handler;
-  extern dl_zipper dl_null_zipper;
+  dl_api dl_handler dl_make_handler(dl_ptr data, dl_ptr (*func)(dl_ptr data, dl_ptr value));
+  dl_api dl_zipper dl_make_zipper(dl_ptr data, dl_ptr (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right));
+  dl_api dl_filter dl_make_filter(dl_ptr data, dl_integer (*func)(dl_ptr data, const dl_ptr value));
+  dl_api dl_folder dl_make_folder(dl_ptr data, dl_ptr (*func)(dl_ptr data, dl_ptr item, const dl_ptr left));
+  dl_api dl_comparator dl_make_comparator(dl_ptr data, dl_integer (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right));
 
 #ifdef __cplusplus
 }
@@ -88,6 +88,46 @@ extern "C"
 
 #define ITER_UNSAFE(left, right) (!dl_iterator_is_valid(left) || (dl_iterator_is_valid(right) && dl_iterator_container(left) != dl_iterator_container(right)))
 #define FUNC_UNSAFE(f) (f.func == NULL)
+
+dl_api dl_handler dl_make_handler(dl_ptr data, dl_ptr (*func)(dl_ptr data, dl_ptr value))
+{
+  dl_handler h;
+  h.func = func;
+  h.data = data;
+  return h;
+}
+
+dl_api dl_zipper dl_make_zipper(dl_ptr data, dl_ptr (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right))
+{
+  dl_zipper h;
+  h.func = func;
+  h.data = data;
+  return h;
+}
+
+dl_api dl_filter dl_make_filter(dl_ptr data, dl_integer (*func)(dl_ptr data, const dl_ptr value))
+{
+  dl_filter h;
+  h.func = func;
+  h.data = data;
+  return h;
+}
+
+dl_api dl_folder dl_make_folder(dl_ptr data, dl_ptr (*func)(dl_ptr data, dl_ptr item, const dl_ptr left))
+{
+  dl_folder h;
+  h.func = func;
+  h.data = data;
+  return h;
+}
+
+dl_api dl_comparator dl_make_comparator(dl_ptr data, dl_integer (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right))
+{
+  dl_comparator h;
+  h.func = func;
+  h.data = data;
+  return h;
+}
 
 dl_api dl_integer dl_count(dl_iterator left, dl_iterator right)
 {
@@ -428,15 +468,73 @@ dl_api dl_bool dl_remove(dl_iterator left, dl_iterator right, dl_filter predicat
   return dl_iterator_remove(found);
 }
 
-dl_api dl_bool dl_remove_reverse(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
+dl_api dl_bool dl_remove_reverse(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out)
+{
+  dl_iterator found;
+  found = dl_find_reverse(left, right, predicate);
+  
+  if (!dl_iterator_is_valid(found))
+    return false;
+  
+  if (!FUNC_UNSAFE(out))
+    DL_CALL1(out, dl_iterator_ref(found));
 
-dl_api dl_integer dl_remove_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
-dl_api dl_integer dl_remove_count(dl_iterator left, dl_iterator right, dl_natural count, dl_handler out);
+  return dl_iterator_remove(found);
+}
+
+dl_api dl_natural dl_remove_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out)
+{
+  dl_iterator found;
+  dl_bool valid;
+  dl_natural removed; 
+
+  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(predicate)))
+    return 0;
+
+  removed = 0;
+  do
+  {
+    found = dl_find(left, right, predicate);
+    valid = dl_iterator_is_valid(found);
+
+    if (valid)
+    {
+      ++removed;
+      if (!FUNC_UNSAFE(out))
+        DL_CALL1(out, dl_iterator_ref(found));
+    }
+  } while (valid);
+
+  return removed;
+}
+
+dl_api dl_natural dl_remove_count(dl_iterator left, dl_iterator right, dl_filter predicate, dl_natural count, dl_handler out)
+{
+  dl_iterator found;
+  dl_bool valid;
+  dl_natural removed; 
+
+  if (dl_safety(count == 0 || ITER_UNSAFE(left, right) || FUNC_UNSAFE(predicate)))
+    return 0;
+
+  removed = 0;
+  do
+  {
+    found = dl_find(left, right, predicate);
+    valid = dl_iterator_is_valid(found);
+
+    if (valid)
+    {
+      ++removed;
+      if (!FUNC_UNSAFE(out))
+        DL_CALL1(out, dl_iterator_ref(found));
+    }
+  } while (valid && removed < count);
+
+  return removed;
+}
 
 dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator compare);
-
-dl_api dl_handler dl_make_handler(dl_container target);
-dl_api dl_zipper dl_make_zipper(dl_container target);
 
 #endif /* DL_IMPLEMENTATION */
 

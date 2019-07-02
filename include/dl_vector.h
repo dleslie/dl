@@ -46,7 +46,7 @@ extern "C" {
   dl_api dl_integer dl_vector_insert(dl_vector *v, dl_natural position, dl_ptr value);
   dl_api dl_bool dl_vector_remove(dl_vector *v, dl_natural position);
 
-  dl_api dl_bool dl_vector_push(dl_vector *v, dl_ptr value);
+  dl_api dl_ptr dl_vector_push(dl_vector *v, dl_ptr value);
   dl_api dl_ptr dl_vector_pop(dl_vector *v, dl_ptr out);
 
 #ifdef __cplusplus
@@ -309,18 +309,19 @@ dl_api dl_bool dl_vector_remove(dl_vector *v, dl_natural position)
   return true;
 }
 
-dl_api dl_bool dl_vector_push(dl_vector *v, dl_ptr value)
+dl_api dl_ptr dl_vector_push(dl_vector *v, dl_ptr value)
 {
+  dl_ptr ref;
   if (dl_safety(v == NULL))
-    return false;
+    return NULL;
 
   if (v->length == v->capacity && !dl_vector_grow(v, 1))
-    return false;
+    return NULL;
 
-  dl_vector_set(v, v->length, value);
+  ref = dl_vector_set(v, v->length, value);
   v->length++;
 
-  return true;
+  return ref;
 }
 
 dl_api dl_ptr dl_vector_pop(dl_vector *v, dl_ptr out)

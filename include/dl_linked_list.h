@@ -55,7 +55,7 @@ extern "C"
 
   dl_api dl_bool dl_linked_list_swap(dl_linked_list *list, dl_linked_list_node *position1, dl_linked_list_node *position2, dl_bool data);
 
-  dl_api dl_bool dl_linked_list_push(dl_linked_list *v, dl_ptr value);
+  dl_api dl_ptr dl_linked_list_push(dl_linked_list *v, dl_ptr value);
   dl_api dl_ptr dl_linked_list_pop(dl_linked_list *v, dl_ptr out);
 
 #ifdef __cplusplus
@@ -462,21 +462,21 @@ dl_api dl_linked_list_node *dl_linked_list_index(const dl_linked_list *list, dl_
   return NULL;
 }
 
-dl_api dl_bool dl_linked_list_push(dl_linked_list *list, dl_ptr value)
+dl_api dl_ptr dl_linked_list_push(dl_linked_list *list, dl_ptr value)
 {
   dl_linked_list_node *node;
 
   if (dl_safety(list == NULL))
-    return false;
+    return NULL;
 
   node = _linked_list_node_alloc(list, list->last);
   if (node == NULL)
-    return false;
+    return NULL;
 
   if (NULL == dl_linked_list_set(list, node, value))
-    return false;
+    return NULL;
 
-  return true;
+  return DL_LINKED_LIST_DATA(node);
 }
 
 dl_api dl_ptr dl_linked_list_pop(dl_linked_list *list, dl_ptr out)

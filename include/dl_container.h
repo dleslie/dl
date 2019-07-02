@@ -63,7 +63,7 @@ extern "C"
   dl_api dl_iterator dl_container_first(const dl_container *target);
   dl_api dl_iterator dl_container_last(const dl_container *target);
 
-  dl_api dl_bool dl_container_push(dl_container *v, dl_ptr value);
+  dl_api dl_ptr dl_container_push(dl_container *v, dl_ptr value);
   dl_api dl_ptr dl_container_pop(dl_container *v, dl_ptr out);
 
   dl_api dl_natural dl_container_traits(const dl_container *v);
@@ -270,7 +270,7 @@ dl_api dl_iterator dl_container_last(const dl_container *target)
   }
 }
 
-dl_api dl_bool dl_container_push(dl_container *c, dl_ptr value)
+dl_api dl_ptr dl_container_push(dl_container *c, dl_ptr value)
 {
   if (dl_safety(c == NULL))
     return false;
