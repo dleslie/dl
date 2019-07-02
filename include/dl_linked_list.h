@@ -38,7 +38,7 @@ extern "C"
   dl_api dl_natural dl_linked_list_copy(dl_linked_list *target, dl_linked_list_node *target_position, const dl_linked_list *original, dl_linked_list_node *original_position, dl_natural count);
   dl_api dl_natural dl_linked_list_copy_array(dl_linked_list *target, dl_linked_list_node *target_position, const dl_byte *data, dl_natural data_position, dl_natural count);
 
-  dl_api void dl_destroy_linked_list(dl_linked_list *target, dl_handler *deconstruct_entry);
+  dl_api void dl_destroy_linked_list(dl_linked_list *target);
 
   dl_api dl_natural dl_linked_list_length(const dl_linked_list *list);
   dl_api dl_bool dl_linked_list_is_empty(const dl_linked_list *list);
@@ -53,7 +53,7 @@ extern "C"
   dl_api dl_linked_list_node *dl_linked_list_insert(dl_linked_list *list, dl_linked_list_node *position, dl_ptr value);
   dl_api dl_bool dl_linked_list_remove(dl_linked_list *list, dl_linked_list_node *position);
 
-  dl_api dl_bool dl_linked_list_swap(dl_linked_list *list, dl_linked_list_node *position1, dl_linked_list_node *position2, dl_bool data);
+  dl_api dl_bool dl_linked_list_swap(dl_linked_list *list, dl_linked_list_node *position1, dl_linked_list_node *position2);
 
   dl_api dl_ptr dl_linked_list_push(dl_linked_list *v, dl_ptr value);
   dl_api dl_ptr dl_linked_list_pop(dl_linked_list *v, dl_ptr out);
@@ -178,7 +178,7 @@ dl_api dl_ptr _linked_list_node_deconstructor(dl_ptr data, dl_ptr element)
     }
   }
   else
-    dl_linked_list_swap(d->list, e, new_node, true);
+    dl_linked_list_swap(d->list, e, new_node);
 
   _linked_list_node_free(d->list, e);
   _linked_list_node_detach_free(d->list, e);
@@ -247,33 +247,19 @@ dl_api dl_natural dl_linked_list_copy_array(dl_linked_list *target, dl_linked_li
   return actual_count;
 }
 
-dl_api void dl_destroy_linked_list(dl_linked_list *target, dl_handler *deconstruct_entry)
+dl_api void dl_destroy_linked_list(dl_linked_list *target)
 {
   dl_linked_list_node *node, *next_node;
 
   if (dl_safety(target == NULL))
     return;
 
-  if (deconstruct_entry != NULL && deconstruct_entry->func != NULL)
+  next_node = target->last;
+  while (next_node != NULL)
   {
-    next_node = target->last;
-    while (next_node != NULL)
-    {
-      node = next_node;
-      next_node = node->previous;
-      deconstruct_entry->func(deconstruct_entry->data, DL_LINKED_LIST_DATA(node));
-      DL_FREE(node);
-    }
-  }
-  else
-  {
-    next_node = target->last;
-    while (next_node != NULL)
-    {
-      node = next_node;
-      next_node = node->previous;
-      DL_FREE(node);
-    }
+    node = next_node;
+    next_node = node->previous;
+    DL_FREE(node);
   }
 
   dl_linked_list_clear_free_list(target);
@@ -378,67 +364,14 @@ dl_api dl_bool dl_linked_list_remove(dl_linked_list *list, dl_linked_list_node *
   return true;
 }
 
-dl_api dl_bool dl_linked_list_swap(dl_linked_list *list, dl_linked_list_node *position1, dl_linked_list_node *position2, dl_bool data)
+dl_api dl_bool dl_linked_list_swap(dl_linked_list *list, dl_linked_list_node *position1, dl_linked_list_node *position2)
 {
   dl_linked_list_node *t;
 
   if (dl_safety(list == NULL || position1 == NULL || position2 == NULL))
     return false;
 
-  /* It's complicated because it is a double-linked list, and we have to be careful not to create a cycle. */
-  if (position1 == position2->previous)
-  {
-    if (position1->previous != NULL)
-      position1->previous->next = position2;
-    if (position2->next != NULL)
-      position2->next->previous = position1;
-    position2->previous = position1->previous;
-    position1->previous = position2;
-    position1->next = position2->next;
-    position2->next = position1;
-  }
-  else if (position2 == position1->previous)
-  {
-    if (position2->previous != NULL)
-      position2->previous->next = position1;
-    if (position1->next != NULL)
-      position1->next->previous = position2;
-    position1->previous = position2->previous;
-    position2->previous = position1;
-    position2->next = position1->next;
-    position1->next = position2;
-  }
-  else
-  {
-    if (position1->previous != NULL)
-      position1->previous->next = position2;
-    if (position1->next != NULL)
-      position1->next->previous = position2;
-    if (position2->previous != NULL)
-      position2->previous->next = position1;
-    if (position2->next != NULL)
-      position2->next->previous = position1;
-
-    t = position1->next;
-    position1->next = position2->next;
-    position2->next = t;
-
-    t = position1->previous;
-    position1->previous = position2->previous;
-    position2->previous = t;
-  }
-
-  if (list->first == position1)
-    list->first = position2;
-  else if (list->first == position2)
-    list->first = position1;
-  if (list->last == position1)
-    list->last = position2;
-  else if (list->last == position2)
-    list->last = position1;
-
-  if (data)
-    dl_memory_swap(DL_LINKED_LIST_DATA(position1), DL_LINKED_LIST_DATA(position2), list->element_size);
+  dl_memory_swap(DL_LINKED_LIST_DATA(position1), DL_LINKED_LIST_DATA(position2), list->element_size);
 
   return true;
 }

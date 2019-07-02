@@ -255,6 +255,15 @@ extern "C" {
   dl_api dl_ptr dl_memory_copy(dl_ptr target, dl_ptr source, dl_natural dl_bytes);
   dl_api dl_ptr dl_memory_set(dl_ptr target, dl_byte val, dl_natural dl_bytes);
 
+#if DL_USE_EXTENIONS && DL_IS_ATLEAST_C90 && (DL_IS_GNUC || DL_IS_CLANG)
+  #define dl_swap(a,b) ({			\
+      __auto_type _c = (a); 	\
+      a = b;                  \
+      b = _c;                 \
+    })
+#else
+  #define dl_swap(a, b) dl_memory_swap(&(a), &(b), sizeof(a))
+#endif
 
 #if defined(__cplusplus)
 }

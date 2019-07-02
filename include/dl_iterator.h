@@ -134,7 +134,7 @@ dl_api dl_bool dl_iterator_swap(dl_iterator position1, dl_iterator position2)
     default:
       return false;
     case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_swap((dl_linked_list *)position1.container, position1.data.node, position2.data.node, false);
+      return dl_linked_list_swap((dl_linked_list *)position1.container, position1.data.node, position2.data.node);
     case DL_CONTAINER_TYPE_VECTOR:
       return dl_vector_swap((dl_vector *)position1.container, position1.data.index, position2.data.index);
   }

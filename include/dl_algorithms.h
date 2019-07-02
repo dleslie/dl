@@ -534,7 +534,48 @@ dl_api dl_natural dl_remove_count(dl_iterator left, dl_iterator right, dl_filter
   return removed;
 }
 
-dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator compare);
+dl_iterator _quick_sort_partition(dl_iterator left, dl_iterator right, dl_comparator compare)
+{
+  dl_iterator i, j, pivot;
+  dl_ptr pivot_ref, ref_j;
+  
+  pivot = dl_iterator_prev_ref(right, &pivot_ref);
+  ref_j = dl_iterator_ref(left);
+
+  for (i = j = left; !dl_iterator_equal(pivot, j); j = dl_iterator_next_ref(j, &ref_j)) {
+    if (DL_CALL2(compare, ref_j, pivot_ref)) {
+      dl_iterator_swap(i, j);
+      dl_swap(i, j);
+      i = dl_iterator_next(i);
+    }
+  }
+
+  dl_iterator_swap(i, pivot);
+  dl_swap(i, pivot);
+
+  return i;
+}
+
+dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator compare)
+{
+  dl_iterator pivot;
+
+  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(compare)))
+    return false;
+  
+  if (dl_iterator_equal(left, right))
+    return true;
+
+  pivot = _quick_sort_partition(left, right, compare);
+
+  if (!dl_iterator_equal(left, pivot))
+    dl_quick_sort(left, pivot, compare);
+  pivot = dl_iterator_next(pivot);
+  if (!dl_iterator_equal(pivot, right))
+    dl_quick_sort(pivot, right, compare);
+  
+  return true;
+}
 
 #endif /* DL_IMPLEMENTATION */
 
