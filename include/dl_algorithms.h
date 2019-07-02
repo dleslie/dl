@@ -48,7 +48,7 @@ extern "C"
 #  endif
   #define DL_CALL1(c, arg1) c.func(c.data, arg1)
   #define DL_CALL2(c, arg1, arg2) c.func(c.data, arg1, arg2)
-  
+
   dl_api dl_integer dl_count(dl_iterator left, dl_iterator right);
 
   dl_api dl_iterator dl_find(dl_iterator left, dl_iterator right, dl_filter predicate);
@@ -143,7 +143,7 @@ dl_api dl_iterator dl_find(dl_iterator left, dl_iterator right, dl_filter predic
 {
   dl_natural traits;
 
-  if (dl_safety(ITER_UNSAFE(left, right) || predicate.func == NULL))
+  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(predicate)))
     return dl_make_invalid_iterator();
 
   if (!dl_iterator_is_valid(right))
@@ -173,7 +173,7 @@ dl_api dl_iterator dl_find_reverse(dl_iterator left, dl_iterator right, dl_filte
 {
   dl_natural traits;
 
-  if (dl_safety(ITER_UNSAFE(right, left) || predicate.func == NULL))
+  if (dl_safety(ITER_UNSAFE(right, left) || FUNC_UNSAFE(predicate)))
     return dl_make_invalid_iterator();
 
   if (!dl_iterator_is_valid(left))
@@ -207,7 +207,7 @@ dl_api dl_integer dl_find_all(dl_iterator left, dl_iterator right, dl_filter pre
   dl_bool is_set;
   dl_natural traits;
 
-  if (dl_safety(ITER_UNSAFE(left, right)))
+  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(predicate)))
     return -1;
 
   traits = dl_container_traits(left.container);
@@ -249,7 +249,7 @@ dl_api dl_integer dl_find_all(dl_iterator left, dl_iterator right, dl_filter pre
 
 dl_api dl_ptr dl_foldl(dl_iterator left, dl_iterator right, dl_ptr initial, dl_folder folder)
 {
-  if (dl_safety(ITER_UNSAFE(left, right) || initial == NULL || folder.func == NULL))
+  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(folder)))
     return NULL;
 
   while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right))
@@ -263,7 +263,7 @@ dl_api dl_ptr dl_foldl(dl_iterator left, dl_iterator right, dl_ptr initial, dl_f
 
 dl_api dl_ptr dl_foldr(dl_iterator left, dl_iterator right, dl_ptr initial, dl_folder folder)
 {
-  if (dl_safety(ITER_UNSAFE(left, right) || initial == NULL || folder.func == NULL))
+  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(folder)))
     return NULL;
 
   while (dl_iterator_is_valid(right) && !dl_iterator_equal(left, right))
@@ -277,7 +277,7 @@ dl_api dl_ptr dl_foldr(dl_iterator left, dl_iterator right, dl_ptr initial, dl_f
 
 dl_api dl_bool dl_all(dl_iterator left, dl_iterator right, dl_filter filter)
 {
-  if (dl_safety(ITER_UNSAFE(left, right) || filter.func == NULL))
+  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(filter)))
     return false;
 
   while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right))
@@ -292,7 +292,7 @@ dl_api dl_bool dl_all(dl_iterator left, dl_iterator right, dl_filter filter)
 
 dl_api dl_bool dl_any(dl_iterator left, dl_iterator right, dl_filter filter)
 {
-  if (dl_safety(ITER_UNSAFE(left, right) || filter.func == NULL))
+  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(filter)))
     return false;
 
   while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right))
