@@ -391,9 +391,43 @@ dl_api dl_integer dl_take(dl_iterator left, dl_iterator right, dl_natural count,
   return processed;
 }
 
-dl_api dl_integer dl_drop(dl_iterator left, dl_iterator right, dl_natural count, dl_handler out);
+dl_api dl_integer dl_drop(dl_iterator left, dl_iterator right, dl_natural count, dl_handler out)
+{
+  dl_natural processed;
+  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(out)))
+    return 0;
 
-dl_api dl_bool dl_remove(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
+  while (count > 0)
+  {
+    --count;
+    left = dl_iterator_next(left);
+    if (!dl_iterator_is_valid(left))
+      return 0;
+  }
+  
+  while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right))
+  {
+    DL_CALL1(out, dl_iterator_ref(left));
+    ++processed;
+  }
+
+  return processed;
+}
+
+dl_api dl_bool dl_remove(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out)
+{
+  dl_iterator found;
+  found = dl_find(left, right, predicate);
+  
+  if (!dl_iterator_is_valid(found))
+    return false;
+  
+  if (!FUNC_UNSAFE(out))
+    DL_CALL1(out, dl_iterator_ref(found));
+
+  return dl_iterator_remove(found);
+}
+
 dl_api dl_bool dl_remove_reverse(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
 
 dl_api dl_integer dl_remove_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);

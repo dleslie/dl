@@ -35,8 +35,7 @@ extern "C"
   dl_api dl_bool dl_iterator_swap(dl_iterator position1, dl_iterator position2);
 
   dl_api dl_iterator dl_iterator_insert(dl_iterator position, dl_ptr value);
-  dl_api dl_ptr dl_iterator_remove(dl_iterator position, dl_ptr out);
-  dl_api dl_bool dl_iterator_destroy(dl_iterator position, dl_handler *deconstruct_entry);
+  dl_api dl_bool dl_iterator_remove(dl_iterator position);
 
   dl_api dl_iterator dl_iterator_next(dl_iterator target);
   dl_api dl_iterator dl_iterator_prev(dl_iterator target);
@@ -163,9 +162,9 @@ dl_api dl_iterator dl_iterator_insert(dl_iterator position, dl_ptr value)
   }
 }
 
-dl_api dl_ptr dl_iterator_remove(dl_iterator position, dl_ptr out)
+dl_api dl_bool dl_iterator_remove(dl_iterator position)
 {
-  if (dl_safety(!dl_iterator_is_valid(position) || out == NULL))
+  if (dl_safety(!dl_iterator_is_valid(position)))
     return NULL;
 
   switch (position.container->type)
@@ -173,25 +172,9 @@ dl_api dl_ptr dl_iterator_remove(dl_iterator position, dl_ptr out)
     default:
       return NULL;
     case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_remove((dl_linked_list *)position.container, position.data.node, out);
+      return dl_linked_list_remove((dl_linked_list *)position.container, position.data.node);
     case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_remove((dl_vector *)position.container, position.data.index, out);
-  }
-}
-
-dl_api dl_bool dl_iterator_destroy(dl_iterator position, dl_handler *deconstruct_entry)
-{
-  if (dl_safety(!dl_iterator_is_valid(position)))
-    return false;
-
-  switch (position.container->type)
-  {
-    default:
-      return false;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_destroy((dl_linked_list *)position.container, position.data.node, deconstruct_entry);
-    case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_destroy((dl_vector *)position.container, position.data.index, deconstruct_entry);
+      return dl_vector_remove((dl_vector *)position.container, position.data.index);
   }
 }
 

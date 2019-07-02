@@ -51,9 +51,7 @@ extern "C"
   dl_api dl_linked_list_node *dl_linked_list_index(const dl_linked_list *list, dl_natural position);
 
   dl_api dl_linked_list_node *dl_linked_list_insert(dl_linked_list *list, dl_linked_list_node *position, dl_ptr value);
-  dl_api dl_ptr dl_linked_list_remove(dl_linked_list *list, dl_linked_list_node *position, dl_ptr out);
-  dl_api dl_natural dl_linked_list_destroy_range(dl_linked_list *list, dl_linked_list_node *position, dl_natural count, dl_handler *destruct_entry);
-  dl_api dl_bool dl_linked_list_destroy(dl_linked_list *list, dl_linked_list_node *position, dl_handler *deconstruct_entry);
+  dl_api dl_bool dl_linked_list_remove(dl_linked_list *list, dl_linked_list_node *position);
 
   dl_api dl_bool dl_linked_list_swap(dl_linked_list *list, dl_linked_list_node *position1, dl_linked_list_node *position2, dl_bool data);
 
@@ -370,52 +368,14 @@ dl_api dl_linked_list_node *dl_linked_list_insert(dl_linked_list *list, dl_linke
   return node;
 }
 
-dl_api dl_ptr dl_linked_list_remove(dl_linked_list *list, dl_linked_list_node *position, dl_ptr out)
-{
-  if (dl_safety(list == NULL || position == NULL))
-    return NULL;
-
-  if (dl_unlikely(!dl_memory_copy(out, DL_LINKED_LIST_DATA(position), list->element_size)))
-    return NULL;
-
-  _linked_list_node_free(list, position);
-
-  return out;
-}
-
-dl_api dl_bool dl_linked_list_destroy(dl_linked_list *list, dl_linked_list_node *position, dl_handler *deconstruct_entry)
+dl_api dl_bool dl_linked_list_remove(dl_linked_list *list, dl_linked_list_node *position)
 {
   if (dl_safety(list == NULL || position == NULL))
     return false;
 
-  if (deconstruct_entry != NULL && deconstruct_entry->func != NULL)
-    deconstruct_entry->func(deconstruct_entry->data, DL_LINKED_LIST_DATA(position));
-
   _linked_list_node_free(list, position);
 
   return true;
-}
-
-dl_api dl_natural dl_linked_list_destroy_range(dl_linked_list *list, dl_linked_list_node *position, dl_natural count, dl_handler *deconstruct_entry)
-{
-  dl_natural removed;
-  dl_linked_list_node *next;
-
-  if (dl_safety(list == NULL || position == NULL || count == 0))
-    return 0;
-
-  removed = 0;
-  while (removed < count)
-  {
-    next = position->next;
-    if (!dl_linked_list_destroy(list, position, deconstruct_entry))
-      break;
-
-    position = next;
-    ++removed;
-  }
-
-  return removed;
 }
 
 dl_api dl_bool dl_linked_list_swap(dl_linked_list *list, dl_linked_list_node *position1, dl_linked_list_node *position2, dl_bool data)
