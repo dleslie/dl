@@ -9,12 +9,12 @@ extern "C" {
 
 
 
-  enum dl_ease_direction
+  typedef enum
   {
     DL_EASE_IN,
     DL_EASE_OUT,
     DL_EASE_INOUT
-  };
+  } dl_ease_direction;
 
   typedef dl_real(*dl_easing_function)(dl_ease_direction d, dl_real p);
 

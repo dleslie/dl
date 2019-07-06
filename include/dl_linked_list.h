@@ -77,10 +77,12 @@ dl_api dl_linked_list_node *_linked_list_node_alloc(dl_linked_list *list, dl_lin
     node = list->free_list;
     list->free_list = list->free_list->next;
   }
-  else if (DL_ALLOC != NULL)
-    node = (dl_linked_list_node *)DL_ALLOC(list->element_size + DL_LINKED_LIST_HEADER_SIZE);
   else
+#if DL_USE_ALLOC
+      node = (dl_linked_list_node *)DL_ALLOC(list->element_size + DL_LINKED_LIST_HEADER_SIZE);
+#else
     return NULL;
+#endif
 
   if (node == NULL)
     return NULL;
@@ -141,49 +143,6 @@ dl_api void _linked_list_node_detach_free(dl_linked_list *list, dl_linked_list_n
   if (e->previous != NULL)
     e->previous->next = e->next;
   e->next = e->previous = NULL;
-}
-
-typedef struct
-{
-  dl_handler *original_destructor;
-  dl_linked_list *list;
-} _linked_list_node_deconstructor_data;
-
-dl_api dl_ptr _linked_list_node_deconstructor(dl_ptr data, dl_ptr element)
-{
-  _linked_list_node_deconstructor_data *d;
-  dl_linked_list_node *f, *e, *new_node;
-  dl_handler *destruct;
-
-  d = (_linked_list_node_deconstructor_data *)data;
-  e = (dl_linked_list_node *)element;
-
-  /* Is it in the free list? */
-  for (f = d->list->free_list; f != NULL; f = f->next)
-    if (f == e)
-    {
-      _linked_list_node_detach_free(d->list, e);
-      return NULL;
-    }
-
-  /* Swap from free list */
-  new_node = _linked_list_node_alloc(d->list, e->previous);
-  if (!new_node)
-  {
-    /* No free nodes, destroy it. */
-    if (d->original_destructor != NULL && d->original_destructor->func != NULL)
-    {
-      destruct = d->original_destructor;
-      destruct->func(destruct->data, DL_LINKED_LIST_DATA(e));
-    }
-  }
-  else
-    dl_linked_list_swap(d->list, e, new_node);
-
-  _linked_list_node_free(d->list, e);
-  _linked_list_node_detach_free(d->list, e);
-
-  return NULL;
 }
 
 dl_api dl_linked_list *dl_init_linked_list(dl_linked_list *target, dl_natural element_size, dl_natural capacity)
@@ -366,8 +325,6 @@ dl_api dl_bool dl_linked_list_remove(dl_linked_list *list, dl_linked_list_node *
 
 dl_api dl_bool dl_linked_list_swap(dl_linked_list *list, dl_linked_list_node *position1, dl_linked_list_node *position2)
 {
-  dl_linked_list_node *t;
-
   if (dl_safety(list == NULL || position1 == NULL || position2 == NULL))
     return false;
 

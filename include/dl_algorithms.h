@@ -18,37 +18,6 @@ extern "C"
 {
 #endif
 
-  typedef struct {
-    dl_integer (*func)(dl_ptr data, const dl_ptr value);
-    dl_ptr data;
-  } dl_filter;
-
-  typedef struct {
-    dl_ptr (*func)(dl_ptr data, dl_ptr item, const dl_ptr left);
-    dl_ptr data;
-  } dl_folder;
-
-  typedef struct {
-    dl_integer (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
-    dl_ptr data;
-  } dl_comparator;
-
-  typedef struct {
-    dl_ptr (*func)(dl_ptr data, dl_ptr value);
-    dl_ptr data;
-  } dl_handler;
-
-  typedef struct {
-    dl_ptr (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
-    dl_ptr data;
-  } dl_zipper;
-
-#  if DL_IS_ATLEAST_C99
-  #define DL_CALL(c, ...) c.func(c.data, ##__VAR_ARGS__)
-#  endif
-  #define DL_CALL1(c, arg1) c.func(c.data, arg1)
-  #define DL_CALL2(c, arg1, arg2) c.func(c.data, arg1, arg2)
-
   dl_api dl_integer dl_count(dl_iterator left, dl_iterator right);
 
   dl_api dl_iterator dl_find(dl_iterator left, dl_iterator right, dl_filter predicate);
@@ -132,9 +101,9 @@ dl_api dl_comparator dl_make_comparator(dl_ptr data, dl_integer (*func)(dl_ptr d
 dl_api dl_integer dl_count(dl_iterator left, dl_iterator right)
 {
   dl_integer count;
-
+  count = 0;
   if (dl_safety(ITER_UNSAFE(left, right)))
-    return 0;
+    return count;
 
   while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right))
   {
@@ -244,15 +213,12 @@ dl_api dl_integer dl_find_all(dl_iterator left, dl_iterator right, dl_filter pre
   dl_ptr ref;
   dl_iterator found;
   dl_integer count;
-  dl_bool is_set;
-  dl_natural traits;
 
   if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(predicate)))
     return -1;
 
-  traits = dl_container_traits(left.container);
-  is_set = 0 != (traits & DL_CONTAINER_TRAIT_SET);
   count = 0;
+ 
   if (!FUNC_UNSAFE(out))
   {
     found = dl_find(left, right, predicate);

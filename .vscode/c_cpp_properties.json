@@ -16,7 +16,6 @@
             "defines": [
                 "DL_IMPLEMENTATION=1"
             ],
-            "compilerPath": "C:/MinGW/bin/gcc.exe",
             "cStandard": "c89",
             "cppStandard": "c++17",
             "intelliSenseMode": "gcc-x64",

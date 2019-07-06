@@ -13,15 +13,6 @@ extern "C"
    **  Iterator Interface
    ****************************************************************************/
 
-  typedef struct
-  {
-    dl_container *container;
-    union {
-      dl_integer index;
-      dl_linked_list_node *node;
-    } data;
-  } dl_iterator;
-
   dl_api dl_iterator dl_make_invalid_iterator();
 
   dl_api dl_bool dl_iterator_is_valid(dl_iterator iter);
@@ -73,7 +64,9 @@ dl_api dl_iterator dl_make_invalid_iterator()
 
 dl_api dl_bool dl_iterator_is_valid(dl_iterator iter)
 {
-  return iter.container != NULL && iter.container->data.container != NULL && ((iter.container->type == DL_CONTAINER_TYPE_LINKED_LIST && iter.data.node != NULL) || (iter.container->type == DL_CONTAINER_TYPE_VECTOR && iter.data.index >= 0 && iter.data.index < dl_vector_capacity(&iter.container->data.vector)));
+  return iter.container != NULL
+    && ((iter.container->type == DL_CONTAINER_TYPE_LINKED_LIST && iter.data.node != NULL)
+	|| (iter.container->type == DL_CONTAINER_TYPE_VECTOR && iter.data.index >= 0 && iter.data.index < dl_vector_capacity(&iter.container->data.vector)));
 }
 
 dl_api dl_ptr dl_iterator_get(const dl_iterator target, dl_ptr out)
@@ -165,12 +158,12 @@ dl_api dl_iterator dl_iterator_insert(dl_iterator position, dl_ptr value)
 dl_api dl_bool dl_iterator_remove(dl_iterator position)
 {
   if (dl_safety(!dl_iterator_is_valid(position)))
-    return NULL;
+    return false;
 
   switch (position.container->type)
   {
     default:
-      return NULL;
+      return false;
     case DL_CONTAINER_TYPE_LINKED_LIST:
       return dl_linked_list_remove((dl_linked_list *)position.container, position.data.node);
     case DL_CONTAINER_TYPE_VECTOR:

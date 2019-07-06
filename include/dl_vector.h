@@ -107,9 +107,6 @@ dl_api dl_vector *dl_init_vector_array(dl_vector *target, dl_byte *data, dl_natu
 
 dl_api void dl_destroy_vector(dl_vector *target)
 {
-  dl_ptr entry;
-  dl_natural idx;
-  
   if (target == NULL)
     return;
 

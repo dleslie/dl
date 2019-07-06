@@ -1,4 +1,4 @@
-#include "dl_all.h"
+#include "dl.h"
 
 #if DL_IS_ATLEAST_C99
 

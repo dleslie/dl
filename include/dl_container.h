@@ -13,7 +13,6 @@
 #include "dl_core.h"
 #include "dl_vector.h"
 #include "dl_linked_list.h"
-#include "dl_iterator.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -24,7 +23,7 @@ extern "C"
    **  Generic Interface
    ****************************************************************************/
 
-  enum dl_container_type
+  typedef enum
   {
     DL_CONTAINER_TYPE_NONE,
     DL_CONTAINER_TYPE_VECTOR,
@@ -32,15 +31,15 @@ extern "C"
     DL_CONTAINER_TYPE_SORTED_LIST,
     DL_CONTAINER_TYPE_QUEUE,
     DL_CONTAINER_TYPE_SET
-  };
+  } dl_container_type;
 
-  enum dl_container_trait
+  typedef enum
   {
     DL_CONTAINER_TRAIT_RANDOM_ACCESS = 1,
     DL_CONTAINER_TRAIT_RANDOM_MUTATE = 2,
     DL_CONTAINER_TRAIT_SORTED = 4,
-    DL_CONTAINER_TRAIT_SET = 8,
-  };
+    DL_CONTAINER_TRAIT_SET = 8
+  } dl_container_trait;
 
   typedef struct
   {
@@ -51,9 +50,18 @@ extern "C"
     } data;
   } dl_container;
 
+  typedef struct
+  {
+    dl_container *container;
+    union {
+      dl_integer index;
+      dl_linked_list_node *node;
+    } data;
+  } dl_iterator;
+
   dl_api dl_container *dl_init_container(dl_container *target, dl_container_type type, dl_natural element_size, dl_natural capacity);
   dl_api dl_container *dl_init_container_array(dl_container *target, dl_byte *array_data, dl_natural element_size, dl_natural count);
-  dl_api void dl_destroy_container(dl_container *target, dl_handler *deconstruct_entry);
+  dl_api void dl_destroy_container(dl_container *target);
 
   dl_api dl_natural dl_container_element_size(const dl_container *container);
   dl_api dl_natural dl_container_length(const dl_container *container);
@@ -73,6 +81,8 @@ extern "C"
 #endif
 
 #if DL_IMPLEMENTATION
+
+#include "dl_iterator.h"
 
 /* TODO: use lookup tables instead of switches */
 
@@ -129,9 +139,9 @@ dl_api dl_natural dl_container_copy(dl_iterator target, const dl_iterator origin
   }
 }
 
-dl_api void dl_destroy_container(dl_container *target, dl_handler *deconstruct_entry)
+dl_api void dl_destroy_container(dl_container *target)
 {
-  if (dl_safety(target == NULL || target->data.container == NULL))
+  if (dl_safety(target == NULL))
     return;
 
   switch (target->type)
@@ -139,20 +149,19 @@ dl_api void dl_destroy_container(dl_container *target, dl_handler *deconstruct_e
     default:
       break;
     case DL_CONTAINER_TYPE_LINKED_LIST:
-      dl_destroy_linked_list(&target->data.list, deconstruct_entry);
+      dl_destroy_linked_list(&target->data.list);
       break;
     case DL_CONTAINER_TYPE_VECTOR:
-      dl_destroy_vector(&target->data.vector, deconstruct_entry);
+      dl_destroy_vector(&target->data.vector);
       break;
   }
 
-  target->data.container = NULL;
   target->type = DL_CONTAINER_TYPE_NONE;
 }
 
 dl_api dl_natural dl_container_length(const dl_container *target)
 {
-  if (dl_safety(target == NULL || target->data.container == NULL))
+  if (dl_safety(target == NULL))
     return 0;
 
   switch (target->type)
@@ -168,7 +177,7 @@ dl_api dl_natural dl_container_length(const dl_container *target)
 
 dl_api dl_bool dl_container_is_empty(const dl_container *target)
 {
-  if (dl_safety(target == NULL || target->data.container == NULL))
+  if (dl_safety(target == NULL))
     return true;
 
   switch (target->type)
@@ -202,7 +211,7 @@ dl_api dl_iterator dl_container_index(const dl_container *target, dl_natural pos
 {
   dl_iterator iter;
 
-  if (dl_safety(target == NULL || target->data.container == NULL))
+  if (dl_safety(target == NULL))
     return dl_make_invalid_iterator();
 
   switch (target->type)
@@ -226,7 +235,7 @@ dl_api dl_iterator dl_container_first(const dl_container *target)
 {
   dl_iterator iter;
 
-  if (dl_safety(target == NULL || target->data.container == NULL))
+  if (dl_safety(target == NULL))
     return dl_make_invalid_iterator();
 
   switch (target->type)
@@ -234,13 +243,13 @@ dl_api dl_iterator dl_container_first(const dl_container *target)
     default:
       return dl_make_invalid_iterator();
     case DL_CONTAINER_TYPE_LINKED_LIST:
-      iter.container = target;
+      iter.container = (dl_container *)target;
       iter.data.node = target->data.list.first;
       return iter;
     case DL_CONTAINER_TYPE_VECTOR:
       if (dl_safety(target->data.vector.array == NULL))
         return dl_make_invalid_iterator();
-      iter.container = target;
+      iter.container = (dl_container *)target;
       iter.data.index = 0;
       return iter;
   }
@@ -250,7 +259,7 @@ dl_api dl_iterator dl_container_last(const dl_container *target)
 {
   dl_iterator iter;
 
-  if (dl_safety(target == NULL || target->data.container == NULL))
+  if (dl_safety(target == NULL))
     return dl_make_invalid_iterator();
 
   switch (target->type)
@@ -258,13 +267,13 @@ dl_api dl_iterator dl_container_last(const dl_container *target)
     default:
       return dl_make_invalid_iterator();
     case DL_CONTAINER_TYPE_LINKED_LIST:
-      iter.container = target;
+      iter.container = (dl_container *)target;
       iter.data.node = target->data.list.last;
       return iter;
     case DL_CONTAINER_TYPE_VECTOR:
       if (dl_safety(target->data.vector.array == NULL))
         return dl_make_invalid_iterator();
-      iter.container = target;
+      iter.container = (dl_container *)target;
       iter.data.index = target->data.vector.capacity - 1;
       return iter;
   }

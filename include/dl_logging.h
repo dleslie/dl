@@ -13,14 +13,14 @@
 extern "C" {
 #endif
   
-  enum dl_log_channel
+  typedef enum
   {
     DL_LOG_INFO = 1,
     DL_LOG_WARNING = 2,
     DL_LOG_ERROR = 3,
     DL_LOG_TEST = 4,
     DL_LOG_MESSAGE = 5
-  };
+  } dl_log_channel;
 
   extern dl_natural (*dl_active_log_handler)(dl_log_channel, const char *, dl_natural, const char *, const char *);
 

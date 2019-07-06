@@ -17,15 +17,18 @@
 # define DL_USE_SAFETY_CHECKS 0
 #endif
 
-#if !defined(DL_ALLOC)
+#if !defined(DL_USE_ALLOC)
 # include <malloc.h>
+# define DL_USE_ALLOC 1
 # define DL_ALLOC malloc
 #endif
 
-#if !defined(DL_FREE)
+#if !defined(DL_USE_FREE)
 # include <malloc.h>
+# define DL_USE_FREE 1
 # define DL_FREE free
 #endif
+
 
 
 /***************************************
@@ -264,6 +267,37 @@ extern "C" {
 #else
   #define dl_swap(a, b) dl_memory_swap(&(a), &(b), sizeof(a))
 #endif
+
+  typedef struct {
+    dl_integer (*func)(dl_ptr data, const dl_ptr value);
+    dl_ptr data;
+  } dl_filter;
+
+  typedef struct {
+    dl_ptr (*func)(dl_ptr data, dl_ptr item, const dl_ptr left);
+    dl_ptr data;
+  } dl_folder;
+
+  typedef struct {
+    dl_integer (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
+    dl_ptr data;
+  } dl_comparator;
+
+  typedef struct {
+    dl_ptr (*func)(dl_ptr data, dl_ptr value);
+    dl_ptr data;
+  } dl_handler;
+
+  typedef struct {
+    dl_ptr (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
+    dl_ptr data;
+  } dl_zipper;
+
+#  if DL_IS_ATLEAST_C99
+  #define DL_CALL(c, ...) c.func(c.data, ##__VAR_ARGS__)
+#  endif
+  #define DL_CALL1(c, arg1) c.func(c.data, arg1)
+  #define DL_CALL2(c, arg1, arg2) c.func(c.data, arg1, arg2)
 
 #if defined(__cplusplus)
 }
