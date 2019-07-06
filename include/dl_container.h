@@ -43,6 +43,14 @@ extern "C"
 
   typedef struct
   {
+    dl_natural traits;
+    dl_ptr (*init)(dl_ptr, dl_natural, dl_natural);
+    dl_ptr (*init_array)(dl_ptr, dl_byte *, dl_natural, dl_natural);
+    dl_ptr (*copy)(dl_ptr, dl_ptr);
+  } dl_container_descriptor;
+
+  typedef struct
+  {
     dl_container_type type;
     union {
       dl_linked_list list;
@@ -61,6 +69,7 @@ extern "C"
 
   dl_api dl_container *dl_init_container(dl_container *target, dl_container_type type, dl_natural element_size, dl_natural capacity);
   dl_api dl_container *dl_init_container_array(dl_container *target, dl_byte *array_data, dl_natural element_size, dl_natural count);
+  dl_api dl_container *dl_container_copy(dl_container *target, dl_container *source);
   dl_api void dl_destroy_container(dl_container *target);
 
   dl_api dl_natural dl_container_element_size(const dl_container *container);
@@ -123,19 +132,22 @@ dl_api dl_container *dl_init_container_array(dl_container *target, dl_byte *arra
   return target;
 }
 
-dl_api dl_natural dl_container_copy(dl_iterator target, const dl_iterator original, dl_natural count)
+dl_api dl_container *dl_container_copy(dl_container *target, dl_container *source)
 {
-  if (dl_safety(!dl_iterator_is_valid(target) || !dl_iterator_is_valid(original)))
-    return 0;
+  if (dl_safety(source == NULL || target == NULL))
+    return NULL;
+
+  if (NULL == dl_init_container(target, source->type, dl_container_element_size(source), dl_container_length(source)))
+    return NULL;
 
   switch (target.container->type)
   {
     default:
-      return 0;
+      return NULL;
     case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_copy((dl_linked_list *)target.container, target.data.node, (const dl_linked_list *)original.container, original.data.node, count);
+      return dl_linked_list_copy((dl_linked_list *)target.container, (dl_linked_list *)source.container);
     case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_copy((dl_vector *)target.container, target.data.index, (dl_vector *)original.container, original.data.index, count);
+      return dl_vector_copy((dl_vector *)target.container, (dl_vector *)source.container);
   }
 }
 

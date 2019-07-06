@@ -22,11 +22,9 @@ extern "C" {
   } dl_vector;
 
   dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_natural capacity);
-  dl_api dl_vector *dl_init_vector_custom(dl_vector *target, dl_natural element_size, dl_natural capacity);
-
   dl_api dl_vector *dl_init_vector_array(dl_vector *target, dl_byte *data, dl_natural element_size, dl_natural count);
 
-  dl_api dl_natural dl_vector_copy(dl_vector *target, dl_natural target_offset_index, const dl_vector *original, dl_natural original_offset_index, dl_natural count);
+  dl_api dl_bool dl_vector_copy(dl_vector *target, dl_vector *source);
 
   dl_api void dl_destroy_vector(dl_vector *target);
 
@@ -63,12 +61,6 @@ extern "C" {
 
 dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_natural capacity)
 {
-  return dl_init_vector_custom(target, element_size, capacity);
-}
-
-dl_api dl_vector *dl_init_vector_custom(dl_vector *target, dl_natural element_size, dl_natural capacity)
-{
-  
   if (target == NULL)
     return NULL;
 
@@ -206,24 +198,20 @@ dl_api dl_bool dl_vector_swap(dl_vector *v, dl_natural index1, dl_natural index2
   return true;
 }
 
-dl_api dl_natural dl_vector_copy(dl_vector *target, dl_natural target_offset_index, const dl_vector *original, dl_natural original_offset_index, dl_natural count)
+dl_api dl_bool dl_vector_copy(dl_vector *target, dl_vector *source)
 {
   dl_natural target_window, original_window, actual_count;
   
-  if (dl_safety(target == NULL || original == NULL || target->element_size != original->element_size))
-    return 0;
-  if (dl_unlikely(target->capacity <= target_offset_index))
-    return 0;
-  if (dl_unlikely(original->length <= original_offset_index))
-    return 0;
+  if (dl_safety(target == NULL || source == NULL || target->element_size != original->element_size))
+    return false;
 
-  target_window = target->capacity - target_offset_index;
-  original_window = original->length - original_offset_index;
-  actual_count = dl_min(dl_min(count, original_window), target_window);
-  
-  if (dl_memory_copy((dl_ptr)&target->array[target_offset_index], (dl_ptr)&original->array[original_offset_index], target->element_size * actual_count) != NULL)
-    return actual_count;
-  return 0;
+  if (target->capacity < source->length && !dl_vector_grow(target, source->length - target->capacity))
+    return false;    
+
+  if (dl_memory_copy(target->array, source->array, target->element_size * source->length))
+    return true;
+
+  return false;
 }
 
 dl_api dl_natural dl_vector_ref_array(dl_vector *v, dl_natural index, dl_ptr *out)

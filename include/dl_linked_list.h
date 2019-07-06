@@ -34,9 +34,9 @@ extern "C"
   } dl_linked_list;
 
   dl_api dl_linked_list *dl_init_linked_list(dl_linked_list *target, dl_natural element_size, dl_natural capacity);
+  dl_api dl_linked_list *dl_init_linked_list_array(dl_linked_list *target, dl_byte *data, dl_natural element_size, dl_natural count);
 
-  dl_api dl_natural dl_linked_list_copy(dl_linked_list *target, dl_linked_list_node *target_position, const dl_linked_list *original, dl_linked_list_node *original_position, dl_natural count);
-  dl_api dl_natural dl_linked_list_copy_array(dl_linked_list *target, dl_linked_list_node *target_position, const dl_byte *data, dl_natural data_position, dl_natural count);
+  dl_api dl_bool dl_linked_list_copy(dl_linked_list *target, dl_linked_list *source);
 
   dl_api void dl_destroy_linked_list(dl_linked_list *target);
 
@@ -166,44 +166,45 @@ dl_api dl_linked_list *dl_init_linked_list(dl_linked_list *target, dl_natural el
   return target;
 }
 
-dl_api dl_natural dl_linked_list_copy(dl_linked_list *target, dl_linked_list_node *target_position, const dl_linked_list *original, dl_linked_list_node *original_position, dl_natural count)
+dl_api dl_bool dl_linked_list_copy(dl_linked_list *target, dl_linked_list *source)
 {
-  dl_ptr data;
-  dl_natural actual_count;
+  dl_linked_list_node *node;
 
-  if (dl_safety(original == NULL || target == NULL))
-    return 0;
-  if (dl_unlikely(original->element_size != target->element_size))
-    return 0;
+  if (dl_safety(source == NULL || target == NULL || source->element_size != target->element_size))
+    return false;
 
-  for (actual_count = 0;
-       actual_count < count && original_position != NULL && NULL != (data = dl_linked_list_ref(original, original_position));
-       ++actual_count, original_position = original_position->next)
+  if (target->first != NULL)
   {
-    target_position = dl_linked_list_insert(target, target_position, data);
-    if (dl_unlikely(target_position == NULL))
-      break;
+    target->last->next = target->free_list;
+    target->free_list = target->first;
+    target->first = NULL;
   }
-  return actual_count;
+
+  for (node = source->first; node != NULL; node == node->next)
+    if (NULL == dl_linked_list_push(target, DL_LINKED_LIST_DATA(node)))
+      return false;
+  
+  return true;
 }
 
-dl_api dl_natural dl_linked_list_copy_array(dl_linked_list *target, dl_linked_list_node *target_position, const dl_byte *data, dl_natural data_position, dl_natural length)
+dl_api dl_linked_list *dl_init_linked_list_array(dl_linked_list *target, dl_byte *data, dl_natural element_size, dl_natural count)
 {
-  dl_natural actual_count;
-  dl_ptr node_data;
+  dl_natural idx;
 
-  if (dl_safety(target == NULL || data == NULL))
-    return 0;
-
-  for (actual_count = 0; actual_count < length; ++actual_count)
-  {
-    node_data = (dl_ptr)&data[(data_position + actual_count) * target->element_size];
-    target_position = dl_linked_list_insert(target, target_position, node_data);
-    if (dl_unlikely(target_position == NULL))
-      break;
-  }
-
-  return actual_count;
+  if (dl_safety(data == NULL))
+    return NULL;
+  
+  if (!(target = dl_init_linked_list(target, element_size, count)))
+    return NULL;
+  
+  for (idx = 0; idx < count; ++idx)
+    if (!dl_linked_list_push(target, &data[idx * element_size])) 
+    {
+      dl_destroy_linked_list(target);
+      return NULL;
+    }
+  
+  return target;
 }
 
 dl_api void dl_destroy_linked_list(dl_linked_list *target)
