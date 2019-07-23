@@ -25,29 +25,15 @@ extern "C"
 
   typedef enum
   {
-    DL_CONTAINER_TYPE_NONE,
     DL_CONTAINER_TYPE_VECTOR,
     DL_CONTAINER_TYPE_LINKED_LIST,
-    DL_CONTAINER_TYPE_SORTED_LIST,
-    DL_CONTAINER_TYPE_QUEUE,
-    DL_CONTAINER_TYPE_SET
   } dl_container_type;
 
   typedef enum
   {
     DL_CONTAINER_TRAIT_RANDOM_ACCESS = 1,
     DL_CONTAINER_TRAIT_RANDOM_MUTATE = 2,
-    DL_CONTAINER_TRAIT_SORTED = 4,
-    DL_CONTAINER_TRAIT_SET = 8
   } dl_container_trait;
-
-  typedef struct
-  {
-    dl_natural traits;
-    dl_ptr (*init)(dl_ptr, dl_natural, dl_natural);
-    dl_ptr (*init_array)(dl_ptr, dl_byte *, dl_natural, dl_natural);
-    dl_ptr (*copy)(dl_ptr, dl_ptr);
-  } dl_container_descriptor;
 
   typedef struct
   {
@@ -69,7 +55,7 @@ extern "C"
 
   dl_api dl_container *dl_init_container(dl_container *target, dl_container_type type, dl_natural element_size, dl_natural capacity);
   dl_api dl_container *dl_init_container_array(dl_container *target, dl_byte *array_data, dl_natural element_size, dl_natural count);
-  dl_api dl_container *dl_container_copy(dl_container *target, dl_container *source);
+  dl_api dl_bool dl_container_copy(dl_container *target, dl_container *source);
   dl_api void dl_destroy_container(dl_container *target);
 
   dl_api dl_natural dl_container_element_size(const dl_container *container);
@@ -92,8 +78,6 @@ extern "C"
 #if DL_IMPLEMENTATION
 
 #include "dl_iterator.h"
-
-/* TODO: use lookup tables instead of switches */
 
 /*******************************************************************************
  ** Generic Interface
@@ -132,22 +116,22 @@ dl_api dl_container *dl_init_container_array(dl_container *target, dl_byte *arra
   return target;
 }
 
-dl_api dl_container *dl_container_copy(dl_container *target, dl_container *source)
+dl_api dl_bool dl_container_copy(dl_container *target, dl_container *source)
 {
   if (dl_safety(source == NULL || target == NULL))
-    return NULL;
+    return false;
 
   if (NULL == dl_init_container(target, source->type, dl_container_element_size(source), dl_container_length(source)))
-    return NULL;
-
-  switch (target.container->type)
+    return false;
+  
+  switch (target->type)
   {
     default:
-      return NULL;
+      return false;
     case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_copy((dl_linked_list *)target.container, (dl_linked_list *)source.container);
+      return dl_linked_list_copy((dl_linked_list *)(&target->data.list), (dl_linked_list *)(&source->data.list));
     case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_copy((dl_vector *)target.container, (dl_vector *)source.container);
+      return dl_vector_copy((dl_vector *)(&target->data.vector), (dl_vector *)(&source->data.vector));
   }
 }
 

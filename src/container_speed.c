@@ -1,4 +1,8 @@
 #define DL_IMPLEMENTATION 1
+int main(int argc, char const *argv[])
+{
+  return 0;
+}
 // #include "dl_all.h"
 
 // const dl_natural test_size = 1000;

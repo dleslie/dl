@@ -200,9 +200,7 @@ dl_api dl_bool dl_vector_swap(dl_vector *v, dl_natural index1, dl_natural index2
 
 dl_api dl_bool dl_vector_copy(dl_vector *target, dl_vector *source)
 {
-  dl_natural target_window, original_window, actual_count;
-  
-  if (dl_safety(target == NULL || source == NULL || target->element_size != original->element_size))
+  if (dl_safety(target == NULL || source == NULL || target->element_size != source->element_size))
     return false;
 
   if (target->capacity < source->length && !dl_vector_grow(target, source->length - target->capacity))

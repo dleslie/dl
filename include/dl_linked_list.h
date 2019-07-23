@@ -180,7 +180,7 @@ dl_api dl_bool dl_linked_list_copy(dl_linked_list *target, dl_linked_list *sourc
     target->first = NULL;
   }
 
-  for (node = source->first; node != NULL; node == node->next)
+  for (node = source->first; node != NULL; node = node->next)
     if (NULL == dl_linked_list_push(target, DL_LINKED_LIST_DATA(node)))
       return false;
   
