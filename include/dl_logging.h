@@ -4,57 +4,51 @@
 #ifndef DL_LOGGING_H
 #define DL_LOGGING_H 1
 
-#include <stdio.h>
 #include <stdarg.h>
-
-
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-  
-  typedef enum
-  {
-    DL_LOG_INFO = 1,
-    DL_LOG_WARNING = 2,
-    DL_LOG_ERROR = 3,
-    DL_LOG_TEST = 4,
-    DL_LOG_MESSAGE = 5
-  } dl_log_channel;
 
-  extern dl_natural (*dl_active_log_handler)(dl_log_channel, const char *, dl_natural, const char *, const char *);
+typedef enum {
+  DL_LOG_INFO = 1,
+  DL_LOG_WARNING = 2,
+  DL_LOG_ERROR = 3,
+  DL_LOG_TEST = 4,
+  DL_LOG_MESSAGE = 5
+} dl_log_channel;
 
-  dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *fmt, ...);
+extern dl_natural (*dl_active_log_handler)(dl_log_channel, const char *, dl_natural, const char *, const char *);
 
-# if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MSC || DL_IS_MINGW
-#   define DL_INFO(...) dl_log_message(DL_LOG_INFO, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define DL_WARN(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define DL_ERROR(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define DL_TEST(...) dl_log_message(DL_LOG_TEST, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-#   define DL_MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, __func__, ## __VA_ARGS__)
-# else
-#   define DL_INFO(...) dl_log_message(DL_LOG_INFO, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define DL_WARN(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define DL_ERROR(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define DL_TEST(...) dl_log_message(DL_LOG_TEST, __FILE__, __LINE__, "", ## __VA_ARGS__)
-#   define DL_MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, "", ## __VA_ARGS__)
-# endif
+dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *fmt, ...);
 
-# if DL_USE_SAFETY_CHECKS
-#   undef dl_safety
-#   define dl_safety(x) (dl_unlikely(x) ? DL_ERROR("Safety triggered") || 1 : 0)
-# endif
+#if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MSC || DL_IS_MINGW
+#define DL_INFO(...) dl_log_message(DL_LOG_INFO, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+#define DL_WARN(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+#define DL_ERROR(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+#define DL_TEST(...) dl_log_message(DL_LOG_TEST, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+#define DL_MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, __func__, ##__VA_ARGS__)
+#else
+#define DL_INFO(...) dl_log_message(DL_LOG_INFO, __FILE__, __LINE__, "", ##__VA_ARGS__)
+#define DL_WARN(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, "", ##__VA_ARGS__)
+#define DL_ERROR(...) dl_log_message(DL_LOG_WARNING, __FILE__, __LINE__, "", ##__VA_ARGS__)
+#define DL_TEST(...) dl_log_message(DL_LOG_TEST, __FILE__, __LINE__, "", ##__VA_ARGS__)
+#define DL_MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, "", ##__VA_ARGS__)
+#endif
+
+#if DL_USE_SAFETY_CHECKS
+#undef dl_safety
+#define dl_safety(x) (dl_unlikely(x) ? DL_ERROR("Safety triggered") || 1 : 0)
+#endif
 
 #ifdef __cplusplus
 }
 #endif
 
-
-
 #if DL_IMPLEMENTATION
 
-dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *msg)
-{
+dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *msg) {
   char time_buf[20];
 
 #if defined(DL_TIME_H)
@@ -63,8 +57,7 @@ dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural 
   time_buf[0] = (char)0;
 #endif
 
-  switch (ch)
-  {
+  switch (ch) {
     case DL_LOG_INFO:
       fprintf(stdout, "%s:%lu:%s\n[LOG %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
       return ch;
@@ -87,8 +80,7 @@ dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural 
 
 dl_natural (*dl_active_log_handler)(dl_log_channel ch, const char *, dl_natural, const char *, const char *) = _default_log_handler;
 
-dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *fmt, ...)
-{
+dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *fmt, ...) {
   char buf[256];
   va_list args1, args2;
   va_start(args1, fmt);
