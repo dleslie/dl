@@ -32,7 +32,6 @@ typedef struct
 } dl_linked_list;
 
 dl_api dl_linked_list *dl_init_linked_list(dl_linked_list *target, dl_natural element_size, dl_natural capacity);
-dl_api dl_linked_list *dl_init_linked_list_array(dl_linked_list *target, dl_byte *data, dl_natural element_size, dl_natural count);
 
 dl_api dl_bool dl_linked_list_copy(dl_linked_list *target, dl_linked_list *source);
 
@@ -168,24 +167,6 @@ dl_api dl_bool dl_linked_list_copy(dl_linked_list *target, dl_linked_list *sourc
       return false;
 
   return true;
-}
-
-dl_api dl_linked_list *dl_init_linked_list_array(dl_linked_list *target, dl_byte *data, dl_natural element_size, dl_natural count) {
-  dl_natural idx;
-
-  if (dl_safety(data == NULL))
-    return NULL;
-
-  if (!(target = dl_init_linked_list(target, element_size, count)))
-    return NULL;
-
-  for (idx = 0; idx < count; ++idx)
-    if (!dl_linked_list_push(target, &data[idx * element_size])) {
-      dl_destroy_linked_list(target);
-      return NULL;
-    }
-
-  return target;
 }
 
 dl_api void dl_destroy_linked_list(dl_linked_list *target) {

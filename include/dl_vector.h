@@ -16,11 +16,9 @@ typedef struct {
   dl_natural capacity;
   dl_natural length;
   dl_byte *array;
-  dl_bool should_free;
 } dl_vector;
 
 dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_natural capacity);
-dl_api dl_vector *dl_init_vector_array(dl_vector *target, dl_byte *data, dl_natural element_size, dl_natural count);
 
 dl_api dl_bool dl_vector_copy(dl_vector *target, dl_vector *source);
 
@@ -61,8 +59,8 @@ dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_
 
   target->element_size = element_size;
   target->array = NULL;
-  target->should_free = false;
   target->capacity = 0;
+  target->length = 0;
 
   if (dl_unlikely(target->element_size == 0 || capacity == 0))
     return NULL;
@@ -73,20 +71,7 @@ dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_
     return NULL;
   }
   target->capacity = capacity;
-  target->should_free = true;
-
-  return target;
-}
-
-dl_api dl_vector *dl_init_vector_array(dl_vector *target, dl_byte *data, dl_natural element_size, dl_natural count) {
-  if (dl_safety(target == NULL || data == NULL))
-    return NULL;
-
-  target->element_size = element_size;
-  target->capacity = 0;
-  target->array = data;
-  target->should_free = false;
-
+ 
   return target;
 }
 
@@ -94,7 +79,7 @@ dl_api void dl_destroy_vector(dl_vector *target) {
   if (target == NULL)
     return;
 
-  if (target->should_free)
+  if (target->array != NULL)
     DL_FREE((dl_ptr)target->array);
 
   target->array = NULL;
@@ -146,21 +131,25 @@ dl_api dl_bool dl_vector_grow(dl_vector *v, dl_natural amount) {
   dl_byte *new_array;
   dl_natural new_capacity;
 
-  if (dl_safety(v == NULL))
+  if (dl_safety(v == NULL || v->array == NULL))
     return false;
 
-  new_capacity = (v->capacity + amount);
+  if (amount + v->length <= v->capacity) {
+    v->length += amount;
+    return true;
+  }
+
+  new_capacity = v->length + amount;
   new_array = (dl_byte *)DL_ALLOC(new_capacity * v->element_size);
   if (dl_unlikely(new_array == NULL))
     return false;
 
-  dl_memory_copy((dl_ptr)new_array, (dl_ptr)v->array, v->capacity * v->element_size);
+  dl_memory_copy((dl_ptr)new_array, (dl_ptr)v->array, v->length * v->element_size);
 
-  if (v->should_free)
-    DL_FREE(v->array);
-  v->should_free = true;
+  DL_FREE(v->array);
+
   v->array = new_array;
-  v->capacity = new_capacity;
+  v->capacity = v->length = new_capacity;
 
   return true;
 }
@@ -268,8 +257,8 @@ dl_api dl_ptr dl_vector_push(dl_vector *v, dl_ptr value) {
   if (v->length == v->capacity && !dl_vector_grow(v, 1))
     return NULL;
 
-  ref = dl_vector_set(v, v->length, value);
   v->length++;
+  ref = dl_vector_set(v, v->length - 1, value);
 
   return ref;
 }

@@ -52,7 +52,6 @@ typedef struct {
 } dl_iterator;
 
 dl_api dl_container *dl_init_container(dl_container *target, dl_container_type type, dl_natural element_size, dl_natural capacity);
-dl_api dl_container *dl_init_container_array(dl_container *target, dl_byte *array_data, dl_natural element_size, dl_natural count);
 dl_api void dl_destroy_container(dl_container *target);
 
 dl_api dl_natural dl_container_element_size(const dl_container *container);
@@ -122,15 +121,6 @@ dl_api dl_container *dl_init_container(dl_container *target, dl_container_type t
       if (NULL == dl_init_vector((dl_vector *)target->storage, element_size, capacity)) return NULL;
       return target;
   }
-}
-
-dl_api dl_container *dl_init_container_array(dl_container *target, dl_byte *array_data, dl_natural element_size, dl_natural count) {
-  if (dl_safety(target == NULL || element_size == 0 || count == 0 || array_data == NULL)) return NULL;
-
-  target->type = DL_CONTAINER_TYPE_VECTOR;
-  if (NULL == dl_init_vector_array((dl_vector *)target->storage, array_data, element_size, count)) return NULL;
-
-  return target;
 }
 
 dl_api void dl_destroy_container(dl_container *target) {
