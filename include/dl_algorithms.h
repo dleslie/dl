@@ -11,7 +11,6 @@
 
 #include "dl_container.h"
 #include "dl_core.h"
-#include "dl_iterator.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,6 +52,8 @@ dl_api dl_comparator dl_make_comparator(dl_ptr data, dl_integer (*func)(dl_ptr d
 #endif
 
 #if DL_IMPLEMENTATION
+
+#include "dl_container.h"
 
 #define ITER_UNSAFE(left, right) (!dl_iterator_is_valid(left) || (dl_iterator_is_valid(right) && dl_iterator_container(left) != dl_iterator_container(right)))
 #define FUNC_UNSAFE(f) (f.func == NULL)
@@ -165,7 +166,7 @@ dl_api dl_iterator dl_find_reverse(dl_iterator left, dl_iterator right, dl_filte
   if (!dl_iterator_is_valid(left)) left = dl_container_first(dl_iterator_container(right));
 
   traits = dl_container_traits(left.container);
-  if (traits & (DL_CONTAINER_TRAIT_RANDOM_ACCESS | DL_CONTAINER_TRAIT_SORTED)) {
+  if ((traits & DL_CONTAINER_TRAIT_RANDOM_ACCESS) && (traits & DL_CONTAINER_TRAIT_SORTED)) {
     dl_iterator found, next;
     found = _dl_find_region_binary(left, right, predicate);
 
