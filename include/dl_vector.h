@@ -71,7 +71,7 @@ dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_
     return NULL;
   }
   target->capacity = capacity;
- 
+
   return target;
 }
 
@@ -103,7 +103,7 @@ dl_api dl_inline dl_natural dl_vector_length(const dl_vector *v) {
 dl_api dl_inline dl_bool dl_vector_is_empty(const dl_vector *v) {
   if (dl_safety(v == NULL))
     return true;
-  return v->length > 0;
+  return v->length == 0;
 }
 
 dl_api dl_ptr dl_vector_get(const dl_vector *v, dl_natural index, dl_ptr out) {
@@ -134,11 +134,6 @@ dl_api dl_bool dl_vector_grow(dl_vector *v, dl_natural amount) {
   if (dl_safety(v == NULL || v->array == NULL))
     return false;
 
-  if (amount + v->length <= v->capacity) {
-    v->length += amount;
-    return true;
-  }
-
   new_capacity = v->length + amount;
   new_array = (dl_byte *)DL_ALLOC(new_capacity * v->element_size);
   if (dl_unlikely(new_array == NULL))
@@ -149,7 +144,7 @@ dl_api dl_bool dl_vector_grow(dl_vector *v, dl_natural amount) {
   DL_FREE(v->array);
 
   v->array = new_array;
-  v->capacity = v->length = new_capacity;
+  v->capacity = new_capacity;
 
   return true;
 }
