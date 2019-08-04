@@ -97,13 +97,13 @@ dl_bool dl_test_vector_get_set_ref() {
     if (!dl_check(NULL != dl_vector_get(&v, idx, &value), "Expected get to work"))
       goto get_set_ref_fail;
 
-    if (!dl_check(value == values[idx], "Expected %i == %i", value, values[idx]))
+    if (!dl_check(value == values[idx], "Expected %#010X == %#010X", value, values[idx]))
       goto get_set_ref_fail;
 
     if (!dl_check(NULL != dl_vector_set(&v, idx, &new_values[idx]), "Expected set to work"))
       goto get_set_ref_fail;
 
-    if (!dl_check(new_values[idx] == *(dl_natural *)dl_vector_ref(&v, idx), "Expected %i == %i", new_values[idx], *(dl_natural *)dl_vector_ref(&v, idx)))
+    if (!dl_check(new_values[idx] == *(dl_natural *)dl_vector_ref(&v, idx), "Expected %#010X == %#010X", new_values[idx], *(dl_natural *)dl_vector_ref(&v, idx)))
       goto get_set_ref_fail;
   }
 
