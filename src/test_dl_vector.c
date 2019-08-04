@@ -55,4 +55,32 @@ push_pop_fail:
   dl_destroy_vector(&v);
   return false;
 }
+
+/* grow */
+dl_bool test_dl_vector_grow() {
+  dl_vector v;
+
+  if (!dl_check(dl_init_vector(&v, sizeof(dl_natural), 1), "Expected dl_init_vector to return non-NULL"))
+    return false;
+
+  if (!dl_check(dl_vector_capacity(&v) == 1, "Expected capacity to be 1, not %i", dl_vector_length(&v)))
+    goto grow_fail;
+
+  if (!dl_check(dl_vector_grow(&v, 16), "Expected vector to grow"))
+    goto grow_fail;
+
+  if (!dl_check(dl_vector_capacity(&v) == 17, "Expected vector capacity to be 17, not %i", dl_vector_capacity(&v)))
+    goto grow_fail;
+
+  if (!dl_check(!dl_vector_grow(&v, DL_NATURAL_MAX), "Expected vector capacity not to grow to %i", dl_vector_capacity(&v)))
+    goto grow_fail;
+
+  dl_destroy_vector(&v);
+  return true;
+grow_fail:
+  dl_destroy_vector(&v);
+  return false;
+}
+/* get, set, ref, ref_array */
+/* insert, remove */
 #endif

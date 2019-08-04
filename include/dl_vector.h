@@ -134,7 +134,10 @@ dl_api dl_bool dl_vector_grow(dl_vector *v, dl_natural amount) {
   if (dl_safety(v == NULL || v->array == NULL))
     return false;
 
-  new_capacity = v->length + amount;
+  if (DL_NATURAL_MAX - v->capacity < amount)
+    return false;
+
+  new_capacity = v->capacity + amount;
   new_array = (dl_byte *)DL_ALLOC(new_capacity * v->element_size);
   if (dl_unlikely(new_array == NULL))
     return false;

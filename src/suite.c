@@ -132,6 +132,7 @@ dl_end_test_suite
 dl_begin_test_suite(vector);
 dl_declare_test(test_dl_init_vector);
 dl_declare_test(test_dl_vector_push_pop);
+dl_declare_test(test_dl_vector_grow);
 dl_end_test_suite
 
 int  main(int argc, char **argv) {
