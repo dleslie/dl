@@ -308,7 +308,7 @@ dl_api dl_bool dl_mat4_approximately_equal(const dl_mat4 *left, const dl_mat4 *r
  * Implementation
  **************************************/
 
-#if DL_IMPLEMENTATION
+#if defined(DL_IMPLEMENTATION)
 
 #ifndef DL_PI
 const dl_real DL_PI = 3.14159265359f;

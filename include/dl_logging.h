@@ -46,7 +46,7 @@ dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, 
 }
 #endif
 
-#if DL_IMPLEMENTATION
+#if defined(DL_IMPLEMENTATION)
 
 dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *msg) {
   char time_buf[20];

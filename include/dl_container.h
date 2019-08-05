@@ -101,7 +101,7 @@ dl_api dl_container *dl_iterator_container(dl_iterator target);
 }
 #endif
 
-#if DL_IMPLEMENTATION
+#if defined(DL_IMPLEMENTATION)
 
 /*******************************************************************************
  ** Generic Interface

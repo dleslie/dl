@@ -69,7 +69,7 @@ dl_api dl_vec3 *dl_lerp_vec3(const dl_vec3 *a, const dl_vec3 *b, dl_real p, dl_v
  * Implementation
  **************************************/
 
-#if DL_IMPLEMENTATION
+#if defined(DL_IMPLEMENTATION)
 
 dl_api dl_real dl_tween(dl_easing_function ease, dl_ease_direction direction, dl_real percent) {
   percent = dl_clamp01(percent);

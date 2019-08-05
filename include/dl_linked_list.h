@@ -59,7 +59,7 @@ dl_api dl_ptr dl_linked_list_pop(dl_linked_list *v, dl_ptr out);
 }
 #endif
 
-#if DL_IMPLEMENTATION
+#if defined(DL_IMPLEMENTATION)
 
 /*****************************************************************************
  **  Linked Lists

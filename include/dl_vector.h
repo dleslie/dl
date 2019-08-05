@@ -7,9 +7,9 @@
 extern "C" {
 #endif
 
-/*****************************************************************************
-   **  Vectors
-   ****************************************************************************/
+#ifndef DL_VECTOR_CAPACITY_GROWTH
+#define DL_VECTOR_CAPACITY_GROWTH 64
+#endif
 
 typedef struct {
   dl_natural element_size;
@@ -19,8 +19,6 @@ typedef struct {
 } dl_vector;
 
 dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_natural capacity);
-
-dl_api dl_bool dl_vector_copy(dl_vector *target, dl_vector *source);
 
 dl_api void dl_destroy_vector(dl_vector *target);
 
@@ -47,14 +45,14 @@ dl_api dl_ptr dl_vector_pop(dl_vector *v, dl_ptr out);
 }
 #endif
 
-#if DL_IMPLEMENTATION
+#if defined(DL_IMPLEMENTATION)
 
 /*****************************************************************************
  **  Vectors
  ****************************************************************************/
 
 dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_natural capacity) {
-  if (target == NULL)
+  if (dl_safety(target == NULL))
     return NULL;
 
   target->element_size = element_size;
@@ -76,7 +74,7 @@ dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_
 }
 
 dl_api void dl_destroy_vector(dl_vector *target) {
-  if (target == NULL)
+  if (dl_safety(target == NULL))
     return;
 
   if (target->array != NULL)
@@ -169,19 +167,6 @@ dl_api dl_bool dl_vector_swap(dl_vector *v, dl_natural index1, dl_natural index2
   return true;
 }
 
-dl_api dl_bool dl_vector_copy(dl_vector *target, dl_vector *source) {
-  if (dl_safety(target == NULL || source == NULL || target->element_size != source->element_size))
-    return false;
-
-  if (target->capacity < source->length && !dl_vector_grow(target, source->length - target->capacity))
-    return false;
-
-  if (dl_memory_copy(target->array, source->array, target->element_size * source->length))
-    return true;
-
-  return false;
-}
-
 dl_api dl_natural dl_vector_ref_array(dl_vector *v, dl_natural index, dl_ptr *out) {
   dl_natural count;
 
@@ -197,36 +182,31 @@ dl_api dl_natural dl_vector_ref_array(dl_vector *v, dl_natural index, dl_ptr *ou
 }
 
 dl_api dl_integer dl_vector_insert(dl_vector *v, dl_natural position, dl_ptr value) {
-  if (dl_safety(v == NULL || value == NULL))
+  if (dl_safety(v == NULL || value == NULL) || position > v->length)
     return -1;
 
   if (v->length == v->capacity) {
-    dl_vector new_vec;
+    dl_byte *new_ary;
 
-    if (NULL == dl_init_vector(&new_vec, v->element_size, 1 + dl_vector_capacity(v)))
+    new_ary = (dl_byte *)DL_ALLOC((v->capacity + DL_VECTOR_CAPACITY_GROWTH) * v->element_size);
+    if (dl_unlikely(new_ary == NULL))
       return -1;
 
-    if (position > 0 && position < v->capacity) {
-      if (NULL == dl_memory_copy(new_vec.array, v->array, new_vec.element_size * position) || (NULL != value && NULL == dl_vector_set(&new_vec, position, value)) || NULL == dl_memory_copy(&new_vec.array[new_vec.element_size * (position + 1)], &v->array[new_vec.element_size * position], dl_vector_capacity(&new_vec) - position)) {
-        dl_destroy_vector(&new_vec);
-        return -1;
-      }
-    } else {
-      if (NULL == dl_memory_copy(new_vec.array, v->array, new_vec.element_size * new_vec.capacity) || (NULL != value && NULL == dl_vector_set(&new_vec, v->capacity, value))) {
-        dl_destroy_vector(&new_vec);
-        return -1;
-      }
-      position = v->capacity;
-    }
+    if (position > 0)
+      dl_memory_copy(new_ary, v->array, position * v->element_size);
+    dl_memory_copy(&new_ary[position * v->element_size], value, v->element_size);
+    dl_memory_copy(&new_ary[(position + 1) * v->element_size], &v->array[position * v->element_size], (v->capacity - position) * v->element_size);
 
-    dl_destroy_vector(v);
-    *v = new_vec;
+    DL_FREE(v->array);
+
+    v->length++;  
+    v->array = new_ary;
   } else {
     dl_integer idx;
 
+    v->length++;
     for (idx = v->length; idx > position; --idx)
       dl_vector_set(v, idx, dl_vector_ref(v, idx - 1));
-
     if (NULL != value)
       dl_vector_set(v, position, value);
   }
@@ -237,7 +217,7 @@ dl_api dl_integer dl_vector_insert(dl_vector *v, dl_natural position, dl_ptr val
 dl_api dl_bool dl_vector_remove(dl_vector *v, dl_natural position) {
   dl_integer idx;
 
-  if (dl_safety(v == NULL) || v->length == 0)
+  if (dl_safety(v == NULL) || v->length == 0 || position >= v->length)
     return false;
 
   for (idx = position; idx < v->length - 1; ++idx)
@@ -252,7 +232,7 @@ dl_api dl_ptr dl_vector_push(dl_vector *v, dl_ptr value) {
   if (dl_safety(v == NULL))
     return NULL;
 
-  if (v->length == v->capacity && !dl_vector_grow(v, 1))
+  if (v->length == v->capacity && !dl_vector_grow(v, DL_VECTOR_CAPACITY_GROWTH))
     return NULL;
 
   v->length++;

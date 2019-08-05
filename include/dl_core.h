@@ -1,5 +1,5 @@
-#ifndef DL_H
-#define DL_H 1
+#ifndef DL_CORE_H
+#define DL_CORE_H 1
 
 /***************************************
  * Configuration
@@ -151,10 +151,6 @@
 #define DL_IS_DEBUG 0
 #endif
 
-#ifndef DL_IMPLEMENTATION
-#define DL_IMPLEMENTATION 0
-#endif
-
 #ifndef dl_inline
 #define dl_inline
 #if DL_IS_ATLEAST_C99 && (DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW)
@@ -169,7 +165,7 @@
 
 #ifndef dl_api
 #if !DL_IS_CPP
-#if DL_IMPLEMENTATION
+#if defined(DL_IMPLEMENTATION)
 #define dl_api extern
 #else
 #define dl_api extern
@@ -178,7 +174,7 @@
 #if DL_IS_MSC
 #define dl_api __declspec(dllexport)
 #else
-#if DL_IMPLEMENTATION
+#if defined(DL_IMPLEMENTATION)
 #define dl_api
 #else
 #define dl_api extern
@@ -298,7 +294,7 @@ typedef struct {
  **  IMPLEMENTATION
  ****************************************************************************/
 
-#if DL_IMPLEMENTATION
+#if defined(DL_IMPLEMENTATION)
 
 /*****************************************************************************
  **  Memory Tools

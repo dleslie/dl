@@ -51,7 +51,7 @@ dl_api dl_comparator dl_make_comparator(dl_ptr data, dl_integer (*func)(dl_ptr d
 }
 #endif
 
-#if DL_IMPLEMENTATION
+#if defined(DL_IMPLEMENTATION)
 
 #include "dl_container.h"
 

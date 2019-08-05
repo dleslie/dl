@@ -43,7 +43,7 @@ dl_integer dl_test_count(dl_bool (**tests)(), dl_integer max);
 }
 #endif
 
-#if DL_IMPLEMENTATION
+#if defined(DL_IMPLEMENTATION)
 
 dl_integer dl_test_run(dl_bool (**tests)(), const char **names, dl_integer count) {
   dl_integer i, passed = 0;
