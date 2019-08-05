@@ -14,8 +14,7 @@
                 "/usr/local/include"
             ],
             "defines": [
-                "DL_IMPLEMENTATION=1",
-                "__STDC_VERSION__=201112L"
+                "DL_IMPLEMENTATION"
             ],
             "cStandard": "c11",
             "cppStandard": "c++17",

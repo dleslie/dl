@@ -46,7 +46,7 @@
             "name": "suite",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/suite-c11-pedantic",
+            "program": "${workspaceFolder}/build/suite-c11-test",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
