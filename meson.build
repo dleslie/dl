@@ -9,6 +9,8 @@ lib_m = cc.find_library('m', required : true)
 
 c_stds = ['c89', 'c90', 'c99', 'c11']
 
+standard_flags = []
+
 gcc_configs = [
   ['no-malloc', ['-DDL_USE_MALLOC=0']],
   ['test', ['-DDL_USE_SAFETY_CHECKS=1', '-g']],
@@ -26,6 +28,7 @@ executables = [
 
 if lib_allegro.found() and lib_allegro_primitives.found()
 	executables += ['tween', ['src/tween.c'], [lib_m, lib_allegro, lib_allegro_primitives]]
+	standard_flags += ['-DENABLE_TWEEN_TEST=1']
 endif
 
 foreach exe : executables
@@ -38,7 +41,7 @@ foreach exe : executables
 			conf_flags = conf[1]
 			executable(exe_name + '-' + std + '-' + conf_name, exe_files,
 				include_directories: inc,
-				c_args: conf_flags + ['-std=' + std],
+				c_args: conf_flags + ['-std=' + std] + standard_flags,
 				link_args: conf_flags,
 				dependencies: exe_deps)
 		endforeach

@@ -40,13 +40,12 @@ dl_api dl_natural dl_write_time(const char *fmt, char *buf, dl_natural buf_lengt
 }
 
 dl_api void dl_time(dl_natural *out_usec, dl_natural *out_sec) {
-#if DL_IS_WINDOWS
+#if DL_IS_WINDOWS && DL_IS_ATLEAST_C99
   static const uint64_t epoch = ((uint64_t)116444736000000000ULL);
 
   SYSTEMTIME system_time;
   FILETIME file_time;
   uint64_t time;
-  long tv_sec, tv_usec;
 
   GetSystemTime(&system_time);
   SystemTimeToFileTime(&system_time, &file_time);
