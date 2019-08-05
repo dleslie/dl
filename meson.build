@@ -22,7 +22,7 @@ build_config = gcc_configs
 
 executables = [
 	['tween', ['src/tween.c'], [lib_m, lib_allegro, lib_allegro_primitives]],
-	['suite', ['src/test_dl_math.c', 'src/test_dl_test.c', 'src/test_dl_vector.c', 'src/suite.c'], [lib_m]],
+	['suite', ['src/test_dl_math.c', 'src/test_dl_test.c', 'src/test_dl_vector.c', 'src/test_dl_linked_list.c', 'src/suite.c'], [lib_m]],
 ]
 
 foreach exe : executables

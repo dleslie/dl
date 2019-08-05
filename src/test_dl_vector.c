@@ -111,6 +111,8 @@ dl_bool test_dl_vector_get_set_ref() {
       goto get_set_ref_fail;
   }
 
+  dl_destroy_vector(&v);
+  return true;
 get_set_ref_fail:
   dl_destroy_vector(&v);
   return false;
@@ -155,6 +157,8 @@ dl_bool test_dl_vector_insert_remove() {
       goto insert_remove_fail;
   }
 
+  dl_destroy_vector(&v);
+  return true;
 insert_remove_fail:
   dl_destroy_vector(&v);
   return false;

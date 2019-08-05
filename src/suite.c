@@ -137,10 +137,22 @@ dl_declare_test(test_dl_vector_get_set_ref);
 dl_declare_test(test_dl_vector_insert_remove);
 dl_end_test_suite
 
+/*******************************************************************************;
+ linked_list
+*******************************************************************************/
+
+dl_begin_test_suite(linked_list);
+dl_declare_test(test_dl_init_linked_list);
+dl_declare_test(test_dl_linked_list_push_pop);
+dl_declare_test(test_dl_linked_list_get_set_ref);
+dl_declare_test(test_dl_linked_list_insert_remove);
+dl_end_test_suite
+
 int  main(int argc, char **argv) {
   dl_run_test_suite(tester);
   dl_run_test_suite(math);
   dl_run_test_suite(vector);
+  dl_run_test_suite(linked_list);
   return 0;
 }
 

@@ -61,7 +61,7 @@ dl_api dl_ptr dl_linked_list_pop(dl_linked_list *v, dl_ptr out);
  **  Linked Lists
  ****************************************************************************/
 
-dl_api dl_linked_list_node *_linked_list_node_alloc(dl_linked_list *list, dl_linked_list_node *after) {
+dl_api dl_linked_list_node *_linked_list_node_alloc(dl_linked_list *list, dl_linked_list_node *after, dl_bool for_free_list) {
   dl_linked_list_node *node;
 
   if (list->free_list != NULL) {
@@ -82,19 +82,23 @@ dl_api dl_linked_list_node *_linked_list_node_alloc(dl_linked_list *list, dl_lin
     if (list->first != NULL) {
       node->next = list->first;
       node->next->previous = node;
-      list->first = node;
+      if (!for_free_list)
+        list->first = node;
     } else {
-      list->first = list->last = node;
+      if (!for_free_list)
+        list->first = list->last = node;
       node->next = NULL;
     }
   } else {
     node->previous = after;
     node->next = after->next;
     after->next = node;
-    if (node->next == NULL)
-      list->last = node;
-    else
-      node->next->previous = node;
+    if (node->next == NULL) {
+      if (!for_free_list)
+        list->last = node;
+      else
+        node->next->previous = node;
+    }
   }
 
   return node;
@@ -137,28 +141,13 @@ dl_api dl_linked_list *dl_init_linked_list(dl_linked_list *target, dl_natural el
 
   while (capacity > 0) {
     if (target->free_list == NULL)
-      target->free_list = _linked_list_node_alloc(target, target->free_list);
-    else if (_linked_list_node_alloc(target, target->free_list) == NULL)
+      target->free_list = _linked_list_node_alloc(target, target->free_list, true);
+    else if (_linked_list_node_alloc(target, target->free_list, true) == NULL)
       break;
     --capacity;
   }
 
   return target;
-}
-
-dl_api dl_bool _linked_list_clear_free_list(dl_linked_list *list) {
-  dl_linked_list_node *current;
-
-  if (dl_safety(list == NULL))
-    return false;
-
-  while (list->free_list != NULL) {
-    current = list->free_list;
-    list->free_list = list->free_list->next;
-    DL_FREE(current);
-  }
-
-  return true;
 }
 
 dl_api void dl_destroy_linked_list(dl_linked_list *target) {
@@ -173,10 +162,15 @@ dl_api void dl_destroy_linked_list(dl_linked_list *target) {
     next_node = node->previous;
     DL_FREE(node);
   }
+  target->last = target->first = NULL;
 
-  _linked_list_clear_free_list(target);
-
-  dl_memory_set(target, 0, sizeof(dl_linked_list));
+  next_node = target->free_list;
+  while (next_node != NULL) {
+    node = next_node;
+    next_node = node->next;
+    DL_FREE(node);
+  }
+  target->free_list = NULL;
 }
 
 dl_api dl_natural dl_linked_list_length(const dl_linked_list *list) {
@@ -232,7 +226,7 @@ dl_api dl_linked_list_node *dl_linked_list_insert(dl_linked_list *list, dl_linke
 
   /* alloc expects "after" whereas add expects "at" */
   position = position != NULL ? position->previous : NULL;
-  node = _linked_list_node_alloc(list, position);
+  node = _linked_list_node_alloc(list, position, false);
   if (dl_unlikely(value != NULL && !dl_memory_copy(DL_LINKED_LIST_DATA(node), value, list->element_size))) {
     _linked_list_node_free(list, node);
     return NULL;
@@ -242,7 +236,7 @@ dl_api dl_linked_list_node *dl_linked_list_insert(dl_linked_list *list, dl_linke
 }
 
 dl_api dl_bool dl_linked_list_remove(dl_linked_list *list, dl_linked_list_node *position) {
-  if (dl_safety(list == NULL || position == NULL))
+  if (dl_safety(list == NULL) || position == NULL)
     return false;
 
   _linked_list_node_free(list, position);
@@ -282,7 +276,7 @@ dl_api dl_ptr dl_linked_list_push(dl_linked_list *list, dl_ptr value) {
   if (dl_safety(list == NULL))
     return NULL;
 
-  node = _linked_list_node_alloc(list, list->last);
+  node = _linked_list_node_alloc(list, list->last, false);
   if (node == NULL)
     return NULL;
 
