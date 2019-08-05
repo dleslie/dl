@@ -33,14 +33,10 @@ typedef struct
 
 dl_api dl_linked_list *dl_init_linked_list(dl_linked_list *target, dl_natural element_size, dl_natural capacity);
 
-dl_api dl_bool dl_linked_list_copy(dl_linked_list *target, dl_linked_list *source);
-
 dl_api void dl_destroy_linked_list(dl_linked_list *target);
 
 dl_api dl_natural dl_linked_list_length(const dl_linked_list *list);
 dl_api dl_bool dl_linked_list_is_empty(const dl_linked_list *list);
-
-dl_api dl_bool dl_linked_list_clear_free_list(dl_linked_list *list);
 
 dl_api dl_ptr dl_linked_list_get(const dl_linked_list *list, dl_linked_list_node *position, dl_ptr out);
 dl_api dl_ptr dl_linked_list_ref(const dl_linked_list *list, const dl_linked_list_node *position);
@@ -150,21 +146,17 @@ dl_api dl_linked_list *dl_init_linked_list(dl_linked_list *target, dl_natural el
   return target;
 }
 
-dl_api dl_bool dl_linked_list_copy(dl_linked_list *target, dl_linked_list *source) {
-  dl_linked_list_node *node;
+dl_api dl_bool _linked_list_clear_free_list(dl_linked_list *list) {
+  dl_linked_list_node *current;
 
-  if (dl_safety(source == NULL || target == NULL || source->element_size != target->element_size))
+  if (dl_safety(list == NULL))
     return false;
 
-  if (target->first != NULL) {
-    target->last->next = target->free_list;
-    target->free_list = target->first;
-    target->first = NULL;
+  while (list->free_list != NULL) {
+    current = list->free_list;
+    list->free_list = list->free_list->next;
+    DL_FREE(current);
   }
-
-  for (node = source->first; node != NULL; node = node->next)
-    if (NULL == dl_linked_list_push(target, DL_LINKED_LIST_DATA(node)))
-      return false;
 
   return true;
 }
@@ -182,7 +174,7 @@ dl_api void dl_destroy_linked_list(dl_linked_list *target) {
     DL_FREE(node);
   }
 
-  dl_linked_list_clear_free_list(target);
+  _linked_list_clear_free_list(target);
 
   dl_memory_set(target, 0, sizeof(dl_linked_list));
 }
@@ -209,21 +201,6 @@ dl_api dl_inline dl_bool dl_linked_list_is_empty(const dl_linked_list *list) {
     return true;
 
   return list->first == NULL;
-}
-
-dl_api dl_bool dl_linked_list_clear_free_list(dl_linked_list *list) {
-  dl_linked_list_node *current;
-
-  if (dl_safety(list == NULL))
-    return false;
-
-  while (list->free_list != NULL) {
-    current = list->free_list;
-    list->free_list = list->free_list->next;
-    DL_FREE(current);
-  }
-
-  return true;
 }
 
 dl_api dl_ptr dl_linked_list_get(const dl_linked_list *list, dl_linked_list_node *position, dl_ptr out) {
