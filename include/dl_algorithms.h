@@ -55,7 +55,7 @@ dl_api dl_comparator dl_make_comparator(dl_ptr data, dl_integer (*func)(dl_ptr d
 
 #include "dl_container.h"
 
-#define ITER_UNSAFE(left, right) (!dl_iterator_is_valid(left) || (dl_iterator_is_valid(right) && dl_iterator_container(left) != dl_iterator_container(right)))
+#define ITER_UNSAFE(left, right) (!dl_iterator_is_valid(left) || (dl_iterator_is_valid(right) && left.container != right.container))
 #define FUNC_UNSAFE(f) (f.func == NULL)
 
 dl_api dl_handler dl_make_handler(dl_ptr data, dl_ptr (*func)(dl_ptr data, dl_ptr value)) {
@@ -122,7 +122,7 @@ dl_api dl_iterator _dl_find_region_binary(dl_iterator left, dl_iterator right, d
   dl_integer match;
 
   mid_index = (dl_iterator_index(right) - dl_iterator_index(left)) >> 1;
-  mid_iter = dl_container_index(dl_iterator_container(left), mid_index);
+  mid_iter = dl_container_index(left.container, mid_index);
 
   match = DL_CALL1(predicate, dl_iterator_ref(mid_iter));
   if (match == 0)
@@ -140,7 +140,7 @@ dl_api dl_iterator dl_find(dl_iterator left, dl_iterator right, dl_filter predic
 
   if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(predicate))) return dl_make_invalid_iterator();
 
-  if (!dl_iterator_is_valid(right)) right = dl_container_last(dl_iterator_container(left));
+  if (!dl_iterator_is_valid(right)) right = dl_container_last(left.container);
 
   traits = dl_container_traits(left.container);
   if (traits & DL_CONTAINER_TRAIT_RANDOM_ACCESS) {
@@ -163,7 +163,7 @@ dl_api dl_iterator dl_find_reverse(dl_iterator left, dl_iterator right, dl_filte
 
   if (dl_safety(ITER_UNSAFE(right, left) || FUNC_UNSAFE(predicate))) return dl_make_invalid_iterator();
 
-  if (!dl_iterator_is_valid(left)) left = dl_container_first(dl_iterator_container(right));
+  if (!dl_iterator_is_valid(left)) left = dl_container_first(right.container);
 
   traits = dl_container_traits(left.container);
   if ((traits & DL_CONTAINER_TRAIT_RANDOM_ACCESS) && (traits & DL_CONTAINER_TRAIT_SORTED)) {

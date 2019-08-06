@@ -25,21 +25,16 @@ extern "C" {
  ****************************************************************************/
 
 typedef enum {
-  DL_CONTAINER_TYPE_NONE = 0,
-  DL_CONTAINER_TYPE_VECTOR,
-  DL_CONTAINER_TYPE_LINKED_LIST
-} dl_container_type;
-
-typedef enum {
   DL_CONTAINER_TRAIT_NONE = 0,
   DL_CONTAINER_TRAIT_RANDOM_ACCESS = 1,
-  DL_CONTAINER_TRAIT_RANDOM_MUTATE = 2,
+  DL_CONTAINER_TRAIT_RANDOM_INSERT = 2,
   DL_CONTAINER_TRAIT_SET = 4,
   DL_CONTAINER_TRAIT_SORTED = 8
 } dl_container_trait;
 
+struct dl_container_interface;
 typedef struct {
-  dl_container_type type;
+  struct dl_container_interface *interface;
   dl_ptr storage;
 } dl_container;
 
@@ -51,7 +46,34 @@ typedef struct {
   } data;
 } dl_iterator;
 
-dl_api dl_container *dl_init_container(dl_container *target, dl_container_type type, dl_natural element_size, dl_natural capacity);
+struct dl_container_interface {
+  dl_ptr (*create)(dl_natural element_size, dl_natural capacity, dl_ptr extra_data);
+  void (*destroy)(dl_ptr c);
+  dl_natural (*traits)(dl_ptr c);
+  dl_natural (*length)(dl_ptr c);
+  dl_bool (*is_empty)(dl_ptr c);
+  dl_natural (*element_size)(dl_ptr c);
+  dl_iterator (*index)(dl_ptr c, dl_natural i);
+  dl_iterator (*first)(dl_ptr c);
+  dl_iterator (*last)(dl_ptr c);
+  dl_ptr (*push)(dl_ptr c, dl_ptr v);
+  dl_ptr (*pop)(dl_ptr c, dl_ptr out);
+
+  dl_bool (*iterator_valid)(dl_iterator i);
+  dl_ptr (*iterator_get)(dl_iterator i, dl_ptr out);
+  dl_ptr (*iterator_ref)(dl_iterator i);
+  dl_ptr (*iterator_set)(dl_iterator i, dl_ptr v);
+  dl_bool (*iterator_swap)(dl_iterator a, dl_iterator b);
+  dl_iterator (*iterator_insert)(dl_iterator pos, dl_ptr value);
+  dl_bool (*iterator_remove)(dl_iterator pos);
+  dl_iterator (*iterator_next)(dl_iterator i);
+  dl_iterator (*iterator_prev)(dl_iterator i);
+  dl_integer (*iterator_compare)(dl_iterator a, dl_iterator b);
+  dl_integer (*iterator_index)(dl_iterator i);
+};
+typedef struct dl_container_interface dl_container_interface;
+
+dl_api dl_container *dl_init_container(dl_container *target, struct dl_container_interface *interface, dl_natural element_size, dl_natural capacity, dl_ptr extra_data);
 dl_api void dl_destroy_container(dl_container *target);
 
 dl_api dl_natural dl_container_element_size(const dl_container *container);
@@ -75,8 +97,6 @@ dl_api dl_iterator dl_make_invalid_iterator();
 
 dl_api dl_bool dl_iterator_is_valid(dl_iterator iter);
 
-dl_api dl_natural dl_iterator_copy(dl_iterator target, const dl_iterator original, dl_natural count);
-
 dl_api dl_ptr dl_iterator_get(const dl_iterator position, dl_ptr out);
 dl_api dl_ptr dl_iterator_ref(dl_iterator position);
 dl_api dl_ptr dl_iterator_set(dl_iterator position, dl_ptr value);
@@ -95,8 +115,6 @@ dl_api dl_bool dl_iterator_equal(dl_iterator left, dl_iterator right);
 dl_api dl_integer dl_iterator_compare(dl_iterator left, dl_iterator right);
 dl_api dl_integer dl_iterator_index(dl_iterator iter);
 
-dl_api dl_container *dl_iterator_container(dl_iterator target);
-
 #ifdef __cplusplus
 }
 #endif
@@ -107,329 +125,159 @@ dl_api dl_container *dl_iterator_container(dl_iterator target);
  ** Generic Interface
  ******************************************************************************/
 
-dl_api dl_container *dl_init_container(dl_container *target, dl_container_type type, dl_natural element_size, dl_natural capacity) {
-  if (dl_safety(target == NULL || element_size == 0 || capacity == 0)) return NULL;
+dl_api dl_container *dl_init_container(dl_container *target, struct dl_container_interface *interface, dl_natural element_size, dl_natural capacity, dl_ptr extra_data) {
+  if (dl_safety(target == NULL || element_size == 0 || capacity == 0 || interface == NULL)) return NULL;
 
-  target->type = type;
-  switch (type) {
-    default:
-      return NULL;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      if (NULL == dl_init_linked_list((dl_linked_list *)target->storage, element_size, capacity)) return NULL;
-      return target;
-    case DL_CONTAINER_TYPE_VECTOR:
-      if (NULL == dl_init_vector((dl_vector *)target->storage, element_size, capacity)) return NULL;
-      return target;
-  }
+  target->interface = interface;
+  target->storage = target->interface->create(element_size, capacity, extra_data);
+
+  if (dl_unlikely(target->storage == NULL))
+    return NULL;
+  return target;
 }
 
 dl_api void dl_destroy_container(dl_container *target) {
-  if (dl_safety(target == NULL)) return;
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return;
 
-  switch (target->type) {
-    default:
-      break;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      dl_destroy_linked_list((dl_linked_list *)target->storage);
-      break;
-    case DL_CONTAINER_TYPE_VECTOR:
-      dl_destroy_vector((dl_vector *)target->storage);
-      break;
-  }
-
-  target->type = DL_CONTAINER_TYPE_NONE;
+  target->interface->destroy(target->storage);
+  target->storage = NULL;
 }
 
 dl_api dl_natural dl_container_length(const dl_container *target) {
-  if (dl_safety(target == NULL)) return 0;
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return -1;
 
-  switch (target->type) {
-    default:
-      return 0;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_length((dl_linked_list *)target->storage);
-    case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_capacity((dl_vector *)target->storage);
-  }
+  return target->interface->length(target->storage);
 }
 
 dl_api dl_bool dl_container_is_empty(const dl_container *target) {
-  if (dl_safety(target == NULL)) return true;
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return false;
 
-  switch (target->type) {
-    default:
-      return 0;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_is_empty((dl_linked_list *)target->storage);
-    case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_is_empty((dl_vector *)target->storage);
-  }
+  return target->interface->is_empty(target->storage);
 }
 
 dl_api dl_natural dl_container_element_size(const dl_container *target) {
-  if (dl_safety(target == NULL)) return 0;
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return 0;
 
-  switch (target->type) {
-    default:
-      return 0;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return ((dl_linked_list *)target->storage)->element_size;
-    case DL_CONTAINER_TYPE_VECTOR:
-      return ((dl_vector *)target->storage)->element_size;
-  }
+  return target->interface->element_size(target->storage);
 }
 
 dl_api dl_iterator dl_container_index(const dl_container *target, dl_natural position) {
-  dl_iterator iter;
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return dl_make_invalid_iterator();
 
-  if (dl_safety(target == NULL)) return dl_make_invalid_iterator();
-
-  switch (target->type) {
-    default:
-      return dl_make_invalid_iterator();
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      iter.container = (dl_container *)target;
-      iter.data.node = dl_linked_list_index((dl_linked_list *)target->storage, position);
-      return iter;
-    case DL_CONTAINER_TYPE_VECTOR:
-      if (dl_safety(position >= dl_vector_capacity((dl_vector *)target->storage))) return dl_make_invalid_iterator();
-      iter.container = (dl_container *)target;
-      iter.data.index = position;
-      return iter;
-  }
+  return target->interface->index(target->storage, position);
 }
 
 dl_api dl_iterator dl_container_first(const dl_container *target) {
-  dl_iterator iter;
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return dl_make_invalid_iterator();
 
-  if (dl_safety(target == NULL)) return dl_make_invalid_iterator();
-
-  switch (target->type) {
-    default:
-      return dl_make_invalid_iterator();
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      iter.container = (dl_container *)target;
-      iter.data.node = ((dl_linked_list *)target->storage)->first;
-      return iter;
-    case DL_CONTAINER_TYPE_VECTOR:
-      if (dl_safety(((dl_vector *)target->storage)->array == NULL)) return dl_make_invalid_iterator();
-      iter.container = (dl_container *)target;
-      iter.data.index = 0;
-      return iter;
-  }
+  return target->interface->first(target->storage);
 }
 
 dl_api dl_iterator dl_container_last(const dl_container *target) {
-  dl_iterator iter;
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return dl_make_invalid_iterator();
 
-  if (dl_safety(target == NULL)) return dl_make_invalid_iterator();
-
-  switch (target->type) {
-    default:
-      return dl_make_invalid_iterator();
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      iter.container = (dl_container *)target;
-      iter.data.node = ((dl_linked_list *)target->storage)->last;
-      return iter;
-    case DL_CONTAINER_TYPE_VECTOR:
-      if (dl_safety(((dl_vector *)target->storage)->array == NULL)) return dl_make_invalid_iterator();
-      iter.container = (dl_container *)target;
-      iter.data.index = ((dl_vector *)target->storage)->capacity - 1;
-      return iter;
-  }
+  return target->interface->last(target->storage);
 }
 
 dl_api dl_ptr dl_container_push(dl_container *target, dl_ptr value) {
-  if (dl_safety(target == NULL)) return false;
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return NULL;
 
-  switch (target->type) {
-    default:
-      return false;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_push((dl_linked_list *)target->storage, value);
-    case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_push((dl_vector *)target->storage, value);
-  }
+  return target->interface->push(target->storage, value);
 }
 
 dl_api dl_ptr dl_container_pop(dl_container *target, dl_ptr out) {
-  if (dl_safety(target == NULL)) return false;
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return NULL;
 
-  switch (target->type) {
-    default:
-      return false;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_pop((dl_linked_list *)target->storage, out);
-    case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_pop((dl_vector *)target->storage, out);
-  }
+  return target->interface->pop(target->storage, out);
 }
 
-dl_api dl_natural dl_container_traits(const dl_container *c) {
-  dl_natural traits;
+dl_api dl_natural dl_container_traits(const dl_container *target) {
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return 0;
 
-  traits = 0;
-
-  switch (c->type) {
-    default:
-      break;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      traits |= DL_CONTAINER_TRAIT_RANDOM_MUTATE;
-    case DL_CONTAINER_TYPE_VECTOR:
-      traits |= DL_CONTAINER_TRAIT_RANDOM_ACCESS;
-      break;
-  }
-
-  return traits;
+  return target->interface->traits(target->storage);
 }
 
 /*******************************************************************************
  ** Iterator Interface
  ******************************************************************************/
-dl_api dl_container *dl_iterator_container(dl_iterator target) {
-  return target.container;
-}
-
 dl_api dl_iterator dl_make_invalid_iterator() {
   dl_iterator iter;
   iter.container = NULL;
-  iter.data.index = 0;
-  iter.data.node = NULL;
   return iter;
 }
 
 dl_api dl_bool dl_iterator_is_valid(dl_iterator iter) {
-  return iter.container != NULL && ((iter.container->type == DL_CONTAINER_TYPE_LINKED_LIST && iter.data.node != NULL) || (iter.container->type == DL_CONTAINER_TYPE_VECTOR && iter.data.index >= 0 && iter.data.index < dl_vector_capacity((dl_vector *)iter.container->storage)));
+  return iter.container != NULL && iter.container->interface != NULL && iter.container->storage != NULL && dl_safety(iter.container->interface->iterator_valid(iter));
 }
 
 dl_api dl_ptr dl_iterator_get(const dl_iterator target, dl_ptr out) {
-  if (dl_safety(!dl_iterator_is_valid(target) || out != NULL))
+  if (dl_safety(!dl_iterator_is_valid(target) || out == NULL))
     return NULL;
 
-  switch (target.container->type) {
-    default:
-      return NULL;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_get((dl_linked_list *)target.container, target.data.node, out);
-    case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_get((dl_vector *)target.container, target.data.index, out);
-  }
+  return target.container->interface->iterator_get(target, out);
 }
 
 dl_api dl_ptr dl_iterator_ref(dl_iterator target) {
   if (dl_safety(!dl_iterator_is_valid(target)))
     return NULL;
 
-  switch (target.container->type) {
-    default:
-      return NULL;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_ref((dl_linked_list *)target.container, target.data.node);
-    case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_ref((dl_vector *)target.container, target.data.index);
-  }
+  return target.container->interface->iterator_ref(target);
 }
 
 dl_api dl_ptr dl_iterator_set(dl_iterator target, dl_ptr value) {
   if (dl_safety(!dl_iterator_is_valid(target) || value == NULL))
     return NULL;
 
-  switch (target.container->type) {
-    default:
-      return 0;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_set((dl_linked_list *)target.container, target.data.node, value);
-    case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_set((dl_vector *)target.container, target.data.index, value);
-  }
+  return target.container->interface->iterator_set(target, value);
 }
 
 dl_api dl_bool dl_iterator_swap(dl_iterator position1, dl_iterator position2) {
-  if (dl_safety(!dl_iterator_is_valid(position1) || !dl_iterator_is_valid(position2) || position2.container != position1.container))
+  if (dl_safety(!dl_iterator_is_valid(position1) || !dl_iterator_is_valid(position2) || position1.container != position2.container))
     return false;
 
-  switch (position1.container->type) {
-    default:
-      return false;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_swap((dl_linked_list *)position1.container, position1.data.node, position2.data.node);
-    case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_swap((dl_vector *)position1.container, position1.data.index, position2.data.index);
-  }
+  return position1.container->interface->iterator_swap(position1, position2);
 }
 
 dl_api dl_iterator dl_iterator_insert(dl_iterator position, dl_ptr value) {
-  dl_iterator iter;
-
-  if (dl_safety(!dl_iterator_is_valid(position)) || value == NULL)
+  if (dl_safety(!dl_iterator_is_valid(position) || value == NULL))
     return dl_make_invalid_iterator();
 
-  switch (position.container->type) {
-    default:
-      return dl_make_invalid_iterator();
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      iter.container = position.container;
-      iter.data.node = dl_linked_list_insert((dl_linked_list *)position.container, position.data.node, value);
-      return iter;
-    case DL_CONTAINER_TYPE_VECTOR:
-      iter.container = position.container;
-      iter.data.index = dl_vector_insert((dl_vector *)position.container, position.data.index, value);
-      return iter;
-  }
+  return position.container->interface->iterator_insert(position, value);
 }
 
 dl_api dl_bool dl_iterator_remove(dl_iterator position) {
   if (dl_safety(!dl_iterator_is_valid(position)))
     return false;
 
-  switch (position.container->type) {
-    default:
-      return false;
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      return dl_linked_list_remove((dl_linked_list *)position.container, position.data.node);
-    case DL_CONTAINER_TYPE_VECTOR:
-      return dl_vector_remove((dl_vector *)position.container, position.data.index);
-  }
+  return position.container->interface->iterator_remove(position);
 }
 
 dl_api dl_iterator dl_iterator_next(dl_iterator target) {
-  dl_iterator iter;
-
   if (dl_safety(!dl_iterator_is_valid(target)))
     return dl_make_invalid_iterator();
 
-  switch (target.container->type) {
-    default:
-      return dl_make_invalid_iterator();
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      iter.container = target.container;
-      iter.data.node = target.data.node == NULL ? NULL : ((dl_linked_list_node *)target.data.node)->next;
-      return iter;
-    case DL_CONTAINER_TYPE_VECTOR:
-      iter.container = target.container;
-      iter.data.index = target.data.index + 1;
-      return iter;
-  }
+  return target.container->interface->iterator_next(target);
 }
 
 dl_api dl_iterator dl_iterator_prev(dl_iterator target) {
-  dl_iterator iter;
-
   if (dl_safety(!dl_iterator_is_valid(target)))
     return dl_make_invalid_iterator();
 
-  switch (target.container->type) {
-    default:
-      return dl_make_invalid_iterator();
-    case DL_CONTAINER_TYPE_LINKED_LIST:
-      iter.container = target.container;
-      iter.data.node = target.data.node == NULL ? NULL : ((dl_linked_list_node *)target.data.node)->previous;
-      return iter;
-    case DL_CONTAINER_TYPE_VECTOR:
-      iter.container = target.container;
-      iter.data.index = target.data.index - 1;
-      return iter;
-  }
+  return target.container->interface->iterator_prev(target);
+}
+
+dl_api dl_integer dl_iterator_compare(dl_iterator left, dl_iterator right) {
+  if (dl_safety(!dl_iterator_is_valid(left) || !dl_iterator_is_valid(right) || left.container != right.container))
+    return -1;
+
+  return left.container->interface->iterator_compare(left, right);
+}
+
+dl_api dl_integer dl_iterator_index(dl_iterator iter) {
+  if (dl_safety(!dl_iterator_is_valid(iter)))
+    return -1;
+
+  return iter.container->interface->iterator_index(iter);
 }
 
 dl_api dl_iterator dl_iterator_next_ref(dl_iterator iter, dl_ptr *out) {
@@ -447,52 +295,7 @@ dl_api dl_iterator dl_iterator_prev_ref(dl_iterator iter, dl_ptr *out) {
 }
 
 dl_api dl_bool dl_iterator_equal(dl_iterator left, dl_iterator right) {
-  dl_bool leftValid, rightValid;
-
-  leftValid = dl_iterator_is_valid(left);
-  rightValid = dl_iterator_is_valid(right);
-
-  return (leftValid == rightValid) && (!leftValid || (left.container == right.container && ((left.container->type = DL_CONTAINER_TYPE_LINKED_LIST && left.data.node == right.data.node) || (left.container->type = DL_CONTAINER_TYPE_VECTOR && left.data.index == right.data.index))));
-}
-
-dl_api dl_integer dl_iterator_compare(dl_iterator left, dl_iterator right) {
-  dl_bool leftValid, rightValid;
-
-  leftValid = dl_iterator_is_valid(left);
-  rightValid = dl_iterator_is_valid(right);
-
-  if (!leftValid && !rightValid)
-    return 0;
-  if (leftValid && !rightValid)
-    return -1;
-  if (!leftValid && rightValid)
-    return 1;
-  if (dl_safety(left.container != right.container))
-    return 0;
-  return dl_iterator_index(left) - dl_iterator_index(right);
-}
-
-dl_api dl_integer dl_iterator_index(dl_iterator iter) {
-  if (dl_safety(!dl_iterator_is_valid(iter)))
-    return -1;
-
-  switch (iter.container->type) {
-    default:
-      return -1;
-    case DL_CONTAINER_TYPE_VECTOR:
-      return iter.data.index;
-    case DL_CONTAINER_TYPE_LINKED_LIST: {
-      dl_integer index = 0;
-      dl_iterator cur;
-      for (cur = dl_container_first(iter.container);
-           dl_iterator_is_valid(cur) && !dl_iterator_equal(cur, iter);
-           cur = dl_iterator_next(iter))
-        ++index;
-      if (!dl_iterator_is_valid(cur))
-        return -1;
-      return index;
-    }
-  }
+  return 0 == dl_iterator_compare(left, right);
 }
 
 #endif /* DL_IMPLEMENTATION */
