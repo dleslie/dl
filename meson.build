@@ -27,7 +27,7 @@ executables = [
 ]
 
 if lib_allegro.found() and lib_allegro_primitives.found()
-	executables += ['tween', ['src/tween.c'], [lib_m, lib_allegro, lib_allegro_primitives]]
+	executables += [['tween', ['src/tween.c'], [lib_m, lib_allegro, lib_allegro_primitives]]]
 	standard_flags += ['-DENABLE_TWEEN_TEST=1']
 endif
 
