@@ -1,14 +1,3 @@
-/*
- * This entire file is a testament to the travesty of C's limitations.
- * What is being done with switch statements at run time could be better done
- * with static analysis at compile time. Alternativey, a structure with function
- * pointers could be used, but the differences in behaviour at runtime are
- * negligible; while at compile-time there is greater ambiguity. It would be
- * better if traits/generics were available to C, so this logic could be done at
- * compile time.
- *
- */
-
 #ifndef DL_CONTAINER_H
 #define DL_CONTAINER_H 1
 
@@ -47,7 +36,7 @@ typedef struct {
 } dl_iterator;
 
 struct dl_container_interface {
-  dl_ptr (*create)(dl_natural element_size, dl_natural capacity, dl_ptr extra_data);
+  dl_bool (*init)(dl_container *c, dl_natural element_size, dl_natural capacity);
   void (*destroy)(dl_ptr c);
   dl_natural (*traits)(dl_ptr c);
   dl_natural (*length)(dl_ptr c);
@@ -73,7 +62,7 @@ struct dl_container_interface {
 };
 typedef struct dl_container_interface dl_container_interface;
 
-dl_api dl_container *dl_init_container(dl_container *target, struct dl_container_interface *interface, dl_natural element_size, dl_natural capacity, dl_ptr extra_data);
+dl_api dl_container *dl_make_container(struct dl_container_interface *interface, dl_natural element_size, dl_natural capacity);
 dl_api void dl_destroy_container(dl_container *target);
 
 dl_api dl_natural dl_container_element_size(const dl_container *container);
@@ -125,14 +114,17 @@ dl_api dl_integer dl_iterator_index(dl_iterator iter);
  ** Generic Interface
  ******************************************************************************/
 
-dl_api dl_container *dl_init_container(dl_container *target, struct dl_container_interface *interface, dl_natural element_size, dl_natural capacity, dl_ptr extra_data) {
-  if (dl_safety(target == NULL || element_size == 0 || capacity == 0 || interface == NULL)) return NULL;
+dl_api dl_container *dl_make_container(struct dl_container_interface *interface, dl_natural element_size, dl_natural capacity) {
+  dl_container *target;
+  if (dl_safety(element_size == 0 || capacity == 0 || interface == NULL)) return NULL;
+
+  if (dl_unlikely(NULL == (target = DL_ALLOC(sizeof(dl_container)))))
+    return NULL;
 
   target->interface = interface;
-  target->storage = target->interface->create(element_size, capacity, extra_data);
-
-  if (dl_unlikely(target->storage == NULL))
+  if (dl_unlikely(false == target->interface->init(target, element_size, capacity)))
     return NULL;
+
   return target;
 }
 
@@ -140,7 +132,10 @@ dl_api void dl_destroy_container(dl_container *target) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return;
 
   target->interface->destroy(target->storage);
-  target->storage = NULL;
+#if DL_USE_SAFETY_CHECKS
+  dl_memory_set(target, 0, sizeof(dl_container));
+#endif
+  DL_FREE(target);
 }
 
 dl_api dl_natural dl_container_length(const dl_container *target) {

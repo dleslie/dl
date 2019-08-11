@@ -31,7 +31,7 @@ typedef struct
   dl_natural element_size;
 } dl_linked_list;
 
-dl_api dl_linked_list *dl_init_linked_list(dl_linked_list *target, dl_natural element_size, dl_natural capacity);
+dl_api dl_linked_list *dl_make_linked_list(dl_natural element_size, dl_natural capacity);
 
 dl_api void dl_destroy_linked_list(dl_linked_list *target);
 
@@ -131,8 +131,13 @@ dl_api void _linked_list_node_detach_free(dl_linked_list *list, dl_linked_list_n
   e->next = e->previous = NULL;
 }
 
-dl_api dl_linked_list *dl_init_linked_list(dl_linked_list *target, dl_natural element_size, dl_natural capacity) {
-  if (dl_safety(target == NULL || element_size < 1))
+dl_api dl_linked_list *dl_make_linked_list(dl_natural element_size, dl_natural capacity) {
+  dl_linked_list *target;
+
+  if (dl_safety(element_size < 1))
+    return NULL;
+
+  if (dl_unlikely(NULL == (target = DL_ALLOC(sizeof(dl_linked_list)))))
     return NULL;
 
   target->first = target->last = target->free_list = NULL;
@@ -170,7 +175,11 @@ dl_api void dl_destroy_linked_list(dl_linked_list *target) {
     next_node = node->next;
     DL_FREE(node);
   }
-  target->free_list = NULL;
+
+#if DL_USE_SAFETY_CHECKS
+  dl_memory_set(target, 0, sizeof(dl_linked_list));
+#endif
+  DL_FREE(target);
 }
 
 dl_api dl_natural dl_linked_list_length(const dl_linked_list *list) {

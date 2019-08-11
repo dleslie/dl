@@ -18,7 +18,7 @@ typedef struct {
   dl_byte *array;
 } dl_vector;
 
-dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_natural capacity);
+dl_api dl_vector *dl_make_vector(dl_natural element_size, dl_natural capacity);
 
 dl_api void dl_destroy_vector(dl_vector *target);
 
@@ -51,8 +51,10 @@ dl_api dl_ptr dl_vector_pop(dl_vector *v, dl_ptr out);
  **  Vectors
  ****************************************************************************/
 
-dl_api dl_vector *dl_init_vector(dl_vector *target, dl_natural element_size, dl_natural capacity) {
-  if (dl_safety(target == NULL))
+dl_api dl_vector *dl_make_vector(dl_natural element_size, dl_natural capacity) {
+  dl_vector *target;
+
+  if (dl_unlikely(NULL == (target = DL_ALLOC(sizeof(dl_vector)))))
     return NULL;
 
   target->element_size = element_size;
@@ -80,8 +82,10 @@ dl_api void dl_destroy_vector(dl_vector *target) {
   if (target->array != NULL)
     DL_FREE((dl_ptr)target->array);
 
-  target->array = NULL;
-  target->capacity = target->length = 0;
+#if DL_USE_SAFETY_CHECKS
+  dl_memory_set(target, 0, sizeof(dl_vector));
+#endif
+  DL_FREE(target);
 }
 
 dl_api dl_inline dl_natural dl_vector_capacity(const dl_vector *v) {
@@ -199,7 +203,7 @@ dl_api dl_integer dl_vector_insert(dl_vector *v, dl_natural position, dl_ptr val
 
     DL_FREE(v->array);
 
-    v->length++;  
+    v->length++;
     v->array = new_ary;
   } else {
     dl_integer idx;
