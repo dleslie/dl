@@ -36,7 +36,7 @@ typedef struct {
 } dl_iterator;
 
 struct dl_container_interface {
-  dl_bool (*init)(dl_container *c, dl_natural element_size, dl_natural capacity);
+  dl_ptr (*make)(dl_natural element_size, dl_natural capacity);
   void (*destroy)(dl_ptr c);
   dl_natural (*traits)(dl_ptr c);
   dl_natural (*length)(dl_ptr c);
@@ -118,11 +118,11 @@ dl_api dl_container *dl_make_container(struct dl_container_interface *interface,
   dl_container *target;
   if (dl_safety(element_size == 0 || capacity == 0 || interface == NULL)) return NULL;
 
-  if (dl_unlikely(NULL == (target = DL_ALLOC(sizeof(dl_container)))))
+  if (dl_unlikely(NULL == (target = (dl_container *)DL_ALLOC(sizeof(dl_container)))))
     return NULL;
 
   target->interface = interface;
-  if (dl_unlikely(false == target->interface->init(target, element_size, capacity)))
+  if (dl_unlikely(NULL == (target->storage = target->interface->make(element_size, capacity))))
     return NULL;
 
   return target;
@@ -131,7 +131,7 @@ dl_api dl_container *dl_make_container(struct dl_container_interface *interface,
 dl_api void dl_destroy_container(dl_container *target) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return;
 
-  target->interface->destroy(target->storage);
+  target->interface->destroy(target);
 #if DL_USE_SAFETY_CHECKS
   dl_memory_set(target, 0, sizeof(dl_container));
 #endif
@@ -141,55 +141,55 @@ dl_api void dl_destroy_container(dl_container *target) {
 dl_api dl_natural dl_container_length(const dl_container *target) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return -1;
 
-  return target->interface->length(target->storage);
+  return target->interface->length((dl_ptr)target);
 }
 
 dl_api dl_bool dl_container_is_empty(const dl_container *target) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return false;
 
-  return target->interface->is_empty(target->storage);
+  return target->interface->is_empty((dl_ptr)target);
 }
 
 dl_api dl_natural dl_container_element_size(const dl_container *target) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return 0;
 
-  return target->interface->element_size(target->storage);
+  return target->interface->element_size((dl_ptr)target);
 }
 
 dl_api dl_iterator dl_container_index(const dl_container *target, dl_natural position) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return dl_make_invalid_iterator();
 
-  return target->interface->index(target->storage, position);
+  return target->interface->index((dl_ptr)target, position);
 }
 
 dl_api dl_iterator dl_container_first(const dl_container *target) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return dl_make_invalid_iterator();
 
-  return target->interface->first(target->storage);
+  return target->interface->first((dl_ptr)target);
 }
 
 dl_api dl_iterator dl_container_last(const dl_container *target) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return dl_make_invalid_iterator();
 
-  return target->interface->last(target->storage);
+  return target->interface->last((dl_ptr)target);
 }
 
 dl_api dl_ptr dl_container_push(dl_container *target, dl_ptr value) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return NULL;
 
-  return target->interface->push(target->storage, value);
+  return target->interface->push(target, value);
 }
 
 dl_api dl_ptr dl_container_pop(dl_container *target, dl_ptr out) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return NULL;
 
-  return target->interface->pop(target->storage, out);
+  return target->interface->pop(target, out);
 }
 
 dl_api dl_natural dl_container_traits(const dl_container *target) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return 0;
 
-  return target->interface->traits(target->storage);
+  return target->interface->traits((dl_ptr)target);
 }
 
 /*******************************************************************************
