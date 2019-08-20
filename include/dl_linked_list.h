@@ -137,7 +137,7 @@ dl_api dl_linked_list *dl_make_linked_list(dl_natural element_size, dl_natural c
   if (dl_safety(element_size < 1))
     return NULL;
 
-  if (dl_unlikely(NULL == (target = DL_ALLOC(sizeof(dl_linked_list)))))
+  if (dl_unlikely(NULL == (target = (dl_linked_list *)DL_ALLOC(sizeof(dl_linked_list)))))
     return NULL;
 
   target->first = target->last = target->free_list = NULL;
