@@ -103,13 +103,13 @@ dl_ptr _vector_container_iterator_get(dl_iterator i, dl_ptr out) {
 }
 
 dl_ptr _vector_container_iterator_ref(dl_iterator i) {
-  if (dl_safety(!dl_iterator_is_valid(i) || out == NULL))
+  if (dl_safety(!dl_iterator_is_valid(i)\))
     return NULL;
   return dl_vector_ref((dl_vector *)i.container->storage, i.data.index);
 }
 
 dl_ptr _vector_container_iterator_set(dl_iterator i, dl_ptr v) {
-  if (dl_safety(!dl_iterator_is_valid(i) || out == NULL))
+  if (dl_safety(!dl_iterator_is_valid(i) || v == NULL))
     return NULL;
   return dl_vector_set((dl_vector *)i.container->storage, i.data.index, v);
 }
