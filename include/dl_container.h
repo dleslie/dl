@@ -2,8 +2,6 @@
 #define DL_CONTAINER_H 1
 
 #include "dl_core.h"
-#include "dl_linked_list.h"
-#include "dl_vector.h"
 
 #ifdef __cplusplus
 extern "C" {
