@@ -1,7 +1,9 @@
 * TODO Use four-sample parameters for all tweening
 * TODO Fix bezier curve spline
-* TODO Create dl_vector_container
-* TODO Create dl_linked_list_container 
+* TODO Tween should be aware of container types
+* TODO Write container test suite
+* DONE Create dl_vector_container
+* DONE Create dl_linked_list_container 
 * TODO Create dl_set_container 
 * TODO Create dl_sorted_list_container 
 * TODO Create dl_queue_container
