@@ -148,11 +148,29 @@ dl_declare_test(test_dl_linked_list_get_set_ref);
 dl_declare_test(test_dl_linked_list_insert_remove);
 dl_end_test_suite
 
+/*******************************************************************************;
+ container
+*******************************************************************************/
+
+dl_begin_test_suite(container);
+dl_declare_test(test_dl_make_container);
+dl_declare_test(test_dl_container_element_size);
+dl_declare_test(test_dl_container_length);
+dl_declare_test(test_dl_container_is_empty);
+dl_declare_test(test_dl_container_index);
+dl_declare_test(test_dl_container_first);
+dl_declare_test(test_dl_container_last);
+dl_declare_test(test_dl_container_push);
+dl_declare_test(test_dl_container_pop);
+dl_declare_test(test_dl_container_traits);
+dl_end_test_suite
+        
 int  main(int argc, char **argv) {
   dl_run_test_suite(tester);
   dl_run_test_suite(math);
   dl_run_test_suite(vector);
   dl_run_test_suite(linked_list);
+  dl_run_test_suite(container);
   return 0;
 }
 

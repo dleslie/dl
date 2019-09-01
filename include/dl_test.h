@@ -1,7 +1,8 @@
-#include "dl_core.h"
-#if DL_IS_ATLEAST_C99
 #ifndef DL_TEST_H
 #define DL_TEST_H
+
+#include "dl_core.h"
+#if DL_IS_ATLEAST_C99
 
 #include "dl_logging.h"
 
