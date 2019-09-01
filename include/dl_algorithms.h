@@ -9,8 +9,8 @@
 #ifndef DL_ALGORITHMS_H
 #define DL_ALGORITHMS_H 1
 
-#include "dl_core.h"
 #include "dl_container.h"
+#include "dl_core.h"
 
 #ifdef __cplusplus
 extern "C" {

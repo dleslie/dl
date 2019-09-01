@@ -50,7 +50,7 @@ dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, 
 
 dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural line, const char *function, const char *msg) {
   char time_buf[20];
-  
+
   time_buf[0] = (char)0;
 #if defined(DL_TIME_H)
   dl_write_time(" %F %T", time_buf, 20);

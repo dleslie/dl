@@ -54,7 +54,7 @@ dl_integer dl_test_run(dl_bool (**tests)(), const char **names, dl_integer count
     if (tests[i]())
       passed++;
     else
-      DL_TEST("[%3i/%3i] FAIL: %s", i + 1, count, names[i]);   
+      DL_TEST("[%3i/%3i] FAIL: %s", i + 1, count, names[i]);
   }
 
   return passed;
