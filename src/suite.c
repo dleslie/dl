@@ -163,6 +163,20 @@ dl_declare_test(test_dl_container_last);
 dl_declare_test(test_dl_container_push);
 dl_declare_test(test_dl_container_pop);
 dl_declare_test(test_dl_container_traits);
+dl_declare_test(test_dl_iterator_is_valid);
+dl_declare_test(test_dl_iterator_get);
+dl_declare_test(test_dl_iterator_ref);
+dl_declare_test(test_dl_iterator_set);
+dl_declare_test(test_dl_iterator_swap);
+dl_declare_test(test_dl_iterator_insert);
+dl_declare_test(test_dl_iterator_remove);
+dl_declare_test(test_dl_iterator_next);
+dl_declare_test(test_dl_iterator_prev);
+dl_declare_test(test_dl_iterator_next_ref);
+dl_declare_test(test_dl_iterator_prev_ref);
+dl_declare_test(test_dl_iterator_equal);
+dl_declare_test(test_dl_iterator_compare);
+dl_declare_test(test_dl_iterator_index);
 dl_end_test_suite
         
 int  main(int argc, char **argv) {

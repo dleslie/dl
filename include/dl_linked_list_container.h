@@ -30,7 +30,7 @@ void _destroy_linked_list_container(dl_ptr c) {
 }
 
 dl_natural _linked_list_container_traits(dl_ptr c) {
-  return DL_CONTAINER_TRAIT_RANDOM_ACCESS;
+  return DL_CONTAINER_TRAIT_RANDOM_INSERT;
 }
 
 dl_natural _linked_list_container_length(dl_ptr c) {
