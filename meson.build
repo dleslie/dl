@@ -3,8 +3,8 @@ project('dl', 'c')
 inc = include_directories('include')
 cc = meson.get_compiler('c')
 
-lib_allegro = dependency('allegro-5')
-lib_allegro_primitives = dependency('allegro_primitives-5')
+lib_allegro = dependency('allegro-5', required: false)
+lib_allegro_primitives = dependency('allegro_primitives-5', required: false)
 lib_m = cc.find_library('m', required : true)
 
 c_stds = ['c89', 'c90', 'c99', 'c11']
@@ -21,9 +21,12 @@ gcc_configs = [
 build_config = gcc_configs
 
 executables = [
-	['tween', ['src/tween.c'], [lib_m, lib_allegro, lib_allegro_primitives]],
 	['suite', ['src/test_dl_collections.c', 'src/test_dl_math.c', 'src/test_dl_test.c', 'src/suite.c'], [lib_m]],
 ]
+
+if lib_allegro.found() and lib_allegro_primitives.found()
+	executables += ['tween', ['src/tween.c'], [lib_m, lib_allegro, lib_allegro_primitives]]
+endif
 
 foreach exe : executables
 	exe_name = exe[0]
