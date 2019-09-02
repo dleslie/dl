@@ -63,3 +63,4 @@ GRTAGS
 GTAGS
 
 .vscode/ipch/
+.\#*
