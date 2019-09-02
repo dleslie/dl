@@ -59,18 +59,23 @@ dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural 
   switch (ch) {
     case DL_LOG_INFO:
       fprintf(stdout, "%s:%lu:%s\n[LOG%s] %s\n", file, (unsigned long)line, function, time_buf, msg);
+      fflush(stdout);
       return ch;
     case DL_LOG_WARNING:
       fprintf(stdout, "%s:%lu:%s\n[WRN%s] %s\n", file, (unsigned long)line, function, time_buf, msg);
+      fflush(stdout);
       return ch;
     case DL_LOG_ERROR:
       fprintf(stderr, "%s:%lu:%s\n[ERR%s] %s\n", file, (unsigned long)line, function, time_buf, msg);
+      fflush(stdout);
       return ch;
     case DL_LOG_TEST:
       fprintf(stdout, "[TST%s] %s\n", time_buf, msg);
+      fflush(stdout);
       return ch;
     case DL_LOG_MESSAGE:
       fprintf(stdout, "[MSG%s] %s\n", time_buf, msg);
+      fflush(stdout);
       return ch;
     default:
       return 0;

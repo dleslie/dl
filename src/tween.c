@@ -161,7 +161,8 @@ int main(int argc, char **argv) {
 
   al_init_primitives_addon();
 
-  al_set_new_display_flags(ALLEGRO_OPENGL);
+  DL_INFO("Creating display");
+  al_set_new_display_flags(ALLEGRO_OPENGL_3_0);
   display = al_create_display(screen_width, screen_height);
   if (!display) {
     return -1;
@@ -179,7 +180,7 @@ int main(int argc, char **argv) {
   if (!bkg) {
     return -1;
   }
-
+  DL_INFO("Initing time");
   dl_init_random_time(&r);
 
   change(&r);
@@ -193,6 +194,7 @@ int main(int argc, char **argv) {
 
   last_tick = al_get_time();
 
+  DL_INFO("Entering main loop");
   while (!should_exit) {
     ALLEGRO_EVENT event;
 
@@ -225,7 +227,7 @@ int main(int argc, char **argv) {
 
     al_flip_display();
   }
-
+  DL_INFO("Exiting");
   return 0;
 }
 #endif
