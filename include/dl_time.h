@@ -26,7 +26,7 @@ dl_api void dl_time(dl_natural *out_usec, dl_natural *out_sec);
 #if defined(DL_IMPLEMENTATION)
 
 dl_api dl_natural dl_write_time(const char *fmt, char *buf, dl_natural buf_length) {
-#if DL_IS_WINDOWSXS
+#if DL_IS_WINDOWS
   struct tm ltime;
   time_t t = time(NULL);
   localtime_s(&ltime, &t);

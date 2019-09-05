@@ -91,7 +91,7 @@ dl_ptr _linked_list_container_iterator_set(dl_iterator i, dl_ptr v) {
 }
 
 dl_bool _linked_list_container_iterator_swap(dl_iterator a, dl_iterator b) {
-  return dl_linked_list_swap((dl_linked_list *)a.container, a.data.node, b.data.node);
+  return dl_linked_list_swap((dl_linked_list *)a.container->storage, a.data.node, b.data.node);
 }
 
 dl_iterator _linked_list_container_iterator_insert(dl_iterator i, dl_ptr value) {

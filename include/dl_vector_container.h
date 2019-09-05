@@ -92,7 +92,7 @@ dl_ptr _vector_container_iterator_set(dl_iterator i, dl_ptr v) {
 }
 
 dl_bool _vector_container_iterator_swap(dl_iterator a, dl_iterator b) {
-  return dl_vector_swap((dl_vector *)a.container, a.data.index, b.data.index);
+  return dl_vector_swap((dl_vector *)a.container->storage, a.data.index, b.data.index);
 }
 
 dl_iterator _vector_container_iterator_insert(dl_iterator i, dl_ptr value) {

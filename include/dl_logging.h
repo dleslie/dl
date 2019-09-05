@@ -53,28 +53,28 @@ dl_natural _default_log_handler(dl_log_channel ch, const char *file, dl_natural 
 
   time_buf[0] = (char)0;
 #if defined(DL_TIME_H)
-  dl_write_time(" %F %T", time_buf, 20);
+  dl_write_time("%F %T", time_buf, 20);
 #endif
 
   switch (ch) {
     case DL_LOG_INFO:
-      fprintf(stdout, "%s:%lu:%s\n[LOG%s] %s\n", file, (unsigned long)line, function, time_buf, msg);
+      fprintf(stdout, "%s:%lu:%s\n[LOG %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
       fflush(stdout);
       return ch;
     case DL_LOG_WARNING:
-      fprintf(stdout, "%s:%lu:%s\n[WRN%s] %s\n", file, (unsigned long)line, function, time_buf, msg);
+      fprintf(stdout, "%s:%lu:%s\n[WRN %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
       fflush(stdout);
       return ch;
     case DL_LOG_ERROR:
-      fprintf(stderr, "%s:%lu:%s\n[ERR%s] %s\n", file, (unsigned long)line, function, time_buf, msg);
+      fprintf(stderr, "%s:%lu:%s\n[ERR %s] %s\n", file, (unsigned long)line, function, time_buf, msg);
       fflush(stdout);
       return ch;
     case DL_LOG_TEST:
-      fprintf(stdout, "[TST%s] %s\n", time_buf, msg);
+      fprintf(stdout, "[TST %s] %s\n", time_buf, msg);
       fflush(stdout);
       return ch;
     case DL_LOG_MESSAGE:
-      fprintf(stdout, "[MSG%s] %s\n", time_buf, msg);
+      fprintf(stdout, "[MSG %s] %s\n", time_buf, msg);
       fflush(stdout);
       return ch;
     default:
