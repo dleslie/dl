@@ -75,7 +75,8 @@ dl_ptr _vector_container_pop(dl_ptr c, dl_ptr out) {
 }
 
 dl_bool _vector_container_iterator_valid(dl_iterator i) {
-  return i.data.index >= 0 && i.data.index < dl_vector_length((dl_vector *)((dl_container *)i.container)->storage);
+  dl_natural length = dl_vector_length((dl_vector *)((dl_container *)i.container)->storage);
+  return i.data.index >= 0 && i.data.index < length;
 }
 
 dl_ptr _vector_container_iterator_get(dl_iterator i, dl_ptr out) {

@@ -95,14 +95,85 @@ error:
 }
 
 dl_bool test_dl_container_index() {
+  dl_container *c;
+  dl_natural idx, idx2;
+  dl_iterator iter;
+
+  for (idx = 0; idx < info_count; ++idx) {
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_natural), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+
+    iter = dl_container_index(c, 1);
+    if (!dl_check(dl_iterator_is_valid(iter), "Expected %s iterator to be valid.", infos[idx].type_name))
+      goto error;
+
+    idx2 = dl_iterator_index(iter);
+    if (!dl_check(idx2 == 1, "Expected %s iterator to point at position $i.", infos[idx].type_name, 1))
+      goto error;
+
+    iter = dl_container_index(c, 11);
+    if (!dl_check(!dl_iterator_is_valid(iter), "Expected %s iterator to be invalid.", infos[idx].type_name))
+      goto error;
+
+    dl_destroy_container(c);
+  }
+
+  return true;
+error:
+  dl_destroy_container(c);
   return false;
 }
 
 dl_bool test_dl_container_first() {
+  dl_container *c;
+  dl_natural idx, idx2;
+  dl_iterator iter;
+
+  for (idx = 0; idx < info_count; ++idx) {
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_natural), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+
+    iter = dl_container_first(c);
+    if (!dl_check(0 == dl_iterator_index(iter), "Expected %s first index to be 0", infos[idx].type_name))
+      goto error;
+
+    dl_destroy_container(c);
+  }
+
+  return true;
+error:
+  dl_destroy_container(c);
   return false;
 }
 
 dl_bool test_dl_container_last() {
+  dl_container *c;
+  dl_natural idx, idx2;
+  dl_iterator iter;
+
+  for (idx = 0; idx < info_count; ++idx) {
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_natural), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+
+    iter = dl_container_last(c);
+    if (!dl_check(9 == dl_iterator_index(iter), "Expected %s last index to be 9", infos[idx].type_name))
+      goto error;
+
+    dl_destroy_container(c);
+  }
+
+  return true;
+error:
+  dl_destroy_container(c);
   return false;
 }
 
