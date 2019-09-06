@@ -406,10 +406,12 @@ dl_iterator _quick_sort_partition(dl_iterator left, dl_iterator right, dl_compar
   dl_iterator i, j, pivot;
   dl_ptr pivot_ref, ref_j;
 
-  pivot = dl_iterator_prev_ref(right, &pivot_ref);
+  pivot = right;
+  dl_iterator_prev_ref(&pivot, &pivot_ref);
+  
   ref_j = dl_iterator_ref(left);
 
-  for (i = j = left; !dl_iterator_equal(pivot, j); j = dl_iterator_next_ref(j, &ref_j)) {
+  for (i = j = left; !dl_iterator_equal(pivot, j); dl_iterator_next_ref(&j, &ref_j)) {
     if (DL_CALL2(compare, ref_j, pivot_ref)) {
       dl_iterator_swap(i, j);
       dl_swap(i, j);
