@@ -1,11 +1,11 @@
-* PROG Write container test suite
-* TODO Write algorithm test suite
+* PROG Write algorithm test suite
 * TODO Use four-sample parameters for all tweening
 * TODO Fix bezier curve spline
 * TODO Tween should be aware of container types
-* DONE Create dl_vector_container
-* DONE Create dl_linked_list_container 
 * TODO Create dl_set_container 
 * TODO Create dl_sorted_list_container 
 * TODO Create dl_queue_container
 * TODO Create dl_dequeue_container
+* DONE Create dl_linked_list_container 
+* DONE Create dl_vector_container
+* DONE Write container test suite

@@ -710,10 +710,69 @@ error:
 }
 
 dl_bool test_dl_iterator_compare() {
+  dl_container *c;
+  dl_natural idx, idx2;
+  dl_iterator iter, first;
+
+  for (idx = 0; idx < info_count; ++idx) {
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_natural), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+
+    if (!dl_check(10 == dl_container_length(c), "Expected %s container length to be 10, not %i.", infos[idx].type_name, dl_container_length(c)))
+      goto error;
+
+    iter = dl_container_first(c);
+    first = dl_container_index(c, 0);
+    if (!dl_check(0 == dl_iterator_compare(iter, first), "Expected %s iterators to be equal.", infos[idx].type_name))
+      goto error;
+    
+    while (dl_iterator_is_valid(iter)) {
+      iter = dl_iterator_next(iter);
+      if (dl_iterator_is_valid(iter) && !dl_check(0 != dl_iterator_compare(iter, first), "Expected %s iterators to not be equal.", infos[idx].type_name))
+        goto error;
+    }
+
+    dl_destroy_container(c);
+  }
+
+  return true;
+error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
+  dl_destroy_container(c);
   return false;
 }
 
 dl_bool test_dl_iterator_index() {
+  dl_container *c;
+  dl_natural idx, idx2, val;
+
+  for (idx = 0; idx < info_count; ++idx) {
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_natural), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+
+    for (idx2 = 0; idx2 < 10; ++idx2) {
+      dl_iterator_get(dl_container_index(c, idx2), &val);
+      if (!dl_check(idx2 == val, "Expected %s index %i to be %i not %i.", infos[idx].type_name, idx2, idx2, val))
+        goto error;
+    }
+
+    dl_destroy_container(c);
+  }
+
+  return true;
+error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
+  dl_destroy_container(c);
   return false;
 }
 
