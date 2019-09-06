@@ -118,7 +118,7 @@ dl_iterator _linked_list_container_iterator_prev(dl_iterator i) {
 }
 
 dl_integer _linked_list_container_iterator_compare(dl_iterator a, dl_iterator b) {
-  return a.data.node == b.data.node;
+  return !(a.data.node == b.data.node);
 }
 
 dl_integer _linked_list_container_iterator_index(dl_iterator i) {

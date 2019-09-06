@@ -280,8 +280,7 @@ dl_api dl_bool dl_iterator_next_ref(dl_iterator *iter, dl_ptr *out) {
   *iter = dl_iterator_next(*iter);
   if (!dl_iterator_is_valid(*iter))
     return false;
-  *out = dl_iterator_ref(*iter);
-  return true;
+  return NULL != dl_iterator_get(*iter, out);
 }
 
 dl_api dl_bool dl_iterator_prev_ref(dl_iterator *iter, dl_ptr *out) {
@@ -290,8 +289,7 @@ dl_api dl_bool dl_iterator_prev_ref(dl_iterator *iter, dl_ptr *out) {
   *iter = dl_iterator_prev(*iter);
   if (!dl_iterator_is_valid(*iter))
     return false;
-  *out = dl_iterator_ref(*iter);
-  return true;
+  return NULL != dl_iterator_get(*iter, out);
 }
 
 dl_api dl_bool dl_iterator_equal(dl_iterator left, dl_iterator right) {

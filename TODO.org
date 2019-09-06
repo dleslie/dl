@@ -1,4 +1,5 @@
 * PROG Write container test suite
+* TODO Write algorithm test suite
 * TODO Use four-sample parameters for all tweening
 * TODO Fix bezier curve spline
 * TODO Tween should be aware of container types
