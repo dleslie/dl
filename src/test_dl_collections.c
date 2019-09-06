@@ -491,6 +491,37 @@ error:
 }
 
 dl_bool test_dl_iterator_remove() {
+  dl_container *c;
+  dl_natural idx, idx2, val, val2;
+
+  for (idx = 0; idx < info_count; ++idx) {
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_natural), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+    for (idx2 = 0; idx2 < 5; ++idx2)
+        dl_iterator_remove(dl_container_index(c, idx2));
+
+    if (!dl_check(5 == dl_container_length(c), "Expected %s container length to be 10, not %i.", infos[idx].type_name, dl_container_length(c)))
+      goto error;
+
+    for (idx2 = 0; idx2 < 5; ++idx2) {
+      val = *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx2));
+      val2 = (idx2 * 2) + 1;
+      if (!dl_check(val2 == val, "Expected %s iterator index %i to be %i not %i.", infos[idx].type_name, val2, idx2, val))
+        goto error;
+    }
+
+    dl_destroy_container(c);
+  }
+
+  return true;
+error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
+  dl_destroy_container(c);
   return false;
 }
 
