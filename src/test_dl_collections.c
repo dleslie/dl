@@ -42,6 +42,9 @@ dl_bool test_dl_container_element_size() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -65,6 +68,9 @@ dl_bool test_dl_container_length() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -90,6 +96,9 @@ dl_bool test_dl_container_is_empty() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -123,6 +132,9 @@ dl_bool test_dl_container_index() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -148,6 +160,9 @@ dl_bool test_dl_container_first() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -173,6 +188,9 @@ dl_bool test_dl_container_last() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -199,6 +217,9 @@ dl_bool test_dl_container_push() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -225,6 +246,9 @@ dl_bool test_dl_container_pop() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -265,6 +289,9 @@ dl_bool test_dl_make_invalid_iterator() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -294,6 +321,9 @@ dl_bool test_dl_iterator_is_valid() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -320,6 +350,9 @@ dl_bool test_dl_iterator_get() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -346,6 +379,9 @@ dl_bool test_dl_iterator_ref() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -374,6 +410,9 @@ dl_bool test_dl_iterator_set() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -408,6 +447,9 @@ dl_bool test_dl_iterator_swap() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }
@@ -415,7 +457,6 @@ error:
 dl_bool test_dl_iterator_insert() {
   dl_container *c;
   dl_natural idx, idx2, val, val2;
-  dl_iterator iter;
 
   for (idx = 0; idx < info_count; ++idx) {
     if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_natural), 128), "Make %s container failed.", infos[idx].type_name))
@@ -423,15 +464,14 @@ dl_bool test_dl_iterator_insert() {
 
     val = 0;
     dl_container_push(c, &val);
-    iter = dl_container_first(c);
 
     for (idx2 = 1; idx2 < 10; ++idx2)
-      dl_iterator_insert(iter, &idx2);
+      dl_iterator_insert(dl_container_first(c), &idx2);
 
     if (!dl_check(10 == dl_container_length(c), "Expected %s container length to be 10, not %i.", infos[idx].type_name, dl_container_length(c)))
       goto error;
 
-    for (idx2 = 1; idx2 < 10; ++idx2) {
+    for (idx2 = 0; idx2 < 10; ++idx2) {
       val = *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx2));
       val2 = 9 - idx2;
       if (!dl_check(val2 == val, "Expected %s iterator index %i to be %i not %i.", infos[idx].type_name, idx2, val2, val))
@@ -443,6 +483,9 @@ dl_bool test_dl_iterator_insert() {
 
   return true;
 error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("%i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
   dl_destroy_container(c);
   return false;
 }

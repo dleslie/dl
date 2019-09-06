@@ -200,7 +200,7 @@ dl_api dl_iterator dl_make_invalid_iterator() {
 }
 
 dl_api dl_bool dl_iterator_is_valid(dl_iterator iter) {
-  return iter.container != NULL && iter.container->interface != NULL && iter.container->storage != NULL && iter.container->interface->iterator_valid(iter);
+  return iter.container != NULL && iter.container->interface != NULL && iter.container->storage != NULL && iter.container->interface->iterator_valid != NULL && iter.container->interface->iterator_valid(iter);
 }
 
 dl_api dl_ptr dl_iterator_get(const dl_iterator target, dl_ptr out) {
