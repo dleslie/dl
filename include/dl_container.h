@@ -173,7 +173,7 @@ dl_api dl_iterator dl_container_last(const dl_container *target) {
 }
 
 dl_api dl_ptr dl_container_push(dl_container *target, dl_ptr value) {
-  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return NULL;
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL || value == NULL)) return NULL;
 
   return target->interface->push(target, value);
 }
