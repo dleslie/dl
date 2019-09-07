@@ -2,16 +2,7 @@
 
 #if DL_IS_ATLEAST_C99
 
-typedef struct {
-  const char *type_name;
-  dl_container_interface *interface;
-  dl_natural traits;
-} _container_info;
-
-_container_info infos[] = {
-  {"vector", &dl_vector_container_interface, DL_CONTAINER_TRAIT_RANDOM_ACCESS},
-  {"linked list", &dl_linked_list_container_interface, DL_CONTAINER_TRAIT_RANDOM_INSERT}};
-dl_natural info_count = 2;
+#include "test_containers.h"
 
 dl_bool test_dl_make_container() {
   dl_container *c;
@@ -501,7 +492,7 @@ dl_bool test_dl_iterator_remove() {
     for (idx2 = 0; idx2 < 10; ++idx2)
       dl_container_push(c, &idx2);
     for (idx2 = 0; idx2 < 5; ++idx2)
-        dl_iterator_remove(dl_container_index(c, idx2));
+      dl_iterator_remove(dl_container_index(c, idx2));
 
     if (!dl_check(5 == dl_container_length(c), "Expected %s container length to be 5, not %i.", infos[idx].type_name, dl_container_length(c)))
       goto error;
@@ -548,7 +539,7 @@ dl_bool test_dl_iterator_next() {
         goto error;
       iter = dl_iterator_next(iter);
       ++idx2;
-    }    
+    }
 
     dl_destroy_container(c);
   }
@@ -585,7 +576,7 @@ dl_bool test_dl_iterator_prev() {
         goto error;
       iter = dl_iterator_prev(iter);
       --idx2;
-    }    
+    }
 
     dl_destroy_container(c);
   }
@@ -690,7 +681,7 @@ dl_bool test_dl_iterator_equal() {
     first = dl_container_index(c, 0);
     if (!dl_check(dl_iterator_equal(iter, first), "Expected %s iterators to be equal.", infos[idx].type_name))
       goto error;
-    
+
     while (dl_iterator_is_valid(iter)) {
       iter = dl_iterator_next(iter);
       if (dl_iterator_is_valid(iter) && !dl_check(!dl_iterator_equal(iter, first), "Expected %s iterators to not be equal.", infos[idx].type_name))
@@ -728,7 +719,7 @@ dl_bool test_dl_iterator_compare() {
     first = dl_container_index(c, 0);
     if (!dl_check(0 == dl_iterator_compare(iter, first), "Expected %s iterators to be equal.", infos[idx].type_name))
       goto error;
-    
+
     while (dl_iterator_is_valid(iter)) {
       iter = dl_iterator_next(iter);
       if (dl_iterator_is_valid(iter) && !dl_check(0 != dl_iterator_compare(iter, first), "Expected %s iterators to not be equal.", infos[idx].type_name))
