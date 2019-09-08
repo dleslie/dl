@@ -117,7 +117,7 @@ dl_api dl_container *dl_make_container(struct dl_container_interface *interface,
   dl_container *target;
   if (dl_safety(element_size == 0 || capacity == 0 || interface == NULL)) return NULL;
 
-  if (dl_unlikely(NULL == (target = (dl_container *)DL_ALLOC(sizeof(dl_container)))))
+  if (dl_unlikely(NULL == (target = (dl_container *)dl_alloc(sizeof(dl_container)))))
     return NULL;
 
   target->interface = interface;
@@ -134,7 +134,7 @@ dl_api void dl_destroy_container(dl_container *target) {
 #if DL_USE_SAFETY_CHECKS
   dl_memory_set(target, 0, sizeof(dl_container));
 #endif
-  DL_FREE(target);
+  dl_free(target);
 }
 
 dl_api dl_natural dl_container_length(const dl_container *target) {

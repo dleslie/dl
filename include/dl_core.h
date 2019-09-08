@@ -1,6 +1,8 @@
 #ifndef DL_CORE_H
 #define DL_CORE_H 1
 
+#include <stddef.h>
+
 /***************************************
  * Configuration
  **************************************/
@@ -17,17 +19,12 @@
 #define DL_USE_SAFETY_CHECKS 0
 #endif
 
-#if !defined(DL_USE_ALLOC)
-#include <malloc.h>
-#define DL_USE_ALLOC 1
-#define DL_ALLOC malloc
+#ifndef DL_USE_MALLOC
+#define DL_USE_MALLOC 1
 #endif
 
-#if !defined(DL_USE_FREE)
-#include <malloc.h>
-#define DL_USE_FREE 1
-#define DL_FREE free
-#endif
+extern void *(*dl_alloc)(size_t sz);
+extern void (*dl_free)(void *ptr);
 
 /***************************************
  * Environment
@@ -295,6 +292,12 @@ typedef struct {
  ****************************************************************************/
 
 #if defined(DL_IMPLEMENTATION)
+
+#if defined(DL_USE_MALLOC)
+#include <malloc.h>
+void *(*dl_alloc)(size_t) = malloc;
+void (*dl_free)(void *) = free;
+#endif
 
 /*****************************************************************************
  **  Memory Tools

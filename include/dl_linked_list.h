@@ -68,11 +68,7 @@ dl_api dl_linked_list_node *_linked_list_node_alloc(dl_linked_list *list, dl_lin
     node = list->free_list;
     list->free_list = list->free_list->next;
   } else
-#if DL_USE_ALLOC
-    node = (dl_linked_list_node *)DL_ALLOC(list->element_size + DL_LINKED_LIST_HEADER_SIZE);
-#else
-    return NULL;
-#endif
+    node = (dl_linked_list_node *)dl_alloc(list->element_size + DL_LINKED_LIST_HEADER_SIZE);
 
   if (node == NULL)
     return NULL;
@@ -137,7 +133,7 @@ dl_api dl_linked_list *dl_make_linked_list(dl_natural element_size, dl_natural c
   if (dl_safety(element_size < 1))
     return NULL;
 
-  if (dl_unlikely(NULL == (target = (dl_linked_list *)DL_ALLOC(sizeof(dl_linked_list)))))
+  if (dl_unlikely(NULL == (target = (dl_linked_list *)dl_alloc(sizeof(dl_linked_list)))))
     return NULL;
 
   target->first = target->last = target->free_list = NULL;
@@ -165,7 +161,7 @@ dl_api void dl_destroy_linked_list(dl_linked_list *target) {
   while (next_node != NULL) {
     node = next_node;
     next_node = node->previous;
-    DL_FREE(node);
+    dl_free(node);
   }
   target->last = target->first = NULL;
 
@@ -173,13 +169,13 @@ dl_api void dl_destroy_linked_list(dl_linked_list *target) {
   while (next_node != NULL) {
     node = next_node;
     next_node = node->next;
-    DL_FREE(node);
+    dl_free(node);
   }
 
 #if DL_USE_SAFETY_CHECKS
   dl_memory_set(target, 0, sizeof(dl_linked_list));
 #endif
-  DL_FREE(target);
+  dl_free(target);
 }
 
 dl_api dl_natural dl_linked_list_length(const dl_linked_list *list) {
