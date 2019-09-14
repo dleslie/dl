@@ -156,7 +156,7 @@ dl_api dl_natural dl_container_element_size(const dl_container *target) {
 }
 
 dl_api dl_iterator dl_container_index(const dl_container *target, dl_natural position) {
-  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return dl_make_invalid_iterator();
+  if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL || position < 0 || position >= dl_container_length((dl_container *)target))) return dl_make_invalid_iterator();
 
   return target->interface->index((dl_ptr)target, position);
 }

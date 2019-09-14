@@ -55,7 +55,7 @@ dl_api dl_comparator dl_make_comparator(dl_ptr data, dl_integer (*func)(dl_ptr d
 
 #include "dl_container.h"
 
-#define ITER_UNSAFE(left, right) (!dl_iterator_is_valid(left) || (dl_iterator_is_valid(right) && left.container != right.container))
+#define ITER_UNSAFE(left, right) (!dl_iterator_is_valid(left) || !dl_iterator_is_valid(right) || left.container != right.container)
 #define FUNC_UNSAFE(f) (f.func == NULL)
 
 dl_api dl_handler dl_make_handler(dl_ptr data, dl_ptr (*func)(dl_ptr data, dl_ptr value)) {
@@ -408,7 +408,7 @@ dl_iterator _quick_sort_partition(dl_iterator left, dl_iterator right, dl_compar
 
   pivot = right;
   dl_iterator_prev_ref(&pivot, &pivot_ref);
-  
+
   ref_j = dl_iterator_ref(left);
 
   for (i = j = left; !dl_iterator_equal(pivot, j); dl_iterator_next_ref(&j, &ref_j)) {
