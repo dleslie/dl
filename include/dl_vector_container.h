@@ -109,12 +109,18 @@ dl_bool _vector_container_iterator_remove(dl_iterator pos) {
 }
 
 dl_iterator _vector_container_iterator_next(dl_iterator i) {
+  dl_vector *v;
+  v = (dl_vector *)i.container->storage;
   i.data.index++;
+  if (i.data.index >= v->length)
+    i.container = NULL;
   return i;
 }
 
 dl_iterator _vector_container_iterator_prev(dl_iterator i) {
   i.data.index--;
+  if (i.data.index < 0)
+    i.container = NULL;
   return i;
 }
 

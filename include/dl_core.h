@@ -100,6 +100,11 @@ extern void (*dl_free)(void *ptr);
 #define DL_IS_ATLEAST_CPP14 (DL_IS_CPP14 || DL_IS_CPP17)
 #define DL_IS_ATLEAST_CPP17 (DL_IS_CPP17)
 
+#if !DL_IS_ATLEAST_C99
+#undef DL_USE_LOGGING
+#define DL_USE_LOGGING 0
+#endif
+
 #if _WIN32 || _WIN64
 #define DL_IS_WINDOWS 1
 #else

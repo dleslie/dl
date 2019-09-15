@@ -1,7 +1,7 @@
 #include "dl_core.h"
 #include "dl_time.h"
 
-#if DL_IS_ATLEAST_C99
+#if DL_USE_LOGGING
 #include "dl_logging.h"
 #include "dl_test.h"
 #endif

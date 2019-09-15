@@ -107,27 +107,50 @@ dl_api dl_integer dl_count(dl_iterator left, dl_iterator right) {
 }
 
 dl_api dl_iterator _dl_find_region_linear(dl_iterator left, dl_iterator right, dl_filter predicate) {
-  while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right) && !DL_CALL1(predicate, dl_iterator_ref(left))) left = dl_iterator_next(left);
-  return left;
+  while (dl_iterator_is_valid(left)) {
+    if (DL_CALL1(predicate, dl_iterator_ref(left)) == 0)
+      return left;
+    if (dl_iterator_equal(left, right))
+      break;
+    left = dl_iterator_next(left);
+  }
+  return dl_make_invalid_iterator();
 }
 
 dl_api dl_iterator _dl_find_reverse_region_linear(dl_iterator left, dl_iterator right, dl_filter predicate) {
-  while (dl_iterator_is_valid(right) && !dl_iterator_equal(left, right) && !DL_CALL1(predicate, dl_iterator_ref(right))) right = dl_iterator_prev(right);
-  return right;
+  while (dl_iterator_is_valid(right)) {
+    if (DL_CALL1(predicate, dl_iterator_ref(right)) == 0)
+      return right;
+    if (dl_iterator_equal(left, right))
+      break;
+    right = dl_iterator_prev(right);
+  }
+  return dl_make_invalid_iterator();
 }
 
 dl_api dl_iterator _dl_find_region_binary(dl_iterator left, dl_iterator right, dl_filter predicate) {
-  dl_natural mid_index;
+  dl_integer index_middle, index_left, index_right, match, range;
   dl_iterator mid_iter;
-  dl_integer match;
 
-  mid_index = (dl_iterator_index(right) - dl_iterator_index(left)) >> 1;
-  mid_iter = dl_container_index(left.container, mid_index);
+  index_left = dl_iterator_index(left);
+  if (index_left < 0)
+    return dl_make_invalid_iterator();
+
+  index_right = dl_iterator_index(right);
+  if (index_right < 0)
+    return dl_make_invalid_iterator();
+
+  range = index_right - index_left;
+  if (range < 0)
+    return dl_make_invalid_iterator();
+
+  index_middle = (range >> 1) + index_left;
+  mid_iter = dl_container_index(left.container, index_middle);
 
   match = DL_CALL1(predicate, dl_iterator_ref(mid_iter));
   if (match == 0)
     return mid_iter;
-  else if (dl_iterator_equal(left, right))
+  else if (range == 0)
     return dl_make_invalid_iterator();
   else if (match < 0)
     return _dl_find_region_binary(left, dl_iterator_prev(mid_iter), predicate);
@@ -140,17 +163,17 @@ dl_api dl_iterator dl_find(dl_iterator left, dl_iterator right, dl_filter predic
 
   if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(predicate))) return dl_make_invalid_iterator();
 
-  if (!dl_iterator_is_valid(right)) right = dl_container_last(left.container);
-
   traits = dl_container_traits(left.container);
   if (traits & DL_CONTAINER_TRAIT_RANDOM_ACCESS) {
     dl_iterator found, prev;
     found = _dl_find_region_binary(left, right, predicate);
 
     if (!(traits & DL_CONTAINER_TRAIT_SET))
-      for (prev = dl_iterator_prev(found); dl_iterator_is_valid(prev) && DL_CALL1(predicate, dl_iterator_ref(prev)) == 0; prev = dl_iterator_prev(prev)) {
+      while (dl_iterator_is_valid(found) && !dl_iterator_equal(found, left)) {
+        prev = dl_iterator_prev(found);
+        if (DL_CALL1(predicate, dl_iterator_ref(prev)) != 0)
+          break;
         found = prev;
-        if (dl_iterator_equal(found, left)) break;
       }
 
     return found;
@@ -163,17 +186,17 @@ dl_api dl_iterator dl_find_reverse(dl_iterator left, dl_iterator right, dl_filte
 
   if (dl_safety(ITER_UNSAFE(right, left) || FUNC_UNSAFE(predicate))) return dl_make_invalid_iterator();
 
-  if (!dl_iterator_is_valid(left)) left = dl_container_first(right.container);
-
   traits = dl_container_traits(left.container);
   if ((traits & DL_CONTAINER_TRAIT_RANDOM_ACCESS) && (traits & DL_CONTAINER_TRAIT_SORTED)) {
     dl_iterator found, next;
     found = _dl_find_region_binary(left, right, predicate);
 
     if (!(traits & DL_CONTAINER_TRAIT_SET))
-      for (next = dl_iterator_next(found); dl_iterator_is_valid(next) && DL_CALL1(predicate, dl_iterator_ref(next)) == 0; next = dl_iterator_next(next)) {
+      while (dl_iterator_is_valid(found) && !dl_iterator_equal(found, right)) {
+        next = dl_iterator_next(found);
+        if (DL_CALL1(predicate, dl_iterator_ref(next)) != 0)
+          break;
         found = next;
-        if (dl_iterator_equal(found, right)) break;
       }
 
     return found;

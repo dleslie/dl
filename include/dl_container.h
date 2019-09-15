@@ -197,6 +197,7 @@ dl_api dl_natural dl_container_traits(const dl_container *target) {
 dl_api dl_iterator dl_make_invalid_iterator() {
   dl_iterator iter;
   iter.container = NULL;
+  iter.data.index = 0;
   return iter;
 }
 
