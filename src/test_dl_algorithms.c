@@ -22,11 +22,11 @@ dl_bool test_dl_count() {
     for (idx2 = 0; idx2 < 10; ++idx2)
       dl_container_push(c, &idx2);
 
-    iter1 = dl_container_index(c, 2);
+    iter1 = dl_container_index(c, 3);
     iter2 = dl_container_index(c, 7);
 
     cnt = dl_count(iter1, iter2);
-    if (!dl_check(5 == cnt, "Expected %s count between 2 and 7 to be 5, not %i.", infos[idx].type_name, cnt))
+    if (!dl_check(5 == cnt, "Expected %s count from 3 to 7 to be 5, not %i.", infos[idx].type_name, cnt))
       goto error;
 
     cnt = dl_count(iter1, dl_make_invalid_iterator(c));
@@ -180,14 +180,6 @@ dl_bool test_dl_remove() {
 }
 
 dl_bool test_dl_remove_reverse() {
-  return false;
-}
-
-dl_bool test_dl_remove_all() {
-  return false;
-}
-
-dl_bool test_dl_remove_count() {
   return false;
 }
 

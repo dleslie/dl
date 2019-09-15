@@ -36,8 +36,6 @@ dl_api dl_integer dl_drop(dl_iterator left, dl_iterator right, dl_natural count,
 
 dl_api dl_bool dl_remove(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
 dl_api dl_bool dl_remove_reverse(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
-dl_api dl_natural dl_remove_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
-dl_api dl_natural dl_remove_count(dl_iterator left, dl_iterator right, dl_filter predicate, dl_natural count, dl_handler out);
 
 dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator compare);
 
@@ -98,8 +96,10 @@ dl_api dl_integer dl_count(dl_iterator left, dl_iterator right) {
   count = 0;
   if (dl_safety(ITER_UNSAFE(left, right))) return count;
 
-  while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right)) {
+  while (dl_iterator_is_valid(left)) {
     ++count;
+    if (dl_iterator_equal(left, right))
+      break;
     left = dl_iterator_next(left);
   }
 
@@ -240,8 +240,10 @@ dl_api dl_integer dl_find_all(dl_iterator left, dl_iterator right, dl_filter pre
 dl_api dl_ptr dl_foldl(dl_iterator left, dl_iterator right, dl_ptr initial, dl_folder folder) {
   if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(folder))) return NULL;
 
-  while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right)) {
+  while (dl_iterator_is_valid(left)) {
     DL_CALL2(folder, initial, dl_iterator_ref(left));
+    if (dl_iterator_equal(left, right))
+      break;
     left = dl_iterator_next(left);
   }
 
@@ -251,8 +253,10 @@ dl_api dl_ptr dl_foldl(dl_iterator left, dl_iterator right, dl_ptr initial, dl_f
 dl_api dl_ptr dl_foldr(dl_iterator left, dl_iterator right, dl_ptr initial, dl_folder folder) {
   if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(folder))) return NULL;
 
-  while (dl_iterator_is_valid(right) && !dl_iterator_equal(left, right)) {
+  while (dl_iterator_is_valid(right)) {
     DL_CALL2(folder, initial, dl_iterator_ref(right));
+    if (dl_iterator_equal(left, right))
+      break;
     right = dl_iterator_prev(right);
   }
 
@@ -262,8 +266,10 @@ dl_api dl_ptr dl_foldr(dl_iterator left, dl_iterator right, dl_ptr initial, dl_f
 dl_api dl_bool dl_all(dl_iterator left, dl_iterator right, dl_filter filter) {
   if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(filter))) return false;
 
-  while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right)) {
+  while (dl_iterator_is_valid(left)) {
     if (!DL_CALL1(filter, dl_iterator_ref(left))) return false;
+    if (dl_iterator_equal(left, right))
+      break;
     left = dl_iterator_next(left);
   }
 
@@ -273,8 +279,10 @@ dl_api dl_bool dl_all(dl_iterator left, dl_iterator right, dl_filter filter) {
 dl_api dl_bool dl_any(dl_iterator left, dl_iterator right, dl_filter filter) {
   if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(filter))) return false;
 
-  while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right)) {
+  while (dl_iterator_is_valid(left)) {
     if (DL_CALL1(filter, dl_iterator_ref(left))) return true;
+    if (dl_iterator_equal(left, right))
+      break;
     left = dl_iterator_next(left);
   }
 
@@ -288,16 +296,20 @@ dl_api dl_integer dl_map(dl_iterator left, dl_iterator right, dl_handler handler
 
   count = 0;
   if (!FUNC_UNSAFE(out)) {
-    while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right)) {
+    while (dl_iterator_is_valid(left)) {
       if (!DL_CALL1(out, DL_CALL1(handler, dl_iterator_ref(left)))) break;
       ++count;
+      if (dl_iterator_equal(left, right))
+        break;
       left = dl_iterator_next(left);
     }
     return count;
   } else {
-    while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right)) {
+    while (dl_iterator_is_valid(left)) {
       if (NULL == DL_CALL1(handler, dl_iterator_ref(left))) break;
       ++count;
+      if (dl_iterator_equal(left, right))
+        break;
       left = dl_iterator_next(left);
     }
     return count;
@@ -313,17 +325,21 @@ dl_api dl_integer dl_zip(dl_iterator left1, dl_iterator right1, dl_iterator left
 
   count = 0;
   if (!FUNC_UNSAFE(out)) {
-    while (dl_iterator_is_valid(left1) && !dl_iterator_equal(left1, right1) && dl_iterator_is_valid(left1) && !dl_iterator_equal(left1, right1)) {
+    while (dl_iterator_is_valid(left1) && dl_iterator_is_valid(left1) && !dl_iterator_equal(left1, right1)) {
       if (!DL_CALL1(out, DL_CALL2(zip, dl_iterator_ref(left1), dl_iterator_ref(left2)))) break;
       ++count;
+      if (dl_iterator_equal(left1, right1))
+        break;
       left1 = dl_iterator_next(left1);
       left2 = dl_iterator_next(left2);
     }
     return count;
   } else {
-    while (dl_iterator_is_valid(left1) && !dl_iterator_equal(left1, right1) && dl_iterator_is_valid(left1) && !dl_iterator_equal(left1, right1)) {
+    while (dl_iterator_is_valid(left1) && dl_iterator_is_valid(left1) && !dl_iterator_equal(left1, right1)) {
       if (NULL == DL_CALL2(zip, dl_iterator_ref(left1), dl_iterator_ref(left2))) break;
       ++count;
+      if (dl_iterator_equal(left1, right1))
+        break;
       left1 = dl_iterator_next(left1);
       left2 = dl_iterator_next(left2);
     }
@@ -381,48 +397,6 @@ dl_api dl_bool dl_remove_reverse(dl_iterator left, dl_iterator right, dl_filter 
   if (!FUNC_UNSAFE(out)) DL_CALL1(out, dl_iterator_ref(found));
 
   return dl_iterator_remove(found);
-}
-
-dl_api dl_natural dl_remove_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out) {
-  dl_iterator found;
-  dl_bool valid;
-  dl_natural removed;
-
-  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(predicate))) return 0;
-
-  removed = 0;
-  do {
-    found = dl_find(left, right, predicate);
-    valid = dl_iterator_is_valid(found);
-
-    if (valid) {
-      ++removed;
-      if (!FUNC_UNSAFE(out)) DL_CALL1(out, dl_iterator_ref(found));
-    }
-  } while (valid);
-
-  return removed;
-}
-
-dl_api dl_natural dl_remove_count(dl_iterator left, dl_iterator right, dl_filter predicate, dl_natural count, dl_handler out) {
-  dl_iterator found;
-  dl_bool valid;
-  dl_natural removed;
-
-  if (dl_safety(count == 0 || ITER_UNSAFE(left, right) || FUNC_UNSAFE(predicate))) return 0;
-
-  removed = 0;
-  do {
-    found = dl_find(left, right, predicate);
-    valid = dl_iterator_is_valid(found);
-
-    if (valid) {
-      ++removed;
-      if (!FUNC_UNSAFE(out)) DL_CALL1(out, dl_iterator_ref(found));
-    }
-  } while (valid && removed < count);
-
-  return removed;
 }
 
 dl_iterator _quick_sort_partition(dl_iterator left, dl_iterator right, dl_comparator compare) {

@@ -198,8 +198,6 @@ dl_declare_test(test_dl_take);
 dl_declare_test(test_dl_drop);
 dl_declare_test(test_dl_remove);
 dl_declare_test(test_dl_remove_reverse);
-dl_declare_test(test_dl_remove_all);
-dl_declare_test(test_dl_remove_count);
 dl_declare_test(test_dl_quick_sort);
 dl_declare_test(test_dl_make_handler);
 dl_declare_test(test_dl_make_zipper);
