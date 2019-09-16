@@ -187,7 +187,7 @@ dl_begin_test_suite(algorithm);
 dl_declare_test(test_dl_count);
 dl_declare_test(test_dl_find);
 dl_declare_test(test_dl_find_reverse);
-dl_declare_test(test_dl_find_all);
+dl_declare_test(test_dl_where);
 dl_declare_test(test_dl_foldl);
 dl_declare_test(test_dl_foldr);
 dl_declare_test(test_dl_all);

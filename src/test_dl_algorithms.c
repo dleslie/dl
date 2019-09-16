@@ -139,7 +139,7 @@ error:
   return false;
 }
 
-dl_bool test_dl_find_all() {
+dl_bool test_dl_where() {
   return false;
 }
 

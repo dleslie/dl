@@ -20,7 +20,8 @@ dl_api dl_integer dl_count(dl_iterator left, dl_iterator right);
 
 dl_api dl_iterator dl_find(dl_iterator left, dl_iterator right, dl_filter predicate);
 dl_api dl_iterator dl_find_reverse(dl_iterator left, dl_iterator right, dl_filter predicate);
-dl_api dl_integer dl_find_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
+
+dl_api dl_integer dl_where(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
 
 dl_api dl_ptr dl_foldl(dl_iterator left, dl_iterator right, dl_ptr initial, dl_folder func);
 dl_api dl_ptr dl_foldr(dl_iterator left, dl_iterator right, dl_ptr initial, dl_folder func);
@@ -204,37 +205,23 @@ dl_api dl_iterator dl_find_reverse(dl_iterator left, dl_iterator right, dl_filte
     return _dl_find_reverse_region_linear(left, right, predicate);
 }
 
-dl_api dl_integer dl_find_all(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out) {
-  dl_ptr ref;
-  dl_iterator found;
+dl_api dl_integer dl_where(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out) {
   dl_integer count;
+  dl_ptr ref;
 
-  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(predicate))) return -1;
+  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(predicate) || FUNC_UNSAFE(out))) return -1;
 
   count = 0;
-
-  if (!FUNC_UNSAFE(out)) {
-    found = dl_find(left, right, predicate);
-    if (!dl_iterator_is_valid(found)) return 0;
-    while (dl_iterator_is_valid(found) && !dl_iterator_equal(found, right)) {
-      ref = dl_iterator_ref(found);
-      if (!DL_CALL1(predicate, ref)) break;
-      ++count;
-      if (!DL_CALL1(out, ref)) break;
-      found = dl_iterator_next(found);
-    }
-    return count;
-  } else {
-    found = dl_find(left, right, predicate);
-    if (!dl_iterator_is_valid(found)) return 0;
-    while (dl_iterator_is_valid(found) && !dl_iterator_equal(found, right)) {
-      ref = dl_iterator_ref(found);
-      if (!DL_CALL1(predicate, ref)) break;
-      ++count;
-      found = dl_iterator_next(found);
-    }
-    return count;
+  while (dl_iterator_is_valid(left)) {
+    ref = dl_iterator_ref(left);
+    if (DL_CALL1(predicate, ref))
+      DL_CALL1(out, ref);
+    ++count;
+    if (dl_iterator_equal(left, right))
+      break;
   }
+
+  return count;
 }
 
 dl_api dl_ptr dl_foldl(dl_iterator left, dl_iterator right, dl_ptr initial, dl_folder folder) {
@@ -295,26 +282,13 @@ dl_api dl_integer dl_map(dl_iterator left, dl_iterator right, dl_handler handler
   if (dl_safety(ITER_UNSAFE(left, right))) return -1;
 
   count = 0;
-  if (!FUNC_UNSAFE(out)) {
-    while (dl_iterator_is_valid(left)) {
-      if (!DL_CALL1(out, DL_CALL1(handler, dl_iterator_ref(left)))) break;
-      ++count;
-      if (dl_iterator_equal(left, right))
-        break;
-      left = dl_iterator_next(left);
-    }
-    return count;
-  } else {
-    while (dl_iterator_is_valid(left)) {
-      if (NULL == DL_CALL1(handler, dl_iterator_ref(left))) break;
-      ++count;
-      if (dl_iterator_equal(left, right))
-        break;
-      left = dl_iterator_next(left);
-    }
-    return count;
+  while (dl_iterator_is_valid(left)) {
+    if (!DL_CALL1(out, DL_CALL1(handler, dl_iterator_ref(left)))) break;
+    ++count;
+    if (dl_iterator_equal(left, right))
+      break;
+    left = dl_iterator_next(left);
   }
-
   return count;
 }
 
@@ -324,27 +298,15 @@ dl_api dl_integer dl_zip(dl_iterator left1, dl_iterator right1, dl_iterator left
   if (dl_safety(ITER_UNSAFE(left1, right1) || ITER_UNSAFE(left2, right2) || zip.func == NULL)) return -1;
 
   count = 0;
-  if (!FUNC_UNSAFE(out)) {
-    while (dl_iterator_is_valid(left1) && dl_iterator_is_valid(left1) && !dl_iterator_equal(left1, right1)) {
-      if (!DL_CALL1(out, DL_CALL2(zip, dl_iterator_ref(left1), dl_iterator_ref(left2)))) break;
-      ++count;
-      if (dl_iterator_equal(left1, right1))
-        break;
-      left1 = dl_iterator_next(left1);
-      left2 = dl_iterator_next(left2);
-    }
-    return count;
-  } else {
-    while (dl_iterator_is_valid(left1) && dl_iterator_is_valid(left1) && !dl_iterator_equal(left1, right1)) {
-      if (NULL == DL_CALL2(zip, dl_iterator_ref(left1), dl_iterator_ref(left2))) break;
-      ++count;
-      if (dl_iterator_equal(left1, right1))
-        break;
-      left1 = dl_iterator_next(left1);
-      left2 = dl_iterator_next(left2);
-    }
-    return count;
+  while (dl_iterator_is_valid(left1) && dl_iterator_is_valid(left1) && !dl_iterator_equal(left1, right1)) {
+    if (!DL_CALL1(out, DL_CALL2(zip, dl_iterator_ref(left1), dl_iterator_ref(left2)))) break;
+    ++count;
+    if (dl_iterator_equal(left1, right1))
+      break;
+    left1 = dl_iterator_next(left1);
+    left2 = dl_iterator_next(left2);
   }
+  return count;
 }
 
 dl_api dl_integer dl_take(dl_iterator left, dl_iterator right, dl_natural count, dl_handler out) {
