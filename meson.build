@@ -9,7 +9,7 @@ lib_m = cc.find_library('m', required : true)
 
 gcc_configs = [
   ['no-malloc', ['-DDL_USE_MALLOC=0']],
-  ['test', ['-DDL_USE_SAFETY_CHECKS=1', '-g']],
+  ['test', ['-g']],
   ['pedantic', ['-pedantic', '-Wall', '-Werror', '-DDL_USE_EXTENSIONS=0']],
   ['small', ['-Os']],
   ['fast', ['-O3']],

@@ -6,8 +6,8 @@
         {
             "label": "test suite",
             "type": "shell",
-            "command": "./suite-c11-pedantic",
-            "dependsOn": "meson",
+            "command": "./suite-c11-test",
+            "dependsOn": "ninja",
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
@@ -26,8 +26,8 @@
         {
             "label": "tween suite",
             "type": "shell",
-            "dependsOn": "meson",
-            "command": "./tween-c11-pedantic",
+            "dependsOn": "ninja",
+            "command": "./tween-c11-test",
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
