@@ -10,6 +10,14 @@ dl_integer _integer_filter(dl_ptr data, const dl_ptr value) {
   return left - right;
 }
 
+dl_integer _even_integer_filter(dl_ptr data, const dl_ptr value) {
+  return (*(dl_integer *)value % 2) == 0;
+}
+
+dl_ptr _push_handler(dl_ptr data, dl_ptr value) {
+  return dl_container_push((dl_container *)data, value);
+}
+
 dl_bool test_dl_count() {
   dl_container *c;
   dl_natural idx, idx2, cnt;
@@ -140,6 +148,45 @@ error:
 }
 
 dl_bool test_dl_where() {
+  dl_container *c = NULL;
+  dl_container *c2 = NULL;
+  dl_integer idx, idx2, count;
+  dl_filter filter = dl_make_filter(NULL, _even_integer_filter);
+  dl_handler out;
+
+  for (idx = 0; idx < info_count; ++idx) {
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_integer), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+
+    if (!dl_check(c2 = dl_make_container(infos[idx].interface, sizeof(dl_integer), 128), "Make %s container failed.", infos[idx].type_name)) {
+      dl_destroy_container(c);
+      return false;
+    }
+
+    out = dl_make_handler(c2, _push_handler);
+
+    count = dl_where(dl_container_first(c), dl_container_last(c), filter, out);
+
+    if (!dl_check(count == 5, "Expected %s where to produce 5 results, not %i", infos[idx].type_name, count))
+      goto error;
+
+    dl_destroy_container(c);
+    dl_destroy_container(c2);
+  }
+
+  return true;
+error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("C1 %i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
+  for (idx = 0; idx < dl_container_length(c2); ++idx) {
+    DL_INFO("C2 %i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c2, idx)));
+  }
+  dl_destroy_container(c);
+  dl_destroy_container(c2);
   return false;
 }
 

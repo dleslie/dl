@@ -214,9 +214,11 @@ dl_api dl_integer dl_where(dl_iterator left, dl_iterator right, dl_filter predic
   count = 0;
   while (dl_iterator_is_valid(left)) {
     ref = dl_iterator_ref(left);
-    if (DL_CALL1(predicate, ref))
+    if (DL_CALL1(predicate, ref)) {
       DL_CALL1(out, ref);
-    ++count;
+      ++count;
+    }
+    left = dl_iterator_next(left);
     if (dl_iterator_equal(left, right))
       break;
   }
