@@ -18,6 +18,13 @@ dl_ptr _push_handler(dl_ptr data, dl_ptr value) {
   return dl_container_push((dl_container *)data, value);
 }
 
+dl_ptr _fold_handler(dl_ptr data, dl_ptr item, dl_ptr left) {
+  DL_INFO("%i %s %i", *(dl_integer *)item, (*(dl_bool *)data ? "*" : "+"), *(dl_integer *)left);
+  *(dl_integer *)item = *(dl_bool *)data ? (*(dl_integer *)item * *(dl_integer *)left) : (*(dl_integer *)item + *(dl_integer *)left);
+  *(dl_bool *)data = !*(dl_bool *)data;
+  return item;
+}
+
 dl_bool test_dl_count() {
   dl_container *c;
   dl_natural idx, idx2, cnt;
@@ -191,10 +198,72 @@ error:
 }
 
 dl_bool test_dl_foldl() {
+  dl_container *c = NULL;
+  dl_integer idx, idx2, outcome, desired;
+  dl_bool truth = true;
+  dl_folder folder = dl_make_folder(&truth, _fold_handler);
+
+  desired = ((((((((((0 * 0) + 1) * 2) + 3) * 4) + 5) * 6) + 7) * 8) + 9);
+
+  for (idx = 0; idx < info_count; ++idx) {
+    outcome = 0;
+
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_integer), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+
+    if (!dl_check(NULL != dl_foldl(dl_container_first(c), dl_container_last(c), &outcome, folder), "Expected %s foldl to succeed.", infos[idx].type_name))
+      goto error;
+
+    if (!dl_check(desired == outcome, "Expected %s foldl to produce %i not %i.", infos[idx].type_name, desired, outcome))
+      goto error;
+
+    dl_destroy_container(c);
+  }
+
+  return true;
+error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("C1 %i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
+  dl_destroy_container(c);
   return false;
 }
 
 dl_bool test_dl_foldr() {
+  dl_container *c = NULL;
+  dl_integer idx, idx2, outcome, desired;
+  dl_bool truth = true;
+  dl_folder folder = dl_make_folder(&truth, _fold_handler);
+
+  desired = ((((((((((0 * 9) + 8) * 7) + 6) * 5) + 4) * 3) + 2) * 1) + 0);
+
+  for (idx = 0; idx < info_count; ++idx) {
+    outcome = 0;
+
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_integer), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+
+    if (!dl_check(NULL != dl_foldr(dl_container_first(c), dl_container_last(c), &outcome, folder), "Expected %s foldr to succeed.", infos[idx].type_name))
+      goto error;
+
+    if (!dl_check(desired == outcome, "Expected %s foldr to produce %i not %i.", infos[idx].type_name, desired, outcome))
+      goto error;
+
+    dl_destroy_container(c);
+  }
+
+  return true;
+error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("C1 %i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
+  dl_destroy_container(c);
   return false;
 }
 
