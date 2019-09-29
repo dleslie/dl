@@ -187,11 +187,11 @@ dl_begin_test_suite(algorithm);
 dl_declare_test(test_dl_count);
 dl_declare_test(test_dl_find);
 dl_declare_test(test_dl_find_reverse);
-dl_declare_test(test_dl_where);
 dl_declare_test(test_dl_foldl);
 dl_declare_test(test_dl_foldr);
 dl_declare_test(test_dl_all);
 dl_declare_test(test_dl_any);
+dl_declare_test(test_dl_where);
 dl_declare_test(test_dl_map);
 dl_declare_test(test_dl_zip);
 dl_declare_test(test_dl_take);
@@ -199,11 +199,6 @@ dl_declare_test(test_dl_drop);
 dl_declare_test(test_dl_remove);
 dl_declare_test(test_dl_remove_reverse);
 dl_declare_test(test_dl_quick_sort);
-dl_declare_test(test_dl_make_handler);
-dl_declare_test(test_dl_make_zipper);
-dl_declare_test(test_dl_make_filter);
-dl_declare_test(test_dl_make_folder);
-dl_declare_test(test_dl_make_comparator);
 dl_end_test_suite
     
 int  main(int argc, char **argv) {

@@ -46,6 +46,8 @@ dl_api dl_filter dl_make_filter(dl_ptr data, dl_integer (*func)(dl_ptr data, con
 dl_api dl_folder dl_make_folder(dl_ptr data, dl_ptr (*func)(dl_ptr data, dl_ptr item, const dl_ptr left));
 dl_api dl_comparator dl_make_comparator(dl_ptr data, dl_integer (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right));
 
+dl_api dl_handler dl_make_push_handler(dl_container *target);
+
 #ifdef __cplusplus
 }
 #endif
@@ -300,10 +302,10 @@ dl_api dl_integer dl_zip(dl_iterator left1, dl_iterator right1, dl_iterator left
   if (dl_safety(ITER_UNSAFE(left1, right1) || ITER_UNSAFE(left2, right2) || zip.func == NULL)) return -1;
 
   count = 0;
-  while (dl_iterator_is_valid(left1) && dl_iterator_is_valid(left1) && !dl_iterator_equal(left1, right1)) {
+  while (dl_iterator_is_valid(left1) && dl_iterator_is_valid(left2)) {
     if (!DL_CALL1(out, DL_CALL2(zip, dl_iterator_ref(left1), dl_iterator_ref(left2)))) break;
     ++count;
-    if (dl_iterator_equal(left1, right1))
+    if (dl_iterator_equal(left1, right1) || dl_iterator_equal(left2, right2))
       break;
     left1 = dl_iterator_next(left1);
     left2 = dl_iterator_next(left2);
@@ -400,6 +402,14 @@ dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator 
   if (!dl_iterator_equal(pivot, right)) dl_quick_sort(pivot, right, compare);
 
   return true;
+}
+
+dl_api dl_ptr _push_handler(dl_ptr data, dl_ptr value) {
+  return dl_container_push((dl_container *)data, value);
+}
+
+dl_api dl_handler dl_make_push_handler(dl_container *target) {
+  return dl_make_handler(target, _push_handler);
 }
 
 #endif /* DL_IMPLEMENTATION */
