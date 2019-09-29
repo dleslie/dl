@@ -3,6 +3,13 @@
 #if DL_IS_ATLEAST_C99
 #include "test_containers.h"
 
+dl_integer _gt_filter(dl_ptr data, const dl_ptr value) {
+  dl_integer left, right;
+  left = *(dl_integer *)data;
+  right = *(dl_integer *)value;
+  return left <= right;
+}
+
 dl_integer _integer_filter(dl_ptr data, const dl_ptr value) {
   dl_integer left, right;
   left = *(dl_integer *)data;
@@ -19,7 +26,6 @@ dl_ptr _push_handler(dl_ptr data, dl_ptr value) {
 }
 
 dl_ptr _fold_handler(dl_ptr data, dl_ptr item, dl_ptr left) {
-  DL_INFO("%i %s %i", *(dl_integer *)item, (*(dl_bool *)data ? "*" : "+"), *(dl_integer *)left);
   *(dl_integer *)item = *(dl_bool *)data ? (*(dl_integer *)item * *(dl_integer *)left) : (*(dl_integer *)item + *(dl_integer *)left);
   *(dl_bool *)data = !*(dl_bool *)data;
   return item;
@@ -268,10 +274,70 @@ error:
 }
 
 dl_bool test_dl_all() {
+  dl_container *c = NULL;
+  dl_integer idx, idx2, value;
+  dl_filter filter = dl_make_filter(&value, _gt_filter);
+
+  for (idx = 0; idx < info_count; ++idx) {
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_integer), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+
+    value = -1;
+    if (!dl_check(dl_all(dl_container_first(c), dl_container_last(c), filter), "Expected all %s value to be greater than -1.", infos[idx].type_name))
+      goto error;
+
+    value = 5;
+    if (!dl_check(!dl_all(dl_container_first(c), dl_container_last(c), filter), "Expected %s to have values that are not greater than 5.", infos[idx].type_name))
+      goto error;
+
+    dl_destroy_container(c);
+  }
+
+  return true;
+error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("C1 %i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
+  dl_destroy_container(c);
   return false;
 }
 
 dl_bool test_dl_any() {
+  dl_container *c = NULL;
+  dl_integer idx, idx2, value;
+  dl_filter filter = dl_make_filter(&value, _gt_filter);
+
+  for (idx = 0; idx < info_count; ++idx) {
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_integer), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+
+    value = -1;
+    if (!dl_check(dl_any(dl_container_first(c), dl_container_last(c), filter), "Expected some %s value to be greater than -1.", infos[idx].type_name))
+      goto error;
+
+    value = 5;
+    if (!dl_check(dl_any(dl_container_first(c), dl_container_last(c), filter), "Expected %s to have values that are greater than 5.", infos[idx].type_name))
+      goto error;
+
+    value = 11;
+    if (!dl_check(!dl_any(dl_container_first(c), dl_container_last(c), filter), "Expected %s to not have values that are greater than 11.", infos[idx].type_name))
+      goto error;
+
+    dl_destroy_container(c);
+  }
+
+  return true;
+error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("C1 %i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
+  dl_destroy_container(c);
   return false;
 }
 
