@@ -38,6 +38,10 @@ dl_ptr _add_zipper(dl_ptr data, dl_ptr item1, dl_ptr item2) {
   return &_temp_add_handler;
 }
 
+dl_integer _integer_compare(dl_ptr data, const dl_ptr left, const dl_ptr right) {
+  return *(dl_integer *)left < *(dl_integer *)right;
+}
+
 dl_bool test_dl_count() {
   dl_container *c;
   dl_natural idx, idx2, cnt;
@@ -537,6 +541,38 @@ error:
 }
 
 dl_bool test_dl_quick_sort() {
+  dl_container *c = NULL;
+  dl_integer idx, idx2, a, b;
+  dl_integer values[10] = {0, -3, 35, 11, 0, 23, 5, 8, 20, 555};
+  dl_integer sorted_values[10] = {-3, 0, 0, 5, 8, 11, 20, 23, 35, 555};
+  dl_comparator compare = dl_make_comparator(NULL, _integer_compare);
+
+  for (idx = 0; idx < info_count; ++idx) {
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_integer), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &values[idx2]);
+
+    if (!dl_check(dl_quick_sort(dl_container_first(c), dl_container_last(c), compare),
+                  "Expected %s quick sort to work.", infos[idx].type_name))
+      goto error;
+
+    for (idx2 = 0; idx2 < 10; ++idx2) {
+      a = *(dl_integer *)dl_iterator_ref(dl_container_index(c, idx2));
+      b = sorted_values[idx2];
+      if (!dl_check(a == b, "Expected %s index %i to equal %i, not %i.", infos[idx].type_name, idx2, b, a))
+        goto error;
+    }
+
+    dl_destroy_container(c);
+  }
+  return true;
+error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("C1 %i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
+  dl_destroy_container(c);
   return false;
 }
 
