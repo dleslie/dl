@@ -536,14 +536,6 @@ error:
   return false;
 }
 
-dl_bool test_dl_remove() {
-  return false;
-}
-
-dl_bool test_dl_remove_reverse() {
-  return false;
-}
-
 dl_bool test_dl_quick_sort() {
   return false;
 }

@@ -35,9 +35,6 @@ dl_api dl_integer dl_zip(dl_iterator left1, dl_iterator right1, dl_iterator left
 dl_api dl_integer dl_take(dl_iterator left, dl_iterator right, dl_natural count, dl_handler out);
 dl_api dl_integer dl_drop(dl_iterator left, dl_iterator right, dl_natural count, dl_handler out);
 
-dl_api dl_bool dl_remove(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
-dl_api dl_bool dl_remove_reverse(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out);
-
 dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator compare);
 
 dl_api dl_handler dl_make_handler(dl_ptr data, dl_ptr (*func)(dl_ptr data, dl_ptr value));
@@ -342,28 +339,6 @@ dl_api dl_integer dl_drop(dl_iterator left, dl_iterator right, dl_natural count,
   }
 
   return processed;
-}
-
-dl_api dl_bool dl_remove(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out) {
-  dl_iterator found;
-  found = dl_find(left, right, predicate);
-
-  if (!dl_iterator_is_valid(found)) return false;
-
-  if (!FUNC_UNSAFE(out)) DL_CALL1(out, dl_iterator_ref(found));
-
-  return dl_iterator_remove(found);
-}
-
-dl_api dl_bool dl_remove_reverse(dl_iterator left, dl_iterator right, dl_filter predicate, dl_handler out) {
-  dl_iterator found;
-  found = dl_find_reverse(left, right, predicate);
-
-  if (!dl_iterator_is_valid(found)) return false;
-
-  if (!FUNC_UNSAFE(out)) DL_CALL1(out, dl_iterator_ref(found));
-
-  return dl_iterator_remove(found);
 }
 
 dl_iterator _quick_sort_partition(dl_iterator left, dl_iterator right, dl_comparator compare) {

@@ -196,8 +196,6 @@ dl_declare_test(test_dl_map);
 dl_declare_test(test_dl_zip);
 dl_declare_test(test_dl_take);
 dl_declare_test(test_dl_drop);
-dl_declare_test(test_dl_remove);
-dl_declare_test(test_dl_remove_reverse);
 dl_declare_test(test_dl_quick_sort);
 dl_end_test_suite
     
