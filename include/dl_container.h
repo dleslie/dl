@@ -96,9 +96,6 @@ dl_api dl_bool dl_iterator_remove(dl_iterator position);
 dl_api dl_iterator dl_iterator_next(dl_iterator target);
 dl_api dl_iterator dl_iterator_prev(dl_iterator target);
 
-dl_api dl_bool dl_iterator_next_ref(dl_iterator *target, dl_ptr *out);
-dl_api dl_bool dl_iterator_prev_ref(dl_iterator *target, dl_ptr *out);
-
 dl_api dl_bool dl_iterator_equal(dl_iterator left, dl_iterator right);
 dl_api dl_integer dl_iterator_compare(dl_iterator left, dl_iterator right);
 dl_api dl_integer dl_iterator_index(dl_iterator iter);
@@ -273,24 +270,6 @@ dl_api dl_integer dl_iterator_index(dl_iterator iter) {
     return -1;
 
   return iter.container->interface->iterator_index(iter);
-}
-
-dl_api dl_bool dl_iterator_next_ref(dl_iterator *iter, dl_ptr *out) {
-  if (dl_safety(iter == NULL))
-    return false;
-  *iter = dl_iterator_next(*iter);
-  if (!dl_iterator_is_valid(*iter))
-    return false;
-  return NULL != dl_iterator_get(*iter, out);
-}
-
-dl_api dl_bool dl_iterator_prev_ref(dl_iterator *iter, dl_ptr *out) {
-  if (dl_safety(iter == NULL))
-    return false;
-  *iter = dl_iterator_prev(*iter);
-  if (!dl_iterator_is_valid(*iter))
-    return false;
-  return NULL != dl_iterator_get(*iter, out);
 }
 
 dl_api dl_bool dl_iterator_equal(dl_iterator left, dl_iterator right) {

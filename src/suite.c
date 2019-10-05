@@ -172,8 +172,6 @@ dl_declare_test(test_dl_iterator_insert);
 dl_declare_test(test_dl_iterator_remove);
 dl_declare_test(test_dl_iterator_next);
 dl_declare_test(test_dl_iterator_prev);
-dl_declare_test(test_dl_iterator_next_ref);
-dl_declare_test(test_dl_iterator_prev_ref);
 dl_declare_test(test_dl_iterator_equal);
 dl_declare_test(test_dl_iterator_compare);
 dl_declare_test(test_dl_iterator_index);
