@@ -543,7 +543,7 @@ error:
 dl_bool test_dl_quick_sort() {
   dl_container *c = NULL;
   dl_integer idx, idx2, a, b;
-  dl_integer values[10] = {0, -3, 35, 11, 0, 23, 5, 8, 20, 555};
+  dl_integer values[10] = {0, -3, 35, 11, 0, 23, 5, 8, 555, 20};
   dl_integer sorted_values[10] = {-3, 0, 0, 5, 8, 11, 20, 23, 35, 555};
   dl_comparator compare = dl_make_comparator(NULL, _integer_compare);
 

@@ -345,8 +345,8 @@ dl_iterator _quick_sort_partition(dl_iterator left, dl_iterator right, dl_compar
   dl_iterator i, j, pivot;
   dl_ptr pivot_ref, ref_j;
 
-  pivot = dl_iterator_prev(pivot);
-  if (!dl_iterator_is_valid(pivot))
+  pivot = dl_iterator_prev(right);
+  if (dl_safety(!dl_iterator_is_valid(pivot)))
     return dl_make_invalid_iterator();
   pivot_ref = dl_iterator_ref(pivot);
 
@@ -357,6 +357,7 @@ dl_iterator _quick_sort_partition(dl_iterator left, dl_iterator right, dl_compar
       dl_iterator_swap(i, j);
       dl_swap(i, j);
       i = dl_iterator_next(i);
+      ref_j = dl_iterator_ref(j);
     }
     j = dl_iterator_next(j);
     ref_j = dl_iterator_ref(j);
@@ -369,17 +370,22 @@ dl_iterator _quick_sort_partition(dl_iterator left, dl_iterator right, dl_compar
 }
 
 dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator compare) {
-  dl_iterator pivot;
+  dl_iterator pivot, pivot_next;
 
-  if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(compare))) return false;
+  if (dl_safety(FUNC_UNSAFE(compare)))
+    return false;
 
-  if (dl_iterator_equal(left, right)) return true;
+  if (dl_safety(ITER_UNSAFE(left, right)))
+    return false;
+
+  if (dl_iterator_equal(left, right))
+    return true;
 
   pivot = _quick_sort_partition(left, right, compare);
+  pivot_next = dl_iterator_next(pivot);
 
   if (!dl_iterator_equal(left, pivot)) dl_quick_sort(left, pivot, compare);
-  pivot = dl_iterator_next(pivot);
-  if (!dl_iterator_equal(pivot, right)) dl_quick_sort(pivot, right, compare);
+  if (!dl_iterator_equal(pivot_next, right)) dl_quick_sort(pivot_next, right, compare);
 
   return true;
 }
