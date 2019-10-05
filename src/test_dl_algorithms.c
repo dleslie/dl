@@ -490,6 +490,49 @@ error:
 }
 
 dl_bool test_dl_drop() {
+  dl_container *c = NULL;
+  dl_container *c2 = NULL;
+  dl_integer idx, idx2, count;
+
+  for (idx = 0; idx < info_count; ++idx) {
+    if (!dl_check(c = dl_make_container(infos[idx].interface, sizeof(dl_integer), 128), "Make %s container failed.", infos[idx].type_name))
+      return false;
+
+    for (idx2 = 0; idx2 < 10; ++idx2)
+      dl_container_push(c, &idx2);
+
+    if (!dl_check(c2 = dl_make_container(infos[idx].interface, sizeof(dl_integer), 128), "Make %s container failed.", infos[idx].type_name)) {
+      dl_destroy_container(c);
+      return false;
+    }
+
+    count = dl_drop(dl_container_first(c), dl_container_last(c), 3, dl_make_push_handler(c2));
+    if (!dl_check(7 == count, "Expected %s container to contain 7 items, not %i.", infos[idx].type_name, count))
+      goto error;
+
+    if (!dl_check(10 == dl_container_length(c), "Expected %s container to be length 10, not %i.",
+                  infos[idx].type_name, dl_container_length(c)))
+      goto error;
+
+    for (idx2 = 3; idx2 < 10; ++idx2)
+      if (!dl_check(idx2 == *(dl_integer *)dl_iterator_ref(dl_container_index(c2, idx2 - 3)),
+                    "Expected %s index to be %i, not %i.", infos[idx].type_name, idx2, *(dl_integer *)dl_iterator_ref(dl_container_index(c2, idx2 - 3))))
+        goto error;
+
+    dl_destroy_container(c);
+    dl_destroy_container(c2);
+  }
+
+  return true;
+error:
+  for (idx = 0; idx < dl_container_length(c); ++idx) {
+    DL_INFO("C1 %i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c, idx)));
+  }
+  for (idx = 0; idx < dl_container_length(c2); ++idx) {
+    DL_INFO("C2 %i: %i", idx, *(dl_natural *)dl_iterator_ref(dl_container_index(c2, idx)));
+  }
+  dl_destroy_container(c);
+  dl_destroy_container(c2);
   return false;
 }
 

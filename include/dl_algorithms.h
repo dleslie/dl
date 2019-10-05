@@ -326,18 +326,19 @@ dl_api dl_integer dl_take(dl_iterator left, dl_iterator right, dl_natural count,
 }
 
 dl_api dl_integer dl_drop(dl_iterator left, dl_iterator right, dl_natural count, dl_handler out) {
-  dl_natural processed;
+  dl_natural processed = 0;
   if (dl_safety(ITER_UNSAFE(left, right) || FUNC_UNSAFE(out))) return 0;
 
-  while (count > 0) {
-    --count;
+  while (dl_iterator_is_valid(left)) {
+    if (count > 0)
+      --count;
+    else {
+      DL_CALL1(out, dl_iterator_ref(left));
+      ++processed;
+    }
+    if (dl_iterator_equal(left, right))
+      break;
     left = dl_iterator_next(left);
-    if (!dl_iterator_is_valid(left)) return 0;
-  }
-
-  while (dl_iterator_is_valid(left) && !dl_iterator_equal(left, right)) {
-    DL_CALL1(out, dl_iterator_ref(left));
-    ++processed;
   }
 
   return processed;
