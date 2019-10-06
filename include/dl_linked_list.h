@@ -75,22 +75,24 @@ dl_api dl_linked_list_node *_linked_list_node_alloc(dl_linked_list *list, dl_lin
 
   if (after == NULL) {
     node->previous = NULL;
-    if (list->first != NULL) {
+
+    if (for_free_list) {
+      node->next = list->free_list;
+      list->free_list = node;
+    } else if (list->first != NULL) {
       node->next = list->first;
       node->next->previous = node;
-      if (!for_free_list)
-        list->first = node;
+      list->first = node;
     } else {
-      if (!for_free_list)
-        list->first = list->last = node;
+      list->first = list->last = node;
       node->next = NULL;
     }
   } else {
     node->previous = after;
     node->next = after->next;
     after->next = node;
-    if (node->next == NULL) {
-      if (!for_free_list)
+    if (!for_free_list) {
+      if (node->next == NULL)
         list->last = node;
       else
         node->next->previous = node;
@@ -141,9 +143,7 @@ dl_api dl_linked_list *dl_make_linked_list(dl_natural element_size, dl_natural c
   target->free_list = NULL;
 
   while (capacity > 0) {
-    if (target->free_list == NULL)
-      target->free_list = _linked_list_node_alloc(target, target->free_list, true);
-    else if (_linked_list_node_alloc(target, target->free_list, true) == NULL)
+    if (_linked_list_node_alloc(target, NULL, true) == NULL)
       break;
     --capacity;
   }
