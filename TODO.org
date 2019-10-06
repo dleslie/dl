@@ -1,6 +1,6 @@
-* TODO Use four-sample parameters for all tweening
 * TODO Fix bezier curve spline
 * TODO Tween should be aware of container types
+* TODO Add Quat to math
 * TODO Create dl_array_container
 * TODO Create dl_tree_container
 * TODO Create dl_hashset_container
