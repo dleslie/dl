@@ -25,6 +25,8 @@ dl_api void dl_time(dl_natural *out_usec, dl_natural *out_sec);
 
 #if defined(DL_IMPLEMENTATION)
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
 dl_api dl_natural dl_write_time(const char *fmt, char *buf, dl_natural buf_length) {
 #if DL_IS_MSC
   struct tm ltime;
@@ -38,6 +40,7 @@ dl_api dl_natural dl_write_time(const char *fmt, char *buf, dl_natural buf_lengt
   return 0;
 #endif
 }
+#pragma GCC diagnostic pop
 
 dl_api void dl_time(dl_natural *out_usec, dl_natural *out_sec) {
 #if DL_IS_WINDOWS && DL_IS_ATLEAST_C99
