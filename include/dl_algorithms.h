@@ -342,35 +342,28 @@ dl_api dl_integer dl_drop(dl_iterator left, dl_iterator right, dl_natural count,
 }
 
 dl_iterator _quick_sort_partition(dl_iterator left, dl_iterator right, dl_comparator compare) {
-  dl_iterator i, j, pivot;
-  dl_ptr pivot_ref, ref_j;
+  dl_iterator low, current;
+  dl_ptr pivot_ref, current_ref;
 
-  pivot = dl_iterator_prev(right);
-  if (dl_safety(!dl_iterator_is_valid(pivot)))
-    return dl_make_invalid_iterator();
-  pivot_ref = dl_iterator_ref(pivot);
+  low = left;
+  current = left;
 
-  ref_j = dl_iterator_ref(left);
-  i = j = left;
-  while (dl_iterator_is_valid(j) && !dl_iterator_equal(pivot, j)) {
-    if (DL_CALL2(compare, ref_j, pivot_ref)) {
-      dl_iterator_swap(i, j);
-      dl_swap(i, j);
-      i = dl_iterator_next(i);
-      ref_j = dl_iterator_ref(j);
+  pivot_ref = dl_iterator_ref(right);
+
+  while (!dl_iterator_equal(current, right)) {
+    current_ref = dl_iterator_ref(current);
+    if (0 < DL_CALL2(compare, current_ref, pivot_ref)) {
+      dl_iterator_swap(low, current);
+      low = dl_iterator_next(low);
     }
-    j = dl_iterator_next(j);
-    ref_j = dl_iterator_ref(j);
+    current = dl_iterator_next(current);
   }
-
-  dl_iterator_swap(i, pivot);
-  dl_swap(i, pivot);
-
-  return i;
+  dl_iterator_swap(low, right);
+  return low;
 }
 
 dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator compare) {
-  dl_iterator pivot, pivot_next;
+  dl_iterator pivot;
 
   if (dl_safety(FUNC_UNSAFE(compare)))
     return false;
@@ -382,10 +375,13 @@ dl_api dl_bool dl_quick_sort(dl_iterator left, dl_iterator right, dl_comparator 
     return true;
 
   pivot = _quick_sort_partition(left, right, compare);
-  pivot_next = dl_iterator_next(pivot);
+  if (!dl_iterator_is_valid(pivot))
+    return false;
 
-  if (!dl_iterator_equal(left, pivot)) dl_quick_sort(left, pivot, compare);
-  if (!dl_iterator_equal(pivot_next, right)) dl_quick_sort(pivot_next, right, compare);
+  if (!dl_iterator_equal(pivot, left))
+    dl_quick_sort(left, dl_iterator_prev(pivot), compare);
+  if (!dl_iterator_equal(pivot, right))
+    dl_quick_sort(dl_iterator_next(pivot), right, compare);
 
   return true;
 }
