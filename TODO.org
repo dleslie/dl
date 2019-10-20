@@ -1,9 +1,11 @@
-* TODO Fix bezier curve spline
+* TODO Test suite should return fail count
+* TODO GitHub integration into automattic testing
 * TODO Tween should be aware of container types
 * TODO Add Quat to math
 * TODO Create dl_array_container
 * TODO Create dl_tree_container
 * TODO Create dl_hashset_container
+* DONE Fix bezier curve spline
 * DONE Create dl_linked_list_container 
 * DONE Create dl_vector_container
 * DONE Write container test suite

@@ -9,10 +9,6 @@
 #define DL_USE_LEFT_HANDED 0
 #endif
 
-#ifndef DL_BEZIER_DEGREE
-#define DL_BEZIER_DEGREE 4
-#endif
-
 #include <math.h>
 #include "dl_core.h"
 

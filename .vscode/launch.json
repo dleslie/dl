@@ -103,6 +103,26 @@
             ]
         },
         {
+            "name": "tween mingw",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/tween-c11-test",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "miDebuggerPath": "c:/MingW/bin/gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
             "name": "tween",
             "type": "cppdbg",
             "request": "launch",
