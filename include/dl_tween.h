@@ -38,6 +38,8 @@ dl_api dl_real *dl_interpolate(const dl_selector_function select, const dl_real 
 dl_api dl_real *dl_select_linear(const dl_real *v, dl_natural l, dl_real p, dl_real *out);
 dl_api dl_real *dl_select_bezier(const dl_real *v, dl_natural l, dl_real p, dl_real *out);
 dl_api dl_real *dl_select_catmullrom(const dl_real *v, dl_natural l, dl_real p, dl_real *out);
+dl_api dl_real *dl_select_hermite(const dl_real *v, dl_natural l, dl_real p, dl_real *out);
+dl_api dl_real *dl_select_smoothstep(const dl_real *v, dl_natural l, dl_real p, dl_real *out);
 
 typedef dl_point2 *(*dl_selector_function_point2)(const dl_point2 *values, dl_natural length, dl_real percent, dl_point2 *out);
 
@@ -46,6 +48,8 @@ dl_api dl_point2 *dl_interpolate_point2(const dl_selector_function_point2 select
 dl_api dl_point2 *dl_select_linear_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out);
 dl_api dl_point2 *dl_select_bezier_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out);
 dl_api dl_point2 *dl_select_catmullrom_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out);
+dl_api dl_point2 *dl_select_hermite_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out);
+dl_api dl_point2 *dl_select_smoothstep_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out);
 
 typedef dl_point3 *(*dl_selector_function_point3)(const dl_point3 *values, dl_natural length, dl_real percent, dl_point3 *out);
 
@@ -54,6 +58,8 @@ dl_api dl_point3 *dl_interpolate_point3(const dl_selector_function_point3 select
 dl_api dl_point3 *dl_select_linear_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out);
 dl_api dl_point3 *dl_select_bezier_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out);
 dl_api dl_point3 *dl_select_catmullrom_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out);
+dl_api dl_point3 *dl_select_hermite_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out);
+dl_api dl_point3 *dl_select_smoothstep_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out);
 
 dl_api dl_integer *dl_lerp_integer(dl_integer a, dl_integer b, dl_real p, dl_integer *out);
 dl_api dl_real *dl_lerp_real(dl_real a, dl_real b, dl_real p, dl_real *out);
@@ -364,6 +370,31 @@ dl_real *dl_select_catmullrom(const dl_real *v, dl_natural l, dl_real p, dl_real
 
   *out = v[b_idx] + (t * v0) + (t2 * (-v1 - (2 * v0) + (3 * v[c_idx]) - (3 * v[b_idx]))) + (t3 * (v1 + v0 + (2 * v[b_idx]) + (-2 * v[c_idx])));
 
+  return out;
+}
+
+dl_real *dl_select_hermite(const dl_real *v, dl_natural l, dl_real p, dl_real *out) {
+  dl_real offset, p2, p3, f1, f2, f3, f4;
+  dl_integer A, B, C, D, max_idx;
+  dl_integer A, B, C, D, max_idx;
+
+  max_idx = l - 1;
+  offset = (dl_real)p * (dl_real)max_idx;
+  B = (dl_integer)dl_floor(offset);
+  A = dl_clamp(B - 1, 0, max_idx);
+  C = dl_clamp(B + 1, 0, max_idx);
+  D = dl_clamp(B + 2, 0, max_idx);
+
+  p = ((offset - (dl_real)B) + 1.0) * 0.25;
+  p2 = p * p;
+  p3 = p * p2;
+
+  f1 = ((2.0 * p3) - (3.0 * p2)) + 1.0;
+  f2 = (-2.0 * p3) + (3.0 * p2);
+  f3 = (p3 - (2.0 * p2)) + p;
+  f4 = p3 - p2;
+
+  *out = (B * f1) + (C * f2) + (0 * f3) + (0 * f4);
   return out;
 }
 
