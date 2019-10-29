@@ -30,8 +30,8 @@
 /* Vector transformer for Container interface */
 #include "dl_vector_container.h"
 
-/* Lerping, Splines, and some pleasant-looking in/out tweens */
-#include "dl_tween.h"
-
 /* Vector, Matrix et al */
 #include "dl_math.h"
+
+/* Lerping, Splines, and some pleasant-looking in/out tweens */
+#include "dl_tween.h"
