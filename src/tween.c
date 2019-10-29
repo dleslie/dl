@@ -16,12 +16,13 @@ typedef struct {
   const char *name;
 } tween_method;
 
-#define tween_count 38
+#define tween_count 39
 #define point_count 16
 
 dl_integer active_method = -1;
 tween_method tween_methods[tween_count] = {
   {0, NULL, dl_select_linear, NULL, "dl_select_linear"},
+  {0, NULL, dl_select_bezier, NULL, "dl_select_bezier"},
   {0, NULL, dl_select_catmullrom, NULL, "dl_select_catmullrom"},
   {0, NULL, NULL, dl_select_linear_point2, "dl_select_linear_point2"},
   {0, NULL, NULL, dl_select_bezier_point2, "dl_select_bezier_point2"},

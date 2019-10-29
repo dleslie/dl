@@ -36,6 +36,7 @@ typedef dl_real *(*dl_selector_function)(const dl_real *values, dl_natural lengt
 dl_api dl_real *dl_interpolate(const dl_selector_function select, const dl_real *values, dl_natural length, dl_real percent, dl_real *out);
 
 dl_api dl_real *dl_select_linear(const dl_real *v, dl_natural l, dl_real p, dl_real *out);
+dl_api dl_real *dl_select_bezier(const dl_real *v, dl_natural l, dl_real p, dl_real *out);
 dl_api dl_real *dl_select_catmullrom(const dl_real *v, dl_natural l, dl_real p, dl_real *out);
 
 typedef dl_point2 *(*dl_selector_function_point2)(const dl_point2 *values, dl_natural length, dl_real percent, dl_point2 *out);
@@ -283,7 +284,7 @@ dl_real dl_ease_bounce(dl_ease_direction d, dl_real p) {
 }
 
 dl_real *dl_interpolate(const dl_selector_function select, const dl_real *values, dl_natural length, dl_real percent, dl_real *out) {
-  if (dl_safety(select == NULL || values == NULL || length == 0))
+  if (dl_safety(select == NULL || values == NULL) || dl_unlikely(length == 0))
     return NULL;
   if (dl_unlikely(length == 1)) {
     *out = values[0];
@@ -312,6 +313,30 @@ dl_real *dl_select_linear(const dl_real *v, dl_natural l, dl_real p, dl_real *ou
   }
 
   return dl_lerp_real(v[idx], v[next_idx], (scaled_p - (dl_real)idx), out);
+}
+
+dl_real *dl_select_bezier(const dl_real *v, dl_natural l, dl_real p, dl_real *out) {
+  dl_integer max_idx;
+  dl_real offset, delta, inv_delta, delta2, delta3, inv_delta2, inv_delta3;
+  dl_integer A, B, C, D;
+
+  max_idx = l - 1;
+  offset = (dl_real)p * (dl_real)max_idx;
+  B = (dl_integer)dl_floor(offset);
+  A = dl_clamp(B - 1, 0, max_idx);
+  C = dl_clamp(B + 1, 0, max_idx);
+  D = dl_clamp(B + 2, 0, max_idx);
+
+  delta = ((offset - (dl_real)B) + 1.0) * 0.25;
+  inv_delta = (dl_real)1 - delta;
+
+  delta2 = delta * delta;
+  delta3 = delta2 * delta;
+  inv_delta2 = inv_delta * inv_delta;
+  inv_delta3 = inv_delta2 * inv_delta;
+
+  *out = (v[A] * inv_delta3) + (v[B] * 3.0 * delta * inv_delta2) + (v[C] * 3.0 * delta2 * inv_delta) + (v[D] * delta3);
+  return out;
 }
 
 dl_real *dl_select_catmullrom(const dl_real *v, dl_natural l, dl_real p, dl_real *out) {
@@ -372,31 +397,34 @@ dl_point2 *dl_select_linear_point2(const dl_point2 *v, dl_natural l, dl_real p, 
 }
 
 dl_point2 *dl_select_bezier_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out) {
-  dl_natural max_idx, idx, degree;
-  dl_real target;
-  dl_point2 t1, t2, compute_v[DL_BEZIER_DEGREE + 1];
-  dl_integer i, j, desired_idx;
+  dl_integer max_idx;
+  dl_real offset, delta, inv_delta, delta2, delta3, inv_delta2, inv_delta3;
+  dl_integer A, B, C, D;
+  dl_point2 p1, p2, p3, p4;
+
+  p1 = p2 = p3 = p4 = dl_point2_zero;
 
   max_idx = l - 1;
-  degree = dl_clamp(DL_BEZIER_DEGREE, 1, max_idx);
-  target = (dl_real)max_idx * p;
-  idx = (dl_natural)dl_floor(target);
+  offset = (dl_real)p * (dl_real)max_idx;
+  B = (dl_integer)dl_floor(offset);
+  A = dl_clamp(B - 1, 0, max_idx);
+  C = dl_clamp(B + 1, 0, max_idx);
+  D = dl_clamp(B + 2, 0, max_idx);
 
-  for (i = 0; i < degree + 1; ++i) {
-    desired_idx = idx + i;
-    desired_idx = dl_clamp(desired_idx, 0, max_idx);
-    compute_v[i] = v[desired_idx];
-  }
+  delta = ((offset - (dl_real)B) + 1.0) * 0.25;
+  inv_delta = (dl_real)1 - delta;
 
-  for (i = 1; i <= degree; ++i)
-    for (j = 0; j <= degree - i; ++j)
-      dl_point2_add(
-        dl_point2_mul_scalar(&compute_v[j], 1.0 - p, &t1),
-        dl_point2_mul_scalar(&compute_v[j + 1], p, &t2),
-        &compute_v[j]);
+  delta2 = delta * delta;
+  delta3 = delta2 * delta;
+  inv_delta2 = inv_delta * inv_delta;
+  inv_delta3 = inv_delta2 * inv_delta;
 
-  *out = compute_v[0];
-  return out;
+  dl_point2_mul_scalar(&v[A], inv_delta3, &p1);
+  dl_point2_mul_scalar(&v[B], 3.0 * delta * inv_delta2, &p2);
+  dl_point2_mul_scalar(&v[C], 3.0 * delta2 * inv_delta, &p3);
+  dl_point2_mul_scalar(&v[D], delta3, &p4);
+
+  return dl_point2_add(&p1, dl_point2_add(&p2, dl_point2_add(&p3, &p4, out), &p4), out);
 }
 
 dl_point2 *dl_select_catmullrom_point2(const dl_point2 *v, dl_natural l, dl_real p, dl_point2 *out) {
@@ -467,27 +495,34 @@ dl_point3 *dl_select_linear_point3(const dl_point3 *v, dl_natural l, dl_real p, 
 }
 
 dl_point3 *dl_select_bezier_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out) {
-  dl_natural max_idx, idx;
-  dl_real target;
-  dl_point3 temp[2], compute_v[DL_BEZIER_DEGREE + 1];
-  dl_integer i, j, desired_idx;
+  dl_integer max_idx;
+  dl_real offset, delta, inv_delta, delta2, delta3, inv_delta2, inv_delta3;
+  dl_integer A, B, C, D;
+  dl_point3 p1, p2, p3, p4;
+
+  p1 = p2 = p3 = p4 = dl_point3_zero;
 
   max_idx = l - 1;
-  target = (dl_real)max_idx * p;
-  idx = (dl_natural)dl_floor(target);
+  offset = (dl_real)p * (dl_real)max_idx;
+  B = (dl_integer)dl_floor(offset);
+  A = dl_clamp(B - 1, 0, max_idx);
+  C = dl_clamp(B + 1, 0, max_idx);
+  D = dl_clamp(B + 2, 0, max_idx);
 
-  for (i = 0; i < DL_BEZIER_DEGREE + 1; ++i) {
-    desired_idx = idx + i;
-    desired_idx = dl_clamp(desired_idx, 0, max_idx);
-    compute_v[i] = v[desired_idx];
-  }
+  delta = ((offset - (dl_real)B) + 1.0) * 0.25;
+  inv_delta = (dl_real)1 - delta;
 
-  for (i = 1; i <= DL_BEZIER_DEGREE; ++i)
-    for (j = 0; j <= DL_BEZIER_DEGREE - i; ++j)
-      dl_point3_add(dl_point3_mul_scalar(&compute_v[j], 1.0 - p, &temp[0]), dl_point3_mul_scalar(&compute_v[j + 1], p, &temp[1]), &compute_v[j]);
+  delta2 = delta * delta;
+  delta3 = delta2 * delta;
+  inv_delta2 = inv_delta * inv_delta;
+  inv_delta3 = inv_delta2 * inv_delta;
 
-  *out = compute_v[0];
-  return out;
+  dl_point3_mul_scalar(&v[A], inv_delta3, &p1);
+  dl_point3_mul_scalar(&v[B], 3.0 * delta * inv_delta2, &p2);
+  dl_point3_mul_scalar(&v[C], 3.0 * delta2 * inv_delta, &p3);
+  dl_point3_mul_scalar(&v[D], delta3, &p4);
+
+  return dl_point3_add(&p1, dl_point3_add(&p2, dl_point3_add(&p3, &p4, out), &p4), out);
 }
 
 dl_point3 *dl_select_catmullrom_point3(const dl_point3 *v, dl_natural l, dl_real p, dl_point3 *out) {
