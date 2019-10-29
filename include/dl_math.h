@@ -279,13 +279,13 @@ dl_api dl_bool dl_mat4_approximately_equal(const dl_mat4 *left, const dl_mat4 *r
 
 /* dl_quat *dl_quat_add(const dl_quat *left, const quat *right, quat *out); */
 /* dl_quat *dl_quat_sub(const dl_quat *left, const quat *right, quat *out); */
-/* dl_quat *dl_uat_mul(const dl_quat *left, const quat *right, quat *out); */
+/* dl_quat *dl_quat_mul(const dl_quat *left, const quat *right, quat *out); */
 /* dl_quat *dl_quat_div(const dl_quat *left, const quat *right, quat *out); */
 
 /* dl_quat *dl_quat_mul_scalar(const dl_quat *left, dl_real scalar, quat *out); */
 /* dl_quat *dl_quat_div_scalar(const dl_quat *left, dl_real scalar, quat *out); */
 
-/* dl_real qdl_uat_dot(const dl_quat *left, const quat *right); */
+/* dl_real dl_quat_dot(const dl_quat *left, const quat *right); */
 /* dl_real dl_quat_magnitude(const dl_quat *q); */
 
 /* dl_quat *dl_quat_normalize(const quat *q, dl_quat *out); */
