@@ -333,7 +333,7 @@ dl_real *dl_select_bezier(const dl_real *v, dl_natural l, dl_real p, dl_real *ou
   C = dl_clamp(B + 1, 0, max_idx);
   D = dl_clamp(B + 2, 0, max_idx);
 
-  delta = ((offset - (dl_real)B) + 1.0) * 0.25;
+  delta = (offset - (dl_real)A) / (dl_real)(D - A);
   inv_delta = (dl_real)1 - delta;
 
   delta2 = delta * delta;
@@ -376,7 +376,6 @@ dl_real *dl_select_catmullrom(const dl_real *v, dl_natural l, dl_real p, dl_real
 dl_real *dl_select_hermite(const dl_real *v, dl_natural l, dl_real p, dl_real *out) {
   dl_real offset, p2, p3, f1, f2, f3, f4;
   dl_integer A, B, C, D, max_idx;
-  dl_integer A, B, C, D, max_idx;
 
   max_idx = l - 1;
   offset = (dl_real)p * (dl_real)max_idx;
@@ -385,7 +384,7 @@ dl_real *dl_select_hermite(const dl_real *v, dl_natural l, dl_real p, dl_real *o
   C = dl_clamp(B + 1, 0, max_idx);
   D = dl_clamp(B + 2, 0, max_idx);
 
-  p = ((offset - (dl_real)B) + 1.0) * 0.25;
+  p = (offset - (dl_real)A) / (dl_real)(D - A);
   p2 = p * p;
   p3 = p * p2;
 
@@ -394,7 +393,30 @@ dl_real *dl_select_hermite(const dl_real *v, dl_natural l, dl_real p, dl_real *o
   f3 = (p3 - (2.0 * p2)) + p;
   f4 = p3 - p2;
 
-  *out = (B * f1) + (C * f2) + (0 * f3) + (0 * f4);
+  /*
+ABCD
+ACDB
+ADBC
+ABDC
+ACBD
+ADCB
+BCDA
+BACD
+BADC
+BCAD
+BCDA
+BDAC
+BDCA
+CDAB
+CABD
+CADB
+DABC
+
+    CBAD, CBDA, CDAB, CDBA,
+    DABC, DACB, DBAC, DBCA, DCAB, DCBA
+
+*/
+  *out = (C * f1) + (A * f2) + (D * f3) + (B * f4);
   return out;
 }
 
@@ -442,7 +464,7 @@ dl_point2 *dl_select_bezier_point2(const dl_point2 *v, dl_natural l, dl_real p, 
   C = dl_clamp(B + 1, 0, max_idx);
   D = dl_clamp(B + 2, 0, max_idx);
 
-  delta = ((offset - (dl_real)B) + 1.0) * 0.25;
+  delta = (offset - (dl_real)A) / (dl_real)(D - A);
   inv_delta = (dl_real)1 - delta;
 
   delta2 = delta * delta;
@@ -540,7 +562,7 @@ dl_point3 *dl_select_bezier_point3(const dl_point3 *v, dl_natural l, dl_real p, 
   C = dl_clamp(B + 1, 0, max_idx);
   D = dl_clamp(B + 2, 0, max_idx);
 
-  delta = ((offset - (dl_real)B) + 1.0) * 0.25;
+  delta = (offset - (dl_real)A) / (dl_real)(D - A);
   inv_delta = (dl_real)1 - delta;
 
   delta2 = delta * delta;
