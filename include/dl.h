@@ -1,6 +1,12 @@
 /* Preprocessor defines for machine information, and memory functions */
 #include "dl_core.h"
 
+/* Extra preprocessor macros */
+#include "dl_macro.h"
+
+/* Memory methods */
+#include "dl_memory.h"
+
 /* Basic time methods */
 #include "dl_time.h"
 

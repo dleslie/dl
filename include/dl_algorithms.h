@@ -16,6 +16,37 @@
 extern "C" {
 #endif
 
+typedef struct {
+  dl_integer (*func)(dl_ptr data, const dl_ptr value);
+  dl_ptr data;
+} dl_filter;
+
+typedef struct {
+  dl_ptr (*func)(dl_ptr data, dl_ptr item, const dl_ptr left);
+  dl_ptr data;
+} dl_folder;
+
+typedef struct {
+  dl_integer (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
+  dl_ptr data;
+} dl_comparator;
+
+typedef struct {
+  dl_ptr (*func)(dl_ptr data, dl_ptr value);
+  dl_ptr data;
+} dl_handler;
+
+typedef struct {
+  dl_ptr (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
+  dl_ptr data;
+} dl_zipper;
+
+#if DL_IS_ATLEAST_C99
+#define DL_CALL(c, ...) c.func(c.data, ##__VAR_ARGS__)
+#endif
+#define DL_CALL1(c, arg1) c.func(c.data, arg1)
+#define DL_CALL2(c, arg1, arg2) c.func(c.data, arg1, arg2)
+
 dl_api dl_integer dl_count(dl_iterator left, dl_iterator right);
 
 dl_api dl_iterator dl_find(dl_iterator left, dl_iterator right, dl_filter predicate);

@@ -20,7 +20,7 @@ build_config = gcc_configs
 
 executables = [
 	['suite',
-   ['src/test_dl_math.c', 'src/test_dl_test.c', 'src/test_dl_vector.c', 'src/test_dl_linked_list.c', 'src/test_dl_collections.c', 'src/test_dl_algorithms.c', 'src/test_containers.c', 'src/suite.c'],
+   ['src/test_dl_math.c', 'src/test_dl_test.c', 'src/test_dl_vector.c', 'src/test_dl_linked_list.c', 'src/test_dl_collections.c', 'src/test_dl_algorithms.c', 'src/test_containers.c', 'src/test_dl_macro.c', 'src/suite.c'],
    [lib_m],
    c_stds]
 ]

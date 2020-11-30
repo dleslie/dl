@@ -23,9 +23,6 @@
 #define DL_USE_MALLOC 1
 #endif
 
-extern void *(*dl_alloc)(size_t sz);
-extern void (*dl_free)(void *ptr);
-
 /***************************************
  * Environment
  **************************************/
@@ -215,11 +212,17 @@ typedef float dl_real;
 typedef unsigned char dl_byte;
 typedef unsigned int dl_natural;
 
-#ifndef __cplusplus
+#if !DL_IS_ATLEAST_C99 && !defined(__cplusplus)
 typedef enum { false,
                true } dl_bool;
 #else
-typedef bool dl_bool;
+typedef _Bool dl_bool;
+#ifndef true
+#define true 1
+#endif
+#ifndef false
+#define false 0
+#endif
 #endif
 
 #define DL_INTEGER_MAX 2147483647
@@ -239,170 +242,8 @@ typedef bool dl_bool;
 extern "C" {
 #endif
 
-/*****************************************************************************
-   **  Memory Tools
-   ****************************************************************************/
-
-dl_api dl_ptr dl_memory_swap(dl_ptr target, dl_ptr source, dl_natural dl_bytes);
-dl_api dl_ptr dl_memory_copy(dl_ptr target, dl_ptr source, dl_natural dl_bytes);
-dl_api dl_ptr dl_memory_set(dl_ptr target, dl_byte val, dl_natural dl_bytes);
-
-#if DL_USE_EXTENIONS && DL_IS_ATLEAST_C90 && (DL_IS_GNUC || DL_IS_CLANG)
-#define dl_swap(a, b) ({ \
-  __auto_type _c = (a);  \
-  a = b;                 \
-  b = _c;                \
-})
-#else
-#define dl_swap(a, b) dl_memory_swap(&(a), &(b), sizeof(a))
-#endif
-
-typedef struct {
-  dl_integer (*func)(dl_ptr data, const dl_ptr value);
-  dl_ptr data;
-} dl_filter;
-
-typedef struct {
-  dl_ptr (*func)(dl_ptr data, dl_ptr item, const dl_ptr left);
-  dl_ptr data;
-} dl_folder;
-
-typedef struct {
-  dl_integer (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
-  dl_ptr data;
-} dl_comparator;
-
-typedef struct {
-  dl_ptr (*func)(dl_ptr data, dl_ptr value);
-  dl_ptr data;
-} dl_handler;
-
-typedef struct {
-  dl_ptr (*func)(dl_ptr data, const dl_ptr left, const dl_ptr right);
-  dl_ptr data;
-} dl_zipper;
-
-#if DL_IS_ATLEAST_C99
-#define DL_CALL(c, ...) c.func(c.data, ##__VAR_ARGS__)
-#endif
-#define DL_CALL1(c, arg1) c.func(c.data, arg1)
-#define DL_CALL2(c, arg1, arg2) c.func(c.data, arg1, arg2)
-
 #if defined(__cplusplus)
 }
 #endif
-
-/*****************************************************************************
- **  IMPLEMENTATION
- ****************************************************************************/
-
-#if defined(DL_IMPLEMENTATION)
-
-#if defined(DL_USE_MALLOC)
-#include <malloc.h>
-void *(*dl_alloc)(size_t) = malloc;
-void (*dl_free)(void *) = free;
-#endif
-
-/*****************************************************************************
- **  Memory Tools
- ****************************************************************************/
-
-dl_api dl_ptr dl_memory_swap(dl_ptr left, dl_ptr right, dl_natural dl_bytes) {
-  size_t sz_count, byte_count, *sz_left, *sz_right, sz_temp;
-
-  sz_count = dl_bytes / sizeof(size_t);
-  byte_count = dl_bytes - (sz_count * sizeof(size_t));
-
-  sz_left = (size_t *)left;
-  sz_right = (size_t *)right;
-
-  for (; sz_count > 0; --sz_count) {
-    sz_temp = *sz_left;
-    *sz_left = *sz_right;
-    *sz_right = sz_temp;
-    ++sz_left;
-    ++sz_right;
-  }
-
-  if (byte_count > 0) {
-    dl_byte *byte_left, *byte_right, byte_temp;
-    byte_left = (dl_byte *)sz_left;
-    byte_right = (dl_byte *)sz_right;
-
-    for (; byte_count > 0; --byte_count) {
-      byte_temp = *byte_left;
-      *byte_left = *byte_right;
-      *byte_right = byte_temp;
-      ++byte_left;
-      ++byte_right;
-    }
-  }
-
-  return left;
-}
-
-dl_api dl_ptr dl_memory_copy(dl_ptr left, dl_ptr right, dl_natural dl_bytes) {
-  size_t sz_count, byte_count, *sz_left, *sz_right;
-
-  sz_count = dl_bytes / sizeof(size_t);
-  byte_count = dl_bytes - (sz_count * sizeof(size_t));
-
-  sz_left = (size_t *)left;
-  sz_right = (size_t *)right;
-
-  for (; sz_count > 0; --sz_count) {
-    *sz_left = *sz_right;
-    ++sz_left;
-    ++sz_right;
-  }
-
-  if (dl_unlikely(byte_count > 0)) {
-    dl_byte *byte_left, *byte_right;
-    byte_left = (dl_byte *)sz_left;
-    byte_right = (dl_byte *)sz_right;
-
-    for (; byte_count > 0; --byte_count) {
-      *byte_left = *byte_right;
-      ++byte_left;
-      ++byte_right;
-    }
-  }
-
-  return left;
-}
-
-dl_ptr dl_memory_set(dl_ptr left, dl_byte val, dl_natural dl_bytes) {
-  size_t *sz_left, sz_count, byte_count, sz_val, shift;
-
-  sz_left = (size_t *)left;
-  sz_count = dl_bytes / sizeof(size_t);
-  byte_count = dl_bytes - (sz_count * sizeof(size_t));
-
-  sz_val = val;
-
-  for (shift = 1; shift < sizeof(size_t); ++shift)
-    sz_val |= (val << shift);
-
-  for (; sz_count > 0; --sz_count) {
-    *(size_t *)sz_left = sz_val;
-    ++sz_left;
-  }
-
-  if (dl_unlikely(byte_count > 0)) {
-    dl_byte *byte_left;
-
-    byte_left = (dl_byte *)sz_left;
-
-    for (; byte_count > 0; --byte_count) {
-      *(dl_byte *)byte_left = val;
-      ++byte_left;
-    }
-  }
-
-  return left;
-}
-
-#endif /* DL_IMPLEMENTATION */
 
 #endif

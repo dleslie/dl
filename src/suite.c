@@ -177,7 +177,7 @@ dl_declare_test(test_dl_iterator_compare);
 dl_declare_test(test_dl_iterator_index);
 dl_end_test_suite
 
-/*******************************************************************************;
+/*******************************************************************************
  algorithms
 *******************************************************************************/
 
@@ -196,7 +196,22 @@ dl_declare_test(test_dl_take);
 dl_declare_test(test_dl_drop);
 dl_declare_test(test_dl_quick_sort);
 dl_end_test_suite
-    
+
+/*******************************************************************************
+ macros
+*******************************************************************************/
+
+dl_begin_test_suite(macros);
+dl_declare_test(test_dl_swap);
+dl_declare_test(test_dl_count_args);
+dl_declare_test(test_dl_argcar);
+dl_declare_test(test_dl_argcdr);
+dl_declare_test(test_dl_argmap);
+dl_declare_test(test_dl_stringify);
+dl_declare_test(test_dl_define_enum);
+dl_end_test_suite
+
+
 int  main(int argc, char **argv) {
   dl_run_test_suite(tester);
   dl_run_test_suite(math);
@@ -204,6 +219,7 @@ int  main(int argc, char **argv) {
   dl_run_test_suite(linked_list);
   dl_run_test_suite(container);
   dl_run_test_suite(algorithm);
+  dl_run_test_suite(macros);
   return 0;
 }
 
