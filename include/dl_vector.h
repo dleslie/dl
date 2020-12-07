@@ -67,7 +67,7 @@ dl_api dl_vector *dl_make_vector(dl_natural element_size, dl_natural capacity) {
 
   target->array = (dl_byte *)dl_alloc(capacity * element_size);
   if (dl_unlikely(target->array == NULL)) {
-    target->capacity = 0;
+    dl_free(target);
     return NULL;
   }
   target->capacity = capacity;
@@ -79,12 +79,11 @@ dl_api void dl_destroy_vector(dl_vector *target) {
   if (dl_safety(target == NULL))
     return;
 
-  if (target->array != NULL)
+  if (target->array != NULL) {
     dl_free((dl_ptr)target->array);
+    target->array = NULL;
+  }
 
-#if DL_USE_SAFETY_CHECKS
-  dl_memory_set(target, 0, sizeof(dl_vector));
-#endif
   dl_free(target);
 }
 
@@ -111,13 +110,13 @@ dl_api dl_inline dl_bool dl_vector_is_empty(const dl_vector *v) {
 dl_api dl_ptr dl_vector_get(const dl_vector *v, dl_natural index, dl_ptr out) {
   dl_ptr ref = dl_vector_ref(v, index);
 
-  return ref == NULL ? NULL : dl_memory_copy(out, ref, v->element_size);
+  return ref == NULL ? (dl_ptr)NULL : dl_memory_copy(out, ref, v->element_size);
 }
 
 dl_api dl_ptr dl_vector_set(dl_vector *v, dl_natural index, dl_ptr value) {
   dl_ptr ref = dl_vector_ref(v, index);
 
-  return ref == NULL ? NULL : dl_memory_copy(ref, value, v->element_size);
+  return ref == NULL ? (dl_ptr)NULL : dl_memory_copy(ref, value, v->element_size);
 }
 
 dl_api dl_ptr dl_vector_ref(const dl_vector *v, dl_natural index) {
@@ -144,9 +143,10 @@ dl_api dl_bool dl_vector_grow(dl_vector *v, dl_natural amount) {
   if (dl_unlikely(new_array == NULL))
     return false;
 
-  dl_memory_copy((dl_ptr)new_array, (dl_ptr)v->array, v->length * v->element_size);
-
-  dl_free(v->array);
+  if (v->array != NULL) {
+    dl_memory_copy((dl_ptr)new_array, (dl_ptr)v->array, v->length * v->element_size);
+    dl_free(v->array);
+  }
 
   v->array = new_array;
   v->capacity = new_capacity;
