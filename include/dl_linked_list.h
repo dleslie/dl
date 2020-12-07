@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 /*****************************************************************************
- **  Linked Lists
+ **  Doubly Linked Lists
  ****************************************************************************/
 
 struct dl_linked_list_node {
@@ -102,35 +102,9 @@ dl_api dl_linked_list_node *_linked_list_node_alloc(dl_linked_list *list, dl_lin
   return node;
 }
 
-dl_api void _linked_list_node_free(dl_linked_list *list, dl_linked_list_node *node) {
-  if (list->first == node)
-    list->first = node->next;
-  if (node->next != NULL)
-    node->next->previous = node->previous;
-  if (node->previous != NULL)
-    node->previous->next = node->next;
-  if (list->last == node)
-    list->last = node->previous;
-
-  node->next = list->free_list;
-  if (node->next != NULL)
-    node->next->previous = node;
-  node->previous = NULL;
-  list->free_list = node;
-}
-
-dl_api void _linked_list_node_detach_free(dl_linked_list *list, dl_linked_list_node *e) {
-  if (list->free_list == e)
-    list->free_list = e->next;
-  if (e->next != NULL)
-    e->next->previous = e->previous;
-  if (e->previous != NULL)
-    e->previous->next = e->next;
-  e->next = e->previous = NULL;
-}
-
 dl_api dl_linked_list *dl_make_linked_list(dl_natural element_size, dl_natural capacity) {
   dl_linked_list *target;
+  dl_linked_list_node *node;
 
   if (dl_safety(element_size < 1))
     return NULL;
@@ -140,11 +114,14 @@ dl_api dl_linked_list *dl_make_linked_list(dl_natural element_size, dl_natural c
 
   target->first = target->last = target->free_list = NULL;
   target->element_size = element_size;
-  target->free_list = NULL;
 
   while (capacity > 0) {
-    if (_linked_list_node_alloc(target, NULL, true) == NULL)
+    if (dl_unlikely(NULL == (node = (dl_linked_list_node *)dl_alloc(target->element_size + DL_LINKED_LIST_HEADER_SIZE))))
       break;
+
+    node->next = target->free_list;
+    node->previous = NULL;
+    target->free_list = node;
     --capacity;
   }
 
@@ -152,29 +129,27 @@ dl_api dl_linked_list *dl_make_linked_list(dl_natural element_size, dl_natural c
 }
 
 dl_api void dl_destroy_linked_list(dl_linked_list *target) {
-  dl_linked_list_node *node, *next_node;
+  dl_linked_list_node *node, *kill;
 
   if (dl_safety(target == NULL))
     return;
 
-  next_node = target->last;
-  while (next_node != NULL) {
-    node = next_node;
-    next_node = node->previous;
-    dl_free(node);
-  }
-  target->last = target->first = NULL;
-
-  next_node = target->free_list;
-  while (next_node != NULL) {
-    node = next_node;
-    next_node = node->next;
-    dl_free(node);
+  node = target->first;
+  while (node != NULL) {
+    kill = node;
+    node = node->next;
+    dl_free(kill);
   }
 
-#if DL_USE_SAFETY_CHECKS
-  dl_memory_set(target, 0, sizeof(dl_linked_list));
-#endif
+  node = target->free_list;
+  while (node != NULL) {
+    kill = node;
+    node = node->next;
+    dl_free(kill);
+  }
+
+  target->free_list = target->last = target->first = NULL;
+
   dl_free(target);
 }
 
@@ -229,12 +204,40 @@ dl_api dl_linked_list_node *dl_linked_list_insert(dl_linked_list *list, dl_linke
   if (dl_safety(list == NULL))
     return NULL;
 
-  /* alloc expects "after" whereas add expects "at" */
-  position = position != NULL ? position->previous : NULL;
-  node = _linked_list_node_alloc(list, position, false);
-  if (dl_unlikely(value != NULL && !dl_memory_copy(DL_LINKED_LIST_DATA(node), value, list->element_size))) {
-    _linked_list_node_free(list, node);
+  if (dl_likely(list->free_list != NULL)) {
+    node = list->free_list;
+    list->free_list = node->next;
+    node->next = NULL;
+  } else if (dl_unlikely(NULL == (node = (dl_linked_list_node *)dl_alloc(list->element_size + DL_LINKED_LIST_HEADER_SIZE))))
     return NULL;
+
+  if (dl_likely(value != NULL) && dl_unlikely(!dl_memory_copy(DL_LINKED_LIST_DATA(node), value, list->element_size))) {
+    node->next = list->free_list;
+    node->previous = NULL;
+    list->free_list = node;
+    return NULL;
+  }
+
+  if (position == NULL) {
+    if (dl_unlikely(list->last == NULL)) {
+      list->last = list->first = node;
+      node->next = node->previous = NULL;
+    } else {
+      list->last->next = node;
+      node->previous = list->last;
+      node->next = NULL;
+      list->last = node;
+    }
+  } else {
+    if (position == list->first) {
+      list->first = node;
+    } else {
+      position->previous->next = node;
+      node->previous = position->previous;
+    }
+
+    node->next = position;
+    position->previous = node;
   }
 
   return node;
@@ -244,7 +247,26 @@ dl_api dl_bool dl_linked_list_remove(dl_linked_list *list, dl_linked_list_node *
   if (dl_safety(list == NULL) || position == NULL)
     return false;
 
-  _linked_list_node_free(list, position);
+  if (list->first == position) {
+    list->first = position->next;
+    if (list->first == NULL)
+      list->last = NULL;
+    else
+      list->first->previous = NULL;
+  } else if (list->last == position) {
+    list->last = position->previous;
+    if (list->last == NULL)
+      list->first = NULL;
+    else
+      list->last->next = NULL;
+  } else {
+    position->previous->next = position->next;
+    position->next->previous = position->previous;
+  }
+
+  position->next = list->free_list;
+  position->previous = NULL;
+  list->free_list = position;
 
   return true;
 }
@@ -281,11 +303,7 @@ dl_api dl_ptr dl_linked_list_push(dl_linked_list *list, dl_ptr value) {
   if (dl_safety(list == NULL))
     return NULL;
 
-  node = _linked_list_node_alloc(list, list->last, false);
-  if (node == NULL)
-    return NULL;
-
-  if (NULL == dl_linked_list_set(list, node, value))
+  if (dl_unlikely(NULL == (node = dl_linked_list_insert(list, NULL, value))))
     return NULL;
 
   return DL_LINKED_LIST_DATA(node);
@@ -294,15 +312,15 @@ dl_api dl_ptr dl_linked_list_push(dl_linked_list *list, dl_ptr value) {
 dl_api dl_ptr dl_linked_list_pop(dl_linked_list *list, dl_ptr out) {
   dl_ptr ref;
 
-  if (dl_safety(list == NULL))
+  if (dl_safety(list == NULL) || list->last == NULL)
     return NULL;
 
   if (out != NULL)
     ref = dl_linked_list_get(list, list->last, out);
   else
-    ref = dl_linked_list_ref(list, list->last);
+    ref = NULL;
 
-  _linked_list_node_free(list, list->last);
+  dl_linked_list_remove(list, list->last);
 
   return ref;
 }
