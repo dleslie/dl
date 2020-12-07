@@ -1,12 +1,12 @@
 #include <stdio.h>
 
 #define DL_IMPLEMENTATION 1
+#include <string.h>
 #include "dl.h"
 
 /* clang-format off */
 
 #if DL_IS_ATLEAST_C99
-
 
 /*******************************************************************************
  math
@@ -212,14 +212,35 @@ dl_declare_test(test_dl_define_enum);
 dl_end_test_suite
 
 
-int  main(int argc, char **argv) {
-  dl_run_test_suite(tester);
-  dl_run_test_suite(math);
-  dl_run_test_suite(vector);
-  dl_run_test_suite(linked_list);
-  dl_run_test_suite(container);
-  dl_run_test_suite(algorithm);
-  dl_run_test_suite(macros);
+int main(int argc, char **argv) {
+  int idx;
+  if (argc <= 1) {
+    dl_run_test_suite(tester);
+    dl_run_test_suite(math);
+    dl_run_test_suite(vector);
+    dl_run_test_suite(linked_list);
+    dl_run_test_suite(container);
+    dl_run_test_suite(algorithm);
+    dl_run_test_suite(macros);
+  }
+  else if (argc > 1) {
+    for (idx = 1; idx < argc; ++idx) {
+      if (0 == strncmp("tester", argv[idx], 24))
+	dl_run_test_suite(tester);
+      if (0 == strncmp("math", argv[idx], 24))
+	dl_run_test_suite(math);
+      if (0 == strncmp("vector", argv[idx], 24))
+	dl_run_test_suite(vector);
+      if (0 == strncmp("linked_list", argv[idx], 24))
+	dl_run_test_suite(linked_list);
+      if (0 == strncmp("container", argv[idx], 24))
+	dl_run_test_suite(container);
+      if (0 == strncmp("algorithm", argv[idx], 24))
+	dl_run_test_suite(algorithm);
+      if (0 == strncmp("macros", argv[idx], 24))
+	dl_run_test_suite(macros);
+    }
+  }
   return 0;
 }
 
