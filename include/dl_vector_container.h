@@ -29,10 +29,6 @@ void _destroy_vector_container(dl_ptr c) {
   dl_destroy_vector((dl_vector *)((dl_container *)c)->storage);
 }
 
-dl_natural _vector_container_traits(dl_ptr c) {
-  return DL_CONTAINER_TRAIT_RANDOM_ACCESS;
-}
-
 dl_natural _vector_container_length(dl_ptr c) {
   return dl_vector_length((dl_vector *)((dl_container *)c)->storage);
 }
@@ -133,9 +129,9 @@ dl_integer _vector_container_iterator_index(dl_iterator i) {
 }
 
 dl_container_interface dl_vector_container_interface = {
+  DL_CONTAINER_TRAIT_RANDOM_ACCESS,
   _make_vector_container,
   _destroy_vector_container,
-  _vector_container_traits,
   _vector_container_length,
   _vector_container_is_empty,
   _vector_container_element_size,

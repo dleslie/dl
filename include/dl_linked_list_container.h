@@ -29,10 +29,6 @@ void _destroy_linked_list_container(dl_ptr c) {
   dl_destroy_linked_list((dl_linked_list *)((dl_container *)c)->storage);
 }
 
-dl_natural _linked_list_container_traits(dl_ptr c) {
-  return DL_CONTAINER_TRAIT_RANDOM_INSERT;
-}
-
 dl_natural _linked_list_container_length(dl_ptr c) {
   return dl_linked_list_length((dl_linked_list *)((dl_container *)c)->storage);
 }
@@ -136,9 +132,9 @@ dl_integer _linked_list_container_iterator_index(dl_iterator i) {
 }
 
 dl_container_interface dl_linked_list_container_interface = {
+  DL_CONTAINER_TRAIT_RANDOM_INSERT,
   _make_linked_list_container,
   _destroy_linked_list_container,
-  _linked_list_container_traits,
   _linked_list_container_length,
   _linked_list_container_is_empty,
   _linked_list_container_element_size,

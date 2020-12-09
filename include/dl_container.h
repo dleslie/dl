@@ -34,9 +34,9 @@ typedef struct {
 } dl_iterator;
 
 struct dl_container_interface {
+  dl_natural traits;
   dl_ptr (*make)(dl_natural element_size, dl_natural capacity);
   void (*destroy)(dl_ptr c);
-  dl_natural (*traits)(dl_ptr c);
   dl_natural (*length)(dl_ptr c);
   dl_bool (*is_empty)(dl_ptr c);
   dl_natural (*element_size)(dl_ptr c);
@@ -185,7 +185,7 @@ dl_api dl_ptr dl_container_pop(dl_container *target, dl_ptr out) {
 dl_api dl_natural dl_container_traits(const dl_container *target) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return 0;
 
-  return target->interface->traits((dl_ptr)target);
+  return target->interface->traits;
 }
 
 /*******************************************************************************
