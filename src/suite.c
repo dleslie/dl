@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #define DL_IMPLEMENTATION 1
+#include <stdlib.h>
 #include <string.h>
 #include "dl.h"
 
@@ -214,6 +215,8 @@ dl_end_test_suite
 
 int main(int argc, char **argv) {
   int idx;
+  int repeat = 1;
+  int repeat_idx = 0;
   if (argc <= 1) {
     dl_run_test_suite(tester);
     dl_run_test_suite(math);
@@ -225,20 +228,29 @@ int main(int argc, char **argv) {
   }
   else if (argc > 1) {
     for (idx = 1; idx < argc; ++idx) {
-      if (0 == strncmp("tester", argv[idx], 24))
-	dl_run_test_suite(tester);
-      if (0 == strncmp("math", argv[idx], 24))
-	dl_run_test_suite(math);
-      if (0 == strncmp("vector", argv[idx], 24))
-	dl_run_test_suite(vector);
-      if (0 == strncmp("linked_list", argv[idx], 24))
-	dl_run_test_suite(linked_list);
-      if (0 == strncmp("container", argv[idx], 24))
-	dl_run_test_suite(container);
-      if (0 == strncmp("algorithm", argv[idx], 24))
-	dl_run_test_suite(algorithm);
-      if (0 == strncmp("macros", argv[idx], 24))
-	dl_run_test_suite(macros);
+      if (idx < argc - 1 && 0 == strncmp("--repeat", argv[idx], 24))
+	repeat = atoi(argv[++idx]);
+      else if (0 == strncmp("tester", argv[idx], 24))
+	for (repeat_idx = 0; repeat_idx < repeat; ++repeat_idx)
+	  dl_run_test_suite(tester);
+      else if (0 == strncmp("math", argv[idx], 24))
+	for (repeat_idx = 0; repeat_idx < repeat; ++repeat_idx)
+	  dl_run_test_suite(math);
+      else if (0 == strncmp("vector", argv[idx], 24))
+	for (repeat_idx = 0; repeat_idx < repeat; ++repeat_idx)
+	  dl_run_test_suite(vector);
+      else if (0 == strncmp("linked_list", argv[idx], 24))
+	for (repeat_idx = 0; repeat_idx < repeat; ++repeat_idx)
+	  dl_run_test_suite(linked_list);
+      else if (0 == strncmp("container", argv[idx], 24))
+	for (repeat_idx = 0; repeat_idx < repeat; ++repeat_idx)
+	  dl_run_test_suite(container);
+      else if (0 == strncmp("algorithm", argv[idx], 24))
+	for (repeat_idx = 0; repeat_idx < repeat; ++repeat_idx)
+	  dl_run_test_suite(algorithm);
+      else if (0 == strncmp("macros", argv[idx], 24))
+	for (repeat_idx = 0; repeat_idx < repeat; ++repeat_idx)
+	  dl_run_test_suite(macros);
     }
   }
   return 0;
