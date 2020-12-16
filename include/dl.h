@@ -10,7 +10,7 @@
 /* Basic time methods */
 #include "dl_time.h"
 
-#if DL_USE_LOGGING
+#if defined(DL_USE_LOGGING) && DL_USE_LOGGING
 /* STDIO logging */
 #include "dl_logging.h"
 

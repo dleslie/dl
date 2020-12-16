@@ -37,7 +37,7 @@ dl_natural dl_log_message(dl_log_channel ch, const char *file, dl_natural line, 
 #define DL_MSG(...) dl_log_message(DL_LOG_MESSAGE, __FILE__, __LINE__, "", ##__VA_ARGS__)
 #endif
 
-#if DL_USE_SAFETY_CHECKS
+#if defined(DL_USE_SAFETY_CHECKS) && DL_USE_SAFETY_CHECKS
 #undef dl_safety
 #define dl_safety(x) (dl_unlikely(x) ? DL_ERROR("Safety triggered") || 1 : 0)
 #endif

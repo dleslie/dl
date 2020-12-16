@@ -28,7 +28,7 @@ dl_integer dl_test_count(dl_bool (**tests)(), dl_integer max);
   *out_passed = dl_test_run(tests, test_names, *out_count); \
   }
 #define dl_declare_test(test_name)  \
-  dl_bool test_name();              \
+  extern dl_bool test_name();       \
   tests[current] = test_name;       \
   test_names[current] = #test_name; \
   current++;

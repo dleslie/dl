@@ -198,7 +198,7 @@
 #endif
 #endif
 
-#if !defined(DL_USE_SAFETY_CHECKS) || !DL_USE_SAFETY_CHECKS
+#if defined(DL_USE_SAFETY_CHECKS) && DL_USE_SAFETY_CHECKS
 #define dl_safety(x) dl_unlikely(x)
 #else
 #define dl_safety(x) (1 == 0)
