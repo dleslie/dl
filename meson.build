@@ -8,13 +8,13 @@ standard_flags = []
 lib_m = cc.find_library('m', required : true)
 
 gcc_configs = [
-#  ['no-malloc', ['-DDL_USE_MALLOC=0']],
+  ['no-malloc', ['-DDL_USE_MALLOC=0']],
   ['test-checked', ['-g', '-O0', '-DDL_USE_SAFETY_CHECKS=1']],
   ['test-unchecked', ['-g', '-O0', '-DDL_USE_SAFETY_CHECKS=0']],
-#  ['pedantic', ['-pedantic', '-Wall', '-Werror', '-Wduplicated-cond', '-Wduplicated-branches', '-Wlogical-op', '-Wrestrict', '-Wnull-dereference', '-Wjump-misses-init', '-Wformat=2', '-Wshadow', '-DDL_USE_EXTENSIONS=0']],
-#  ['small', ['-Os']],
-#  ['fast', ['-O3']],
-#  ['prof', ['-pg']]
+  ['pedantic', ['-pedantic', '-Wall', '-Werror', '-Wduplicated-cond', '-Wduplicated-branches', '-Wlogical-op', '-Wrestrict', '-Wnull-dereference', '-Wjump-misses-init', '-Wformat=2', '-Wshadow', '-DDL_USE_EXTENSIONS=0']],
+  ['small', ['-Os']],
+  ['fast', ['-O3']],
+  ['prof', ['-pg']]
 ]
 
 build_config = gcc_configs
