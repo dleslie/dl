@@ -13,10 +13,9 @@
 
 #ifndef DL_USE_LOGGING
 #define DL_USE_LOGGING 1
+#ifndef DL_LOG_SAFETY_CHECKS
+#define DL_LOG_SAFETY_CHECKS 0
 #endif
-
-#ifndef DL_USE_SAFETY_CHECKS
-#define DL_USE_SAFETY_CHECKS 0
 #endif
 
 #ifndef DL_USE_MALLOC
@@ -184,7 +183,7 @@
 
 #ifndef dl_likely
 #define dl_likely(x) !!(x)
-#if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
+#if DL_USE_EXTENSIONS && (DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW)
 #undef dl_likely
 #define dl_likely(x) __builtin_expect(!!(x), 1)
 #endif
@@ -192,17 +191,13 @@
 
 #ifndef dl_unlikely
 #define dl_unlikely(x) !!(x)
-#if DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW
+#if DL_USE_EXTENSIONS && (DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW)
 #undef dl_unlikely
 #define dl_unlikely(x) __builtin_expect(!!(x), 0)
 #endif
 #endif
 
-#if defined(DL_USE_SAFETY_CHECKS) && DL_USE_SAFETY_CHECKS
 #define dl_safety(x) dl_unlikely(x)
-#else
-#define dl_safety(x) (1 == 0)
-#endif
 
 #define dl_unused(x) (void)(x)
 
