@@ -186,7 +186,7 @@ dl_api dl_natural dl_vector_ref_array(dl_vector *v, dl_natural index, dl_ptr *ou
 }
 
 dl_api dl_integer dl_vector_insert(dl_vector *v, dl_natural position, dl_ptr value) {
-  dl_integer idx;
+  dl_natural idx;
 
   if (dl_safety(v == NULL || value == NULL) || position > v->length)
     return -1;
@@ -204,7 +204,7 @@ dl_api dl_integer dl_vector_insert(dl_vector *v, dl_natural position, dl_ptr val
 }
 
 dl_api dl_bool dl_vector_remove(dl_vector *v, dl_natural position) {
-  dl_integer idx;
+  dl_natural idx;
 
   if (dl_safety(v == NULL) || v->length == 0 || position >= v->length)
     return false;

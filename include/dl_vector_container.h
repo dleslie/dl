@@ -72,7 +72,7 @@ dl_ptr _vector_container_pop(dl_ptr c, dl_ptr out) {
 
 dl_bool _vector_container_iterator_valid(dl_iterator i) {
   dl_vector *v = (dl_vector *)((dl_container *)i.container)->storage;
-  return i.data.index >= 0 && !dl_safety(v == NULL) && i.data.index < v->length;
+  return i.data.index >= 0 && !dl_safety(v == NULL) && i.data.index < (dl_integer)v->length;
 }
 
 dl_ptr _vector_container_iterator_get(dl_iterator i, dl_ptr out) {
@@ -108,7 +108,7 @@ dl_iterator _vector_container_iterator_next(dl_iterator i) {
   dl_vector *v;
   v = (dl_vector *)i.container->storage;
   i.data.index++;
-  if (i.data.index >= v->length)
+  if (i.data.index >= (dl_integer)v->length)
     i.container = NULL;
   return i;
 }

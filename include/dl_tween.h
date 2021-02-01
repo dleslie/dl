@@ -78,6 +78,7 @@ dl_api dl_real dl_tween(dl_easing_function ease, dl_ease_direction direction, dl
 }
 
 dl_api dl_real dl_ease_linear(dl_ease_direction d, dl_real p) {
+  dl_unused(d);
   return p;
 }
 

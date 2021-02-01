@@ -37,6 +37,9 @@ dl_api dl_natural dl_write_time(const char *fmt, char *buf, dl_natural buf_lengt
   time_t t = time(NULL);
   return strftime(buf, buf_length, fmt, localtime(&t));
 #else
+  dl_unused(fmt);
+  dl_unused(buf);
+  dl_unused(buf_length);
   return 0;
 #endif
 }

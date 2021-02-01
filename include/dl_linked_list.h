@@ -185,6 +185,7 @@ dl_api dl_ptr dl_linked_list_get(const dl_linked_list *list, dl_linked_list_node
 }
 
 dl_api dl_ptr dl_linked_list_ref(const dl_linked_list *list, const dl_linked_list_node *position) {
+    dl_unused(list);
   if (dl_safety(position == NULL))
     return NULL;
 
