@@ -16,17 +16,28 @@ extern dl_container_interface dl_linked_list_container_interface;
 
 #if defined(DL_IMPLEMENTATION)
 #include "dl_linked_list.h"
+#include "dl_memory.h"
 
 dl_container *dl_make_linked_list_container(dl_natural element_size, dl_natural capacity) {
   return dl_make_container(&dl_linked_list_container_interface, element_size, capacity);
 }
 
-dl_ptr _make_linked_list_container(dl_natural element_size, dl_natural capacity) {
-  return dl_make_linked_list(element_size, capacity);
+dl_container *_make_linked_list_container(dl_natural element_size, dl_natural capacity) {
+  dl_container *container;
+
+  if (dl_unlikely(NULL == (container = (dl_container *)dl_alloc(sizeof(dl_container)))))
+    return NULL;
+
+  container->interface = &dl_linked_list_container_interface;
+  if (dl_unlikely(NULL == (container->storage = dl_make_linked_list(element_size, capacity))))
+    return NULL;
+
+  return container;
 }
 
 void _destroy_linked_list_container(dl_ptr c) {
   dl_destroy_linked_list((dl_linked_list *)((dl_container *)c)->storage);
+  dl_free(c);
 }
 
 dl_natural _linked_list_container_length(dl_ptr c) {

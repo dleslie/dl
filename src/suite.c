@@ -131,22 +131,26 @@ dl_end_test_suite
 *******************************************************************************/
 
 dl_begin_test_suite(vector);
+#if DL_USE_MALLOC
 dl_declare_test(test_dl_init_vector);
 dl_declare_test(test_dl_vector_push_pop);
 dl_declare_test(test_dl_vector_grow);
 dl_declare_test(test_dl_vector_get_set_ref);
 dl_declare_test(test_dl_vector_insert_remove);
+#endif
 dl_end_test_suite
-
+    
 /*******************************************************************************;
  linked_list
 *******************************************************************************/
 
 dl_begin_test_suite(linked_list);
+#if DL_USE_MALLOC
 dl_declare_test(test_dl_init_linked_list);
 dl_declare_test(test_dl_linked_list_push_pop);
 dl_declare_test(test_dl_linked_list_get_set_ref);
 dl_declare_test(test_dl_linked_list_insert_remove);
+#endif
 dl_end_test_suite
 
 /*******************************************************************************;

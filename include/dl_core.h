@@ -1,6 +1,7 @@
 #ifndef DL_CORE_H
 #define DL_CORE_H 1
 
+/* For size_t and others */
 #include <stddef.h>
 
 /***************************************
@@ -149,6 +150,10 @@
 #define DL_IS_DEBUG 0
 #endif
 
+/***************************************
+ * Function Decorating
+ **************************************/
+
 #ifndef dl_inline
 #define dl_inline
 #if DL_IS_ATLEAST_C99 && (DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW)
@@ -181,6 +186,10 @@
 #endif
 #endif
 
+/***************************************
+ * Expression Decorating
+ **************************************/
+
 #ifndef dl_likely
 #define dl_likely(x) !!(x)
 #if DL_USE_EXTENSIONS && (DL_IS_GNUC || DL_IS_CLANG || DL_IS_MINGW)
@@ -201,6 +210,10 @@
 
 #define dl_unused(x) (void)(x)
 
+/***************************************
+ * Basic Types
+ **************************************/
+
 typedef void *dl_ptr;
 typedef signed int dl_integer;
 typedef float dl_real;
@@ -220,17 +233,153 @@ typedef _Bool dl_bool;
 #endif
 #endif
 
-#define DL_INTEGER_MAX 2147483647
-#define DL_INTEGER_MIN -2147483648
-
-#define DL_NATURAL_MAX 4294967295U
-#define DL_NATURAL_MIN 0
-
-#define DL_REAL_MAX 3.402823e+38f
-#define DL_REAL_MIN 1.175494e-38f
-
 #ifndef NULL
 #define NULL 0
+#endif
+
+/***************************************
+ * Simple Maths
+ **************************************/
+
+#ifndef DL_INTEGER_MAX
+#define DL_INTEGER_MAX 2147483647
+#endif
+
+#ifndef DL_INTEGER_MIN
+#define DL_INTEGER_MIN -2147483648
+#endif
+
+#ifndef DL_NATURAL_MAX
+#define DL_NATURAL_MAX 4294967295U
+#endif
+
+#ifndef DL_NATURAL_MIN
+#define DL_NATURAL_MIN 0
+#endif
+
+#ifndef DL_REAL_MAX
+#define DL_REAL_MAX 3.402823e+38f
+#endif
+
+#ifndef DL_REAL_MIN
+#define DL_REAL_MIN 1.175494e-38f
+#endif
+
+#ifndef dl_real_to_natural
+#define dl_real_to_natural(a) ((dl_natural)(a))
+#endif
+
+#ifndef dl_natural_to_real
+#define dl_natural_to_real(a) ((dl_real)(a))
+#endif
+
+#ifndef dl_real_to_integer
+#define dl_real_to_integer(a) ((dl_integer)(a))
+#endif
+
+#ifndef dl_integer_to_real
+#define dl_integer_to_real(a) ((dl_real)(a))
+#endif
+
+#ifndef dl_integer_to_natural
+#define dl_integer_to_natural(a) ((dl_natural)(a))
+#endif
+
+#ifndef dl_natural_to_integer
+#define dl_natural_to_integer(a) ((dl_integer)(a))
+#endif
+
+#ifndef dl_mul_real
+#define dl_mul_real(a, b) ((a) * (b))
+#endif
+#ifndef dl_div_real
+#define dl_div_real(a, b) ((a) / (b))
+#endif
+#ifndef dl_add_real
+#define dl_add_real(a, b) ((a) + (b))
+#endif
+#ifndef dl_sub_real
+#define dl_sub_real(a, b) ((a) - (b))
+#endif
+#ifndef dl_gt_real
+#define dl_gt_real(a, b) ((a) > (b))
+#endif
+#ifndef dl_lt_real
+#define dl_lt_real(a, b) ((a) < (b))
+#endif
+#ifndef dl_eq_real
+#define dl_eq_real(a, b) ((a) == (b))
+#endif
+#ifndef dl_gte_real
+#define dl_gte_real(a, b) ((a) >= (b))
+#endif
+#ifndef dl_lte_real
+#define dl_lte_real(a, b) ((a) <= (b))
+#endif
+#ifndef dl_neg_real
+#define dl_neg_real(a) (-(a))
+#endif
+
+#ifndef dl_mul_natural
+#define dl_mul_natural(a, b) ((a) * (b))
+#endif
+#ifndef dl_div_natural
+#define dl_div_natural(a, b) ((a) / (b))
+#endif
+#ifndef dl_add_natural
+#define dl_add_natural(a, b) ((a) + (b))
+#endif
+#ifndef dl_sub_natural
+#define dl_sub_natural(a, b) ((a) - (b))
+#endif
+#ifndef dl_gt_natural
+#define dl_gt_natural(a, b) ((a) > (b))
+#endif
+#ifndef dl_lt_natural
+#define dl_lt_natural(a, b) ((a) < (b))
+#endif
+#ifndef dl_eq_natural
+#define dl_eq_natural(a, b) ((a) == (b))
+#endif
+#ifndef dl_gte_natural
+#define dl_gte_natural(a, b) ((a) >= (b))
+#endif
+#ifndef dl_lte_natural
+#define dl_lte_natural(a, b) ((a) <= (b))
+#endif
+#ifndef dl_neg_natural
+#define dl_neg_natural(a) (-(a))
+#endif
+
+#ifndef dl_mul_integer
+#define dl_mul_integer(a, b) ((a) * (b))
+#endif
+#ifndef dl_div_integer
+#define dl_div_integer(a, b) ((a) / (b))
+#endif
+#ifndef dl_add_integer
+#define dl_add_integer(a, b) ((a) + (b))
+#endif
+#ifndef dl_sub_integer
+#define dl_sub_integer(a, b) ((a) - (b))
+#endif
+#ifndef dl_gt_integer
+#define dl_gt_integer(a, b) ((a) > (b))
+#endif
+#ifndef dl_lt_integer
+#define dl_lt_integer(a, b) ((a) < (b))
+#endif
+#ifndef dl_eq_integer
+#define dl_eq_integer(a, b) ((a) == (b))
+#endif
+#ifndef dl_gte_integer
+#define dl_gte_integer(a, b) ((a) >= (b))
+#endif
+#ifndef dl_lte_integer
+#define dl_lte_integer(a, b) ((a) <= (b))
+#endif
+#ifndef dl_neg_integer
+#define dl_neg_integer(a) (-(a))
 #endif
 
 #if defined(__cplusplus)

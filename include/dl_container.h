@@ -35,7 +35,7 @@ typedef struct {
 
 struct dl_container_interface {
   dl_natural traits;
-  dl_ptr (*make)(dl_natural element_size, dl_natural capacity);
+  dl_container *(*make)(dl_natural element_size, dl_natural capacity);
   void (*destroy)(dl_ptr c);
   dl_natural (*length)(dl_ptr c);
   dl_bool (*is_empty)(dl_ptr c);
@@ -114,11 +114,7 @@ dl_api dl_container *dl_make_container(struct dl_container_interface *interface,
   dl_container *target;
   if (dl_safety(element_size == 0 || capacity == 0 || interface == NULL)) return NULL;
 
-  if (dl_unlikely(NULL == (target = (dl_container *)dl_alloc(sizeof(dl_container)))))
-    return NULL;
-
-  target->interface = interface;
-  if (dl_unlikely(NULL == (target->storage = target->interface->make(element_size, capacity))))
+  if (dl_unlikely(NULL == (target = interface->make(element_size, capacity))))
     return NULL;
 
   return target;
@@ -128,10 +124,6 @@ dl_api void dl_destroy_container(dl_container *target) {
   if (dl_safety(target == NULL || target->storage == NULL || target->interface == NULL)) return;
 
   target->interface->destroy(target);
-#if DL_USE_SAFETY_CHECKS
-  dl_memory_set(target, 0, sizeof(dl_container));
-#endif
-  dl_free(target);
 }
 
 dl_api dl_natural dl_container_length(const dl_container *target) {

@@ -24,6 +24,8 @@ dl_integer dl_test_count(dl_bool (**tests)(), dl_integer max);
       return;                                                              \
     dl_memory_set(tests, 0, sizeof(dl_bool(*)()) * 256);
 #define dl_end_test_suite                                   \
+  if (current == 0)                                         \
+    dl_unused(current);                                     \
   *out_count = dl_test_count(tests, 256);                   \
   *out_passed = dl_test_run(tests, test_names, *out_count); \
   }
