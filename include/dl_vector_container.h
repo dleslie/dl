@@ -15,8 +15,8 @@ extern dl_container_interface dl_vector_container_interface;
 #endif
 
 #if defined(DL_IMPLEMENTATION)
-#include "dl_vector.h"
 #include "dl_memory.h"
+#include "dl_vector.h"
 
 dl_container *dl_make_vector_container(dl_natural element_size, dl_natural capacity) {
   return dl_make_container(&dl_vector_container_interface, element_size, capacity);
@@ -35,49 +35,49 @@ dl_container *_make_vector_container(dl_natural element_size, dl_natural capacit
   return container;
 }
 
-void _destroy_vector_container(dl_ptr c) {
+void _destroy_vector_container(dl_container *c) {
   dl_destroy_vector((dl_vector *)((dl_container *)c)->storage);
   dl_free(c);
 }
 
-dl_natural _vector_container_length(dl_ptr c) {
+dl_natural _vector_container_length(dl_container *c) {
   return dl_vector_length((dl_vector *)((dl_container *)c)->storage);
 }
 
-dl_bool _vector_container_is_empty(dl_ptr c) {
+dl_bool _vector_container_is_empty(dl_container *c) {
   return dl_vector_is_empty((dl_vector *)((dl_container *)c)->storage);
 }
 
-dl_natural _vector_container_element_size(dl_ptr c) {
+dl_natural _vector_container_element_size(dl_container *c) {
   return ((dl_vector *)((dl_container *)c)->storage)->element_size;
 }
 
-dl_iterator _vector_container_index(dl_ptr c, dl_natural i) {
+dl_iterator _vector_container_index(dl_container *c, dl_natural i) {
   dl_iterator iter;
   iter.container = (dl_container *)c;
   iter.data.index = i;
   return iter;
 }
 
-dl_iterator _vector_container_first(dl_ptr c) {
+dl_iterator _vector_container_first(dl_container *c) {
   dl_iterator iter;
   iter.container = (dl_container *)c;
   iter.data.index = 0;
   return iter;
 }
 
-dl_iterator _vector_container_last(dl_ptr c) {
+dl_iterator _vector_container_last(dl_container *c) {
   dl_iterator iter;
   iter.container = (dl_container *)c;
   iter.data.index = dl_vector_length((dl_vector *)((dl_container *)c)->storage) - 1;
   return iter;
 }
 
-dl_ptr _vector_container_push(dl_ptr c, dl_ptr v) {
+dl_ptr _vector_container_push(dl_container *c, dl_ptr v) {
   return dl_vector_push((dl_vector *)((dl_container *)c)->storage, v);
 }
 
-dl_ptr _vector_container_pop(dl_ptr c, dl_ptr out) {
+dl_ptr _vector_container_pop(dl_container *c, dl_ptr out) {
   return dl_vector_pop((dl_vector *)((dl_container *)c)->storage, out);
 }
 

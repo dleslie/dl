@@ -36,15 +36,15 @@ typedef struct {
 struct dl_container_interface {
   dl_natural traits;
   dl_container *(*make)(dl_natural element_size, dl_natural capacity);
-  void (*destroy)(dl_ptr c);
-  dl_natural (*length)(dl_ptr c);
-  dl_bool (*is_empty)(dl_ptr c);
-  dl_natural (*element_size)(dl_ptr c);
-  dl_iterator (*index)(dl_ptr c, dl_natural i);
-  dl_iterator (*first)(dl_ptr c);
-  dl_iterator (*last)(dl_ptr c);
-  dl_ptr (*push)(dl_ptr c, dl_ptr v);
-  dl_ptr (*pop)(dl_ptr c, dl_ptr out);
+  void (*destroy)(dl_container *c);
+  dl_natural (*length)(dl_container *c);
+  dl_bool (*is_empty)(dl_container *c);
+  dl_natural (*element_size)(dl_container *c);
+  dl_iterator (*index)(dl_container *c, dl_natural i);
+  dl_iterator (*first)(dl_container *c);
+  dl_iterator (*last)(dl_container *c);
+  dl_ptr (*push)(dl_container *c, dl_ptr v);
+  dl_ptr (*pop)(dl_container *c, dl_ptr out);
 
   dl_bool (*iterator_valid)(dl_iterator i);
   dl_ptr (*iterator_get)(dl_iterator i, dl_ptr out);

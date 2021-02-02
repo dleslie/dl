@@ -35,49 +35,49 @@ dl_container *_make_linked_list_container(dl_natural element_size, dl_natural ca
   return container;
 }
 
-void _destroy_linked_list_container(dl_ptr c) {
+void _destroy_linked_list_container(dl_container *c) {
   dl_destroy_linked_list((dl_linked_list *)((dl_container *)c)->storage);
   dl_free(c);
 }
 
-dl_natural _linked_list_container_length(dl_ptr c) {
+dl_natural _linked_list_container_length(dl_container *c) {
   return dl_linked_list_length((dl_linked_list *)((dl_container *)c)->storage);
 }
 
-dl_bool _linked_list_container_is_empty(dl_ptr c) {
+dl_bool _linked_list_container_is_empty(dl_container *c) {
   return dl_linked_list_is_empty((dl_linked_list *)((dl_container *)c)->storage);
 }
 
-dl_natural _linked_list_container_element_size(dl_ptr c) {
+dl_natural _linked_list_container_element_size(dl_container *c) {
   return ((dl_linked_list *)((dl_container *)c)->storage)->element_size;
 }
 
-dl_iterator _linked_list_container_index(dl_ptr c, dl_natural i) {
+dl_iterator _linked_list_container_index(dl_container *c, dl_natural i) {
   dl_iterator iter;
   iter.container = (dl_container *)c;
   iter.data.node = dl_linked_list_index((dl_linked_list *)iter.container->storage, i);
   return iter;
 }
 
-dl_iterator _linked_list_container_first(dl_ptr c) {
+dl_iterator _linked_list_container_first(dl_container *c) {
   dl_iterator iter;
   iter.container = (dl_container *)c;
   iter.data.node = ((dl_linked_list *)iter.container->storage)->first;
   return iter;
 }
 
-dl_iterator _linked_list_container_last(dl_ptr c) {
+dl_iterator _linked_list_container_last(dl_container *c) {
   dl_iterator iter;
   iter.container = (dl_container *)c;
   iter.data.node = ((dl_linked_list *)iter.container->storage)->last;
   return iter;
 }
 
-dl_ptr _linked_list_container_push(dl_ptr c, dl_ptr v) {
+dl_ptr _linked_list_container_push(dl_container *c, dl_ptr v) {
   return dl_linked_list_push((dl_linked_list *)((dl_container *)c)->storage, v);
 }
 
-dl_ptr _linked_list_container_pop(dl_ptr c, dl_ptr out) {
+dl_ptr _linked_list_container_pop(dl_container *c, dl_ptr out) {
   return dl_linked_list_pop((dl_linked_list *)((dl_container *)c)->storage, out);
 }
 
