@@ -19,11 +19,13 @@
 /* Interface for data structres */
 #include "dl_container.h"
 
+/* Basic wrapper around C arrays */
+#include "dl_array_container.h"
+
 #if DL_IS_LINUX || DL_IS_APPLE || DL_IS_WINDOWS
 /* Basic time methods */
 #include "dl_time.h"
 #endif /* DL_IS_LINUX || DL_IS_APPLE || DL_IS_WINDOWS */
-
 
 #if DL_USE_LOGGING
 /* STDIO logging */
@@ -32,7 +34,6 @@
 /* Define and execute test suites */
 #include "dl_test.h"
 #endif /* DL_USE_LOGGING */
-
 
 #if DL_USE_MALLOC
 /* Linked List */

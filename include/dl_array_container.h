@@ -11,7 +11,7 @@ typedef struct {
   dl_natural element_size;
   dl_natural capacity;
   dl_natural end;
-  dl_ptr data;
+  dl_byte *data;
 } dl_array_info;
 
 dl_api dl_array_info *dl_init_array_info(dl_array_info *ary_info, dl_natural element_size, dl_natural capacity, dl_ptr data);
@@ -47,7 +47,7 @@ dl_array_info *dl_init_array_info(dl_array_info *ary_info, dl_natural element_si
 }
 
 dl_container *dl_init_array_container(dl_container *container, dl_array_info *ary_info) {
-  if (dl_safety(ary_info == NULL || container == NULL || ary == NULL))
+  if (dl_safety(ary_info == NULL || container == NULL || ary_info == NULL))
     return NULL;
 
   container->interface = &dl_array_container_interface;
@@ -122,7 +122,7 @@ dl_integer _array_container_iterator_index(dl_iterator i) {
 }
 
 dl_bool _array_container_iterator_valid(dl_iterator i) {
-  return i.data.index >= 0 && !dl_safety(v == NULL) && i.data.index < ((dl_array_info *)i.container->storage)->end;
+  return i.data.index >= 0 && i.data.index < ((dl_array_info *)i.container->storage)->end;
 }
 
 dl_ptr _array_container_iterator_get(dl_iterator i, dl_ptr out) {
@@ -177,7 +177,7 @@ dl_bool _array_container_iterator_remove(dl_iterator pos) {
   dl_natural sz = ary->element_size;
 
   if (ary->end == 0)
-    return NULL;
+    return false;
 
   for (; idx < ary->end; ++idx)
     dl_memory_copy(&ary->data[idx * sz], &ary->data[(idx + 1) * sz], sz);
@@ -193,7 +193,7 @@ dl_iterator _array_container_iterator_insert(dl_iterator pos, dl_ptr value) {
   dl_natural sz = ary->element_size;
 
   if (ary->end >= ary->capacity)
-    return NULL;
+    return dl_make_invalid_iterator();
 
   for (; idx > pos.data.index; --idx)
     dl_memory_copy(&ary->data[idx * sz], &ary->data[(idx - 1) * sz], sz);
@@ -202,7 +202,7 @@ dl_iterator _array_container_iterator_insert(dl_iterator pos, dl_ptr value) {
 
   ary->end++;
 
-  return true;
+  return pos;
 }
 
 dl_container_interface dl_array_container_interface = {
