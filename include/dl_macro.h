@@ -337,6 +337,8 @@
   enum name##_enum{DL_ARGMAP(DL_COMMASPLICE, (__VA_ARGS__)) name##_count}; \
   const char *name##_strings[] = {DL_ARGMAP(DL_STRINGIFY_COMMASPLICE, (__VA_ARGS__)) DL_COUNT_ARGS_STRING(__VA_ARGS__)};
 
+#define DL_IS_BITFLAG(value) (0 == (value & (value - 1)))
+
 #endif /* DL_IS_ATLEAST_C99 */
 
 #endif

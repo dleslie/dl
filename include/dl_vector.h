@@ -2,6 +2,7 @@
 #define DL_VECTOR_H 1
 
 #include "dl_core.h"
+#include "dl_memory.h"
 
 #ifdef __cplusplus
 extern "C" {

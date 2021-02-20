@@ -1,6 +1,6 @@
 #include "dl.h"
 
-#if DL_IS_ATLEAST_C99
+#if DL_IS_ATLEAST_C99 && DL_USE_MALLOC
 
 dl_bool test_dl_init_linked_list() {
   dl_linked_list *l;
