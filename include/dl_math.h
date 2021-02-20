@@ -22,53 +22,16 @@ extern const dl_real DL_E;
 extern const dl_real DL_INV_E;
 extern const dl_real DL_EPSILON;
 
-#ifndef dl_sqrt
-#define dl_sqrt(v) sqrt(v)
-#endif
-#ifndef dl_cos
-#define dl_cos(v) cos(v)
-#endif
-#ifndef dl_sin
-#define dl_sin(v) sin(v)
-#endif
-#ifndef dl_tan
-#define dl_tan(v) tan(v)
-#endif
-#ifndef dl_acos
-#define dl_acos(v) acos(v)
-#endif
-#ifndef dl_asin
-#define dl_asin(v) asin(v)
-#endif
-#ifndef dl_atan
-#define dl_atan(v) atan(v)
-#endif
-#ifndef dl_pow
-#define dl_pow(a, b) pow((a), (b))
-#endif
-#ifndef dl_exp
-#define dl_exp(v) exp(v)
-#endif
-#ifndef dl_floor
-#define dl_floor(v) floor(v)
-#endif
-#ifndef dl_ceil
-#define dl_ceil(v) ceil(v)
-#endif
-#ifndef dl_abs
-#define dl_abs(v) (dl_gt_real(v, 0) ? (v) : dl_neg_real(v))
-#endif
-
 #if DL_USE_EXTENIONS && DL_IS_ATLEAST_C90 && (DL_IS_GNUC || DL_IS_CLANG)
-#define dl_max(a, b) ({         \
-  __auto_type _a = (a);         \
-  __auto_type _b = (b);         \
-  dl_gt_real(_a, _b) ? _a : _b; \
+#define dl_max(a, b) ({ \
+  __auto_type _a = (a); \
+  __auto_type _b = (b); \
+  _a > _b ? _a : _b;    \
 })
-#define dl_min(a, b) ({         \
-  __auto_type _a = (a);         \
-  __auto_type _b = (b);         \
-  dl_lt_real(_a, _b) ? _a : _b; \
+#define dl_min(a, b) ({ \
+  __auto_type _a = (a); \
+  __auto_type _b = (b); \
+  _a < _b ? _a : _b;    \
 })
 #define dl_clamp(x, i, j) ({  \
   __auto_type _i = (i);       \
@@ -78,8 +41,8 @@ extern const dl_real DL_EPSILON;
 })
 #define dl_clamp01(x) dl_clamp(x, 0, 1)
 #else
-#define dl_min(x, y) (dl_lte_real(x, y) ? (x) : (y))
-#define dl_max(x, y) (dl_gte_real(x, y) ? (x) : (y))
+#define dl_min(x, y) ((x) <= (y) ? (x) : (y))
+#define dl_max(x, y) ((x) >= (y) ? (x) : (y))
 #define dl_clamp(x, a, b) dl_max(dl_min(b, x), a)
 #define dl_clamp01(x) dl_clamp(x, 0, 1)
 #endif
@@ -94,8 +57,21 @@ dl_api dl_real dl_degree_to_radian(dl_real degree);
 dl_api dl_real dl_radian_to_degree(dl_real radian);
 dl_api dl_integer dl_factorial(dl_integer n);
 
+#define dl_sqrt(v) sqrt(v)
+#define dl_cos(v) cos(v)
+#define dl_sin(v) sin(v)
+#define dl_tan(v) tan(v)
+#define dl_acos(v) acos(v)
+#define dl_asin(v) asin(v)
+#define dl_atan(v) atan(v)
+#define dl_pow(a, b) pow((a), (b))
+#define dl_exp(v) exp(v)
+#define dl_floor(v) floor(v)
+#define dl_ceil(v) ceil(v)
+#define dl_abs(v) ((v) > 0 ? (v) : -(v))
+
 #if !DL_IS_ATLEAST_C99
-#define dl_hypot(a, b) dl_sqrt(dl_add_real(dl_mul_real(a, a), dl_mul_real(b, b)))
+#define dl_hypot(a, b) dl_sqrt((a) * (a) + (b) * (b))
 #define dl_round(a) dl_floor(a)
 #else
 #define dl_hypot(a, b) hypot((a), (b))
