@@ -1,6 +1,6 @@
 project('dl', 'c')
 
-inc = include_directories('include')
+inc = include_directories('.')
 cc = meson.get_compiler('c')
 c_stds = ['c89', 'c90', 'c99', 'c11']
 standard_flags = []
@@ -28,7 +28,7 @@ executables = [
 if target_machine.system() == 'windows'
   lib_allegro = cc.find_library('allegro', dirs : [meson.source_root() + '/deps/windows/allegro/lib'])
   lib_allegro_primitives = cc.find_library('allegro_primitives', dirs : [meson.source_root() + '/deps/windows/allegro/lib'])
-  inc = include_directories('deps/windows/allegro/include', 'include')
+  inc = include_directories('deps/windows/allegro/include', '.')
 else
   lib_allegro = dependency('allegro-5', required : false)
   lib_allegro_primitives = dependency('allegro_primitives-5', required : false)
