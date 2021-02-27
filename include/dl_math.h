@@ -417,7 +417,7 @@ dl_api dl_integer dl_factorial(dl_integer n) {
 }
 
 dl_api dl_random_state *dl_init_random(dl_random_state *state, dl_integer seed) {
-  return dl_init_random_custom(state, DL_INTEGER_MAX, 1103515245, 12345, seed);
+  return dl_init_random_custom(state, (dl_integer)0xFFFFFFFFFFFF, 1103515245, 12345, seed);
 }
 
 dl_api dl_random_state *dl_init_random_custom(dl_random_state *state, dl_integer m, dl_integer a, dl_integer c, dl_integer seed) {

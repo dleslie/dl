@@ -71,7 +71,7 @@ dl_bool test_dl_vector_grow() {
   if (!dl_check(dl_vector_capacity(v) == 17, "Expected vector capacity to be 17, not %i", dl_vector_capacity(v)))
     goto grow_fail;
 
-  if (!dl_check(!dl_vector_grow(v, DL_NATURAL_MAX), "Expected vector capacity not to grow to %i", dl_vector_capacity(v)))
+  if (!dl_check(!dl_vector_grow(v, (dl_natural)(-1)), "Expected vector capacity not to grow to %i", dl_vector_capacity(v)))
     goto grow_fail;
 
   dl_destroy_vector(v);
@@ -130,7 +130,7 @@ dl_bool test_dl_vector_insert_remove() {
     if (!dl_check(0 == dl_vector_insert(v, 0, &values[idx]), "Expected insert to work"))
       goto insert_remove_fail;
 
-    if (!dl_check(-1 == dl_vector_insert(v, DL_NATURAL_MAX, &values[idx]), "Expected insert to fail"))
+    if (!dl_check(-1 == dl_vector_insert(v, (dl_natural)(-1), &values[idx]), "Expected insert to fail"))
       goto insert_remove_fail;
 
     if (!dl_check(4 - idx == dl_vector_length(v), "Expected length to be %i not %i", 4 - idx, dl_vector_length(v)))
@@ -147,7 +147,7 @@ dl_bool test_dl_vector_insert_remove() {
     if (!dl_check(dl_vector_remove(v, 0), "Expected remove to work"))
       goto insert_remove_fail;
 
-    if (!dl_check(!dl_vector_remove(v, DL_NATURAL_MAX), "Expected remove to fail"))
+    if (!dl_check(!dl_vector_remove(v, (dl_natural)-1), "Expected remove to fail"))
       goto insert_remove_fail;
 
     if (idx < 3 && !dl_check(values[idx + 1] == *(dl_natural *)dl_vector_ref(v, 0), "Expected %#010x == %#010x", &values[idx + 1], *(dl_natural *)dl_vector_ref(v, 0)))

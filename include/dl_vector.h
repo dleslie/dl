@@ -136,7 +136,7 @@ dl_api dl_bool dl_vector_grow(dl_vector *v, dl_natural amount) {
   if (dl_safety(v == NULL || v->array == NULL))
     return false;
 
-  if (DL_NATURAL_MAX - v->capacity < amount)
+  if (v->capacity + amount < v->capacity)
     return false;
 
   new_capacity = v->capacity + amount;

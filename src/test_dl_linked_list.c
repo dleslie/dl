@@ -115,7 +115,7 @@ dl_bool test_dl_linked_list_insert_remove() {
     if (!dl_check(dl_linked_list_remove(l, dl_linked_list_index(l, 0)), "Expected remove to work"))
       goto insert_remove_fail;
 
-    if (!dl_check(!dl_linked_list_remove(l, dl_linked_list_index(l, DL_NATURAL_MAX)), "Expected remove to fail"))
+    if (!dl_check(!dl_linked_list_remove(l, dl_linked_list_index(l, (dl_natural)-1)), "Expected remove to fail"))
       goto insert_remove_fail;
 
     if (idx < 3 && !dl_check(values[idx + 1] == *(dl_natural *)dl_linked_list_ref(l, dl_linked_list_index(l, 0)), "Expected %#010x == %#010x", values[idx + 1], *(dl_natural *)dl_linked_list_ref(l, dl_linked_list_index(l, 0))))
